@@ -1,0 +1,364 @@
+{
+  "id": 4,
+  "title": "System Statistics",
+  "originalTitle": "System Statistics",
+  "tags": [],
+  "style": "dark",
+  "timezone": "utc",
+  "editable": true,
+  "hideControls": false,
+  "sharedCrosshair": false,
+  "rows": [
+    {
+      "collapse": false,
+      "editable": true,
+      "height": "250px",
+      "panels": [
+        {
+          "aliasColors": {
+            "95th Percentile": "#9AC48A",
+            "99th Percentile": "#E24D42",
+            "Mean": "#6ED0E0",
+            "Usage": "#9AC48A"
+          },
+          "bars": false,
+          "datasource": null,
+          "decimals": 2,
+          "editable": true,
+          "error": false,
+          "fill": 0,
+          "grid": {
+            "leftLogBase": 1,
+            "leftMax": null,
+            "leftMin": null,
+            "rightLogBase": 1,
+            "rightMax": null,
+            "rightMin": null,
+            "threshold1": null,
+            "threshold1Color": "rgba(218, 204, 60, 0.49)",
+            "threshold2": null,
+            "threshold2Color": "rgba(205, 82, 82, 0.86)",
+            "thresholdLine": false
+          },
+          "height": "300",
+          "id": 1,
+          "interval": "5m",
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+            {
+              "dashUri": "db/ruby-object-statistics",
+              "dashboard": "Ruby Object Statistics",
+              "keepTime": true,
+              "targetBlank": true,
+              "title": "Ruby Object Statistics",
+              "type": "dashboard"
+            },
+            {
+              "dashUri": "db/garbage-collector",
+              "dashboard": "Garbage Collector",
+              "keepTime": true,
+              "targetBlank": true,
+              "title": "Garbage Collector",
+              "type": "dashboard"
+            },
+            {
+              "dashUri": "db/transaction-overview",
+              "dashboard": "Transaction Overview",
+              "keepTime": true,
+              "targetBlank": true,
+              "title": "Transaction Overview",
+              "type": "dashboard"
+            }
+          ],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "$col",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "memory_usage",
+              "query": "SELECT mean(\"memory_95th\") AS \"95th Percentile\", mean(\"memory_99th\") AS \"99th Percentile\", mean(\"memory_mean\") AS \"Mean\" FROM gitlab.seven_days.\"[[process_type]]_memory_usage_per_minute\" WHERE $timeFilter GROUP BY time($interval)",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "process_type",
+                  "operator": "=~",
+                  "value": "/$process_type$/"
+                }
+              ]
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Memory Usage",
+          "tooltip": {
+            "shared": true,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "x-axis": true,
+          "y-axis": true,
+          "y_formats": [
+            "bytes",
+            "short"
+          ]
+        }
+      ],
+      "title": "Row"
+    },
+    {
+      "collapse": false,
+      "editable": true,
+      "height": "250px",
+      "panels": [
+        {
+          "aliasColors": {
+            "Amount": "#9AC48A"
+          },
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 0,
+          "grid": {
+            "leftLogBase": 1,
+            "leftMax": null,
+            "leftMin": null,
+            "rightLogBase": 1,
+            "rightMax": null,
+            "rightMin": null,
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 2,
+          "interval": "5m",
+          "isNew": true,
+          "legend": {
+            "avg": true,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "$col",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "file_descriptors",
+              "query": "SELECT mean(\"value\") FROM gitlab.seven_days.\"[[process_type]]_file_descriptors_per_minute\" WHERE $timeFilter GROUP BY time($interval)",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "sum"
+                  },
+                  {
+                    "params": [
+                      "amount"
+                    ],
+                    "type": "alias"
+                  }
+                ]
+              ],
+              "tags": []
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "File Descriptors",
+          "tooltip": {
+            "shared": true,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "x-axis": true,
+          "y-axis": true,
+          "y_formats": [
+            "short",
+            "short"
+          ]
+        }
+      ],
+      "title": "New row"
+    }
+  ],
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {
+    "now": true,
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "templating": {
+    "list": [
+      {
+        "allFormat": "regex values",
+        "current": {
+          "tags": [],
+          "text": "rails",
+          "value": "rails"
+        },
+        "datasource": null,
+        "includeAll": false,
+        "label": "Process Type",
+        "multi": false,
+        "multiFormat": "glob",
+        "name": "process_type",
+        "options": [
+          {
+            "selected": true,
+            "text": "rails",
+            "value": "rails"
+          },
+          {
+            "selected": false,
+            "text": "sidekiq",
+            "value": "sidekiq"
+          }
+        ],
+        "query": "rails,sidekiq",
+        "refresh": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "annotations": {
+    "list": [
+      {
+        "datasource": "InfluxDB",
+        "enable": true,
+        "iconColor": "#C0C6BE",
+        "iconSize": 13,
+        "lineColor": "rgba(255, 255, 255, 0.59)",
+        "name": "Deploys",
+        "query": "SELECT version FROM deploys WHERE $timeFilter",
+        "showLine": true
+      }
+    ]
+  },
+  "refresh": false,
+  "schemaVersion": 8,
+  "version": 21,
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "keepTime": true,
+      "tags": [
+        "controller"
+      ],
+      "title": "Controllers",
+      "type": "dashboards"
+    }
+  ]
+}
