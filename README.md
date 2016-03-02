@@ -6,4 +6,4 @@ performance metrics obtained from InfluxDB. See [GitLab CE][gitlab-ce-docs] or
 and these dashboards.
 
 [gitlab-ce-docs]: http://docs.gitlab.com/ce/monitoring/performance/introduction.html
-[gitlab-ce-docs]: http://docs.gitlab.com/ee/monitoring/performance/introduction.html
+[gitlab-ee-docs]: http://docs.gitlab.com/ee/monitoring/performance/introduction.html
