@@ -1,15 +1,16 @@
 {
-  "id": 1,
-  "title": "Garbage Collector",
-  "originalTitle": "Garbage Collector",
-  "tags": [
-    "ruby"
-  ],
-  "style": "dark",
-  "timezone": "utc",
+  "annotations": {
+    "list": [
+
+    ]
+  },
   "editable": true,
   "hideControls": false,
-  "sharedCrosshair": false,
+  "id": null,
+  "links": [
+
+  ],
+  "originalTitle": "Project.find_with_namespace",
   "rows": [
     {
       "collapse": false,
@@ -18,11 +19,12 @@
       "panels": [
         {
           "aliasColors": {
-            "Amount": "#9AC48A"
+            "95th Percentile": "#9AC48A",
+            "99th Percentile": "#E24D42",
+            "Mean": "#70DBED"
           },
           "bars": false,
           "datasource": null,
-          "decimals": 0,
           "editable": true,
           "error": false,
           "fill": 0,
@@ -38,10 +40,10 @@
             "threshold2": null,
             "threshold2Color": "rgba(234, 112, 112, 0.22)"
           },
+          "height": "",
           "id": 1,
-          "interval": "1m",
+          "interval": "",
           "isNew": true,
-          "leftYAxisLabel": "",
           "legend": {
             "avg": false,
             "current": false,
@@ -53,13 +55,17 @@
           },
           "lines": true,
           "linewidth": 1,
-          "links": [],
+          "links": [
+
+          ],
           "nullPointMode": "null as zero",
           "percentage": false,
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
-          "seriesOverrides": [],
+          "seriesOverrides": [
+
+          ],
           "span": 12,
           "stack": false,
           "steppedLine": false,
@@ -81,8 +87,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "gc_statistics",
-              "query": "SELECT \"count\" AS \"Amount\" FROM gitlab.seven_days.\"[[process_type]]_gc_counts_per_minute\" WHERE $timeFilter",
+              "query": "SELECT \"duration_95th\" AS \"95th Percentile\", \"duration_99th\" as \"99th Percentile\", \"duration_mean\" AS \"Mean\" FROM gitlab.seven_days.\"[[process_type]]_method_call_timings_per_method\" WHERE $timeFilter AND \"method\" = 'Project.find_with_namespace'",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -90,28 +95,26 @@
                 [
                   {
                     "params": [
-                      "count"
+                      "value"
                     ],
                     "type": "field"
                   },
                   {
-                    "params": [],
-                    "type": "mean"
-                  },
-                  {
                     "params": [
-                      "amount"
+
                     ],
-                    "type": "alias"
+                    "type": "mean"
                   }
                 ]
               ],
-              "tags": []
+              "tags": [
+
+              ]
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "GC runs",
+          "title": "Timings",
           "tooltip": {
             "shared": true,
             "value_type": "cumulative"
@@ -120,18 +123,14 @@
           "x-axis": true,
           "y-axis": true,
           "y_formats": [
-            "short",
+            "ms",
             "short"
           ]
         },
         {
           "aliasColors": {
-            "95th Percentile": "#9AC48A",
-            "95th percentile": "#9AC48A",
-            "99th Percentile": "#E24D42",
-            "Mean": "#6ED0E0"
           },
-          "bars": false,
+          "bars": true,
           "datasource": null,
           "editable": true,
           "error": false,
@@ -148,7 +147,7 @@
             "threshold2": null,
             "threshold2Color": "rgba(234, 112, 112, 0.22)"
           },
-          "id": 5,
+          "id": 3,
           "interval": "1m",
           "isNew": true,
           "legend": {
@@ -160,21 +159,25 @@
             "total": false,
             "values": false
           },
-          "lines": true,
+          "lines": false,
           "linewidth": 1,
-          "links": [],
-          "nullPointMode": "connected",
+          "links": [
+
+          ],
+          "nullPointMode": "null as zero",
           "percentage": false,
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
-          "seriesOverrides": [],
+          "seriesOverrides": [
+
+          ],
           "span": 12,
           "stack": false,
           "steppedLine": false,
           "targets": [
             {
-              "alias": "$col",
+              "alias": "$tag_action",
               "dsType": "influxdb",
               "groupBy": [
                 {
@@ -190,8 +193,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "gc_statistics",
-              "query": "SELECT \"duration_95th\" AS \"95th Percentile\", \"duration_99th\" AS \"99th Percentile\", \"duration_mean\" AS \"Mean\" FROM gitlab.seven_days.\"[[process_type]]_gc_timings_per_minute\" WHERE $timeFilter",
+              "query": "SELECT percentile(\"duration\", 95) AS \"95th Percentile\" FROM \"[[process_type]]_method_calls\" WHERE $timeFilter AND \"method\" = 'Project.find_with_namespace' GROUP BY \"action\", time($interval)",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -199,24 +201,28 @@
                 [
                   {
                     "params": [
-                      "time"
+                      "value"
                     ],
                     "type": "field"
                   },
                   {
-                    "params": [],
+                    "params": [
+
+                    ],
                     "type": "mean"
                   }
                 ]
               ],
-              "tags": []
+              "tags": [
+
+              ]
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "GC Time",
+          "title": "Timings (95th Percentile) per Action",
           "tooltip": {
-            "shared": true,
+            "shared": false,
             "value_type": "cumulative"
           },
           "type": "graph",
@@ -233,54 +239,70 @@
     {
       "collapse": false,
       "editable": true,
-      "height": "250px",
+      "height": "",
       "panels": [
         {
-          "aliasColors": {
-            "Major": "#E24D42",
-            "Minor": "#9AC48A"
-          },
-          "bars": false,
-          "datasource": null,
+          "columns": [
+
+          ],
           "editable": true,
           "error": false,
-          "fill": 0,
-          "grid": {
-            "leftLogBase": 1,
-            "leftMax": null,
-            "leftMin": null,
-            "rightLogBase": 1,
-            "rightMax": null,
-            "rightMin": null,
-            "threshold1": null,
-            "threshold1Color": "rgba(216, 200, 27, 0.27)",
-            "threshold2": null,
-            "threshold2Color": "rgba(234, 112, 112, 0.22)"
-          },
+          "fontSize": "100%",
+          "height": "800",
           "id": 2,
           "interval": "1m",
           "isNew": true,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
+          "links": [
+
+          ],
+          "pageSize": 100,
+          "scroll": true,
+          "showHeader": true,
+          "sort": {
+            "col": 0,
+            "desc": true
           },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
           "span": 12,
-          "stack": false,
-          "steppedLine": false,
+          "styles": [
+            {
+              "dateFormat": "HH:MM",
+              "pattern": "Time",
+              "type": "date"
+            },
+            {
+              "colorMode": "cell",
+              "colors": [
+                "rgba(50, 172, 45, 0.97)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(245, 54, 54, 0.9)"
+              ],
+              "decimals": 2,
+              "pattern": "95th Percentile",
+              "thresholds": [
+                "0",
+                "100",
+                "150"
+              ],
+              "type": "number",
+              "unit": "ms"
+            },
+            {
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "action",
+              "thresholds": [
+
+              ],
+              "type": "string",
+              "unit": "short"
+            }
+          ],
           "targets": [
             {
               "alias": "$col",
@@ -299,78 +321,80 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "gc_statistics",
-              "query": "SELECT \"major\" AS \"Major\", \"minor\" AS \"Minor\" FROM gitlab.seven_days.\"[[process_type]]_gc_major_minor_per_minute\" WHERE $timeFilter",
+              "query": "SELECT percentile(\"duration\", 95) AS \"95th Percentile\" FROM \"[[process_type]]_method_calls\" WHERE $timeFilter AND \"method\" = 'Project.find_with_namespace' GROUP BY \"action\" ORDER BY time DESC LIMIT 100",
               "rawQuery": true,
               "refId": "A",
-              "resultFormat": "time_series",
+              "resultFormat": "table",
               "select": [
                 [
                   {
                     "params": [
-                      "major_gc_count"
+                      "value"
                     ],
                     "type": "field"
                   },
                   {
-                    "params": [],
+                    "params": [
+
+                    ],
                     "type": "mean"
-                  },
-                  {
-                    "params": [
-                      "Major"
-                    ],
-                    "type": "alias"
-                  }
-                ],
-                [
-                  {
-                    "params": [
-                      "minor_gc_count"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  },
-                  {
-                    "params": [
-                      "Minor"
-                    ],
-                    "type": "alias"
                   }
                 ]
               ],
-              "tags": []
+              "tags": [
+
+              ]
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Major/Minor Runs",
-          "tooltip": {
-            "shared": true,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "x-axis": true,
-          "y-axis": true,
-          "y_formats": [
-            "short",
-            "short"
-          ]
+          "title": "Average Time Per Action",
+          "transform": "table",
+          "type": "table"
         }
       ],
       "title": "New row"
-    },
-    {
-      "collapse": false,
-      "editable": true,
-      "height": "250px",
-      "panels": [],
-      "title": "New row"
     }
   ],
+  "schemaVersion": 8,
+  "sharedCrosshair": false,
+  "style": "dark",
+  "tags": [
+    "method"
+  ],
+  "templating": {
+    "list": [
+      {
+        "allFormat": "glob",
+        "current": {
+          "tags": [
+
+          ],
+          "text": "rails",
+          "value": "rails"
+        },
+        "datasource": null,
+        "includeAll": false,
+        "label": "Process Type",
+        "multi": false,
+        "multiFormat": "glob",
+        "name": "process_type",
+        "options": [
+          {
+            "selected": true,
+            "text": "rails",
+            "value": "rails"
+          },
+          {
+            "selected": false,
+            "text": "sidekiq",
+            "value": "sidekiq"
+          }
+        ],
+        "query": "rails,sidekiq",
+        "refresh": false,
+        "type": "custom"
+      }
+    ]
+  },
   "time": {
     "from": "now-3h",
     "to": "now"
@@ -401,52 +425,7 @@
       "30d"
     ]
   },
-  "templating": {
-    "list": [
-      {
-        "allFormat": "regex values",
-        "current": {
-          "tags": [],
-          "text": "rails",
-          "value": "rails"
-        },
-        "datasource": null,
-        "includeAll": false,
-        "label": "Process Type",
-        "multi": false,
-        "multiFormat": "regex values",
-        "name": "process_type",
-        "options": [
-          {
-            "selected": true,
-            "text": "rails",
-            "value": "rails"
-          },
-          {
-            "selected": false,
-            "text": "sidekiq",
-            "value": "sidekiq"
-          }
-        ],
-        "query": "rails,sidekiq",
-        "refresh": false,
-        "type": "custom"
-      }
-    ]
-  },
-  "annotations": {
-    "list": []
-  },
-  "schemaVersion": 8,
-  "version": 20,
-  "links": [
-    {
-      "asDropdown": true,
-      "icon": "external link",
-      "keepTime": true,
-      "tags": [],
-      "title": "Dashboards",
-      "type": "dashboards"
-    }
-  ]
+  "timezone": "utc",
+  "title": "Project.find_with_namespace",
+  "version": 0
 }
