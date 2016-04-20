@@ -87,7 +87,7 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT \"duration_95th\" AS \"95th Percentile\", \"duration_99th\" as \"99th Percentile\", \"duration_mean\" AS \"Mean\" FROM gitlab.seven_days.\"[[process_type]]_method_call_timings_per_method\" WHERE $timeFilter AND \"method\" = 'Gitlab::Git::Repository#log'",
+              "query": "SELECT \"duration_95th\" AS \"95th Percentile\", \"duration_99th\" as \"99th Percentile\", \"duration_mean\" AS \"Mean\" FROM gitlab.downsampled.\"[[process_type]]_method_call_timings_per_method\" WHERE $timeFilter AND \"method\" = 'Gitlab::Git::Repository#log'",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -193,7 +193,7 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT percentile(\"duration\", 95) AS \"95th Percentile\" FROM \"[[process_type]]_method_calls\" WHERE $timeFilter AND \"method\" = 'Gitlab::Git::Repository#log' GROUP BY \"action\", time($interval)",
+              "query": "SELECT mean(\"duration_95th\") AS \"95th Percentile\" FROM gitlab.downsampled.\"[[process_type]]_method_call_timings_per_action_and_method\" WHERE $timeFilter AND \"method\" = 'Gitlab::Git::Repository#log' GROUP BY \"action\", time($interval)",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -222,7 +222,7 @@
           "timeShift": null,
           "title": "Timings (95th Percentile) per Action",
           "tooltip": {
-            "shared": false,
+            "shared": true,
             "value_type": "cumulative"
           },
           "type": "graph",
@@ -321,7 +321,7 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT percentile(\"duration\", 95) AS \"95th Percentile\" FROM \"[[process_type]]_method_calls\" WHERE $timeFilter AND \"method\" = 'Gitlab::Git::Repository#log' GROUP BY \"action\" ORDER BY time DESC LIMIT 100",
+              "query": "SELECT mean(\"duration_95th\") AS \"95th Percentile\" FROM gitlab.downsampled.\"[[process_type]]_method_call_timings_per_action_and_method\" WHERE $timeFilter AND \"method\" = 'Gitlab::Git::Repository#log' GROUP BY \"action\" ORDER BY time DESC LIMIT 100",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "table",
@@ -387,9 +387,14 @@
             "selected": false,
             "text": "sidekiq",
             "value": "sidekiq"
+          },
+          {
+            "selected": false,
+            "text": "grape",
+            "value": "grape"
           }
         ],
-        "query": "rails,sidekiq",
+        "query": "rails,sidekiq,grape",
         "refresh": false,
         "type": "custom"
       }

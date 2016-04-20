@@ -87,7 +87,7 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT \"duration_95th\" AS \"95th Percentile\", \"duration_99th\" as \"99th Percentile\", \"duration_mean\" AS \"Mean\" FROM gitlab.seven_days.\"[[process_type]]_method_call_timings_per_method\" WHERE $timeFilter AND \"method\" = 'Project#valid_repo?'",
+              "query": "SELECT \"duration_95th\" AS \"95th Percentile\", \"duration_99th\" as \"99th Percentile\", \"duration_mean\" AS \"Mean\" FROM gitlab.downsampled.\"[[process_type]]_method_call_timings_per_method\" WHERE $timeFilter AND \"method\" = 'Project#valid_repo?'",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -115,6 +115,112 @@
           "timeFrom": null,
           "timeShift": null,
           "title": "Timings",
+          "tooltip": {
+            "shared": true,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "x-axis": true,
+          "y-axis": true,
+          "y_formats": [
+            "ms",
+            "short"
+          ]
+        },
+        {
+          "aliasColors": {
+          },
+          "bars": true,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 0,
+          "grid": {
+            "leftLogBase": 1,
+            "leftMax": null,
+            "leftMin": null,
+            "rightLogBase": 1,
+            "rightMax": null,
+            "rightMin": null,
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 3,
+          "interval": "1m",
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": false,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null as zero",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+
+          ],
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "$tag_action",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "query": "SELECT mean(\"duration_95th\") AS \"95th Percentile\" FROM gitlab.downsampled.\"[[process_type]]_method_call_timings_per_action_and_method\" WHERE $timeFilter AND \"method\" = 'Project#valid_repo?' GROUP BY \"action\", time($interval)",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [
+
+                    ],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+
+              ]
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Timings (95th Percentile) per Action",
           "tooltip": {
             "shared": true,
             "value_type": "cumulative"
@@ -215,7 +321,7 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT percentile(\"duration\", 95) AS \"95th Percentile\" FROM \"[[process_type]]_method_calls\" WHERE $timeFilter AND \"method\" = 'Project#valid_repo?' GROUP BY \"action\" ORDER BY time DESC LIMIT 100",
+              "query": "SELECT mean(\"duration_95th\") AS \"95th Percentile\" FROM gitlab.downsampled.\"[[process_type]]_method_call_timings_per_action_and_method\" WHERE $timeFilter AND \"method\" = 'Project#valid_repo?' GROUP BY \"action\" ORDER BY time DESC LIMIT 100",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "table",
@@ -281,9 +387,14 @@
             "selected": false,
             "text": "sidekiq",
             "value": "sidekiq"
+          },
+          {
+            "selected": false,
+            "text": "grape",
+            "value": "grape"
           }
         ],
-        "query": "rails,sidekiq",
+        "query": "rails,sidekiq,grape",
         "refresh": false,
         "type": "custom"
       }
@@ -321,5 +432,5 @@
   },
   "timezone": "utc",
   "title": "Project#valid_repo?",
-  "version": 3
+  "version": 0
 }

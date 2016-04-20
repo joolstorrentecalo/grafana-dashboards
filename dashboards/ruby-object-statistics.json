@@ -28,6 +28,7 @@
       "panels": [
         {
           "aliasColors": {
+            "Total": "#9AC48A"
           },
           "bars": false,
           "datasource": null,
@@ -48,7 +49,7 @@
             "threshold2Color": "rgba(234, 112, 112, 0.22)"
           },
           "id": 1,
-          "interval": "5m",
+          "interval": "1m",
           "isNew": true,
           "legend": {
             "avg": false,
@@ -64,7 +65,7 @@
           "links": [
 
           ],
-          "nullPointMode": "connected",
+          "nullPointMode": "null",
           "percentage": false,
           "pointradius": 5,
           "points": false,
@@ -94,7 +95,7 @@
                 }
               ],
               "measurement": "object_counts",
-              "query": "SELECT sum(\"count\") AS \"Total\" FROM \"[[process_type]]_object_counts\" WHERE $timeFilter GROUP BY time($interval) fill(null)",
+              "query": "SELECT \"count\" AS \"Total\" FROM gitlab.downsampled.\"[[process_type]]_object_counts_overall\" WHERE $timeFilter",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -205,7 +206,7 @@
                 }
               ],
               "measurement": "object_counts",
-              "query": "SELECT sum(\"count\") AS \"Amount\" FROM \"[[process_type]]_object_counts\" WHERE $timeFilter AND \"type\" =~ /^(String|Array|Hash|Set|Bignum|File|Float|Regexp|Rational|Struct|Symbol|Time|Class)$/GROUP BY \"type\", time($interval) fill(null)",
+              "query": "SELECT mean(\"count\") AS \"Amount\" FROM gitlab.downsampled.\"[[process_type]]_object_counts_per_type\" WHERE $timeFilter AND \"type\" =~ /^(String|Array|Hash|Set|Bignum|File|Float|Regexp|Rational|Struct|Symbol|Time|Class)$/ GROUP BY \"type\", time($interval)",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -323,7 +324,7 @@
                 }
               ],
               "measurement": "object_counts",
-              "query": "SELECT sum(\"count\") FROM \"[[process_type]]_object_counts\" WHERE $timeFilter AND \"type\" =~ /^Rugged/ GROUP BY time($interval),  \"type\" fill(null)",
+              "query": "SELECT mean(\"count\") AS \"Amount\" FROM gitlab.downsampled.\"[[process_type]]_object_counts_per_type\" WHERE $timeFilter AND \"type\" =~ /^Rugged/ GROUP BY \"type\", time($interval)",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -433,7 +434,7 @@
                 }
               ],
               "measurement": "object_counts",
-              "query": "SELECT sum(\"count\") FROM \"[[process_type]]_object_counts\" WHERE $timeFilter AND \"type\" =~ /^Gitlab::Git/ GROUP BY time($interval),  \"type\"fill(null)",
+              "query": "SELECT mean(\"count\") AS \"Amount\" FROM gitlab.downsampled.\"[[process_type]]_object_counts_per_type\" WHERE $timeFilter AND \"type\" =~ /^Gitlab::Git/ GROUP BY \"type\", time($interval)",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -543,7 +544,7 @@
                 }
               ],
               "measurement": "object_counts",
-              "query": "SELECT sum(\"count\") FROM \"[[process_type]]_object_counts\" WHERE $timeFilter AND \"type\" =~ /^InfluxDB/ GROUP BY time($interval),  \"type\" fill(null)",
+              "query": "SELECT mean(\"count\") AS \"Amount\" FROM gitlab.downsampled.\"[[process_type]]_object_counts_per_type\" WHERE $timeFilter AND \"type\" =~ /^InfluxDB/ GROUP BY \"type\", time($interval)",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -653,7 +654,7 @@
                 }
               ],
               "measurement": "object_counts",
-              "query": "SELECT sum(\"count\") FROM \"[[process_type]]_object_counts\" WHERE $timeFilter AND \"type\" =~ /^Gitlab::Metrics/ GROUP BY time($interval),  \"type\" fill(null)",
+              "query": "SELECT mean(\"count\") AS \"Amount\" FROM gitlab.downsampled.\"[[process_type]]_object_counts_per_type\" WHERE $timeFilter AND \"type\" =~ /^Gitlab::Metrics/ GROUP BY \"type\", time($interval)",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -708,9 +709,6 @@
       {
         "allFormat": "regex values",
         "current": {
-          "tags": [
-
-          ],
           "text": "rails",
           "value": "rails"
         },
@@ -771,5 +769,5 @@
   },
   "timezone": "utc",
   "title": "Ruby Object Statistics",
-  "version": 19
+  "version": 21
 }
