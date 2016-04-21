@@ -69,7 +69,7 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT mean(\"duration_95th\") FROM gitlab.downsampled.rails_transaction_timings_per_action WHERE $timeFilter AND \"action\" = 'Projects::MergeRequestsController#[[action]]'",
+              "query": "SELECT percentile(\"duration\", 95) FROM rails_transactions WHERE $timeFilter AND \"action\" = 'Projects::MergeRequestsController#[[action]]'",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -159,7 +159,7 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT mean(\"sql_duration_95th\") FROM gitlab.downsampled.rails_transaction_timings_per_action WHERE $timeFilter AND \"action\" = 'Projects::MergeRequestsController#[[action]]'",
+              "query": "SELECT percentile(\"sql_duration\", 95) FROM rails_transactions WHERE $timeFilter AND \"action\" = 'Projects::MergeRequestsController#[[action]]'",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -249,7 +249,7 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT mean(\"method_duration_95th\") FROM gitlab.downsampled.rails_transaction_timings_per_action WHERE $timeFilter AND \"action\" = 'Projects::MergeRequestsController#[[action]]'",
+              "query": "SELECT percentile(\"method_duration\", 95) FROM rails_transactions WHERE $timeFilter AND \"action\" = 'Projects::MergeRequestsController#[[action]]'",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -339,7 +339,7 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT mean(\"cache_duration_95th\") FROM gitlab.downsampled.rails_transaction_timings_per_action WHERE $timeFilter AND \"action\" = 'Projects::MergeRequestsController#[[action]]'",
+              "query": "SELECT percentile(\"cache_duration\", 95) FROM rails_transactions WHERE $timeFilter AND \"action\" = 'Projects::MergeRequestsController#[[action]]'",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -429,7 +429,7 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT mean(\"duration_95th\") AS \"95th Percentile\" FROM gitlab.downsampled.rails_git_timings_per_action WHERE $timeFilter AND \"action\" = 'Projects::MergeRequestsController#[[action]]'",
+              "query": "SELECT percentile(\"duration\", 95) AS \"95th Percentile\" FROM rails_method_calls WHERE $timeFilter AND \"action\" = 'Projects::MergeRequestsController#[[action]]' AND method =~ /^(Gitlab::Git|Rugged)/",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -519,7 +519,7 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT mean(\"view_duration_95th\") FROM gitlab.downsampled.rails_transaction_timings_per_action WHERE $timeFilter AND \"action\" = 'Projects::MergeRequestsController#[[action]]'",
+              "query": "SELECT percentile(\"view_duration\", 95) FROM rails_transactions WHERE $timeFilter AND \"action\" = 'Projects::MergeRequestsController#[[action]]'",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -558,8 +558,8 @@
           "valueName": "avg"
         }
       ],
-      "showTitle": false,
-      "title": "New row"
+      "showTitle": true,
+      "title": "Last Hour"
     },
     {
       "collapse": false,
@@ -660,7 +660,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Requests",
+          "title": "Transactions",
           "tooltip": {
             "shared": true,
             "value_type": "cumulative"
@@ -769,7 +769,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Timings",
+          "title": "Transaction Timings",
           "tooltip": {
             "shared": true,
             "value_type": "cumulative"
@@ -783,7 +783,8 @@
           ]
         }
       ],
-      "title": "Row"
+      "showTitle": true,
+      "title": "Timings"
     },
     {
       "collapse": false,
@@ -1300,7 +1301,7 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT mean(\"duration_95th\") FROM gitlab.downsampled.rails_slow_method_call_timings_per_action_and_method WHERE $timeFilter AND \"action\" = 'Projects::MergeRequestsController#[[action]]' GROUP BY \"method\", time($interval)",
+              "query": "SELECT mean(\"duration_95th\") AS \"value\" FROM gitlab.downsampled.rails_method_call_timings_per_action_and_method WHERE $timeFilter AND \"action\" = 'Projects::MergeRequestsController#[[action]]' GROUP BY \"method\", time($interval)",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -1327,7 +1328,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Slow Method Calls",
+          "title": "Method Calls",
           "tooltip": {
             "shared": false,
             "value_type": "individual"
@@ -1648,11 +1649,8 @@
       {
         "allFormat": "glob",
         "current": {
-          "tags": [
-
-          ],
-          "text": "index",
-          "value": "index"
+          "text": "show",
+          "value": "show"
         },
         "datasource": null,
         "includeAll": false,
@@ -1703,6 +1701,11 @@
           },
           {
             "selected": false,
+            "text": "destroy",
+            "value": "destroy"
+          },
+          {
+            "selected": false,
             "text": "diffs",
             "value": "diffs"
           },
@@ -1712,7 +1715,7 @@
             "value": "edit"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "index",
             "value": "index"
           },
@@ -1742,7 +1745,7 @@
             "value": "remove_wip"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "show",
             "value": "show"
           },
@@ -1801,5 +1804,5 @@
   },
   "timezone": "utc",
   "title": "Projects::MergeRequestsController",
-  "version": 0
+  "version": 3
 }
