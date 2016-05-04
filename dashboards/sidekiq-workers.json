@@ -11,6 +11,7 @@
 
   ],
   "originalTitle": "Sidekiq Workers",
+  "refresh": false,
   "rows": [
     {
       "collapse": false,
@@ -44,7 +45,7 @@
           "postfixFontSize": "50%",
           "prefix": "",
           "prefixFontSize": "50%",
-          "span": 2,
+          "span": 4,
           "sparkline": {
             "fillColor": "rgba(31, 118, 189, 0.18)",
             "full": false,
@@ -186,96 +187,6 @@
           ],
           "thresholds": "0,1000,5000",
           "title": "SQL Time",
-          "type": "singlestat",
-          "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "N/A",
-              "value": "null"
-            }
-          ],
-          "valueName": "avg"
-        },
-        {
-          "cacheTimeout": null,
-          "colorBackground": false,
-          "colorValue": true,
-          "colors": [
-            "rgba(50, 172, 45, 0.97)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(245, 54, 54, 0.9)"
-          ],
-          "datasource": null,
-          "editable": true,
-          "error": false,
-          "format": "ms",
-          "height": "100px",
-          "id": 9,
-          "interval": null,
-          "isNew": true,
-          "links": [
-
-          ],
-          "maxDataPoints": 100,
-          "nullPointMode": "connected",
-          "nullText": null,
-          "postfix": "",
-          "postfixFontSize": "50%",
-          "prefix": "",
-          "prefixFontSize": "50%",
-          "span": 2,
-          "sparkline": {
-            "fillColor": "rgba(31, 118, 189, 0.18)",
-            "full": false,
-            "lineColor": "rgb(31, 120, 193)",
-            "show": false
-          },
-          "targets": [
-            {
-              "alias": "$col",
-              "dsType": "influxdb",
-              "groupBy": [
-                {
-                  "params": [
-                    "$interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "null"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "query": "SELECT mean(\"method_duration_95th\") FROM gitlab.downsampled.sidekiq_transaction_timings_per_action WHERE $timeFilter AND \"action\" = '[[worker]]'",
-              "rawQuery": true,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [
-
-                    ],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": [
-
-              ]
-            }
-          ],
-          "thresholds": "0,500,5000",
-          "title": "Method Time",
           "type": "singlestat",
           "valueFontSize": "80%",
           "valueMaps": [
@@ -1222,6 +1133,118 @@
             "ms",
             "short"
           ]
+        },
+        {
+          "aliasColors": {
+            "95th Percentile": "#9AC48A",
+            "99th Percentile": "#E24D42",
+            "Maximum": "#EAB839"
+          },
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 0,
+          "grid": {
+            "leftLogBase": 1,
+            "leftMax": null,
+            "leftMin": null,
+            "rightLogBase": 1,
+            "rightMax": null,
+            "rightMin": null,
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 20,
+          "interval": "1m",
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null as zero",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "Maximum",
+              "yaxis": 1
+            }
+          ],
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "$col",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "query": "SELECT \"sql_count_95th\" AS \"95th Percentile\", \"sql_count_99th\" AS \"99th Percentile\", \"sql_count_mean\" AS \"Mean\", \"sql_count_max\" AS \"Maximum\" FROM gitlab.downsampled.sidekiq_transaction_sql_counts_per_action WHERE $timeFilter AND \"action\" = '[[worker]]'",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [
+
+                    ],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+
+              ]
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "SQL Query Counts",
+          "tooltip": {
+            "shared": true,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "x-axis": true,
+          "y-axis": true,
+          "y_formats": [
+            "short",
+            "short"
+          ]
         }
       ],
       "title": "New row"
@@ -1300,7 +1323,7 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT mean(\"duration_95th\") FROM gitlab.downsampled.sidekiq_slow_method_call_timings_per_action_and_method WHERE $timeFilter AND \"action\" = '[[worker]]' GROUP BY \"method\", time($interval)",
+              "query": "SELECT mean(\"duration_95th\") FROM gitlab.downsampled.sidekiq_method_call_timings_per_action_and_method WHERE $timeFilter AND \"action\" = '[[worker]]' GROUP BY \"method\", time($interval)",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -1327,7 +1350,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Slow Method Calls",
+          "title": "Method Calls",
           "tooltip": {
             "shared": false,
             "value_type": "individual"
@@ -1486,6 +1509,9 @@
       {
         "allFormat": "glob",
         "current": {
+          "tags": [
+
+          ],
           "text": "PostReceive#perform",
           "value": "PostReceive#perform"
         },
@@ -1503,8 +1529,23 @@
           },
           {
             "selected": false,
+            "text": "AdminEmailWorker#perform",
+            "value": "AdminEmailWorker#perform"
+          },
+          {
+            "selected": false,
             "text": "BuildEmailWorker#perform",
             "value": "BuildEmailWorker#perform"
+          },
+          {
+            "selected": false,
+            "text": "DeleteUserWorker#perform",
+            "value": "DeleteUserWorker#perform"
+          },
+          {
+            "selected": false,
+            "text": "ElasticIndexerWorker#perform",
+            "value": "ElasticIndexerWorker#perform"
           },
           {
             "selected": false,
@@ -1523,6 +1564,11 @@
           },
           {
             "selected": false,
+            "text": "HistoricalDataWorker#perform",
+            "value": "HistoricalDataWorker#perform"
+          },
+          {
+            "selected": false,
             "text": "IrkerWorker#perform",
             "value": "IrkerWorker#perform"
           },
@@ -1530,6 +1576,11 @@
             "selected": false,
             "text": "LdapGroupSyncWorker#perform",
             "value": "LdapGroupSyncWorker#perform"
+          },
+          {
+            "selected": false,
+            "text": "LdapSyncWorker#perform",
+            "value": "LdapSyncWorker#perform"
           },
           {
             "selected": false,
@@ -1608,8 +1659,23 @@
           },
           {
             "selected": false,
+            "text": "RepositoryUpdateRemoteMirrorWorker#perform",
+            "value": "RepositoryUpdateRemoteMirrorWorker#perform"
+          },
+          {
+            "selected": false,
+            "text": "StuckCiBuildsWorker#perform",
+            "value": "StuckCiBuildsWorker#perform"
+          },
+          {
+            "selected": false,
             "text": "SystemHookWorker#perform",
             "value": "SystemHookWorker#perform"
+          },
+          {
+            "selected": false,
+            "text": "UpdateAllMirrorsWorker#perform",
+            "value": "UpdateAllMirrorsWorker#perform"
           },
           {
             "selected": false,
@@ -1625,7 +1691,7 @@
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-6h",
     "to": "now"
   },
   "timepicker": {
@@ -1656,5 +1722,5 @@
   },
   "timezone": "utc",
   "title": "Sidekiq Workers",
-  "version": 3
+  "version": 9
 }

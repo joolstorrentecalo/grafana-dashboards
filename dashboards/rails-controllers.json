@@ -44,7 +44,7 @@
           "postfixFontSize": "50%",
           "prefix": "",
           "prefixFontSize": "50%",
-          "span": 2,
+          "span": 4,
           "sparkline": {
             "fillColor": "rgba(31, 118, 189, 0.18)",
             "full": false,
@@ -186,96 +186,6 @@
           ],
           "thresholds": "0,1000,5000",
           "title": "SQL Time",
-          "type": "singlestat",
-          "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "N/A",
-              "value": "null"
-            }
-          ],
-          "valueName": "avg"
-        },
-        {
-          "cacheTimeout": null,
-          "colorBackground": false,
-          "colorValue": true,
-          "colors": [
-            "rgba(50, 172, 45, 0.97)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(245, 54, 54, 0.9)"
-          ],
-          "datasource": null,
-          "editable": true,
-          "error": false,
-          "format": "ms",
-          "height": "100px",
-          "id": 9,
-          "interval": null,
-          "isNew": true,
-          "links": [
-
-          ],
-          "maxDataPoints": 100,
-          "nullPointMode": "connected",
-          "nullText": null,
-          "postfix": "",
-          "postfixFontSize": "50%",
-          "prefix": "",
-          "prefixFontSize": "50%",
-          "span": 2,
-          "sparkline": {
-            "fillColor": "rgba(31, 118, 189, 0.18)",
-            "full": false,
-            "lineColor": "rgb(31, 120, 193)",
-            "show": false
-          },
-          "targets": [
-            {
-              "alias": "$col",
-              "dsType": "influxdb",
-              "groupBy": [
-                {
-                  "params": [
-                    "$interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "null"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "query": "SELECT percentile(\"method_duration\", 95) FROM rails_transactions WHERE $timeFilter AND \"action\" = '[[action]]'",
-              "rawQuery": true,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [
-
-                    ],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": [
-
-              ]
-            }
-          ],
-          "thresholds": "0,500,5000",
-          "title": "Method Time",
           "type": "singlestat",
           "valueFontSize": "80%",
           "valueMaps": [
@@ -742,7 +652,7 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT \"duration_95th\" AS \"95th Percentile\", \"duration_mean\" AS \"Mean\" FROM gitlab.downsampled.rails_transaction_timings_per_action WHERE $timeFilter AND \"action\" = '[[action]]'",
+              "query": "SELECT \"duration_95th\" AS \"95th Percentile\", \"duration_99th\" AS \"99th Percentile\", \"duration_mean\" AS \"Mean\" FROM gitlab.downsampled.rails_transaction_timings_per_action WHERE $timeFilter AND \"action\" = '[[action]]'",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -795,6 +705,7 @@
           "aliasColors": {
             "95th Pecentile": "#9AC48A",
             "95th Percentile": "#9AC48A",
+            "99th Percentile": "#E24D42",
             "Mean": "#6ED0E0"
           },
           "bars": false,
@@ -860,7 +771,7 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT \"sql_duration_95th\" AS \"95th Percentile\", \"sql_duration_mean\" AS \"Mean\" FROM gitlab.downsampled.rails_transaction_timings_per_action WHERE $timeFilter AND \"action\" = '[[action]]'",
+              "query": "SELECT \"sql_duration_95th\" AS \"95th Percentile\", \"sql_duration_99th\" AS \"99th Percentile\", \"sql_duration_mean\" AS \"Mean\" FROM gitlab.downsampled.rails_transaction_timings_per_action WHERE $timeFilter AND \"action\" = '[[action]]'",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -903,6 +814,7 @@
         {
           "aliasColors": {
             "95th Percentile": "#9AC48A",
+            "99th Percentile": "#E24D42",
             "Mean": "#6ED0E0"
           },
           "bars": false,
@@ -968,7 +880,7 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT \"view_duration_95th\" AS \"95th Percentile\", \"view_duration_mean\" AS \"Mean\" FROM gitlab.downsampled.rails_transaction_timings_per_action WHERE $timeFilter AND \"action\" = '[[action]]'",
+              "query": "SELECT \"view_duration_95th\" AS \"95th Percentile\", \"view_duration_99th\" AS \"99th Percentile\", \"view_duration_mean\" AS \"Mean\" FROM gitlab.downsampled.rails_transaction_timings_per_action WHERE $timeFilter AND \"action\" = '[[action]]'",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -1221,6 +1133,118 @@
           "y-axis": true,
           "y_formats": [
             "ms",
+            "short"
+          ]
+        },
+        {
+          "aliasColors": {
+            "95th Percentile": "#9AC48A",
+            "99th Percentile": "#E24D42",
+            "Maximum": "#EAB839"
+          },
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 0,
+          "grid": {
+            "leftLogBase": 1,
+            "leftMax": null,
+            "leftMin": null,
+            "rightLogBase": 1,
+            "rightMax": null,
+            "rightMin": null,
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 20,
+          "interval": "1m",
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null as zero",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "Maximum",
+              "yaxis": 1
+            }
+          ],
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "$col",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "query": "SELECT \"sql_count_95th\" AS \"95th Percentile\", \"sql_count_99th\" AS \"99th Percentile\", \"sql_count_mean\" AS \"Mean\", \"sql_count_max\" AS \"Maximum\" FROM gitlab.downsampled.rails_transaction_sql_counts_per_action WHERE $timeFilter AND \"action\" = '[[action]]'",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [
+
+                    ],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+
+              ]
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "SQL Query Counts",
+          "tooltip": {
+            "shared": true,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "x-axis": true,
+          "y-axis": true,
+          "y_formats": [
+            "short",
             "short"
           ]
         }
@@ -1583,6 +1607,22 @@
               ],
               "type": "number",
               "unit": "bytes"
+            },
+            {
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 0,
+              "pattern": "Queries",
+              "thresholds": [
+
+              ],
+              "type": "number",
+              "unit": "short"
             }
           ],
           "targets": [
@@ -1594,7 +1634,7 @@
               ],
               "hide": false,
               "measurement": "transactions",
-              "query": "SELECT \"duration\" AS \"Duration\", \"allocated_memory\" AS \"Memory\", \"request_method\" AS \"Method\", \"action\" AS \"Action\", \"request_uri\" AS \"URI\" FROM \"rails_transactions\" WHERE $timeFilter AND \"action\" ='[[action]]' ORDER BY time DESC LIMIT 100",
+              "query": "SELECT \"duration\" AS \"Duration\", \"allocated_memory\" AS \"Memory\", \"sql_count\" AS \"Queries\", \"request_method\" AS \"Method\", \"action\" AS \"Action\", \"request_uri\" AS \"URI\" FROM \"rails_transactions\" WHERE $timeFilter AND \"action\" ='[[action]]' ORDER BY time DESC LIMIT 100",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "table",
@@ -1649,9 +1689,6 @@
       {
         "allFormat": "glob",
         "current": {
-          "tags": [
-
-          ],
           "text": "Projects::IssuesController#show",
           "value": "Projects::IssuesController#show"
         },
@@ -1684,13 +1721,18 @@
           },
           {
             "selected": false,
-            "text": "Admin::ApplicationSettingsController#clear_repository_check_states",
-            "value": "Admin::ApplicationSettingsController#clear_repository_check_states"
+            "text": "Admin::AppearancesController#show",
+            "value": "Admin::AppearancesController#show"
           },
           {
             "selected": false,
             "text": "Admin::ApplicationSettingsController#show",
             "value": "Admin::ApplicationSettingsController#show"
+          },
+          {
+            "selected": false,
+            "text": "Admin::ApplicationsController#index",
+            "value": "Admin::ApplicationsController#index"
           },
           {
             "selected": false,
@@ -1714,23 +1756,38 @@
           },
           {
             "selected": false,
+            "text": "Admin::BuildsController#index",
+            "value": "Admin::BuildsController#index"
+          },
+          {
+            "selected": false,
             "text": "Admin::DashboardController#index",
             "value": "Admin::DashboardController#index"
           },
           {
             "selected": false,
-            "text": "Admin::GeoNodesController#index",
-            "value": "Admin::GeoNodesController#index"
+            "text": "Admin::GroupsController#edit",
+            "value": "Admin::GroupsController#edit"
           },
           {
             "selected": false,
-            "text": "Admin::HooksController#index",
-            "value": "Admin::HooksController#index"
+            "text": "Admin::GroupsController#index",
+            "value": "Admin::GroupsController#index"
           },
           {
             "selected": false,
-            "text": "Admin::IdentitiesController#index",
-            "value": "Admin::IdentitiesController#index"
+            "text": "Admin::GroupsController#show",
+            "value": "Admin::GroupsController#show"
+          },
+          {
+            "selected": false,
+            "text": "Admin::GroupsController#update",
+            "value": "Admin::GroupsController#update"
+          },
+          {
+            "selected": false,
+            "text": "Admin::ImpersonationController#create",
+            "value": "Admin::ImpersonationController#create"
           },
           {
             "selected": false,
@@ -1739,8 +1796,8 @@
           },
           {
             "selected": false,
-            "text": "Admin::LicensesController#show",
-            "value": "Admin::LicensesController#show"
+            "text": "Admin::ImpersonationsController#destroy",
+            "value": "Admin::ImpersonationsController#destroy"
           },
           {
             "selected": false,
@@ -1769,11 +1826,6 @@
           },
           {
             "selected": false,
-            "text": "Admin::RunnersController#show",
-            "value": "Admin::RunnersController#show"
-          },
-          {
-            "selected": false,
             "text": "Admin::SpamLogsController#index",
             "value": "Admin::SpamLogsController#index"
           },
@@ -1784,13 +1836,13 @@
           },
           {
             "selected": false,
-            "text": "Admin::UsersController#destroy",
-            "value": "Admin::UsersController#destroy"
+            "text": "Admin::UsersController#create",
+            "value": "Admin::UsersController#create"
           },
           {
             "selected": false,
-            "text": "Admin::UsersController#disable_two_factor",
-            "value": "Admin::UsersController#disable_two_factor"
+            "text": "Admin::UsersController#destroy",
+            "value": "Admin::UsersController#destroy"
           },
           {
             "selected": false,
@@ -1799,13 +1851,23 @@
           },
           {
             "selected": false,
+            "text": "Admin::UsersController#groups",
+            "value": "Admin::UsersController#groups"
+          },
+          {
+            "selected": false,
+            "text": "Admin::UsersController#impersonate",
+            "value": "Admin::UsersController#impersonate"
+          },
+          {
+            "selected": false,
             "text": "Admin::UsersController#index",
             "value": "Admin::UsersController#index"
           },
           {
             "selected": false,
-            "text": "Admin::UsersController#keys",
-            "value": "Admin::UsersController#keys"
+            "text": "Admin::UsersController#new",
+            "value": "Admin::UsersController#new"
           },
           {
             "selected": false,
@@ -2249,8 +2311,18 @@
           },
           {
             "selected": false,
+            "text": "Import::GitoriousController#jobs",
+            "value": "Import::GitoriousController#jobs"
+          },
+          {
+            "selected": false,
             "text": "Import::GitoriousController#new",
             "value": "Import::GitoriousController#new"
+          },
+          {
+            "selected": false,
+            "text": "Import::GitoriousController#status",
+            "value": "Import::GitoriousController#status"
           },
           {
             "selected": false,
@@ -2336,11 +2408,6 @@
             "selected": false,
             "text": "Oauth::AuthorizedApplicationsController#destroy",
             "value": "Oauth::AuthorizedApplicationsController#destroy"
-          },
-          {
-            "selected": false,
-            "text": "Oauth::AuthorizedApplicationsController#index",
-            "value": "Oauth::AuthorizedApplicationsController#index"
           },
           {
             "selected": false,
@@ -2461,11 +2528,6 @@
             "selected": false,
             "text": "Profiles::KeysController#show",
             "value": "Profiles::KeysController#show"
-          },
-          {
-            "selected": false,
-            "text": "Profiles::KeysController#update",
-            "value": "Profiles::KeysController#update"
           },
           {
             "selected": false,
@@ -2689,6 +2751,11 @@
           },
           {
             "selected": false,
+            "text": "Projects::BuildsController#status",
+            "value": "Projects::BuildsController#status"
+          },
+          {
+            "selected": false,
             "text": "Projects::CommitController#branches",
             "value": "Projects::CommitController#branches"
           },
@@ -2879,6 +2946,11 @@
           },
           {
             "selected": false,
+            "text": "Projects::IssuesController#can_create_branch",
+            "value": "Projects::IssuesController#can_create_branch"
+          },
+          {
+            "selected": false,
             "text": "Projects::IssuesController#create",
             "value": "Projects::IssuesController#create"
           },
@@ -2956,6 +3028,11 @@
             "selected": false,
             "text": "Projects::LabelsController#new",
             "value": "Projects::LabelsController#new"
+          },
+          {
+            "selected": false,
+            "text": "Projects::LabelsController#show",
+            "value": "Projects::LabelsController#show"
           },
           {
             "selected": false,
@@ -3762,5 +3839,5 @@
   },
   "timezone": "utc",
   "title": "Rails Controllers",
-  "version": 7
+  "version": 12
 }
