@@ -29,12 +29,6 @@
           "error": false,
           "fill": 0,
           "grid": {
-            "leftLogBase": 1,
-            "leftMax": null,
-            "leftMin": null,
-            "rightLogBase": 1,
-            "rightMax": null,
-            "rightMin": null,
             "threshold1": null,
             "threshold1Color": "rgba(216, 200, 27, 0.27)",
             "threshold2": null,
@@ -66,7 +60,7 @@
           "seriesOverrides": [
 
           ],
-          "span": 12,
+          "span": 6,
           "stack": false,
           "steppedLine": false,
           "targets": [
@@ -87,7 +81,8 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT \"duration_95th\" AS \"95th Percentile\", \"duration_99th\" as \"99th Percentile\", \"duration_mean\" AS \"Mean\" FROM gitlab.downsampled.\"[[process_type]]_method_call_timings_per_method\" WHERE $timeFilter AND \"method\" = '[[method]]'",
+              "policy": "default",
+              "query": "SELECT \"duration_95th\" AS \"95th Percentile\", \"duration_99th\" as \"99th Percentile\", \"duration_mean\" AS \"Mean\" FROM gitlab.downsampled.\"[[process_type]]_method_call_timings_per_method\" WHERE $timeFilter AND \"method\" =~ /^$method$/",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -114,17 +109,150 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Timings",
+          "title": "Real Time",
           "tooltip": {
+            "msResolution": false,
             "shared": true,
             "value_type": "cumulative"
           },
           "type": "graph",
-          "x-axis": true,
-          "y-axis": true,
-          "y_formats": [
-            "ms",
-            "short"
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "ms",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+            "95th Percentile": "#9AC48A",
+            "99th Percentile": "#E24D42",
+            "Mean": "#70DBED"
+          },
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 0,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "height": "",
+          "id": 4,
+          "interval": "1m",
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null as zero",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+
+          ],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "$col",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "policy": "default",
+              "query": "SELECT \"cpu_duration_95th\" AS \"95th Percentile\", \"cpu_duration_99th\" as \"99th Percentile\", \"cpu_duration_mean\" AS \"Mean\" FROM gitlab.downsampled.\"[[process_type]]_method_call_timings_per_method\" WHERE $timeFilter AND \"method\" =~ /^$method$/",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [
+
+                    ],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+
+              ]
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "CPU Time",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "ms",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
           ]
         },
         {
@@ -136,12 +264,6 @@
           "error": false,
           "fill": 0,
           "grid": {
-            "leftLogBase": 1,
-            "leftMax": null,
-            "leftMin": null,
-            "rightLogBase": 1,
-            "rightMax": null,
-            "rightMin": null,
             "threshold1": null,
             "threshold1Color": "rgba(216, 200, 27, 0.27)",
             "threshold2": null,
@@ -193,7 +315,8 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT mean(\"duration_95th\") AS \"95th Percentile\" FROM gitlab.downsampled.\"[[process_type]]_method_call_timings_per_action_and_method\" WHERE $timeFilter AND \"method\" = '[[method]]' GROUP BY \"action\", time($interval)",
+              "policy": "default",
+              "query": "SELECT mean(\"duration_95th\") AS \"95th Percentile\" FROM gitlab.downsampled.\"[[process_type]]_method_call_timings_per_action_and_method\" WHERE $timeFilter AND \"method\" =~ /^$method$/ GROUP BY \"action\", time($interval)",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -222,22 +345,36 @@
           "timeShift": null,
           "title": "Timings (95th Percentile) per Action",
           "tooltip": {
+            "msResolution": false,
             "shared": false,
             "value_type": "cumulative"
           },
           "type": "graph",
-          "x-axis": true,
-          "y-axis": true,
-          "y_formats": [
-            "ms",
-            "short"
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "ms",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
           ]
         }
       ],
       "title": "Row"
     }
   ],
-  "schemaVersion": 8,
+  "schemaVersion": 12,
   "sharedCrosshair": false,
   "style": "dark",
   "tags": [
@@ -255,6 +392,7 @@
           "value": "rails"
         },
         "datasource": null,
+        "hide": 0,
         "includeAll": false,
         "label": "Process Type",
         "multi": false,
@@ -278,7 +416,7 @@
           }
         ],
         "query": "rails,sidekiq,grape",
-        "refresh": false,
+        "refresh": 0,
         "type": "custom"
       },
       {
@@ -288,6 +426,7 @@
           "value": "Banzai::Filter::AbstractReferenceFilter#call"
         },
         "datasource": null,
+        "hide": 0,
         "includeAll": false,
         "label": "Method",
         "multi": false,
@@ -303,6 +442,11 @@
             "selected": false,
             "text": "Banzai::Filter::AbstractReferenceFilter#find_object_cached",
             "value": "Banzai::Filter::AbstractReferenceFilter#find_object_cached"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::AbstractReferenceFilter#get_or_set_cache",
+            "value": "Banzai::Filter::AbstractReferenceFilter#get_or_set_cache"
           },
           {
             "selected": false,
@@ -391,8 +535,28 @@
           },
           {
             "selected": false,
+            "text": "Banzai::Filter::AutolinkFilter#link_options",
+            "value": "Banzai::Filter::AutolinkFilter#link_options"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::AutolinkFilter#rinku_parse",
+            "value": "Banzai::Filter::AutolinkFilter#rinku_parse"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::AutolinkFilter#text_parse",
+            "value": "Banzai::Filter::AutolinkFilter#text_parse"
+          },
+          {
+            "selected": false,
             "text": "Banzai::Filter::CommitRangeReferenceFilter#find_object",
             "value": "Banzai::Filter::CommitRangeReferenceFilter#find_object"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::CommitRangeReferenceFilter#initialize",
+            "value": "Banzai::Filter::CommitRangeReferenceFilter#initialize"
           },
           {
             "selected": false,
@@ -466,6 +630,11 @@
           },
           {
             "selected": false,
+            "text": "Banzai::Filter::EmojiFilter#emoji_pattern",
+            "value": "Banzai::Filter::EmojiFilter#emoji_pattern"
+          },
+          {
+            "selected": false,
             "text": "Banzai::Filter::EmojiFilter.emoji_pattern",
             "value": "Banzai::Filter::EmojiFilter.emoji_pattern"
           },
@@ -481,8 +650,28 @@
           },
           {
             "selected": false,
+            "text": "Banzai::Filter::ExternalIssueReferenceFilter#default_issues_tracker_cache",
+            "value": "Banzai::Filter::ExternalIssueReferenceFilter#default_issues_tracker_cache"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::ExternalIssueReferenceFilter#issue_link_filter",
+            "value": "Banzai::Filter::ExternalIssueReferenceFilter#issue_link_filter"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::ExternalIssueReferenceFilter#url_for_issue",
+            "value": "Banzai::Filter::ExternalIssueReferenceFilter#url_for_issue"
+          },
+          {
+            "selected": false,
             "text": "Banzai::Filter::ExternalIssueReferenceFilter.referenced_by",
             "value": "Banzai::Filter::ExternalIssueReferenceFilter.referenced_by"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::ExternalIssueReferenceFilter.references_in",
+            "value": "Banzai::Filter::ExternalIssueReferenceFilter.references_in"
           },
           {
             "selected": false,
@@ -496,8 +685,23 @@
           },
           {
             "selected": false,
+            "text": "Banzai::Filter::GollumTagsFilter#toc_tag?",
+            "value": "Banzai::Filter::GollumTagsFilter#toc_tag?"
+          },
+          {
+            "selected": false,
             "text": "Banzai::Filter::ImageLinkFilter#call",
             "value": "Banzai::Filter::ImageLinkFilter#call"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::InlineDiffFilter#call",
+            "value": "Banzai::Filter::InlineDiffFilter#call"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::InlineDiffFilter#inline_diff_filter",
+            "value": "Banzai::Filter::InlineDiffFilter#inline_diff_filter"
           },
           {
             "selected": false,
@@ -521,8 +725,18 @@
           },
           {
             "selected": false,
+            "text": "Banzai::Filter::LabelReferenceFilter#find_label",
+            "value": "Banzai::Filter::LabelReferenceFilter#find_label"
+          },
+          {
+            "selected": false,
             "text": "Banzai::Filter::LabelReferenceFilter#find_object",
             "value": "Banzai::Filter::LabelReferenceFilter#find_object"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::LabelReferenceFilter#label_params",
+            "value": "Banzai::Filter::LabelReferenceFilter#label_params"
           },
           {
             "selected": false,
@@ -548,6 +762,11 @@
             "selected": false,
             "text": "Banzai::Filter::MarkdownFilter#call",
             "value": "Banzai::Filter::MarkdownFilter#call"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::MarkdownFilter#initialize",
+            "value": "Banzai::Filter::MarkdownFilter#initialize"
           },
           {
             "selected": false,
@@ -581,8 +800,28 @@
           },
           {
             "selected": false,
+            "text": "Banzai::Filter::MilestoneReferenceFilter#find_milestone",
+            "value": "Banzai::Filter::MilestoneReferenceFilter#find_milestone"
+          },
+          {
+            "selected": false,
             "text": "Banzai::Filter::MilestoneReferenceFilter#find_object",
             "value": "Banzai::Filter::MilestoneReferenceFilter#find_object"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::MilestoneReferenceFilter#object_link_text",
+            "value": "Banzai::Filter::MilestoneReferenceFilter#object_link_text"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::MilestoneReferenceFilter#references_in",
+            "value": "Banzai::Filter::MilestoneReferenceFilter#references_in"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::MilestoneReferenceFilter#url_for_object",
+            "value": "Banzai::Filter::MilestoneReferenceFilter#url_for_object"
           },
           {
             "selected": false,
@@ -593,6 +832,21 @@
             "selected": false,
             "text": "Banzai::Filter::RedactorFilter#call",
             "value": "Banzai::Filter::RedactorFilter#call"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RedactorFilter#current_user",
+            "value": "Banzai::Filter::RedactorFilter#current_user"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RedactorFilter#nodes_visible_to_user",
+            "value": "Banzai::Filter::RedactorFilter#nodes_visible_to_user"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RedactorFilter#project",
+            "value": "Banzai::Filter::RedactorFilter#project"
           },
           {
             "selected": false,
@@ -621,8 +875,18 @@
           },
           {
             "selected": false,
+            "text": "Banzai::Filter::ReferenceFilter#nodes",
+            "value": "Banzai::Filter::ReferenceFilter#nodes"
+          },
+          {
+            "selected": false,
             "text": "Banzai::Filter::ReferenceFilter#project",
             "value": "Banzai::Filter::ReferenceFilter#project"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::ReferenceFilter#reference_class",
+            "value": "Banzai::Filter::ReferenceFilter#reference_class"
           },
           {
             "selected": false,
@@ -656,6 +920,11 @@
           },
           {
             "selected": false,
+            "text": "Banzai::Filter::ReferenceFilter.reference_type",
+            "value": "Banzai::Filter::ReferenceFilter.reference_type"
+          },
+          {
+            "selected": false,
             "text": "Banzai::Filter::ReferenceFilter.user_can_reference?",
             "value": "Banzai::Filter::ReferenceFilter.user_can_reference?"
           },
@@ -671,8 +940,73 @@
           },
           {
             "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#build_relative_path",
+            "value": "Banzai::Filter::RelativeLinkFilter#build_relative_path"
+          },
+          {
+            "selected": false,
             "text": "Banzai::Filter::RelativeLinkFilter#call",
             "value": "Banzai::Filter::RelativeLinkFilter#call"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#current_sha",
+            "value": "Banzai::Filter::RelativeLinkFilter#current_sha"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#file_exists?",
+            "value": "Banzai::Filter::RelativeLinkFilter#file_exists?"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#image?",
+            "value": "Banzai::Filter::RelativeLinkFilter#image?"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#linkable_files?",
+            "value": "Banzai::Filter::RelativeLinkFilter#linkable_files?"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#path_type",
+            "value": "Banzai::Filter::RelativeLinkFilter#path_type"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#process_link_attr",
+            "value": "Banzai::Filter::RelativeLinkFilter#process_link_attr"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#rebuild_relative_uri",
+            "value": "Banzai::Filter::RelativeLinkFilter#rebuild_relative_uri"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#ref",
+            "value": "Banzai::Filter::RelativeLinkFilter#ref"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#relative_file_path",
+            "value": "Banzai::Filter::RelativeLinkFilter#relative_file_path"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#repository",
+            "value": "Banzai::Filter::RelativeLinkFilter#repository"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#tree?",
+            "value": "Banzai::Filter::RelativeLinkFilter#tree?"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::SanitizationFilter#customize_whitelist",
+            "value": "Banzai::Filter::SanitizationFilter#customize_whitelist"
           },
           {
             "selected": false,
@@ -683,6 +1017,11 @@
             "selected": false,
             "text": "Banzai::Filter::SnippetReferenceFilter#find_object",
             "value": "Banzai::Filter::SnippetReferenceFilter#find_object"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::SnippetReferenceFilter#url_for_object",
+            "value": "Banzai::Filter::SnippetReferenceFilter#url_for_object"
           },
           {
             "selected": false,
@@ -711,8 +1050,18 @@
           },
           {
             "selected": false,
+            "text": "Banzai::Filter::UploadLinkFilter#build_url",
+            "value": "Banzai::Filter::UploadLinkFilter#build_url"
+          },
+          {
+            "selected": false,
             "text": "Banzai::Filter::UploadLinkFilter#call",
             "value": "Banzai::Filter::UploadLinkFilter#call"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::UploadLinkFilter#process_link_attr",
+            "value": "Banzai::Filter::UploadLinkFilter#process_link_attr"
           },
           {
             "selected": false,
@@ -721,8 +1070,28 @@
           },
           {
             "selected": false,
+            "text": "Banzai::Filter::UserReferenceFilter#link_to_namespace",
+            "value": "Banzai::Filter::UserReferenceFilter#link_to_namespace"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::UserReferenceFilter#link_to_user",
+            "value": "Banzai::Filter::UserReferenceFilter#link_to_user"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::UserReferenceFilter#namespaces",
+            "value": "Banzai::Filter::UserReferenceFilter#namespaces"
+          },
+          {
+            "selected": false,
             "text": "Banzai::Filter::UserReferenceFilter#user_link_filter",
             "value": "Banzai::Filter::UserReferenceFilter#user_link_filter"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::UserReferenceFilter#usernames",
+            "value": "Banzai::Filter::UserReferenceFilter#usernames"
           },
           {
             "selected": false,
@@ -756,7 +1125,7 @@
           }
         ],
         "query": "SHOW TAG VALUES FROM gitlab.downsampled.rails_method_call_timings_per_method WITH KEY = \"method\"",
-        "refresh": true,
+        "refresh": 1,
         "regex": "/Banzai::Filter.+/",
         "type": "query"
       }
@@ -794,5 +1163,5 @@
   },
   "timezone": "utc",
   "title": "Markdown Filter Methods",
-  "version": 4
+  "version": 7
 }

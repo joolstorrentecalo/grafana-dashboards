@@ -29,12 +29,6 @@
           "error": false,
           "fill": 0,
           "grid": {
-            "leftLogBase": 1,
-            "leftMax": null,
-            "leftMin": null,
-            "rightLogBase": 1,
-            "rightMax": null,
-            "rightMin": null,
             "threshold1": null,
             "threshold1Color": "rgba(216, 200, 27, 0.27)",
             "threshold2": null,
@@ -66,7 +60,7 @@
           "seriesOverrides": [
 
           ],
-          "span": 12,
+          "span": 6,
           "stack": false,
           "steppedLine": false,
           "targets": [
@@ -87,7 +81,8 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT \"duration_95th\" AS \"95th Percentile\", \"duration_99th\" as \"99th Percentile\", \"duration_mean\" AS \"Mean\" FROM gitlab.downsampled.\"[[process_type]]_method_call_timings_per_method\" WHERE $timeFilter AND \"method\" = '[[method]]'",
+              "policy": "default",
+              "query": "SELECT \"duration_95th\" AS \"95th Percentile\", \"duration_99th\" as \"99th Percentile\", \"duration_mean\" AS \"Mean\" FROM gitlab.downsampled.\"[[process_type]]_method_call_timings_per_method\" WHERE $timeFilter AND \"method\" =~ /^$method$/",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -114,17 +109,150 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Timings",
+          "title": "Real Time",
           "tooltip": {
+            "msResolution": false,
             "shared": true,
             "value_type": "cumulative"
           },
           "type": "graph",
-          "x-axis": true,
-          "y-axis": true,
-          "y_formats": [
-            "ms",
-            "short"
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "ms",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+            "95th Percentile": "#9AC48A",
+            "99th Percentile": "#E24D42",
+            "Mean": "#70DBED"
+          },
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 0,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "height": "",
+          "id": 5,
+          "interval": "",
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null as zero",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+
+          ],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "$col",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "policy": "default",
+              "query": "SELECT \"cpu_duration_95th\" AS \"95th Percentile\", \"cpu_duration_99th\" as \"99th Percentile\", \"cpu_duration_mean\" AS \"Mean\" FROM gitlab.downsampled.\"[[process_type]]_method_call_timings_per_method\" WHERE $timeFilter AND \"method\" =~ /^$method$/",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [
+
+                    ],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+
+              ]
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "CPU Time",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "ms",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
           ]
         },
         {
@@ -136,12 +264,6 @@
           "error": false,
           "fill": 0,
           "grid": {
-            "leftLogBase": 1,
-            "leftMax": null,
-            "leftMin": null,
-            "rightLogBase": 1,
-            "rightMax": null,
-            "rightMin": null,
             "threshold1": null,
             "threshold1Color": "rgba(216, 200, 27, 0.27)",
             "threshold2": null,
@@ -193,7 +315,8 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT mean(\"duration_95th\") AS \"95th Percentile\" FROM gitlab.downsampled.\"[[process_type]]_method_call_timings_per_action_and_method\" WHERE $timeFilter AND \"method\" = '[[method]]' GROUP BY \"action\", time($interval)",
+              "policy": "default",
+              "query": "SELECT mean(\"duration_95th\") AS \"95th Percentile\" FROM gitlab.downsampled.\"[[process_type]]_method_call_timings_per_action_and_method\" WHERE $timeFilter AND \"method\" =~ /^$method$/ GROUP BY \"action\", time($interval)",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -220,17 +343,31 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Timings (95th Percentile) per Action",
+          "title": "Real Time (95th Percentile) per Action",
           "tooltip": {
+            "msResolution": false,
             "shared": false,
             "value_type": "cumulative"
           },
           "type": "graph",
-          "x-axis": true,
-          "y-axis": true,
-          "y_formats": [
-            "ms",
-            "short"
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "ms",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
           ]
         }
       ],
@@ -279,7 +416,6 @@
               "decimals": 2,
               "pattern": "95th Percentile",
               "thresholds": [
-                "0",
                 "100",
                 "150"
               ],
@@ -321,7 +457,8 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT percentile(\"duration\", 95) AS \"95th Percentile\" FROM \"[[process_type]]_method_calls\" WHERE $timeFilter AND \"method\" = '[[method]]' GROUP BY \"action\" ORDER BY time DESC LIMIT 100",
+              "policy": "default",
+              "query": "SELECT percentile(\"duration\", 95) AS \"95th Percentile\" FROM \"[[process_type]]_method_calls\" WHERE $timeFilter AND \"method\" =~ /^$method$/ GROUP BY \"action\" ORDER BY time DESC LIMIT 100",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "table",
@@ -354,7 +491,7 @@
       "title": "New row"
     }
   ],
-  "schemaVersion": 8,
+  "schemaVersion": 12,
   "sharedCrosshair": false,
   "style": "dark",
   "tags": [
@@ -372,6 +509,7 @@
           "value": "rails"
         },
         "datasource": null,
+        "hide": 0,
         "includeAll": false,
         "label": "Process Type",
         "multi": false,
@@ -395,19 +533,17 @@
           }
         ],
         "query": "rails,sidekiq,grape",
-        "refresh": false,
+        "refresh": 0,
         "type": "custom"
       },
       {
         "allFormat": "glob",
         "current": {
-          "tags": [
-
-          ],
-          "text": "Banzai::Filter::AbstractReferenceFilter#call",
-          "value": "Banzai::Filter::AbstractReferenceFilter#call"
+          "text": "Project.find_with_namespace",
+          "value": "Project.find_with_namespace"
         },
         "datasource": null,
+        "hide": 0,
         "includeAll": false,
         "label": "Method",
         "multi": false,
@@ -440,7 +576,47 @@
             "value": "AuditEventService#security_event"
           },
           {
-            "selected": true,
+            "selected": false,
+            "text": "Auth::ContainerRegistryAuthenticationService#can_access?",
+            "value": "Auth::ContainerRegistryAuthenticationService#can_access?"
+          },
+          {
+            "selected": false,
+            "text": "Auth::ContainerRegistryAuthenticationService#execute",
+            "value": "Auth::ContainerRegistryAuthenticationService#execute"
+          },
+          {
+            "selected": false,
+            "text": "Auth::ContainerRegistryAuthenticationService#process_repository_access",
+            "value": "Auth::ContainerRegistryAuthenticationService#process_repository_access"
+          },
+          {
+            "selected": false,
+            "text": "Auth::ContainerRegistryAuthenticationService#process_scope",
+            "value": "Auth::ContainerRegistryAuthenticationService#process_scope"
+          },
+          {
+            "selected": false,
+            "text": "Auth::ContainerRegistryAuthenticationService#scope",
+            "value": "Auth::ContainerRegistryAuthenticationService#scope"
+          },
+          {
+            "selected": false,
+            "text": "Auth::ContainerRegistryAuthenticationService.full_access_token",
+            "value": "Auth::ContainerRegistryAuthenticationService.full_access_token"
+          },
+          {
+            "selected": false,
+            "text": "Auth::ContainerRegistryAuthenticationService.token_expire_at",
+            "value": "Auth::ContainerRegistryAuthenticationService.token_expire_at"
+          },
+          {
+            "selected": false,
+            "text": "BambooService#execute",
+            "value": "BambooService#execute"
+          },
+          {
+            "selected": false,
             "text": "Banzai::Filter::AbstractReferenceFilter#call",
             "value": "Banzai::Filter::AbstractReferenceFilter#call"
           },
@@ -448,6 +624,11 @@
             "selected": false,
             "text": "Banzai::Filter::AbstractReferenceFilter#find_object_cached",
             "value": "Banzai::Filter::AbstractReferenceFilter#find_object_cached"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::AbstractReferenceFilter#get_or_set_cache",
+            "value": "Banzai::Filter::AbstractReferenceFilter#get_or_set_cache"
           },
           {
             "selected": false,
@@ -536,13 +717,28 @@
           },
           {
             "selected": false,
+            "text": "Banzai::Filter::AutolinkFilter#link_options",
+            "value": "Banzai::Filter::AutolinkFilter#link_options"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::AutolinkFilter#rinku_parse",
+            "value": "Banzai::Filter::AutolinkFilter#rinku_parse"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::AutolinkFilter#text_parse",
+            "value": "Banzai::Filter::AutolinkFilter#text_parse"
+          },
+          {
+            "selected": false,
             "text": "Banzai::Filter::CommitRangeReferenceFilter#find_object",
             "value": "Banzai::Filter::CommitRangeReferenceFilter#find_object"
           },
           {
             "selected": false,
-            "text": "Banzai::Filter::CommitRangeReferenceFilter#object_link_title",
-            "value": "Banzai::Filter::CommitRangeReferenceFilter#object_link_title"
+            "text": "Banzai::Filter::CommitRangeReferenceFilter#initialize",
+            "value": "Banzai::Filter::CommitRangeReferenceFilter#initialize"
           },
           {
             "selected": false,
@@ -616,6 +812,11 @@
           },
           {
             "selected": false,
+            "text": "Banzai::Filter::EmojiFilter#emoji_pattern",
+            "value": "Banzai::Filter::EmojiFilter#emoji_pattern"
+          },
+          {
+            "selected": false,
             "text": "Banzai::Filter::EmojiFilter.emoji_pattern",
             "value": "Banzai::Filter::EmojiFilter.emoji_pattern"
           },
@@ -661,8 +862,23 @@
           },
           {
             "selected": false,
+            "text": "Banzai::Filter::GollumTagsFilter#toc_tag?",
+            "value": "Banzai::Filter::GollumTagsFilter#toc_tag?"
+          },
+          {
+            "selected": false,
             "text": "Banzai::Filter::ImageLinkFilter#call",
             "value": "Banzai::Filter::ImageLinkFilter#call"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::InlineDiffFilter#call",
+            "value": "Banzai::Filter::InlineDiffFilter#call"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::InlineDiffFilter#inline_diff_filter",
+            "value": "Banzai::Filter::InlineDiffFilter#inline_diff_filter"
           },
           {
             "selected": false,
@@ -726,6 +942,11 @@
           },
           {
             "selected": false,
+            "text": "Banzai::Filter::MarkdownFilter#initialize",
+            "value": "Banzai::Filter::MarkdownFilter#initialize"
+          },
+          {
+            "selected": false,
             "text": "Banzai::Filter::MarkdownFilter.redcarpet_options",
             "value": "Banzai::Filter::MarkdownFilter.redcarpet_options"
           },
@@ -756,8 +977,28 @@
           },
           {
             "selected": false,
+            "text": "Banzai::Filter::MilestoneReferenceFilter#find_milestone",
+            "value": "Banzai::Filter::MilestoneReferenceFilter#find_milestone"
+          },
+          {
+            "selected": false,
             "text": "Banzai::Filter::MilestoneReferenceFilter#find_object",
             "value": "Banzai::Filter::MilestoneReferenceFilter#find_object"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::MilestoneReferenceFilter#object_link_text",
+            "value": "Banzai::Filter::MilestoneReferenceFilter#object_link_text"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::MilestoneReferenceFilter#references_in",
+            "value": "Banzai::Filter::MilestoneReferenceFilter#references_in"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::MilestoneReferenceFilter#url_for_object",
+            "value": "Banzai::Filter::MilestoneReferenceFilter#url_for_object"
           },
           {
             "selected": false,
@@ -768,6 +1009,16 @@
             "selected": false,
             "text": "Banzai::Filter::RedactorFilter#call",
             "value": "Banzai::Filter::RedactorFilter#call"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RedactorFilter#current_user",
+            "value": "Banzai::Filter::RedactorFilter#current_user"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RedactorFilter#nodes_visible_to_user",
+            "value": "Banzai::Filter::RedactorFilter#nodes_visible_to_user"
           },
           {
             "selected": false,
@@ -793,6 +1044,11 @@
             "selected": false,
             "text": "Banzai::Filter::ReferenceFilter#ignore_ancestor_query",
             "value": "Banzai::Filter::ReferenceFilter#ignore_ancestor_query"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::ReferenceFilter#nodes",
+            "value": "Banzai::Filter::ReferenceFilter#nodes"
           },
           {
             "selected": false,
@@ -836,6 +1092,11 @@
           },
           {
             "selected": false,
+            "text": "Banzai::Filter::ReferenceFilter.reference_type",
+            "value": "Banzai::Filter::ReferenceFilter.reference_type"
+          },
+          {
+            "selected": false,
             "text": "Banzai::Filter::ReferenceFilter.user_can_reference?",
             "value": "Banzai::Filter::ReferenceFilter.user_can_reference?"
           },
@@ -851,8 +1112,73 @@
           },
           {
             "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#build_relative_path",
+            "value": "Banzai::Filter::RelativeLinkFilter#build_relative_path"
+          },
+          {
+            "selected": false,
             "text": "Banzai::Filter::RelativeLinkFilter#call",
             "value": "Banzai::Filter::RelativeLinkFilter#call"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#current_sha",
+            "value": "Banzai::Filter::RelativeLinkFilter#current_sha"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#file_exists?",
+            "value": "Banzai::Filter::RelativeLinkFilter#file_exists?"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#image?",
+            "value": "Banzai::Filter::RelativeLinkFilter#image?"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#linkable_files?",
+            "value": "Banzai::Filter::RelativeLinkFilter#linkable_files?"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#path_type",
+            "value": "Banzai::Filter::RelativeLinkFilter#path_type"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#process_link_attr",
+            "value": "Banzai::Filter::RelativeLinkFilter#process_link_attr"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#rebuild_relative_uri",
+            "value": "Banzai::Filter::RelativeLinkFilter#rebuild_relative_uri"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#ref",
+            "value": "Banzai::Filter::RelativeLinkFilter#ref"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#relative_file_path",
+            "value": "Banzai::Filter::RelativeLinkFilter#relative_file_path"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#repository",
+            "value": "Banzai::Filter::RelativeLinkFilter#repository"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::RelativeLinkFilter#tree?",
+            "value": "Banzai::Filter::RelativeLinkFilter#tree?"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::SanitizationFilter#customize_whitelist",
+            "value": "Banzai::Filter::SanitizationFilter#customize_whitelist"
           },
           {
             "selected": false,
@@ -863,6 +1189,11 @@
             "selected": false,
             "text": "Banzai::Filter::SnippetReferenceFilter#find_object",
             "value": "Banzai::Filter::SnippetReferenceFilter#find_object"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::SnippetReferenceFilter#url_for_object",
+            "value": "Banzai::Filter::SnippetReferenceFilter#url_for_object"
           },
           {
             "selected": false,
@@ -891,8 +1222,18 @@
           },
           {
             "selected": false,
+            "text": "Banzai::Filter::UploadLinkFilter#build_url",
+            "value": "Banzai::Filter::UploadLinkFilter#build_url"
+          },
+          {
+            "selected": false,
             "text": "Banzai::Filter::UploadLinkFilter#call",
             "value": "Banzai::Filter::UploadLinkFilter#call"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::UploadLinkFilter#process_link_attr",
+            "value": "Banzai::Filter::UploadLinkFilter#process_link_attr"
           },
           {
             "selected": false,
@@ -901,8 +1242,28 @@
           },
           {
             "selected": false,
+            "text": "Banzai::Filter::UserReferenceFilter#link_to_namespace",
+            "value": "Banzai::Filter::UserReferenceFilter#link_to_namespace"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::UserReferenceFilter#link_to_user",
+            "value": "Banzai::Filter::UserReferenceFilter#link_to_user"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::UserReferenceFilter#namespaces",
+            "value": "Banzai::Filter::UserReferenceFilter#namespaces"
+          },
+          {
+            "selected": false,
             "text": "Banzai::Filter::UserReferenceFilter#user_link_filter",
             "value": "Banzai::Filter::UserReferenceFilter#user_link_filter"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::Filter::UserReferenceFilter#usernames",
+            "value": "Banzai::Filter::UserReferenceFilter#usernames"
           },
           {
             "selected": false,
@@ -941,6 +1302,161 @@
           },
           {
             "selected": false,
+            "text": "Banzai::ReferenceParser::BaseParser#can?",
+            "value": "Banzai::ReferenceParser::BaseParser#can?"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::BaseParser#find_projects_for_hash_keys",
+            "value": "Banzai::ReferenceParser::BaseParser#find_projects_for_hash_keys"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::BaseParser#gather_attributes_per_project",
+            "value": "Banzai::ReferenceParser::BaseParser#gather_attributes_per_project"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::BaseParser#gather_references",
+            "value": "Banzai::ReferenceParser::BaseParser#gather_references"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::BaseParser#grouped_objects_for_nodes",
+            "value": "Banzai::ReferenceParser::BaseParser#grouped_objects_for_nodes"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::BaseParser#initialize",
+            "value": "Banzai::ReferenceParser::BaseParser#initialize"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::BaseParser#lazy",
+            "value": "Banzai::ReferenceParser::BaseParser#lazy"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::BaseParser#nodes_user_can_reference",
+            "value": "Banzai::ReferenceParser::BaseParser#nodes_user_can_reference"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::BaseParser#nodes_visible_to_user",
+            "value": "Banzai::ReferenceParser::BaseParser#nodes_visible_to_user"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::BaseParser#process",
+            "value": "Banzai::ReferenceParser::BaseParser#process"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::BaseParser#project",
+            "value": "Banzai::ReferenceParser::BaseParser#project"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::BaseParser#projects_for_nodes",
+            "value": "Banzai::ReferenceParser::BaseParser#projects_for_nodes"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::BaseParser#referenced_by",
+            "value": "Banzai::ReferenceParser::BaseParser#referenced_by"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::BaseParser#unique_attribute_values",
+            "value": "Banzai::ReferenceParser::BaseParser#unique_attribute_values"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::BaseParser.data_attribute",
+            "value": "Banzai::ReferenceParser::BaseParser.data_attribute"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::BaseParser.reference_type",
+            "value": "Banzai::ReferenceParser::BaseParser.reference_type"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::CommitParser#commit_ids_per_project",
+            "value": "Banzai::ReferenceParser::CommitParser#commit_ids_per_project"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::CommitParser#find_commits",
+            "value": "Banzai::ReferenceParser::CommitParser#find_commits"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::CommitParser#referenced_by",
+            "value": "Banzai::ReferenceParser::CommitParser#referenced_by"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::ExternalIssueParser#referenced_by",
+            "value": "Banzai::ReferenceParser::ExternalIssueParser#referenced_by"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::IssueParser#issue_for_node",
+            "value": "Banzai::ReferenceParser::IssueParser#issue_for_node"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::IssueParser#issues_for_nodes",
+            "value": "Banzai::ReferenceParser::IssueParser#issues_for_nodes"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::IssueParser#nodes_visible_to_user",
+            "value": "Banzai::ReferenceParser::IssueParser#nodes_visible_to_user"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::IssueParser#referenced_by",
+            "value": "Banzai::ReferenceParser::IssueParser#referenced_by"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::MergeRequestParser#references_relation",
+            "value": "Banzai::ReferenceParser::MergeRequestParser#references_relation"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::UserParser#find_users",
+            "value": "Banzai::ReferenceParser::UserParser#find_users"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::UserParser#find_users_for_groups",
+            "value": "Banzai::ReferenceParser::UserParser#find_users_for_groups"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::UserParser#find_users_for_projects",
+            "value": "Banzai::ReferenceParser::UserParser#find_users_for_projects"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::UserParser#nodes_user_can_reference",
+            "value": "Banzai::ReferenceParser::UserParser#nodes_user_can_reference"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::UserParser#nodes_visible_to_user",
+            "value": "Banzai::ReferenceParser::UserParser#nodes_visible_to_user"
+          },
+          {
+            "selected": false,
+            "text": "Banzai::ReferenceParser::UserParser#referenced_by",
+            "value": "Banzai::ReferenceParser::UserParser#referenced_by"
+          },
+          {
+            "selected": false,
             "text": "Banzai::Renderer.cacheless_render",
             "value": "Banzai::Renderer.cacheless_render"
           },
@@ -971,6 +1487,11 @@
           },
           {
             "selected": false,
+            "text": "BaseService#abilities",
+            "value": "BaseService#abilities"
+          },
+          {
+            "selected": false,
             "text": "BaseService#can?",
             "value": "BaseService#can?"
           },
@@ -991,6 +1512,11 @@
           },
           {
             "selected": false,
+            "text": "BaseService#notification_service",
+            "value": "BaseService#notification_service"
+          },
+          {
+            "selected": false,
             "text": "BaseService#params",
             "value": "BaseService#params"
           },
@@ -1001,8 +1527,28 @@
           },
           {
             "selected": false,
+            "text": "BaseService#system_hook_service",
+            "value": "BaseService#system_hook_service"
+          },
+          {
+            "selected": false,
+            "text": "BaseService#todo_service",
+            "value": "BaseService#todo_service"
+          },
+          {
+            "selected": false,
             "text": "BroadcastMessage.current",
             "value": "BroadcastMessage.current"
+          },
+          {
+            "selected": false,
+            "text": "CampfireService#description",
+            "value": "CampfireService#description"
+          },
+          {
+            "selected": false,
+            "text": "CampfireService#execute",
+            "value": "CampfireService#execute"
           },
           {
             "selected": false,
@@ -1021,18 +1567,23 @@
           },
           {
             "selected": false,
+            "text": "Ci::Build#execute_hooks",
+            "value": "Ci::Build#execute_hooks"
+          },
+          {
+            "selected": false,
             "text": "Ci::Build#extract_coverage",
             "value": "Ci::Build#extract_coverage"
           },
           {
             "selected": false,
-            "text": "Ci::Build#merge_request",
-            "value": "Ci::Build#merge_request"
+            "text": "Ci::Build#has_tags?",
+            "value": "Ci::Build#has_tags?"
           },
           {
             "selected": false,
-            "text": "Ci::Build#trace=",
-            "value": "Ci::Build#trace="
+            "text": "Ci::Build#merge_request",
+            "value": "Ci::Build#merge_request"
           },
           {
             "selected": false,
@@ -1076,8 +1627,28 @@
           },
           {
             "selected": false,
+            "text": "Ci::Commit#retry_failed",
+            "value": "Ci::Commit#retry_failed"
+          },
+          {
+            "selected": false,
+            "text": "Ci::Commit#retryable?",
+            "value": "Ci::Commit#retryable?"
+          },
+          {
+            "selected": false,
             "text": "Ci::Commit#started_at",
             "value": "Ci::Commit#started_at"
+          },
+          {
+            "selected": false,
+            "text": "Ci::Commit#triggered?",
+            "value": "Ci::Commit#triggered?"
+          },
+          {
+            "selected": false,
+            "text": "Ci::Commit.stages",
+            "value": "Ci::Commit.stages"
           },
           {
             "selected": false,
@@ -1086,8 +1657,68 @@
           },
           {
             "selected": false,
+            "text": "Ci::CreatePipelineService#commit",
+            "value": "Ci::CreatePipelineService#commit"
+          },
+          {
+            "selected": false,
+            "text": "Ci::CreatePipelineService#execute",
+            "value": "Ci::CreatePipelineService#execute"
+          },
+          {
+            "selected": false,
+            "text": "Ci::CreatePipelineService#ref_names",
+            "value": "Ci::CreatePipelineService#ref_names"
+          },
+          {
+            "selected": false,
             "text": "Ci::ImageForBuildService#execute",
             "value": "Ci::ImageForBuildService#execute"
+          },
+          {
+            "selected": false,
+            "text": "Ci::ImageForBuildService#ref_sha",
+            "value": "Ci::ImageForBuildService#ref_sha"
+          },
+          {
+            "selected": false,
+            "text": "Ci::Pipeline#cancelable?",
+            "value": "Ci::Pipeline#cancelable?"
+          },
+          {
+            "selected": false,
+            "text": "Ci::Pipeline#create_builds",
+            "value": "Ci::Pipeline#create_builds"
+          },
+          {
+            "selected": false,
+            "text": "Ci::Pipeline#create_next_builds",
+            "value": "Ci::Pipeline#create_next_builds"
+          },
+          {
+            "selected": false,
+            "text": "Ci::Pipeline#retry_failed",
+            "value": "Ci::Pipeline#retry_failed"
+          },
+          {
+            "selected": false,
+            "text": "Ci::Pipeline#retryable?",
+            "value": "Ci::Pipeline#retryable?"
+          },
+          {
+            "selected": false,
+            "text": "Ci::Pipeline#triggered?",
+            "value": "Ci::Pipeline#triggered?"
+          },
+          {
+            "selected": false,
+            "text": "Ci::Pipeline#update_state",
+            "value": "Ci::Pipeline#update_state"
+          },
+          {
+            "selected": false,
+            "text": "Ci::Pipeline.stages",
+            "value": "Ci::Pipeline.stages"
           },
           {
             "selected": false,
@@ -1096,8 +1727,28 @@
           },
           {
             "selected": false,
+            "text": "Ci::Runner#has_tags?",
+            "value": "Ci::Runner#has_tags?"
+          },
+          {
+            "selected": false,
             "text": "Ci::Trigger#last_trigger_request",
             "value": "Ci::Trigger#last_trigger_request"
+          },
+          {
+            "selected": false,
+            "text": "CommitStatus.stages",
+            "value": "CommitStatus.stages"
+          },
+          {
+            "selected": false,
+            "text": "CommitStatus.stages_status",
+            "value": "CommitStatus.stages_status"
+          },
+          {
+            "selected": false,
+            "text": "Commits::ChangeService#create_target_branch",
+            "value": "Commits::ChangeService#create_target_branch"
           },
           {
             "selected": false,
@@ -1118,6 +1769,11 @@
             "selected": false,
             "text": "CompareService#execute",
             "value": "CompareService#execute"
+          },
+          {
+            "selected": false,
+            "text": "ContributedProjectsFinder#all_projects",
+            "value": "ContributedProjectsFinder#all_projects"
           },
           {
             "selected": false,
@@ -1171,8 +1827,23 @@
           },
           {
             "selected": false,
+            "text": "DeleteTagService#success",
+            "value": "DeleteTagService#success"
+          },
+          {
+            "selected": false,
             "text": "DeleteUserService#execute",
             "value": "DeleteUserService#execute"
+          },
+          {
+            "selected": false,
+            "text": "DeployKey#destroyed_when_orphaned?",
+            "value": "DeployKey#destroyed_when_orphaned?"
+          },
+          {
+            "selected": false,
+            "text": "DeployKeysProject#destroy_orphaned_deploy_key",
+            "value": "DeployKeysProject#destroy_orphaned_deploy_key"
           },
           {
             "selected": false,
@@ -1188,6 +1859,11 @@
             "selected": false,
             "text": "EmailsOnPushService#execute",
             "value": "EmailsOnPushService#execute"
+          },
+          {
+            "selected": false,
+            "text": "EmailsOnPushService#fields",
+            "value": "EmailsOnPushService#fields"
           },
           {
             "selected": false,
@@ -1266,8 +1942,18 @@
           },
           {
             "selected": false,
+            "text": "EventCreateService#create_event",
+            "value": "EventCreateService#create_event"
+          },
+          {
+            "selected": false,
             "text": "EventCreateService#create_project",
             "value": "EventCreateService#create_project"
+          },
+          {
+            "selected": false,
+            "text": "EventCreateService#create_record_event",
+            "value": "EventCreateService#create_record_event"
           },
           {
             "selected": false,
@@ -1321,8 +2007,18 @@
           },
           {
             "selected": false,
+            "text": "Files::BaseService#create_target_branch",
+            "value": "Files::BaseService#create_target_branch"
+          },
+          {
+            "selected": false,
             "text": "Files::BaseService#execute",
             "value": "Files::BaseService#execute"
+          },
+          {
+            "selected": false,
+            "text": "Files::BaseService#validate",
+            "value": "Files::BaseService#validate"
           },
           {
             "selected": false,
@@ -1356,13 +2052,318 @@
           },
           {
             "selected": false,
-            "text": "GemnasiumService#description",
-            "value": "GemnasiumService#description"
+            "text": "GitHooksService#execute",
+            "value": "GitHooksService#execute"
           },
           {
             "selected": false,
-            "text": "GitHooksService#execute",
-            "value": "GitHooksService#execute"
+            "text": "GitHooksService#run_hook",
+            "value": "GitHooksService#run_hook"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::File#added_lines",
+            "value": "Gitlab::Diff::File#added_lines"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::File#deleted_file",
+            "value": "Gitlab::Diff::File#deleted_file"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::File#diff",
+            "value": "Gitlab::Diff::File#diff"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::File#diff_lines",
+            "value": "Gitlab::Diff::File#diff_lines"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::File#diff_refs",
+            "value": "Gitlab::Diff::File#diff_refs"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::File#file_path",
+            "value": "Gitlab::Diff::File#file_path"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::File#highlighted_diff_lines",
+            "value": "Gitlab::Diff::File#highlighted_diff_lines"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::File#initialize",
+            "value": "Gitlab::Diff::File#initialize"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::File#mode_changed?",
+            "value": "Gitlab::Diff::File#mode_changed?"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::File#new_file",
+            "value": "Gitlab::Diff::File#new_file"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::File#new_path",
+            "value": "Gitlab::Diff::File#new_path"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::File#new_ref",
+            "value": "Gitlab::Diff::File#new_ref"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::File#next_line",
+            "value": "Gitlab::Diff::File#next_line"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::File#old_path",
+            "value": "Gitlab::Diff::File#old_path"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::File#old_ref",
+            "value": "Gitlab::Diff::File#old_ref"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::File#parallel_diff_lines",
+            "value": "Gitlab::Diff::File#parallel_diff_lines"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::File#parser",
+            "value": "Gitlab::Diff::File#parser"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::File#raw_diff",
+            "value": "Gitlab::Diff::File#raw_diff"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::File#removed_lines",
+            "value": "Gitlab::Diff::File#removed_lines"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::File#renamed_file",
+            "value": "Gitlab::Diff::File#renamed_file"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::File#too_large?",
+            "value": "Gitlab::Diff::File#too_large?"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Highlight#diff_file",
+            "value": "Gitlab::Diff::Highlight#diff_file"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Highlight#diff_new_path",
+            "value": "Gitlab::Diff::Highlight#diff_new_path"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Highlight#diff_new_ref",
+            "value": "Gitlab::Diff::Highlight#diff_new_ref"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Highlight#diff_old_path",
+            "value": "Gitlab::Diff::Highlight#diff_old_path"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Highlight#diff_old_ref",
+            "value": "Gitlab::Diff::Highlight#diff_old_ref"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Highlight#highlight",
+            "value": "Gitlab::Diff::Highlight#highlight"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Highlight#highlight_line",
+            "value": "Gitlab::Diff::Highlight#highlight_line"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Highlight#initialize",
+            "value": "Gitlab::Diff::Highlight#initialize"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Highlight#inline_diffs",
+            "value": "Gitlab::Diff::Highlight#inline_diffs"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Highlight#new_lines",
+            "value": "Gitlab::Diff::Highlight#new_lines"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Highlight#old_lines",
+            "value": "Gitlab::Diff::Highlight#old_lines"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Highlight#processing_args",
+            "value": "Gitlab::Diff::Highlight#processing_args"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::InlineDiff#inline_diffs",
+            "value": "Gitlab::Diff::InlineDiff#inline_diffs"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::InlineDiff#longest_common_prefix",
+            "value": "Gitlab::Diff::InlineDiff#longest_common_prefix"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::InlineDiff#longest_common_suffix",
+            "value": "Gitlab::Diff::InlineDiff#longest_common_suffix"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::InlineDiff#new_line",
+            "value": "Gitlab::Diff::InlineDiff#new_line"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::InlineDiff#offset",
+            "value": "Gitlab::Diff::InlineDiff#offset"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::InlineDiff#old_line",
+            "value": "Gitlab::Diff::InlineDiff#old_line"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::InlineDiff.find_local_edits",
+            "value": "Gitlab::Diff::InlineDiff.find_local_edits"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::InlineDiff.for_lines",
+            "value": "Gitlab::Diff::InlineDiff.for_lines"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::InlineDiffMarker#mark",
+            "value": "Gitlab::Diff::InlineDiffMarker#mark"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::InlineDiffMarker#position_mapping",
+            "value": "Gitlab::Diff::InlineDiffMarker#position_mapping"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::InlineDiffMarker#raw_line",
+            "value": "Gitlab::Diff::InlineDiffMarker#raw_line"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::InlineDiffMarker#rich_line",
+            "value": "Gitlab::Diff::InlineDiffMarker#rich_line"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Line#added?",
+            "value": "Gitlab::Diff::Line#added?"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Line#index",
+            "value": "Gitlab::Diff::Line#index"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Line#initialize",
+            "value": "Gitlab::Diff::Line#initialize"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Line#new_pos",
+            "value": "Gitlab::Diff::Line#new_pos"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Line#old_pos",
+            "value": "Gitlab::Diff::Line#old_pos"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Line#removed?",
+            "value": "Gitlab::Diff::Line#removed?"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Line#text",
+            "value": "Gitlab::Diff::Line#text"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Line#text=",
+            "value": "Gitlab::Diff::Line#text="
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Line#type",
+            "value": "Gitlab::Diff::Line#type"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::LineCode.generate",
+            "value": "Gitlab::Diff::LineCode.generate"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::ParallelDiff#diff_file",
+            "value": "Gitlab::Diff::ParallelDiff#diff_file"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::ParallelDiff#generate_line_code",
+            "value": "Gitlab::Diff::ParallelDiff#generate_line_code"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::ParallelDiff#parallelize",
+            "value": "Gitlab::Diff::ParallelDiff#parallelize"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Parser#filename?",
+            "value": "Gitlab::Diff::Parser#filename?"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Parser#identification_type",
+            "value": "Gitlab::Diff::Parser#identification_type"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Diff::Parser#parse",
+            "value": "Gitlab::Diff::Parser#parse"
           },
           {
             "selected": false,
@@ -1396,6 +2397,21 @@
           },
           {
             "selected": false,
+            "text": "Gitlab::Git::Blame#initialize",
+            "value": "Gitlab::Git::Blame#initialize"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Git::Blame#load_blame",
+            "value": "Gitlab::Git::Blame#load_blame"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Git::Blame#process_raw_blame",
+            "value": "Gitlab::Git::Blame#process_raw_blame"
+          },
+          {
+            "selected": false,
             "text": "Gitlab::Git::BlameLine#commit",
             "value": "Gitlab::Git::BlameLine#commit"
           },
@@ -1426,6 +2442,11 @@
           },
           {
             "selected": false,
+            "text": "Gitlab::Git::Blob#has_lfs_version_key?",
+            "value": "Gitlab::Git::Blob#has_lfs_version_key?"
+          },
+          {
+            "selected": false,
             "text": "Gitlab::Git::Blob#id",
             "value": "Gitlab::Git::Blob#id"
           },
@@ -1436,13 +2457,18 @@
           },
           {
             "selected": false,
-            "text": "Gitlab::Git::Blob#lfs_pointer?",
-            "value": "Gitlab::Git::Blob#lfs_pointer?"
+            "text": "Gitlab::Git::Blob#initialize",
+            "value": "Gitlab::Git::Blob#initialize"
           },
           {
             "selected": false,
-            "text": "Gitlab::Git::Blob#lfs_size",
-            "value": "Gitlab::Git::Blob#lfs_size"
+            "text": "Gitlab::Git::Blob#lfs_oid",
+            "value": "Gitlab::Git::Blob#lfs_oid"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Git::Blob#lfs_pointer?",
+            "value": "Gitlab::Git::Blob#lfs_pointer?"
           },
           {
             "selected": false,
@@ -1508,6 +2534,11 @@
             "selected": false,
             "text": "Gitlab::Git::Blob.remove",
             "value": "Gitlab::Git::Blob.remove"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Git::Blob.submodule_blob",
+            "value": "Gitlab::Git::Blob.submodule_blob"
           },
           {
             "selected": false,
@@ -1611,6 +2642,21 @@
           },
           {
             "selected": false,
+            "text": "Gitlab::Git::Commit#init_from_hash",
+            "value": "Gitlab::Git::Commit#init_from_hash"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Git::Commit#init_from_rugged",
+            "value": "Gitlab::Git::Commit#init_from_rugged"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Git::Commit#initialize",
+            "value": "Gitlab::Git::Commit#initialize"
+          },
+          {
+            "selected": false,
             "text": "Gitlab::Git::Commit#message",
             "value": "Gitlab::Git::Commit#message"
           },
@@ -1658,6 +2704,11 @@
             "selected": false,
             "text": "Gitlab::Git::Commit#safe_message",
             "value": "Gitlab::Git::Commit#safe_message"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Git::Commit#serialize_keys",
+            "value": "Gitlab::Git::Commit#serialize_keys"
           },
           {
             "selected": false,
@@ -1716,8 +2767,18 @@
           },
           {
             "selected": false,
+            "text": "Gitlab::Git::Compare#commits",
+            "value": "Gitlab::Git::Compare#commits"
+          },
+          {
+            "selected": false,
             "text": "Gitlab::Git::Compare#diffs",
             "value": "Gitlab::Git::Compare#diffs"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Git::Compare#initialize",
+            "value": "Gitlab::Git::Compare#initialize"
           },
           {
             "selected": false,
@@ -1758,6 +2819,21 @@
             "selected": false,
             "text": "Gitlab::Git::Diff#diff=",
             "value": "Gitlab::Git::Diff#diff="
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Git::Diff#init_from_hash",
+            "value": "Gitlab::Git::Diff#init_from_hash"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Git::Diff#init_from_rugged",
+            "value": "Gitlab::Git::Diff#init_from_rugged"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Git::Diff#initialize",
+            "value": "Gitlab::Git::Diff#initialize"
           },
           {
             "selected": false,
@@ -1816,6 +2892,11 @@
           },
           {
             "selected": false,
+            "text": "Gitlab::Git::Diff#strip_diff_headers",
+            "value": "Gitlab::Git::Diff#strip_diff_headers"
+          },
+          {
+            "selected": false,
             "text": "Gitlab::Git::Diff#submodule?",
             "value": "Gitlab::Git::Diff#submodule?"
           },
@@ -1871,6 +2952,11 @@
           },
           {
             "selected": false,
+            "text": "Gitlab::Git::DiffCollection#populate!",
+            "value": "Gitlab::Git::DiffCollection#populate!"
+          },
+          {
+            "selected": false,
             "text": "Gitlab::Git::DiffCollection#real_size",
             "value": "Gitlab::Git::DiffCollection#real_size"
           },
@@ -1883,6 +2969,11 @@
             "selected": false,
             "text": "Gitlab::Git::PathHelper.normalize_path",
             "value": "Gitlab::Git::PathHelper.normalize_path"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Git::Ref#initialize",
+            "value": "Gitlab::Git::Ref#initialize"
           },
           {
             "selected": false,
@@ -1901,13 +2992,28 @@
           },
           {
             "selected": false,
+            "text": "Gitlab::Git::Repository#archive_file_path",
+            "value": "Gitlab::Git::Repository#archive_file_path"
+          },
+          {
+            "selected": false,
             "text": "Gitlab::Git::Repository#archive_metadata",
             "value": "Gitlab::Git::Repository#archive_metadata"
           },
           {
             "selected": false,
+            "text": "Gitlab::Git::Repository#attributes",
+            "value": "Gitlab::Git::Repository#attributes"
+          },
+          {
+            "selected": false,
             "text": "Gitlab::Git::Repository#autocrlf",
             "value": "Gitlab::Git::Repository#autocrlf"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Git::Repository#blob_content",
+            "value": "Gitlab::Git::Repository#blob_content"
           },
           {
             "selected": false,
@@ -1936,6 +3042,11 @@
           },
           {
             "selected": false,
+            "text": "Gitlab::Git::Repository#copy_gitattributes",
+            "value": "Gitlab::Git::Repository#copy_gitattributes"
+          },
+          {
+            "selected": false,
             "text": "Gitlab::Git::Repository#count_commits_between",
             "value": "Gitlab::Git::Repository#count_commits_between"
           },
@@ -1946,8 +3057,18 @@
           },
           {
             "selected": false,
+            "text": "Gitlab::Git::Repository#diff_patches",
+            "value": "Gitlab::Git::Repository#diff_patches"
+          },
+          {
+            "selected": false,
             "text": "Gitlab::Git::Repository#diff_text",
             "value": "Gitlab::Git::Repository#diff_text"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Git::Repository#diffable?",
+            "value": "Gitlab::Git::Repository#diffable?"
           },
           {
             "selected": false,
@@ -1971,6 +3092,11 @@
           },
           {
             "selected": false,
+            "text": "Gitlab::Git::Repository#initialize",
+            "value": "Gitlab::Git::Repository#initialize"
+          },
+          {
+            "selected": false,
             "text": "Gitlab::Git::Repository#log",
             "value": "Gitlab::Git::Repository#log"
           },
@@ -1983,6 +3109,11 @@
             "selected": false,
             "text": "Gitlab::Git::Repository#log_by_walk",
             "value": "Gitlab::Git::Repository#log_by_walk"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Git::Repository#log_using_shell?",
+            "value": "Gitlab::Git::Repository#log_using_shell?"
           },
           {
             "selected": false,
@@ -2006,8 +3137,8 @@
           },
           {
             "selected": false,
-            "text": "Gitlab::Git::Repository#name",
-            "value": "Gitlab::Git::Repository#name"
+            "text": "Gitlab::Git::Repository#parse_gitmodules",
+            "value": "Gitlab::Git::Repository#parse_gitmodules"
           },
           {
             "selected": false,
@@ -2076,6 +3207,11 @@
           },
           {
             "selected": false,
+            "text": "Gitlab::Git::Tag#initialize",
+            "value": "Gitlab::Git::Tag#initialize"
+          },
+          {
+            "selected": false,
             "text": "Gitlab::Git::Tag#message",
             "value": "Gitlab::Git::Tag#message"
           },
@@ -2101,8 +3237,18 @@
           },
           {
             "selected": false,
+            "text": "Gitlab::Git::Tree#id",
+            "value": "Gitlab::Git::Tree#id"
+          },
+          {
+            "selected": false,
             "text": "Gitlab::Git::Tree#id=",
             "value": "Gitlab::Git::Tree#id="
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::Git::Tree#initialize",
+            "value": "Gitlab::Git::Tree#initialize"
           },
           {
             "selected": false,
@@ -2181,8 +3327,23 @@
           },
           {
             "selected": false,
+            "text": "Gitlab::GitAccess#build_status_object",
+            "value": "Gitlab::GitAccess#build_status_object"
+          },
+          {
+            "selected": false,
             "text": "Gitlab::GitAccess#can_push_to_branch?",
             "value": "Gitlab::GitAccess#can_push_to_branch?"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::GitAccess#download_access_check",
+            "value": "Gitlab::GitAccess#download_access_check"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::GitAccess#initialize",
+            "value": "Gitlab::GitAccess#initialize"
           },
           {
             "selected": false,
@@ -2193,6 +3354,11 @@
             "selected": false,
             "text": "Gitlab::GitAccess#user",
             "value": "Gitlab::GitAccess#user"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::GitAccess#user_download_access_check",
+            "value": "Gitlab::GitAccess#user_download_access_check"
           },
           {
             "selected": false,
@@ -2221,8 +3387,18 @@
           },
           {
             "selected": false,
+            "text": "Gitlab::ReferenceExtractor#initialize",
+            "value": "Gitlab::ReferenceExtractor#initialize"
+          },
+          {
+            "selected": false,
             "text": "Gitlab::ReferenceExtractor#issues",
             "value": "Gitlab::ReferenceExtractor#issues"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::ReferenceExtractor#labels",
+            "value": "Gitlab::ReferenceExtractor#labels"
           },
           {
             "selected": false,
@@ -2231,8 +3407,23 @@
           },
           {
             "selected": false,
+            "text": "Gitlab::ReferenceExtractor#milestones",
+            "value": "Gitlab::ReferenceExtractor#milestones"
+          },
+          {
+            "selected": false,
             "text": "Gitlab::ReferenceExtractor#project",
             "value": "Gitlab::ReferenceExtractor#project"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::ReferenceExtractor#references",
+            "value": "Gitlab::ReferenceExtractor#references"
+          },
+          {
+            "selected": false,
+            "text": "Gitlab::ReferenceExtractor#snippets",
+            "value": "Gitlab::ReferenceExtractor#snippets"
           },
           {
             "selected": false,
@@ -2336,8 +3527,18 @@
           },
           {
             "selected": false,
+            "text": "Group.sort",
+            "value": "Group.sort"
+          },
+          {
+            "selected": false,
             "text": "Group.visible_to_user",
             "value": "Group.visible_to_user"
+          },
+          {
+            "selected": false,
+            "text": "GroupMember#after_accept_invite",
+            "value": "GroupMember#after_accept_invite"
           },
           {
             "selected": false,
@@ -2346,8 +3547,28 @@
           },
           {
             "selected": false,
+            "text": "GroupMember#post_create_hook",
+            "value": "GroupMember#post_create_hook"
+          },
+          {
+            "selected": false,
+            "text": "GroupMember#post_update_hook",
+            "value": "GroupMember#post_update_hook"
+          },
+          {
+            "selected": false,
+            "text": "GroupMember#send_invite",
+            "value": "GroupMember#send_invite"
+          },
+          {
+            "selected": false,
             "text": "GroupProjectsFinder#execute",
             "value": "GroupProjectsFinder#execute"
+          },
+          {
+            "selected": false,
+            "text": "GroupProjectsFinder#group_projects",
+            "value": "GroupProjectsFinder#group_projects"
           },
           {
             "selected": false,
@@ -2361,8 +3582,18 @@
           },
           {
             "selected": false,
+            "text": "GroupsFinder#all_groups",
+            "value": "GroupsFinder#all_groups"
+          },
+          {
+            "selected": false,
             "text": "GroupsFinder#execute",
             "value": "GroupsFinder#execute"
+          },
+          {
+            "selected": false,
+            "text": "Issuable#can_move?",
+            "value": "Issuable#can_move?"
           },
           {
             "selected": false,
@@ -2373,6 +3604,11 @@
             "selected": false,
             "text": "Issuable#downvotes",
             "value": "Issuable#downvotes"
+          },
+          {
+            "selected": false,
+            "text": "Issuable#labels_array",
+            "value": "Issuable#labels_array"
           },
           {
             "selected": false,
@@ -2406,6 +3642,11 @@
           },
           {
             "selected": false,
+            "text": "Issuable#updated_tasks",
+            "value": "Issuable#updated_tasks"
+          },
+          {
+            "selected": false,
             "text": "Issuable#upvotes",
             "value": "Issuable#upvotes"
           },
@@ -2416,8 +3657,18 @@
           },
           {
             "selected": false,
+            "text": "Issuable::ClassMethods#highest_label_priority",
+            "value": "Issuable::ClassMethods#highest_label_priority"
+          },
+          {
+            "selected": false,
             "text": "Issuable::ClassMethods#order_downvotes_desc",
             "value": "Issuable::ClassMethods#order_downvotes_desc"
+          },
+          {
+            "selected": false,
+            "text": "Issuable::ClassMethods#order_labels_priority",
+            "value": "Issuable::ClassMethods#order_labels_priority"
           },
           {
             "selected": false,
@@ -2441,6 +3692,61 @@
           },
           {
             "selected": false,
+            "text": "IssuableBaseService#change_state",
+            "value": "IssuableBaseService#change_state"
+          },
+          {
+            "selected": false,
+            "text": "IssuableBaseService#create_assignee_note",
+            "value": "IssuableBaseService#create_assignee_note"
+          },
+          {
+            "selected": false,
+            "text": "IssuableBaseService#create_labels_note",
+            "value": "IssuableBaseService#create_labels_note"
+          },
+          {
+            "selected": false,
+            "text": "IssuableBaseService#create_milestone_note",
+            "value": "IssuableBaseService#create_milestone_note"
+          },
+          {
+            "selected": false,
+            "text": "IssuableBaseService#filter_labels",
+            "value": "IssuableBaseService#filter_labels"
+          },
+          {
+            "selected": false,
+            "text": "IssuableBaseService#filter_labels_in_param",
+            "value": "IssuableBaseService#filter_labels_in_param"
+          },
+          {
+            "selected": false,
+            "text": "IssuableBaseService#filter_milestone",
+            "value": "IssuableBaseService#filter_milestone"
+          },
+          {
+            "selected": false,
+            "text": "IssuableBaseService#filter_params",
+            "value": "IssuableBaseService#filter_params"
+          },
+          {
+            "selected": false,
+            "text": "IssuableBaseService#handle_common_system_notes",
+            "value": "IssuableBaseService#handle_common_system_notes"
+          },
+          {
+            "selected": false,
+            "text": "IssuableBaseService#update",
+            "value": "IssuableBaseService#update"
+          },
+          {
+            "selected": false,
+            "text": "IssuableBaseService#update_issuable",
+            "value": "IssuableBaseService#update_issuable"
+          },
+          {
+            "selected": false,
             "text": "IssuableFinder#assignee",
             "value": "IssuableFinder#assignee"
           },
@@ -2458,6 +3764,36 @@
             "selected": false,
             "text": "IssuableFinder#author?",
             "value": "IssuableFinder#author?"
+          },
+          {
+            "selected": false,
+            "text": "IssuableFinder#by_assignee",
+            "value": "IssuableFinder#by_assignee"
+          },
+          {
+            "selected": false,
+            "text": "IssuableFinder#by_author",
+            "value": "IssuableFinder#by_author"
+          },
+          {
+            "selected": false,
+            "text": "IssuableFinder#by_label",
+            "value": "IssuableFinder#by_label"
+          },
+          {
+            "selected": false,
+            "text": "IssuableFinder#by_project",
+            "value": "IssuableFinder#by_project"
+          },
+          {
+            "selected": false,
+            "text": "IssuableFinder#by_state",
+            "value": "IssuableFinder#by_state"
+          },
+          {
+            "selected": false,
+            "text": "IssuableFinder#by_weight",
+            "value": "IssuableFinder#by_weight"
           },
           {
             "selected": false,
@@ -2531,6 +3867,11 @@
           },
           {
             "selected": false,
+            "text": "IssuableFinder#sort",
+            "value": "IssuableFinder#sort"
+          },
+          {
+            "selected": false,
             "text": "Issue#closed_by_merge_requests",
             "value": "Issue#closed_by_merge_requests"
           },
@@ -2551,6 +3892,11 @@
           },
           {
             "selected": false,
+            "text": "Issue#update_assignee_cache_counts",
+            "value": "Issue#update_assignee_cache_counts"
+          },
+          {
+            "selected": false,
             "text": "Issue.sort",
             "value": "Issue.sort"
           },
@@ -2561,6 +3907,21 @@
           },
           {
             "selected": false,
+            "text": "IssueTrackerService#enabled_in_gitlab_config",
+            "value": "IssueTrackerService#enabled_in_gitlab_config"
+          },
+          {
+            "selected": false,
+            "text": "Issues::BaseService#execute_hooks",
+            "value": "Issues::BaseService#execute_hooks"
+          },
+          {
+            "selected": false,
+            "text": "Issues::BaseService#filter_params",
+            "value": "Issues::BaseService#filter_params"
+          },
+          {
+            "selected": false,
             "text": "Issues::BaseService#hook_data",
             "value": "Issues::BaseService#hook_data"
           },
@@ -2568,6 +3929,11 @@
             "selected": false,
             "text": "Issues::BulkUpdateService#execute",
             "value": "Issues::BulkUpdateService#execute"
+          },
+          {
+            "selected": false,
+            "text": "Issues::CloseService#create_note",
+            "value": "Issues::CloseService#create_note"
           },
           {
             "selected": false,
@@ -2591,6 +3957,11 @@
           },
           {
             "selected": false,
+            "text": "Issues::UpdateService#close_service",
+            "value": "Issues::UpdateService#close_service"
+          },
+          {
+            "selected": false,
             "text": "Issues::UpdateService#execute",
             "value": "Issues::UpdateService#execute"
           },
@@ -2601,8 +3972,23 @@
           },
           {
             "selected": false,
+            "text": "IssuesFinder#init_collection",
+            "value": "IssuesFinder#init_collection"
+          },
+          {
+            "selected": false,
             "text": "JenkinsDeprecatedService#commit_status",
             "value": "JenkinsDeprecatedService#commit_status"
+          },
+          {
+            "selected": false,
+            "text": "JiraService#existing_comment?",
+            "value": "JiraService#existing_comment?"
+          },
+          {
+            "selected": false,
+            "text": "JoinedGroupsFinder#all_groups",
+            "value": "JoinedGroupsFinder#all_groups"
           },
           {
             "selected": false,
@@ -2636,6 +4022,36 @@
           },
           {
             "selected": false,
+            "text": "Label.unprioritized",
+            "value": "Label.unprioritized"
+          },
+          {
+            "selected": false,
+            "text": "LegacyDiffNote#active?",
+            "value": "LegacyDiffNote#active?"
+          },
+          {
+            "selected": false,
+            "text": "LegacyDiffNote#diff_line",
+            "value": "LegacyDiffNote#diff_line"
+          },
+          {
+            "selected": false,
+            "text": "LegacyDiffNote#find_diff",
+            "value": "LegacyDiffNote#find_diff"
+          },
+          {
+            "selected": false,
+            "text": "LegacyDiffNote#find_noteable_diff",
+            "value": "LegacyDiffNote#find_noteable_diff"
+          },
+          {
+            "selected": false,
+            "text": "LegacyDiffNote#set_diff",
+            "value": "LegacyDiffNote#set_diff"
+          },
+          {
+            "selected": false,
             "text": "LfsObject#project_allowed_access?",
             "value": "LfsObject#project_allowed_access?"
           },
@@ -2646,8 +4062,23 @@
           },
           {
             "selected": false,
+            "text": "License#current_user_count",
+            "value": "License#current_user_count"
+          },
+          {
+            "selected": false,
             "text": "License#method_missing",
             "value": "License#method_missing"
+          },
+          {
+            "selected": false,
+            "text": "License#user_count",
+            "value": "License#user_count"
+          },
+          {
+            "selected": false,
+            "text": "License#warn_upgrade_license_message?",
+            "value": "License#warn_upgrade_license_message?"
           },
           {
             "selected": false,
@@ -2661,13 +4092,33 @@
           },
           {
             "selected": false,
+            "text": "Member#accept_request",
+            "value": "Member#accept_request"
+          },
+          {
+            "selected": false,
             "text": "Member#create_notification_setting",
             "value": "Member#create_notification_setting"
           },
           {
             "selected": false,
+            "text": "Member#decline_invite!",
+            "value": "Member#decline_invite!"
+          },
+          {
+            "selected": false,
+            "text": "Member#post_destroy_hook",
+            "value": "Member#post_destroy_hook"
+          },
+          {
+            "selected": false,
             "text": "Member.add_user",
             "value": "Member.add_user"
+          },
+          {
+            "selected": false,
+            "text": "Member.can_update_member?",
+            "value": "Member.can_update_member?"
           },
           {
             "selected": false,
@@ -2698,6 +4149,11 @@
             "selected": false,
             "text": "Mentionable#gfm_reference",
             "value": "Mentionable#gfm_reference"
+          },
+          {
+            "selected": false,
+            "text": "Mentionable#local_reference",
+            "value": "Mentionable#local_reference"
           },
           {
             "selected": false,
@@ -2746,6 +4202,11 @@
           },
           {
             "selected": false,
+            "text": "MergeRequest#check_if_can_be_merged",
+            "value": "MergeRequest#check_if_can_be_merged"
+          },
+          {
+            "selected": false,
             "text": "MergeRequest#ci_commit",
             "value": "MergeRequest#ci_commit"
           },
@@ -2753,6 +4214,11 @@
             "selected": false,
             "text": "MergeRequest#closed_event",
             "value": "MergeRequest#closed_event"
+          },
+          {
+            "selected": false,
+            "text": "MergeRequest#compute_diverged_commits_count",
+            "value": "MergeRequest#compute_diverged_commits_count"
           },
           {
             "selected": false,
@@ -2811,8 +4277,18 @@
           },
           {
             "selected": false,
+            "text": "MergeRequest#pipeline",
+            "value": "MergeRequest#pipeline"
+          },
+          {
+            "selected": false,
             "text": "MergeRequest#ref_is_fetched?",
             "value": "MergeRequest#ref_is_fetched?"
+          },
+          {
+            "selected": false,
+            "text": "MergeRequest#reset_merge_when_build_succeeds",
+            "value": "MergeRequest#reset_merge_when_build_succeeds"
           },
           {
             "selected": false,
@@ -2838,6 +4314,11 @@
             "selected": false,
             "text": "MergeRequest#to_reference",
             "value": "MergeRequest#to_reference"
+          },
+          {
+            "selected": false,
+            "text": "MergeRequest#update_assignee_cache_counts",
+            "value": "MergeRequest#update_assignee_cache_counts"
           },
           {
             "selected": false,
@@ -2871,6 +4352,16 @@
           },
           {
             "selected": false,
+            "text": "MergeRequests::AddTodoWhenBuildFailsService#close",
+            "value": "MergeRequests::AddTodoWhenBuildFailsService#close"
+          },
+          {
+            "selected": false,
+            "text": "MergeRequests::ApprovalService#create_approval_note",
+            "value": "MergeRequests::ApprovalService#create_approval_note"
+          },
+          {
+            "selected": false,
             "text": "MergeRequests::ApprovalService#execute",
             "value": "MergeRequests::ApprovalService#execute"
           },
@@ -2886,8 +4377,18 @@
           },
           {
             "selected": false,
+            "text": "MergeRequests::BaseService#each_merge_request",
+            "value": "MergeRequests::BaseService#each_merge_request"
+          },
+          {
+            "selected": false,
             "text": "MergeRequests::BaseService#execute_hooks",
             "value": "MergeRequests::BaseService#execute_hooks"
+          },
+          {
+            "selected": false,
+            "text": "MergeRequests::BaseService#filter_params",
+            "value": "MergeRequests::BaseService#filter_params"
           },
           {
             "selected": false,
@@ -2898,6 +4399,11 @@
             "selected": false,
             "text": "MergeRequests::BuildService#execute",
             "value": "MergeRequests::BuildService#execute"
+          },
+          {
+            "selected": false,
+            "text": "MergeRequests::BuildService#set_title_and_description",
+            "value": "MergeRequests::BuildService#set_title_and_description"
           },
           {
             "selected": false,
@@ -2938,6 +4444,16 @@
             "selected": false,
             "text": "MergeRequests::UpdateService#handle_changes",
             "value": "MergeRequests::UpdateService#handle_changes"
+          },
+          {
+            "selected": false,
+            "text": "MergeRequestsFinder#klass",
+            "value": "MergeRequestsFinder#klass"
+          },
+          {
+            "selected": false,
+            "text": "Milestone#reference_link_text",
+            "value": "Milestone#reference_link_text"
           },
           {
             "selected": false,
@@ -2988,6 +4504,11 @@
             "selected": false,
             "text": "MilestonesFinder#execute",
             "value": "MilestonesFinder#execute"
+          },
+          {
+            "selected": false,
+            "text": "Namespace#any_project_has_container_registry_tags?",
+            "value": "Namespace#any_project_has_container_registry_tags?"
           },
           {
             "selected": false,
@@ -3046,6 +4567,11 @@
           },
           {
             "selected": false,
+            "text": "Note.discussions",
+            "value": "Note.discussions"
+          },
+          {
+            "selected": false,
             "text": "Note.discussions_from_notes",
             "value": "Note.discussions_from_notes"
           },
@@ -3053,6 +4579,11 @@
             "selected": false,
             "text": "Note.grouped_awards",
             "value": "Note.grouped_awards"
+          },
+          {
+            "selected": false,
+            "text": "Note.grouped_diff_notes",
+            "value": "Note.grouped_diff_notes"
           },
           {
             "selected": false,
@@ -3091,6 +4622,26 @@
           },
           {
             "selected": false,
+            "text": "NotificationService#add_labels_subscribers",
+            "value": "NotificationService#add_labels_subscribers"
+          },
+          {
+            "selected": false,
+            "text": "NotificationService#add_project_watchers",
+            "value": "NotificationService#add_project_watchers"
+          },
+          {
+            "selected": false,
+            "text": "NotificationService#add_subscribed_users",
+            "value": "NotificationService#add_subscribed_users"
+          },
+          {
+            "selected": false,
+            "text": "NotificationService#build_recipients",
+            "value": "NotificationService#build_recipients"
+          },
+          {
+            "selected": false,
             "text": "NotificationService#close_issue",
             "value": "NotificationService#close_issue"
           },
@@ -3098,6 +4649,31 @@
             "selected": false,
             "text": "NotificationService#close_mr",
             "value": "NotificationService#close_mr"
+          },
+          {
+            "selected": false,
+            "text": "NotificationService#close_resource_email",
+            "value": "NotificationService#close_resource_email"
+          },
+          {
+            "selected": false,
+            "text": "NotificationService#decline_group_invite",
+            "value": "NotificationService#decline_group_invite"
+          },
+          {
+            "selected": false,
+            "text": "NotificationService#decline_project_access_request",
+            "value": "NotificationService#decline_project_access_request"
+          },
+          {
+            "selected": false,
+            "text": "NotificationService#decline_project_invite",
+            "value": "NotificationService#decline_project_invite"
+          },
+          {
+            "selected": false,
+            "text": "NotificationService#group_member_notification",
+            "value": "NotificationService#group_member_notification"
           },
           {
             "selected": false,
@@ -3141,13 +4717,43 @@
           },
           {
             "selected": false,
+            "text": "NotificationService#new_project_access_request",
+            "value": "NotificationService#new_project_access_request"
+          },
+          {
+            "selected": false,
             "text": "NotificationService#new_project_member",
             "value": "NotificationService#new_project_member"
           },
           {
             "selected": false,
+            "text": "NotificationService#new_resource_email",
+            "value": "NotificationService#new_resource_email"
+          },
+          {
+            "selected": false,
+            "text": "NotificationService#new_user",
+            "value": "NotificationService#new_user"
+          },
+          {
+            "selected": false,
+            "text": "NotificationService#project_member_notification",
+            "value": "NotificationService#project_member_notification"
+          },
+          {
+            "selected": false,
             "text": "NotificationService#project_was_moved",
             "value": "NotificationService#project_was_moved"
+          },
+          {
+            "selected": false,
+            "text": "NotificationService#project_watchers",
+            "value": "NotificationService#project_watchers"
+          },
+          {
+            "selected": false,
+            "text": "NotificationService#reassign_resource_email",
+            "value": "NotificationService#reassign_resource_email"
           },
           {
             "selected": false,
@@ -3158,6 +4764,31 @@
             "selected": false,
             "text": "NotificationService#reassigned_merge_request",
             "value": "NotificationService#reassigned_merge_request"
+          },
+          {
+            "selected": false,
+            "text": "NotificationService#reject_mention_users",
+            "value": "NotificationService#reject_mention_users"
+          },
+          {
+            "selected": false,
+            "text": "NotificationService#reject_muted_users",
+            "value": "NotificationService#reject_muted_users"
+          },
+          {
+            "selected": false,
+            "text": "NotificationService#reject_unsubscribed_users",
+            "value": "NotificationService#reject_unsubscribed_users"
+          },
+          {
+            "selected": false,
+            "text": "NotificationService#reject_users",
+            "value": "NotificationService#reject_users"
+          },
+          {
+            "selected": false,
+            "text": "NotificationService#reject_users_without_access",
+            "value": "NotificationService#reject_users_without_access"
           },
           {
             "selected": false,
@@ -3181,6 +4812,16 @@
           },
           {
             "selected": false,
+            "text": "NotificationService#reopen_resource_email",
+            "value": "NotificationService#reopen_resource_email"
+          },
+          {
+            "selected": false,
+            "text": "NotificationService#select_group_member_setting",
+            "value": "NotificationService#select_group_member_setting"
+          },
+          {
+            "selected": false,
             "text": "NotificationService#update_group_member",
             "value": "NotificationService#update_group_member"
           },
@@ -3191,8 +4832,18 @@
           },
           {
             "selected": false,
+            "text": "NotificationService#users_with_global_level_watch",
+            "value": "NotificationService#users_with_global_level_watch"
+          },
+          {
+            "selected": false,
             "text": "NotificationSetting.find_or_create_for",
             "value": "NotificationSetting.find_or_create_for"
+          },
+          {
+            "selected": false,
+            "text": "PagesDomain#update",
+            "value": "PagesDomain#update"
           },
           {
             "selected": false,
@@ -3208,6 +4859,21 @@
             "selected": false,
             "text": "PersonalProjectsFinder#execute",
             "value": "PersonalProjectsFinder#execute"
+          },
+          {
+            "selected": false,
+            "text": "PipelinesFinder#branches",
+            "value": "PipelinesFinder#branches"
+          },
+          {
+            "selected": false,
+            "text": "PipelinesFinder#execute",
+            "value": "PipelinesFinder#execute"
+          },
+          {
+            "selected": false,
+            "text": "PipelinesFinder#tags",
+            "value": "PipelinesFinder#tags"
           },
           {
             "selected": false,
@@ -3238,6 +4904,11 @@
             "selected": false,
             "text": "Project#build_missing_services",
             "value": "Project#build_missing_services"
+          },
+          {
+            "selected": false,
+            "text": "Project#cache_has_external_issue_tracker",
+            "value": "Project#cache_has_external_issue_tracker"
           },
           {
             "selected": false,
@@ -3326,6 +4997,11 @@
           },
           {
             "selected": false,
+            "text": "Project#has_container_registry_tags?",
+            "value": "Project#has_container_registry_tags?"
+          },
+          {
+            "selected": false,
             "text": "Project#has_remote_mirror?",
             "value": "Project#has_remote_mirror?"
           },
@@ -3333,6 +5009,21 @@
             "selected": false,
             "text": "Project#import_url=",
             "value": "Project#import_url="
+          },
+          {
+            "selected": false,
+            "text": "Project#import_url_availability",
+            "value": "Project#import_url_availability"
+          },
+          {
+            "selected": false,
+            "text": "Project#mark_import_as_failed",
+            "value": "Project#mark_import_as_failed"
+          },
+          {
+            "selected": false,
+            "text": "Project#mark_remote_mirrors_for_removal",
+            "value": "Project#mark_remote_mirrors_for_removal"
           },
           {
             "selected": false,
@@ -3361,8 +5052,28 @@
           },
           {
             "selected": false,
+            "text": "Project#no_import?",
+            "value": "Project#no_import?"
+          },
+          {
+            "selected": false,
+            "text": "Project#origin_merge_requests",
+            "value": "Project#origin_merge_requests"
+          },
+          {
+            "selected": false,
             "text": "Project#owner",
             "value": "Project#owner"
+          },
+          {
+            "selected": false,
+            "text": "Project#pipeline",
+            "value": "Project#pipeline"
+          },
+          {
+            "selected": false,
+            "text": "Project#protected_branch_names",
+            "value": "Project#protected_branch_names"
           },
           {
             "selected": false,
@@ -3391,6 +5102,16 @@
           },
           {
             "selected": false,
+            "text": "Project#running_or_pending_build_count",
+            "value": "Project#running_or_pending_build_count"
+          },
+          {
+            "selected": false,
+            "text": "Project#schedule_delete!",
+            "value": "Project#schedule_delete!"
+          },
+          {
+            "selected": false,
             "text": "Project#set_last_activity_at",
             "value": "Project#set_last_activity_at"
           },
@@ -3403,6 +5124,11 @@
             "selected": false,
             "text": "Project#unarchive!",
             "value": "Project#unarchive!"
+          },
+          {
+            "selected": false,
+            "text": "Project#update_forks_visibility_level",
+            "value": "Project#update_forks_visibility_level"
           },
           {
             "selected": false,
@@ -3445,7 +5171,7 @@
             "value": "Project#visibility_level_allowed_by_group?"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "Project.find_with_namespace",
             "value": "Project.find_with_namespace"
           },
@@ -3476,6 +5202,26 @@
           },
           {
             "selected": false,
+            "text": "Project.where_paths_in",
+            "value": "Project.where_paths_in"
+          },
+          {
+            "selected": false,
+            "text": "ProjectMember#delete_member_todos",
+            "value": "ProjectMember#delete_member_todos"
+          },
+          {
+            "selected": false,
+            "text": "ProjectMember#post_destroy_hook",
+            "value": "ProjectMember#post_destroy_hook"
+          },
+          {
+            "selected": false,
+            "text": "ProjectMember#post_update_hook",
+            "value": "ProjectMember#post_update_hook"
+          },
+          {
+            "selected": false,
             "text": "ProjectMember.add_users_into_projects",
             "value": "ProjectMember.add_users_into_projects"
           },
@@ -3491,8 +5237,28 @@
           },
           {
             "selected": false,
+            "text": "Projects::AutocompleteService#milestones",
+            "value": "Projects::AutocompleteService#milestones"
+          },
+          {
+            "selected": false,
+            "text": "Projects::CreateService#after_create_actions",
+            "value": "Projects::CreateService#after_create_actions"
+          },
+          {
+            "selected": false,
+            "text": "Projects::CreateService#allowed_namespace?",
+            "value": "Projects::CreateService#allowed_namespace?"
+          },
+          {
+            "selected": false,
             "text": "Projects::CreateService#execute",
             "value": "Projects::CreateService#execute"
+          },
+          {
+            "selected": false,
+            "text": "Projects::CreateService#save_project_and_import_data",
+            "value": "Projects::CreateService#save_project_and_import_data"
           },
           {
             "selected": false,
@@ -3571,6 +5337,16 @@
           },
           {
             "selected": false,
+            "text": "Projects::UpdatePagesConfigurationService#reload_daemon",
+            "value": "Projects::UpdatePagesConfigurationService#reload_daemon"
+          },
+          {
+            "selected": false,
+            "text": "Projects::UpdatePagesConfigurationService#update_file",
+            "value": "Projects::UpdatePagesConfigurationService#update_file"
+          },
+          {
+            "selected": false,
             "text": "Projects::UpdateService#execute",
             "value": "Projects::UpdateService#execute"
           },
@@ -3581,6 +5357,11 @@
           },
           {
             "selected": false,
+            "text": "ProjectsFinder#all_projects",
+            "value": "ProjectsFinder#all_projects"
+          },
+          {
+            "selected": false,
             "text": "ProjectsFinder#execute",
             "value": "ProjectsFinder#execute"
           },
@@ -3588,6 +5369,16 @@
             "selected": false,
             "text": "PushoverService#execute",
             "value": "PushoverService#execute"
+          },
+          {
+            "selected": false,
+            "text": "RemoteMirror#add_update_job",
+            "value": "RemoteMirror#add_update_job"
+          },
+          {
+            "selected": false,
+            "text": "RemoteMirror#mark_for_delete_if_blank_url",
+            "value": "RemoteMirror#mark_for_delete_if_blank_url"
           },
           {
             "selected": false,
@@ -3651,8 +5442,18 @@
           },
           {
             "selected": false,
+            "text": "Rugged::Commit#inspect",
+            "value": "Rugged::Commit#inspect"
+          },
+          {
+            "selected": false,
             "text": "Rugged::Commit#message",
             "value": "Rugged::Commit#message"
+          },
+          {
+            "selected": false,
+            "text": "Rugged::Commit#parent_oids",
+            "value": "Rugged::Commit#parent_oids"
           },
           {
             "selected": false,
@@ -3701,6 +5502,11 @@
           },
           {
             "selected": false,
+            "text": "Rugged::Repository#attributes",
+            "value": "Rugged::Repository#attributes"
+          },
+          {
+            "selected": false,
             "text": "Rugged::Repository#bare?",
             "value": "Rugged::Repository#bare?"
           },
@@ -3713,6 +5519,11 @@
             "selected": false,
             "text": "Rugged::Repository#cherrypick_commit",
             "value": "Rugged::Repository#cherrypick_commit"
+          },
+          {
+            "selected": false,
+            "text": "Rugged::Repository#config",
+            "value": "Rugged::Repository#config"
           },
           {
             "selected": false,
@@ -3736,8 +5547,18 @@
           },
           {
             "selected": false,
+            "text": "Rugged::Repository#head_unborn?",
+            "value": "Rugged::Repository#head_unborn?"
+          },
+          {
+            "selected": false,
             "text": "Rugged::Repository#index",
             "value": "Rugged::Repository#index"
+          },
+          {
+            "selected": false,
+            "text": "Rugged::Repository#inspect",
+            "value": "Rugged::Repository#inspect"
           },
           {
             "selected": false,
@@ -3806,6 +5627,11 @@
           },
           {
             "selected": false,
+            "text": "Rugged::TagCollection#create",
+            "value": "Rugged::TagCollection#create"
+          },
+          {
+            "selected": false,
             "text": "Rugged::TagCollection#delete",
             "value": "Rugged::TagCollection#delete"
           },
@@ -3841,6 +5667,11 @@
           },
           {
             "selected": false,
+            "text": "Rugged::Tree#inspect",
+            "value": "Rugged::Tree#inspect"
+          },
+          {
+            "selected": false,
             "text": "Rugged::Tree#repo",
             "value": "Rugged::Tree#repo"
           },
@@ -3871,6 +5702,11 @@
           },
           {
             "selected": false,
+            "text": "Search::ProjectService#params",
+            "value": "Search::ProjectService#params"
+          },
+          {
+            "selected": false,
             "text": "Search::SnippetService#execute",
             "value": "Search::SnippetService#execute"
           },
@@ -3878,6 +5714,11 @@
             "selected": false,
             "text": "SentNotification.for",
             "value": "SentNotification.for"
+          },
+          {
+            "selected": false,
+            "text": "Service#cache_project_has_external_issue_tracker",
+            "value": "Service#cache_project_has_external_issue_tracker"
           },
           {
             "selected": false,
@@ -3898,6 +5739,26 @@
             "selected": false,
             "text": "SlackService#execute",
             "value": "SlackService#execute"
+          },
+          {
+            "selected": false,
+            "text": "Snippet#no_highlighting?",
+            "value": "Snippet#no_highlighting?"
+          },
+          {
+            "selected": false,
+            "text": "Snippet.accessible_to",
+            "value": "Snippet.accessible_to"
+          },
+          {
+            "selected": false,
+            "text": "SnippetsFinder#by_project",
+            "value": "SnippetsFinder#by_project"
+          },
+          {
+            "selected": false,
+            "text": "SnippetsFinder#by_user",
+            "value": "SnippetsFinder#by_user"
           },
           {
             "selected": false,
@@ -3938,6 +5799,11 @@
             "selected": false,
             "text": "SystemNoteService.change_branch",
             "value": "SystemNoteService.change_branch"
+          },
+          {
+            "selected": false,
+            "text": "SystemNoteService.change_issue_confidentiality",
+            "value": "SystemNoteService.change_issue_confidentiality"
           },
           {
             "selected": false,
@@ -3991,6 +5857,11 @@
           },
           {
             "selected": false,
+            "text": "SystemNoteService.cross_reference_note_content",
+            "value": "SystemNoteService.cross_reference_note_content"
+          },
+          {
+            "selected": false,
             "text": "SystemNoteService.cross_reference_note_prefix",
             "value": "SystemNoteService.cross_reference_note_prefix"
           },
@@ -4031,6 +5902,11 @@
           },
           {
             "selected": false,
+            "text": "TodoService#attributes_for_target",
+            "value": "TodoService#attributes_for_target"
+          },
+          {
+            "selected": false,
             "text": "TodoService#close_issue",
             "value": "TodoService#close_issue"
           },
@@ -4041,13 +5917,58 @@
           },
           {
             "selected": false,
+            "text": "TodoService#create_assignment_todo",
+            "value": "TodoService#create_assignment_todo"
+          },
+          {
+            "selected": false,
+            "text": "TodoService#create_mention_todos",
+            "value": "TodoService#create_mention_todos"
+          },
+          {
+            "selected": false,
+            "text": "TodoService#create_todos",
+            "value": "TodoService#create_todos"
+          },
+          {
+            "selected": false,
+            "text": "TodoService#filter_mentioned_users",
+            "value": "TodoService#filter_mentioned_users"
+          },
+          {
+            "selected": false,
+            "text": "TodoService#handle_note",
+            "value": "TodoService#handle_note"
+          },
+          {
+            "selected": false,
             "text": "TodoService#mark_pending_todos_as_done",
             "value": "TodoService#mark_pending_todos_as_done"
           },
           {
             "selected": false,
+            "text": "TodoService#mark_todo",
+            "value": "TodoService#mark_todo"
+          },
+          {
+            "selected": false,
             "text": "TodoService#merge_merge_request",
             "value": "TodoService#merge_merge_request"
+          },
+          {
+            "selected": false,
+            "text": "TodoService#merge_request_build_retried",
+            "value": "TodoService#merge_request_build_retried"
+          },
+          {
+            "selected": false,
+            "text": "TodoService#new_award_emoji",
+            "value": "TodoService#new_award_emoji"
+          },
+          {
+            "selected": false,
+            "text": "TodoService#new_issuable",
+            "value": "TodoService#new_issuable"
           },
           {
             "selected": false,
@@ -4076,6 +5997,21 @@
           },
           {
             "selected": false,
+            "text": "TodoService#reject_users_without_access",
+            "value": "TodoService#reject_users_without_access"
+          },
+          {
+            "selected": false,
+            "text": "TodoService#select_users",
+            "value": "TodoService#select_users"
+          },
+          {
+            "selected": false,
+            "text": "TodoService#update_issuable",
+            "value": "TodoService#update_issuable"
+          },
+          {
+            "selected": false,
             "text": "TodoService#update_issue",
             "value": "TodoService#update_issue"
           },
@@ -4091,6 +6027,16 @@
           },
           {
             "selected": false,
+            "text": "TodosFinder#by_project",
+            "value": "TodosFinder#by_project"
+          },
+          {
+            "selected": false,
+            "text": "TodosFinder#current_user",
+            "value": "TodosFinder#current_user"
+          },
+          {
+            "selected": false,
             "text": "TodosFinder#execute",
             "value": "TodosFinder#execute"
           },
@@ -4101,8 +6047,23 @@
           },
           {
             "selected": false,
+            "text": "TodosFinder#projects",
+            "value": "TodosFinder#projects"
+          },
+          {
+            "selected": false,
             "text": "TrendingProjectsFinder#execute",
             "value": "TrendingProjectsFinder#execute"
+          },
+          {
+            "selected": false,
+            "text": "TrendingProjectsFinder#projects_for",
+            "value": "TrendingProjectsFinder#projects_for"
+          },
+          {
+            "selected": false,
+            "text": "U2fRegistration.authenticate",
+            "value": "U2fRegistration.authenticate"
           },
           {
             "selected": false,
@@ -4118,6 +6079,16 @@
             "selected": false,
             "text": "User#accessible_deploy_keys",
             "value": "User#accessible_deploy_keys"
+          },
+          {
+            "selected": false,
+            "text": "User#assigned_open_issues_count",
+            "value": "User#assigned_open_issues_count"
+          },
+          {
+            "selected": false,
+            "text": "User#assigned_open_merge_request_count",
+            "value": "User#assigned_open_merge_request_count"
           },
           {
             "selected": false,
@@ -4166,6 +6137,11 @@
           },
           {
             "selected": false,
+            "text": "User#ensure_external_user_rights",
+            "value": "User#ensure_external_user_rights"
+          },
+          {
+            "selected": false,
             "text": "User#ensure_namespace_correct",
             "value": "User#ensure_namespace_correct"
           },
@@ -4173,6 +6149,16 @@
             "selected": false,
             "text": "User#fork_of",
             "value": "User#fork_of"
+          },
+          {
+            "selected": false,
+            "text": "User#generate_password",
+            "value": "User#generate_password"
+          },
+          {
+            "selected": false,
+            "text": "User#global_notification_setting",
+            "value": "User#global_notification_setting"
           },
           {
             "selected": false,
@@ -4213,6 +6199,11 @@
             "selected": false,
             "text": "User#projects_limit_left",
             "value": "User#projects_limit_left"
+          },
+          {
+            "selected": false,
+            "text": "User#projects_union",
+            "value": "User#projects_union"
           },
           {
             "selected": false,
@@ -4271,8 +6262,18 @@
           },
           {
             "selected": false,
+            "text": "User#two_factor_u2f_enabled?",
+            "value": "User#two_factor_u2f_enabled?"
+          },
+          {
+            "selected": false,
             "text": "User#unique_email",
             "value": "User#unique_email"
+          },
+          {
+            "selected": false,
+            "text": "User#update_cache_counts",
+            "value": "User#update_cache_counts"
           },
           {
             "selected": false,
@@ -4286,13 +6287,13 @@
           },
           {
             "selected": false,
-            "text": "User.by_login",
-            "value": "User.by_login"
+            "text": "User#viewable_starred_projects",
+            "value": "User#viewable_starred_projects"
           },
           {
             "selected": false,
-            "text": "User.filter",
-            "value": "User.filter"
+            "text": "User.by_login",
+            "value": "User.by_login"
           },
           {
             "selected": false,
@@ -4321,6 +6322,11 @@
           },
           {
             "selected": false,
+            "text": "WikiPages::BaseService#execute_hooks",
+            "value": "WikiPages::BaseService#execute_hooks"
+          },
+          {
+            "selected": false,
             "text": "WikiPages::BaseService#hook_data",
             "value": "WikiPages::BaseService#hook_data"
           },
@@ -4336,7 +6342,7 @@
           }
         ],
         "query": "show tag values from gitlab.downsampled.rails_method_call_timings_per_method with key = \"method\"",
-        "refresh": true,
+        "refresh": 1,
         "regex": "/#|\\./",
         "type": "query"
       }
@@ -4374,5 +6380,5 @@
   },
   "timezone": "utc",
   "title": "Method Call Timings",
-  "version": 13
+  "version": 16
 }

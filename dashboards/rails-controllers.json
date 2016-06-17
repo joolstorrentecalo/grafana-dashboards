@@ -30,6 +30,13 @@
           "editable": true,
           "error": false,
           "format": "ms",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
           "height": "100px",
           "id": 4,
           "interval": null,
@@ -69,6 +76,7 @@
                   "type": "fill"
                 }
               ],
+              "policy": "default",
               "query": "SELECT percentile(\"duration\", 95) FROM rails_transactions WHERE $timeFilter AND \"action\" = '[[action]]'",
               "rawQuery": true,
               "refId": "A",
@@ -94,7 +102,7 @@
               ]
             }
           ],
-          "thresholds": "0,1000,5000",
+          "thresholds": "1000,5000",
           "title": "Response Time",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -120,6 +128,13 @@
           "editable": true,
           "error": false,
           "format": "ms",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
           "height": "100px",
           "id": 7,
           "interval": null,
@@ -159,6 +174,7 @@
                   "type": "fill"
                 }
               ],
+              "policy": "default",
               "query": "SELECT percentile(\"sql_duration\", 95) FROM rails_transactions WHERE $timeFilter AND \"action\" = '[[action]]'",
               "rawQuery": true,
               "refId": "A",
@@ -184,7 +200,7 @@
               ]
             }
           ],
-          "thresholds": "0,1000,5000",
+          "thresholds": "1000,5000",
           "title": "SQL Time",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -210,6 +226,13 @@
           "editable": true,
           "error": false,
           "format": "ms",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
           "height": "100px",
           "id": 14,
           "interval": null,
@@ -249,6 +272,7 @@
                   "type": "fill"
                 }
               ],
+              "policy": "default",
               "query": "SELECT percentile(\"cache_duration\", 95) FROM rails_transactions WHERE $timeFilter AND \"action\" = '[[action]]'",
               "rawQuery": true,
               "refId": "A",
@@ -274,7 +298,7 @@
               ]
             }
           ],
-          "thresholds": "0,100,5000",
+          "thresholds": "100,5000",
           "title": "Cache Time",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -300,6 +324,13 @@
           "editable": true,
           "error": false,
           "format": "ms",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
           "height": "100px",
           "id": 19,
           "interval": null,
@@ -339,6 +370,7 @@
                   "type": "fill"
                 }
               ],
+              "policy": "default",
               "query": "SELECT percentile(\"duration\", 95) AS \"95th Percentile\" FROM rails_method_calls WHERE $timeFilter AND \"action\" = '[[action]]' AND method =~ /^(Gitlab::Git|Rugged)/",
               "rawQuery": true,
               "refId": "A",
@@ -364,7 +396,7 @@
               ]
             }
           ],
-          "thresholds": "0,500,5000",
+          "thresholds": "500,5000",
           "title": "Git Time",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -390,6 +422,13 @@
           "editable": true,
           "error": false,
           "format": "ms",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
           "height": "100px",
           "id": 8,
           "interval": null,
@@ -429,6 +468,7 @@
                   "type": "fill"
                 }
               ],
+              "policy": "default",
               "query": "SELECT percentile(\"view_duration\", 95) FROM rails_transactions WHERE $timeFilter AND \"action\" = '[[action]]'",
               "rawQuery": true,
               "refId": "A",
@@ -454,7 +494,7 @@
               ]
             }
           ],
-          "thresholds": "0,1000,5000",
+          "thresholds": "1000,5000",
           "title": "View Time",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -468,8 +508,8 @@
           "valueName": "avg"
         }
       ],
-      "showTitle": false,
-      "title": "Overall Timings"
+      "showTitle": true,
+      "title": "Last Hour"
     },
     {
       "collapse": false,
@@ -486,12 +526,6 @@
           "error": false,
           "fill": 0,
           "grid": {
-            "leftLogBase": 1,
-            "leftMax": null,
-            "leftMin": null,
-            "rightLogBase": 1,
-            "rightMax": null,
-            "rightMin": null,
             "threshold1": null,
             "threshold1Color": "rgba(216, 200, 27, 0.27)",
             "threshold2": null,
@@ -543,6 +577,7 @@
                   "type": "fill"
                 }
               ],
+              "policy": "default",
               "query": "SELECT \"count\" AS \"Amount\" FROM gitlab.downsampled.rails_transaction_counts_per_action WHERE $timeFilter AND \"action\" = '[[action]]'",
               "rawQuery": true,
               "refId": "A",
@@ -572,15 +607,29 @@
           "timeShift": null,
           "title": "Transactions",
           "tooltip": {
+            "msResolution": false,
             "shared": true,
             "value_type": "cumulative"
           },
           "type": "graph",
-          "x-axis": true,
-          "y-axis": true,
-          "y_formats": [
-            "short",
-            "short"
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
           ]
         },
         {
@@ -595,12 +644,6 @@
           "error": false,
           "fill": 0,
           "grid": {
-            "leftLogBase": 1,
-            "leftMax": null,
-            "leftMin": null,
-            "rightLogBase": 1,
-            "rightMax": null,
-            "rightMin": null,
             "threshold1": null,
             "threshold1Color": "rgba(216, 200, 27, 0.27)",
             "threshold2": null,
@@ -652,6 +695,7 @@
                   "type": "fill"
                 }
               ],
+              "policy": "default",
               "query": "SELECT \"duration_95th\" AS \"95th Percentile\", \"duration_99th\" AS \"99th Percentile\", \"duration_mean\" AS \"Mean\" FROM gitlab.downsampled.rails_transaction_timings_per_action WHERE $timeFilter AND \"action\" = '[[action]]'",
               "rawQuery": true,
               "refId": "A",
@@ -681,19 +725,33 @@
           "timeShift": null,
           "title": "Transaction Timings",
           "tooltip": {
+            "msResolution": true,
             "shared": true,
             "value_type": "cumulative"
           },
           "type": "graph",
-          "x-axis": true,
-          "y-axis": true,
-          "y_formats": [
-            "ms",
-            "short"
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "ms",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
           ]
         }
       ],
-      "showTitle": false,
+      "showTitle": true,
       "title": "Timings"
     },
     {
@@ -703,10 +761,8 @@
       "panels": [
         {
           "aliasColors": {
-            "95th Pecentile": "#9AC48A",
             "95th Percentile": "#9AC48A",
-            "99th Percentile": "#E24D42",
-            "Mean": "#6ED0E0"
+            "99th Percentile": "#E24D42"
           },
           "bars": false,
           "datasource": null,
@@ -714,18 +770,12 @@
           "error": false,
           "fill": 0,
           "grid": {
-            "leftLogBase": 1,
-            "leftMax": null,
-            "leftMin": null,
-            "rightLogBase": 1,
-            "rightMax": null,
-            "rightMin": null,
             "threshold1": null,
             "threshold1Color": "rgba(216, 200, 27, 0.27)",
             "threshold2": null,
             "threshold2Color": "rgba(234, 112, 112, 0.22)"
           },
-          "id": 5,
+          "id": 21,
           "interval": "1m",
           "isNew": true,
           "legend": {
@@ -771,7 +821,8 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT \"sql_duration_95th\" AS \"95th Percentile\", \"sql_duration_99th\" AS \"99th Percentile\", \"sql_duration_mean\" AS \"Mean\" FROM gitlab.downsampled.rails_transaction_timings_per_action WHERE $timeFilter AND \"action\" = '[[action]]'",
+              "policy": "default",
+              "query": "SELECT \"rails_queue_duration_95th\" AS \"95th Percentile\", \"rails_queue_duration_99th\" AS \"99th Percentile\", \"rails_queue_duration_mean\" AS \"Mean\" FROM gitlab.downsampled.rails_transaction_timings_per_action WHERE $timeFilter AND \"action\" = '[[action]]'",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -798,17 +849,31 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "SQL Timings",
+          "title": "HTTP Queue Timings",
           "tooltip": {
+            "msResolution": true,
             "shared": true,
             "value_type": "cumulative"
           },
           "type": "graph",
-          "x-axis": true,
-          "y-axis": true,
-          "y_formats": [
-            "ms",
-            "short"
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "ms",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
           ]
         },
         {
@@ -823,12 +888,6 @@
           "error": false,
           "fill": 0,
           "grid": {
-            "leftLogBase": 1,
-            "leftMax": null,
-            "leftMin": null,
-            "rightLogBase": 1,
-            "rightMax": null,
-            "rightMin": null,
             "threshold1": null,
             "threshold1Color": "rgba(216, 200, 27, 0.27)",
             "threshold2": null,
@@ -880,6 +939,7 @@
                   "type": "fill"
                 }
               ],
+              "policy": "default",
               "query": "SELECT \"view_duration_95th\" AS \"95th Percentile\", \"view_duration_99th\" AS \"99th Percentile\", \"view_duration_mean\" AS \"Mean\" FROM gitlab.downsampled.rails_transaction_timings_per_action WHERE $timeFilter AND \"action\" = '[[action]]'",
               "rawQuery": true,
               "refId": "A",
@@ -909,15 +969,29 @@
           "timeShift": null,
           "title": "View Timings",
           "tooltip": {
+            "msResolution": true,
             "shared": true,
             "value_type": "cumulative"
           },
           "type": "graph",
-          "x-axis": true,
-          "y-axis": true,
-          "y_formats": [
-            "ms",
-            "short"
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "ms",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
           ]
         },
         {
@@ -931,12 +1005,6 @@
           "error": false,
           "fill": 0,
           "grid": {
-            "leftLogBase": 1,
-            "leftMax": null,
-            "leftMin": null,
-            "rightLogBase": 1,
-            "rightMax": null,
-            "rightMin": null,
             "threshold1": null,
             "threshold1Color": "rgba(216, 200, 27, 0.27)",
             "threshold2": null,
@@ -988,6 +1056,7 @@
                   "type": "fill"
                 }
               ],
+              "policy": "default",
               "query": "SELECT \"cache_duration_95th\" AS \"95th Percentile\", \"cache_duration_99th\" AS \"99th Percentile\", \"cache_duration_mean\" AS \"Mean\" FROM gitlab.downsampled.rails_transaction_timings_per_action WHERE $timeFilter AND \"action\" = '[[action]]'",
               "rawQuery": true,
               "refId": "A",
@@ -1017,15 +1086,29 @@
           "timeShift": null,
           "title": "Cache Timings",
           "tooltip": {
+            "msResolution": true,
             "shared": true,
             "value_type": "cumulative"
           },
           "type": "graph",
-          "x-axis": true,
-          "y-axis": true,
-          "y_formats": [
-            "ms",
-            "short"
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "ms",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
           ]
         },
         {
@@ -1039,12 +1122,6 @@
           "error": false,
           "fill": 0,
           "grid": {
-            "leftLogBase": 1,
-            "leftMax": null,
-            "leftMin": null,
-            "rightLogBase": 1,
-            "rightMax": null,
-            "rightMin": null,
             "threshold1": null,
             "threshold1Color": "rgba(216, 200, 27, 0.27)",
             "threshold2": null,
@@ -1096,6 +1173,7 @@
                   "type": "fill"
                 }
               ],
+              "policy": "default",
               "query": "SELECT \"duration_95th\" AS \"95th Percentile\", \"duration_99th\" AS \"99th Percentile\", \"duration_mean\" AS \"Mean\" FROM gitlab.downsampled.rails_git_timings_per_action WHERE $timeFilter AND \"action\" = '[[action]]'",
               "rawQuery": true,
               "refId": "A",
@@ -1125,15 +1203,149 @@
           "timeShift": null,
           "title": "Git Timings",
           "tooltip": {
+            "msResolution": true,
             "shared": true,
             "value_type": "cumulative"
           },
           "type": "graph",
-          "x-axis": true,
-          "y-axis": true,
-          "y_formats": [
-            "ms",
-            "short"
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "ms",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+            "95th Pecentile": "#9AC48A",
+            "95th Percentile": "#9AC48A",
+            "99th Percentile": "#E24D42",
+            "Maximum": "#EAB839",
+            "Mean": "#6ED0E0"
+          },
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 0,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 5,
+          "interval": "1m",
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null as zero",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+
+          ],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "$col",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "policy": "default",
+              "query": "SELECT \"sql_duration_95th\" AS \"95th Percentile\", \"sql_duration_99th\" AS \"99th Percentile\", \"sql_duration_mean\" AS \"Mean\", \"sql_duration_max\" AS \"Maximum\" FROM gitlab.downsampled.rails_transaction_timings_per_action WHERE $timeFilter AND \"action\" = '[[action]]'",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [
+
+                    ],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+
+              ]
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "SQL Timings",
+          "tooltip": {
+            "msResolution": true,
+            "shared": true,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "ms",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
           ]
         },
         {
@@ -1148,12 +1360,6 @@
           "error": false,
           "fill": 0,
           "grid": {
-            "leftLogBase": 1,
-            "leftMax": null,
-            "leftMin": null,
-            "rightLogBase": 1,
-            "rightMax": null,
-            "rightMin": null,
             "threshold1": null,
             "threshold1Color": "rgba(216, 200, 27, 0.27)",
             "threshold2": null,
@@ -1187,7 +1393,7 @@
               "yaxis": 1
             }
           ],
-          "span": 12,
+          "span": 6,
           "stack": false,
           "steppedLine": false,
           "targets": [
@@ -1208,6 +1414,7 @@
                   "type": "fill"
                 }
               ],
+              "policy": "default",
               "query": "SELECT \"sql_count_95th\" AS \"95th Percentile\", \"sql_count_99th\" AS \"99th Percentile\", \"sql_count_mean\" AS \"Mean\", \"sql_count_max\" AS \"Maximum\" FROM gitlab.downsampled.rails_transaction_sql_counts_per_action WHERE $timeFilter AND \"action\" = '[[action]]'",
               "rawQuery": true,
               "refId": "A",
@@ -1237,15 +1444,29 @@
           "timeShift": null,
           "title": "SQL Query Counts",
           "tooltip": {
+            "msResolution": false,
             "shared": true,
             "value_type": "cumulative"
           },
           "type": "graph",
-          "x-axis": true,
-          "y-axis": true,
-          "y_formats": [
-            "short",
-            "short"
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
           ]
         }
       ],
@@ -1266,12 +1487,6 @@
           "error": false,
           "fill": 1,
           "grid": {
-            "leftLogBase": 1,
-            "leftMax": null,
-            "leftMin": null,
-            "rightLogBase": 1,
-            "rightMax": null,
-            "rightMin": null,
             "threshold1": null,
             "threshold1Color": "rgba(216, 200, 27, 0.27)",
             "threshold2": null,
@@ -1325,6 +1540,7 @@
                   "type": "fill"
                 }
               ],
+              "policy": "default",
               "query": "SELECT mean(\"duration_95th\") AS \"value\" FROM gitlab.downsampled.rails_method_call_timings_per_action_and_method WHERE $timeFilter AND \"action\" = '[[action]]' GROUP BY \"method\", time($interval)",
               "rawQuery": true,
               "refId": "A",
@@ -1354,15 +1570,29 @@
           "timeShift": null,
           "title": "Method Calls",
           "tooltip": {
+            "msResolution": false,
             "shared": false,
             "value_type": "individual"
           },
           "type": "graph",
-          "x-axis": true,
-          "y-axis": true,
-          "y_formats": [
-            "ms",
-            "short"
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "ms",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
           ]
         }
       ],
@@ -1380,7 +1610,7 @@
           "editable": true,
           "error": false,
           "fontSize": "100%",
-          "height": "500",
+          "height": "",
           "hideTimeOverride": false,
           "id": 12,
           "isNew": true,
@@ -1407,7 +1637,6 @@
               "decimals": 2,
               "pattern": "95th Percentile",
               "thresholds": [
-                "0",
                 "100",
                 "500"
               ],
@@ -1456,6 +1685,7 @@
               ],
               "hide": false,
               "measurement": "transactions",
+              "policy": "default",
               "query": "SELECT mean(\"duration_95th\") AS \"95th Percentile\" FROM gitlab.downsampled.rails_view_timings_per_action_and_view WHERE $timeFilter AND \"action\" = '[[action]]' GROUP BY \"view\" ORDER BY time DESC LIMIT 100",
               "rawQuery": true,
               "refId": "A",
@@ -1537,7 +1767,6 @@
               "decimals": 2,
               "pattern": "Duration",
               "thresholds": [
-                "0",
                 "1000",
                 "3000"
               ],
@@ -1634,6 +1863,7 @@
               ],
               "hide": false,
               "measurement": "transactions",
+              "policy": "default",
               "query": "SELECT \"duration\" AS \"Duration\", \"allocated_memory\" AS \"Memory\", \"sql_count\" AS \"Queries\", \"request_method\" AS \"Method\", \"action\" AS \"Action\", \"request_uri\" AS \"URI\" FROM \"rails_transactions\" WHERE $timeFilter AND \"action\" ='[[action]]' ORDER BY time DESC LIMIT 100",
               "rawQuery": true,
               "refId": "A",
@@ -1678,7 +1908,7 @@
       "title": "New row"
     }
   ],
-  "schemaVersion": 8,
+  "schemaVersion": 12,
   "sharedCrosshair": false,
   "style": "dark",
   "tags": [
@@ -1693,6 +1923,7 @@
           "value": "Projects::IssuesController#show"
         },
         "datasource": null,
+        "hide": 0,
         "includeAll": false,
         "label": "Action",
         "multi": false,
@@ -1726,13 +1957,48 @@
           },
           {
             "selected": false,
+            "text": "Admin::ApplicationSettingsController#clear_repository_check_states",
+            "value": "Admin::ApplicationSettingsController#clear_repository_check_states"
+          },
+          {
+            "selected": false,
             "text": "Admin::ApplicationSettingsController#show",
             "value": "Admin::ApplicationSettingsController#show"
           },
           {
             "selected": false,
+            "text": "Admin::ApplicationSettingsController#update",
+            "value": "Admin::ApplicationSettingsController#update"
+          },
+          {
+            "selected": false,
+            "text": "Admin::ApplicationsController#create",
+            "value": "Admin::ApplicationsController#create"
+          },
+          {
+            "selected": false,
+            "text": "Admin::ApplicationsController#destroy",
+            "value": "Admin::ApplicationsController#destroy"
+          },
+          {
+            "selected": false,
+            "text": "Admin::ApplicationsController#edit",
+            "value": "Admin::ApplicationsController#edit"
+          },
+          {
+            "selected": false,
             "text": "Admin::ApplicationsController#index",
             "value": "Admin::ApplicationsController#index"
+          },
+          {
+            "selected": false,
+            "text": "Admin::ApplicationsController#new",
+            "value": "Admin::ApplicationsController#new"
+          },
+          {
+            "selected": false,
+            "text": "Admin::ApplicationsController#show",
+            "value": "Admin::ApplicationsController#show"
           },
           {
             "selected": false,
@@ -1746,6 +2012,16 @@
           },
           {
             "selected": false,
+            "text": "Admin::BroadcastMessagesController#destroy",
+            "value": "Admin::BroadcastMessagesController#destroy"
+          },
+          {
+            "selected": false,
+            "text": "Admin::BroadcastMessagesController#edit",
+            "value": "Admin::BroadcastMessagesController#edit"
+          },
+          {
+            "selected": false,
             "text": "Admin::BroadcastMessagesController#index",
             "value": "Admin::BroadcastMessagesController#index"
           },
@@ -1753,6 +2029,11 @@
             "selected": false,
             "text": "Admin::BroadcastMessagesController#preview",
             "value": "Admin::BroadcastMessagesController#preview"
+          },
+          {
+            "selected": false,
+            "text": "Admin::BroadcastMessagesController#update",
+            "value": "Admin::BroadcastMessagesController#update"
           },
           {
             "selected": false,
@@ -1766,6 +2047,31 @@
           },
           {
             "selected": false,
+            "text": "Admin::DeployKeysController#index",
+            "value": "Admin::DeployKeysController#index"
+          },
+          {
+            "selected": false,
+            "text": "Admin::EmailsController#create",
+            "value": "Admin::EmailsController#create"
+          },
+          {
+            "selected": false,
+            "text": "Admin::EmailsController#show",
+            "value": "Admin::EmailsController#show"
+          },
+          {
+            "selected": false,
+            "text": "Admin::GeoNodesController#index",
+            "value": "Admin::GeoNodesController#index"
+          },
+          {
+            "selected": false,
+            "text": "Admin::GitHooksController#index",
+            "value": "Admin::GitHooksController#index"
+          },
+          {
+            "selected": false,
             "text": "Admin::GroupsController#edit",
             "value": "Admin::GroupsController#edit"
           },
@@ -1776,6 +2082,11 @@
           },
           {
             "selected": false,
+            "text": "Admin::GroupsController#members_update",
+            "value": "Admin::GroupsController#members_update"
+          },
+          {
+            "selected": false,
             "text": "Admin::GroupsController#show",
             "value": "Admin::GroupsController#show"
           },
@@ -1783,6 +2094,26 @@
             "selected": false,
             "text": "Admin::GroupsController#update",
             "value": "Admin::GroupsController#update"
+          },
+          {
+            "selected": false,
+            "text": "Admin::HealthCheckController#show",
+            "value": "Admin::HealthCheckController#show"
+          },
+          {
+            "selected": false,
+            "text": "Admin::HooksController#index",
+            "value": "Admin::HooksController#index"
+          },
+          {
+            "selected": false,
+            "text": "Admin::IdentitiesController#index",
+            "value": "Admin::IdentitiesController#index"
+          },
+          {
+            "selected": false,
+            "text": "Admin::IdentitiesController#new",
+            "value": "Admin::IdentitiesController#new"
           },
           {
             "selected": false,
@@ -1798,6 +2129,21 @@
             "selected": false,
             "text": "Admin::ImpersonationsController#destroy",
             "value": "Admin::ImpersonationsController#destroy"
+          },
+          {
+            "selected": false,
+            "text": "Admin::KeysController#show",
+            "value": "Admin::KeysController#show"
+          },
+          {
+            "selected": false,
+            "text": "Admin::LabelsController#index",
+            "value": "Admin::LabelsController#index"
+          },
+          {
+            "selected": false,
+            "text": "Admin::LicensesController#show",
+            "value": "Admin::LicensesController#show"
           },
           {
             "selected": false,
@@ -1821,13 +2167,38 @@
           },
           {
             "selected": false,
+            "text": "Admin::RunnerProjectsController#destroy",
+            "value": "Admin::RunnerProjectsController#destroy"
+          },
+          {
+            "selected": false,
+            "text": "Admin::RunnersController#destroy",
+            "value": "Admin::RunnersController#destroy"
+          },
+          {
+            "selected": false,
             "text": "Admin::RunnersController#index",
             "value": "Admin::RunnersController#index"
           },
           {
             "selected": false,
+            "text": "Admin::RunnersController#pause",
+            "value": "Admin::RunnersController#pause"
+          },
+          {
+            "selected": false,
+            "text": "Admin::RunnersController#show",
+            "value": "Admin::RunnersController#show"
+          },
+          {
+            "selected": false,
             "text": "Admin::SpamLogsController#index",
             "value": "Admin::SpamLogsController#index"
+          },
+          {
+            "selected": false,
+            "text": "Admin::UsersController#block",
+            "value": "Admin::UsersController#block"
           },
           {
             "selected": false,
@@ -1843,6 +2214,11 @@
             "selected": false,
             "text": "Admin::UsersController#destroy",
             "value": "Admin::UsersController#destroy"
+          },
+          {
+            "selected": false,
+            "text": "Admin::UsersController#disable_two_factor",
+            "value": "Admin::UsersController#disable_two_factor"
           },
           {
             "selected": false,
@@ -1866,6 +2242,11 @@
           },
           {
             "selected": false,
+            "text": "Admin::UsersController#keys",
+            "value": "Admin::UsersController#keys"
+          },
+          {
+            "selected": false,
             "text": "Admin::UsersController#new",
             "value": "Admin::UsersController#new"
           },
@@ -1876,6 +2257,11 @@
           },
           {
             "selected": false,
+            "text": "Admin::UsersController#remove_email",
+            "value": "Admin::UsersController#remove_email"
+          },
+          {
+            "selected": false,
             "text": "Admin::UsersController#show",
             "value": "Admin::UsersController#show"
           },
@@ -1883,6 +2269,11 @@
             "selected": false,
             "text": "Admin::UsersController#update",
             "value": "Admin::UsersController#update"
+          },
+          {
+            "selected": false,
+            "text": "AutocompleteController#projects",
+            "value": "AutocompleteController#projects"
           },
           {
             "selected": false,
@@ -2091,6 +2482,11 @@
           },
           {
             "selected": false,
+            "text": "Groups::GroupMembersController#request_access",
+            "value": "Groups::GroupMembersController#request_access"
+          },
+          {
+            "selected": false,
             "text": "Groups::GroupMembersController#resend_invite",
             "value": "Groups::GroupMembersController#resend_invite"
           },
@@ -2118,6 +2514,11 @@
             "selected": false,
             "text": "Groups::HooksController#test",
             "value": "Groups::HooksController#test"
+          },
+          {
+            "selected": false,
+            "text": "Groups::LdapGroupLinksController#index",
+            "value": "Groups::LdapGroupLinksController#index"
           },
           {
             "selected": false,
@@ -2211,6 +2612,11 @@
           },
           {
             "selected": false,
+            "text": "HealthCheckController#index",
+            "value": "HealthCheckController#index"
+          },
+          {
+            "selected": false,
             "text": "HelpController#index",
             "value": "HelpController#index"
           },
@@ -2301,18 +2707,28 @@
           },
           {
             "selected": false,
+            "text": "Import::GithubController#new",
+            "value": "Import::GithubController#new"
+          },
+          {
+            "selected": false,
             "text": "Import::GithubController#status",
             "value": "Import::GithubController#status"
           },
           {
             "selected": false,
-            "text": "Import::GitoriousController#callback",
-            "value": "Import::GitoriousController#callback"
+            "text": "Import::GitlabController#callback",
+            "value": "Import::GitlabController#callback"
           },
           {
             "selected": false,
-            "text": "Import::GitoriousController#jobs",
-            "value": "Import::GitoriousController#jobs"
+            "text": "Import::GitlabController#status",
+            "value": "Import::GitlabController#status"
+          },
+          {
+            "selected": false,
+            "text": "Import::GitoriousController#callback",
+            "value": "Import::GitoriousController#callback"
           },
           {
             "selected": false,
@@ -2348,6 +2764,11 @@
             "selected": false,
             "text": "InvitesController#show",
             "value": "InvitesController#show"
+          },
+          {
+            "selected": false,
+            "text": "JwtController#auth",
+            "value": "JwtController#auth"
           },
           {
             "selected": false,
@@ -2408,6 +2829,11 @@
             "selected": false,
             "text": "Oauth::AuthorizedApplicationsController#destroy",
             "value": "Oauth::AuthorizedApplicationsController#destroy"
+          },
+          {
+            "selected": false,
+            "text": "Oauth::AuthorizedApplicationsController#index",
+            "value": "Oauth::AuthorizedApplicationsController#index"
           },
           {
             "selected": false,
@@ -2511,6 +2937,11 @@
           },
           {
             "selected": false,
+            "text": "Profiles::KeysController#edit",
+            "value": "Profiles::KeysController#edit"
+          },
+          {
+            "selected": false,
             "text": "Profiles::KeysController#get_keys",
             "value": "Profiles::KeysController#get_keys"
           },
@@ -2571,6 +3002,11 @@
           },
           {
             "selected": false,
+            "text": "Profiles::TwoFactorAuthsController#create_u2f",
+            "value": "Profiles::TwoFactorAuthsController#create_u2f"
+          },
+          {
+            "selected": false,
             "text": "Profiles::TwoFactorAuthsController#destroy",
             "value": "Profiles::TwoFactorAuthsController#destroy"
           },
@@ -2578,6 +3014,11 @@
             "selected": false,
             "text": "Profiles::TwoFactorAuthsController#new",
             "value": "Profiles::TwoFactorAuthsController#new"
+          },
+          {
+            "selected": false,
+            "text": "Profiles::TwoFactorAuthsController#show",
+            "value": "Profiles::TwoFactorAuthsController#show"
           },
           {
             "selected": false,
@@ -2756,6 +3197,11 @@
           },
           {
             "selected": false,
+            "text": "Projects::BuildsController#trace",
+            "value": "Projects::BuildsController#trace"
+          },
+          {
+            "selected": false,
             "text": "Projects::CommitController#branches",
             "value": "Projects::CommitController#branches"
           },
@@ -2811,6 +3257,16 @@
           },
           {
             "selected": false,
+            "text": "Projects::ContainerRegistryController#destroy",
+            "value": "Projects::ContainerRegistryController#destroy"
+          },
+          {
+            "selected": false,
+            "text": "Projects::ContainerRegistryController#index",
+            "value": "Projects::ContainerRegistryController#index"
+          },
+          {
+            "selected": false,
             "text": "Projects::DeployKeysController#create",
             "value": "Projects::DeployKeysController#create"
           },
@@ -2833,6 +3289,31 @@
             "selected": false,
             "text": "Projects::DeployKeysController#new",
             "value": "Projects::DeployKeysController#new"
+          },
+          {
+            "selected": false,
+            "text": "Projects::EnvironmentsController#create",
+            "value": "Projects::EnvironmentsController#create"
+          },
+          {
+            "selected": false,
+            "text": "Projects::EnvironmentsController#destroy",
+            "value": "Projects::EnvironmentsController#destroy"
+          },
+          {
+            "selected": false,
+            "text": "Projects::EnvironmentsController#index",
+            "value": "Projects::EnvironmentsController#index"
+          },
+          {
+            "selected": false,
+            "text": "Projects::EnvironmentsController#new",
+            "value": "Projects::EnvironmentsController#new"
+          },
+          {
+            "selected": false,
+            "text": "Projects::EnvironmentsController#show",
+            "value": "Projects::EnvironmentsController#show"
           },
           {
             "selected": false,
@@ -2866,8 +3347,28 @@
           },
           {
             "selected": false,
+            "text": "Projects::GitHooksController#show",
+            "value": "Projects::GitHooksController#show"
+          },
+          {
+            "selected": false,
             "text": "Projects::GitHooksController#update",
             "value": "Projects::GitHooksController#update"
+          },
+          {
+            "selected": false,
+            "text": "Projects::GitHttpController#git_receive_pack",
+            "value": "Projects::GitHttpController#git_receive_pack"
+          },
+          {
+            "selected": false,
+            "text": "Projects::GitHttpController#git_upload_pack",
+            "value": "Projects::GitHttpController#git_upload_pack"
+          },
+          {
+            "selected": false,
+            "text": "Projects::GitHttpController#info_refs",
+            "value": "Projects::GitHttpController#info_refs"
           },
           {
             "selected": false,
@@ -2991,6 +3492,11 @@
           },
           {
             "selected": false,
+            "text": "Projects::IssuesController#toggle_award_emoji",
+            "value": "Projects::IssuesController#toggle_award_emoji"
+          },
+          {
+            "selected": false,
             "text": "Projects::IssuesController#toggle_subscription",
             "value": "Projects::IssuesController#toggle_subscription"
           },
@@ -3028,6 +3534,16 @@
             "selected": false,
             "text": "Projects::LabelsController#new",
             "value": "Projects::LabelsController#new"
+          },
+          {
+            "selected": false,
+            "text": "Projects::LabelsController#remove_priority",
+            "value": "Projects::LabelsController#remove_priority"
+          },
+          {
+            "selected": false,
+            "text": "Projects::LabelsController#set_priorities",
+            "value": "Projects::LabelsController#set_priorities"
           },
           {
             "selected": false,
@@ -3136,6 +3652,11 @@
           },
           {
             "selected": false,
+            "text": "Projects::MergeRequestsController#toggle_award_emoji",
+            "value": "Projects::MergeRequestsController#toggle_award_emoji"
+          },
+          {
+            "selected": false,
             "text": "Projects::MergeRequestsController#toggle_subscription",
             "value": "Projects::MergeRequestsController#toggle_subscription"
           },
@@ -3236,6 +3757,11 @@
           },
           {
             "selected": false,
+            "text": "Projects::NotesController#toggle_award_emoji",
+            "value": "Projects::NotesController#toggle_award_emoji"
+          },
+          {
+            "selected": false,
             "text": "Projects::NotesController#update",
             "value": "Projects::NotesController#update"
           },
@@ -3276,8 +3802,43 @@
           },
           {
             "selected": false,
+            "text": "Projects::PipelinesController#cancel",
+            "value": "Projects::PipelinesController#cancel"
+          },
+          {
+            "selected": false,
+            "text": "Projects::PipelinesController#create",
+            "value": "Projects::PipelinesController#create"
+          },
+          {
+            "selected": false,
+            "text": "Projects::PipelinesController#index",
+            "value": "Projects::PipelinesController#index"
+          },
+          {
+            "selected": false,
+            "text": "Projects::PipelinesController#new",
+            "value": "Projects::PipelinesController#new"
+          },
+          {
+            "selected": false,
+            "text": "Projects::PipelinesController#retry",
+            "value": "Projects::PipelinesController#retry"
+          },
+          {
+            "selected": false,
+            "text": "Projects::PipelinesController#show",
+            "value": "Projects::PipelinesController#show"
+          },
+          {
+            "selected": false,
             "text": "Projects::ProjectMembersController#apply_import",
             "value": "Projects::ProjectMembersController#apply_import"
+          },
+          {
+            "selected": false,
+            "text": "Projects::ProjectMembersController#approve_access_request",
+            "value": "Projects::ProjectMembersController#approve_access_request"
           },
           {
             "selected": false,
@@ -3303,6 +3864,11 @@
             "selected": false,
             "text": "Projects::ProjectMembersController#leave",
             "value": "Projects::ProjectMembersController#leave"
+          },
+          {
+            "selected": false,
+            "text": "Projects::ProjectMembersController#request_access",
+            "value": "Projects::ProjectMembersController#request_access"
           },
           {
             "selected": false,
@@ -3506,6 +4072,16 @@
           },
           {
             "selected": false,
+            "text": "Projects::TodosController#create",
+            "value": "Projects::TodosController#create"
+          },
+          {
+            "selected": false,
+            "text": "Projects::TodosController#update",
+            "value": "Projects::TodosController#update"
+          },
+          {
+            "selected": false,
             "text": "Projects::TreeController#create_dir",
             "value": "Projects::TreeController#create_dir"
           },
@@ -3538,6 +4114,21 @@
             "selected": false,
             "text": "Projects::UploadsController#show",
             "value": "Projects::UploadsController#show"
+          },
+          {
+            "selected": false,
+            "text": "Projects::VariablesController#create",
+            "value": "Projects::VariablesController#create"
+          },
+          {
+            "selected": false,
+            "text": "Projects::VariablesController#destroy",
+            "value": "Projects::VariablesController#destroy"
+          },
+          {
+            "selected": false,
+            "text": "Projects::VariablesController#index",
+            "value": "Projects::VariablesController#index"
           },
           {
             "selected": false,
@@ -3686,6 +4277,11 @@
           },
           {
             "selected": false,
+            "text": "RegistrationsController#edit",
+            "value": "RegistrationsController#edit"
+          },
+          {
+            "selected": false,
             "text": "RegistrationsController#new",
             "value": "RegistrationsController#new"
           },
@@ -3798,10 +4394,15 @@
             "selected": false,
             "text": "UsersController#show",
             "value": "UsersController#show"
+          },
+          {
+            "selected": false,
+            "text": "UsersController#snippets",
+            "value": "UsersController#snippets"
           }
         ],
         "query": "SHOW TAG VALUES FROM gitlab.downsampled.rails_transaction_counts_per_action WITH KEY = \"action\"",
-        "refresh": true,
+        "refresh": 1,
         "regex": "/#/",
         "type": "query"
       }
@@ -3839,5 +4440,5 @@
   },
   "timezone": "utc",
   "title": "Rails Controllers",
-  "version": 12
+  "version": 17
 }

@@ -10,7 +10,7 @@
   "links": [
 
   ],
-  "originalTitle": "Grape#/internal/allowed",
+  "originalTitle": "Grape Endpoints",
   "rows": [
     {
       "collapse": false,
@@ -30,6 +30,13 @@
           "editable": true,
           "error": false,
           "format": "ms",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
           "height": "100px",
           "id": 4,
           "interval": null,
@@ -69,7 +76,8 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT percentile(\"duration\", 95) FROM rails_transactions WHERE $timeFilter AND \"action\" = 'Grape#/internal/allowed'",
+              "policy": "default",
+              "query": "SELECT percentile(\"duration\", 95) FROM rails_transactions WHERE $timeFilter AND \"action\" =~ /^$action$/",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -94,7 +102,7 @@
               ]
             }
           ],
-          "thresholds": "0,1000,5000",
+          "thresholds": "1000,5000",
           "title": "Response Time",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -120,6 +128,13 @@
           "editable": true,
           "error": false,
           "format": "ms",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
           "height": "100px",
           "id": 7,
           "interval": null,
@@ -159,7 +174,8 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT percentile(\"sql_duration\", 95) FROM rails_transactions WHERE $timeFilter AND \"action\" = 'Grape#/internal/allowed'",
+              "policy": "default",
+              "query": "SELECT percentile(\"sql_duration\", 95) FROM rails_transactions WHERE $timeFilter AND \"action\" =~ /^$action$/",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -184,7 +200,7 @@
               ]
             }
           ],
-          "thresholds": "0,1000,5000",
+          "thresholds": "1000,5000",
           "title": "SQL Time",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -210,6 +226,13 @@
           "editable": true,
           "error": false,
           "format": "ms",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
           "height": "100px",
           "id": 14,
           "interval": null,
@@ -249,7 +272,8 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT percentile(\"cache_duration\", 95) FROM rails_transactions WHERE $timeFilter AND \"action\" = 'Grape#/internal/allowed'",
+              "policy": "default",
+              "query": "SELECT percentile(\"cache_duration\", 95) FROM rails_transactions WHERE $timeFilter AND \"action\" =~ /^$action$/",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -274,7 +298,7 @@
               ]
             }
           ],
-          "thresholds": "0,100,5000",
+          "thresholds": "100,5000",
           "title": "Cache Time",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -300,6 +324,13 @@
           "editable": true,
           "error": false,
           "format": "ms",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
           "height": "100px",
           "id": 19,
           "interval": null,
@@ -339,7 +370,8 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT mean(\"duration_95th\") AS \"95th Percentile\" FROM gitlab.downsampled.grape_git_timings_per_action WHERE $timeFilter AND \"action\" = 'Grape#/internal/allowed'",
+              "policy": "default",
+              "query": "SELECT mean(\"duration_95th\") AS \"95th Percentile\" FROM gitlab.downsampled.grape_git_timings_per_action WHERE $timeFilter AND \"action\" =~ /^$action$/",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -364,7 +396,7 @@
               ]
             }
           ],
-          "thresholds": "0,500,5000",
+          "thresholds": "500,5000",
           "title": "Git Time",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -396,12 +428,6 @@
           "error": false,
           "fill": 0,
           "grid": {
-            "leftLogBase": 1,
-            "leftMax": null,
-            "leftMin": null,
-            "rightLogBase": 1,
-            "rightMax": null,
-            "rightMin": null,
             "threshold1": null,
             "threshold1Color": "rgba(216, 200, 27, 0.27)",
             "threshold2": null,
@@ -453,7 +479,8 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT \"count\" AS \"Amount\" FROM gitlab.downsampled.grape_transaction_counts_per_action WHERE $timeFilter AND \"action\" = 'Grape#/internal/allowed'",
+              "policy": "default",
+              "query": "SELECT \"count\" AS \"Amount\" FROM gitlab.downsampled.grape_transaction_counts_per_action WHERE $timeFilter AND \"action\" =~ /^$action$/",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -482,15 +509,29 @@
           "timeShift": null,
           "title": "Transactions",
           "tooltip": {
+            "msResolution": false,
             "shared": true,
             "value_type": "cumulative"
           },
           "type": "graph",
-          "x-axis": true,
-          "y-axis": true,
-          "y_formats": [
-            "short",
-            "short"
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
           ]
         },
         {
@@ -505,12 +546,6 @@
           "error": false,
           "fill": 0,
           "grid": {
-            "leftLogBase": 1,
-            "leftMax": null,
-            "leftMin": null,
-            "rightLogBase": 1,
-            "rightMax": null,
-            "rightMin": null,
             "threshold1": null,
             "threshold1Color": "rgba(216, 200, 27, 0.27)",
             "threshold2": null,
@@ -562,7 +597,8 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT \"duration_95th\" AS \"95th Percentile\", \"duration_mean\" AS \"Mean\" FROM gitlab.downsampled.grape_transaction_timings_per_action WHERE $timeFilter AND \"action\" = 'Grape#/internal/allowed'",
+              "policy": "default",
+              "query": "SELECT \"duration_95th\" AS \"95th Percentile\", \"duration_99th\" AS \"99th Percentile\", \"duration_mean\" AS \"Mean\" FROM gitlab.downsampled.grape_transaction_timings_per_action WHERE $timeFilter AND \"action\" =~ /^$action$/",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -591,15 +627,29 @@
           "timeShift": null,
           "title": "Transaction Timings",
           "tooltip": {
+            "msResolution": false,
             "shared": true,
             "value_type": "cumulative"
           },
           "type": "graph",
-          "x-axis": true,
-          "y-axis": true,
-          "y_formats": [
-            "ms",
-            "short"
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "ms",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
           ]
         }
       ],
@@ -615,6 +665,8 @@
           "aliasColors": {
             "95th Pecentile": "#9AC48A",
             "95th Percentile": "#9AC48A",
+            "99th Percentile": "#E24D42",
+            "Maximum": "#EAB839",
             "Mean": "#6ED0E0"
           },
           "bars": false,
@@ -623,12 +675,6 @@
           "error": false,
           "fill": 0,
           "grid": {
-            "leftLogBase": 1,
-            "leftMax": null,
-            "leftMin": null,
-            "rightLogBase": 1,
-            "rightMax": null,
-            "rightMin": null,
             "threshold1": null,
             "threshold1Color": "rgba(216, 200, 27, 0.27)",
             "threshold2": null,
@@ -680,7 +726,8 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT \"sql_duration_95th\" AS \"95th Percentile\", \"sql_duration_mean\" AS \"Mean\" FROM gitlab.downsampled.grape_transaction_timings_per_action WHERE $timeFilter AND \"action\" = 'Grape#/internal/allowed'",
+              "policy": "default",
+              "query": "SELECT \"sql_duration_95th\" AS \"95th Percentile\", \"sql_duration_99th\" AS \"99th Percentile\", \"sql_duration_mean\" AS \"Mean\", \"sql_duration_max\" AS \"Maximum\" FROM gitlab.downsampled.grape_transaction_timings_per_action WHERE $timeFilter AND \"action\" =~ /^$action$/",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -709,15 +756,29 @@
           "timeShift": null,
           "title": "SQL Timings",
           "tooltip": {
+            "msResolution": false,
             "shared": true,
             "value_type": "cumulative"
           },
           "type": "graph",
-          "x-axis": true,
-          "y-axis": true,
-          "y_formats": [
-            "ms",
-            "short"
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "ms",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
           ]
         },
         {
@@ -731,12 +792,6 @@
           "error": false,
           "fill": 0,
           "grid": {
-            "leftLogBase": 1,
-            "leftMax": null,
-            "leftMin": null,
-            "rightLogBase": 1,
-            "rightMax": null,
-            "rightMin": null,
             "threshold1": null,
             "threshold1Color": "rgba(216, 200, 27, 0.27)",
             "threshold2": null,
@@ -788,7 +843,8 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT \"cache_duration_95th\" AS \"95th Percentile\", \"cache_duration_99th\" AS \"99th Percentile\", \"cache_duration_mean\" AS \"Mean\" FROM gitlab.downsampled.grape_transaction_timings_per_action WHERE $timeFilter AND \"action\" = 'Grape#/internal/allowed'",
+              "policy": "default",
+              "query": "SELECT \"cache_duration_95th\" AS \"95th Percentile\", \"cache_duration_99th\" AS \"99th Percentile\", \"cache_duration_mean\" AS \"Mean\" FROM gitlab.downsampled.grape_transaction_timings_per_action WHERE $timeFilter AND \"action\" =~ /^$action$/",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -817,15 +873,29 @@
           "timeShift": null,
           "title": "Cache Timings",
           "tooltip": {
+            "msResolution": false,
             "shared": true,
             "value_type": "cumulative"
           },
           "type": "graph",
-          "x-axis": true,
-          "y-axis": true,
-          "y_formats": [
-            "ms",
-            "short"
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "ms",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
           ]
         },
         {
@@ -839,12 +909,6 @@
           "error": false,
           "fill": 0,
           "grid": {
-            "leftLogBase": 1,
-            "leftMax": null,
-            "leftMin": null,
-            "rightLogBase": 1,
-            "rightMax": null,
-            "rightMin": null,
             "threshold1": null,
             "threshold1Color": "rgba(216, 200, 27, 0.27)",
             "threshold2": null,
@@ -896,7 +960,8 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT \"duration_95th\" AS \"95th Percentile\", \"duration_99th\" AS \"99th Percentile\", \"duration_mean\" AS \"Mean\" FROM gitlab.downsampled.grape_git_timings_per_action WHERE $timeFilter AND \"action\" = 'Grape#/internal/allowed'",
+              "policy": "default",
+              "query": "SELECT \"duration_95th\" AS \"95th Percentile\", \"duration_99th\" AS \"99th Percentile\", \"duration_mean\" AS \"Mean\" FROM gitlab.downsampled.grape_git_timings_per_action WHERE $timeFilter AND \"action\" =~ /^$action$/",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -925,15 +990,29 @@
           "timeShift": null,
           "title": "Git Timings",
           "tooltip": {
+            "msResolution": false,
             "shared": true,
             "value_type": "cumulative"
           },
           "type": "graph",
-          "x-axis": true,
-          "y-axis": true,
-          "y_formats": [
-            "ms",
-            "short"
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "ms",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
           ]
         },
         {
@@ -948,12 +1027,6 @@
           "error": false,
           "fill": 0,
           "grid": {
-            "leftLogBase": 1,
-            "leftMax": null,
-            "leftMin": null,
-            "rightLogBase": 1,
-            "rightMax": null,
-            "rightMin": null,
             "threshold1": null,
             "threshold1Color": "rgba(216, 200, 27, 0.27)",
             "threshold2": null,
@@ -1008,7 +1081,8 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT \"sql_count_95th\" AS \"95th Percentile\", \"sql_count_99th\" AS \"99th Percentile\", \"sql_count_mean\" AS \"Mean\", \"sql_count_max\" AS \"Maximum\" FROM gitlab.downsampled.grape_transaction_sql_counts_per_action WHERE $timeFilter AND \"action\" = 'Grape#/internal/allowed'",
+              "policy": "default",
+              "query": "SELECT \"sql_count_95th\" AS \"95th Percentile\", \"sql_count_99th\" AS \"99th Percentile\", \"sql_count_mean\" AS \"Mean\", \"sql_count_max\" AS \"Maximum\" FROM gitlab.downsampled.grape_transaction_sql_counts_per_action WHERE $timeFilter AND \"action\" =~ /^$action$/",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -1037,15 +1111,29 @@
           "timeShift": null,
           "title": "SQL Query Counts",
           "tooltip": {
+            "msResolution": false,
             "shared": true,
             "value_type": "cumulative"
           },
           "type": "graph",
-          "x-axis": true,
-          "y-axis": true,
-          "y_formats": [
-            "short",
-            "short"
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
           ]
         }
       ],
@@ -1066,12 +1154,6 @@
           "error": false,
           "fill": 1,
           "grid": {
-            "leftLogBase": 1,
-            "leftMax": null,
-            "leftMin": null,
-            "rightLogBase": 1,
-            "rightMax": null,
-            "rightMin": null,
             "threshold1": null,
             "threshold1Color": "rgba(216, 200, 27, 0.27)",
             "threshold2": null,
@@ -1125,7 +1207,8 @@
                   "type": "fill"
                 }
               ],
-              "query": "SELECT mean(\"duration_95th\") FROM gitlab.downsampled.grape_method_call_timings_per_action_and_method WHERE $timeFilter AND \"action\" = 'Grape#/internal/allowed' GROUP BY \"method\", time($interval)",
+              "policy": "default",
+              "query": "SELECT mean(\"duration_95th\") FROM gitlab.downsampled.grape_method_call_timings_per_action_and_method WHERE $timeFilter AND \"action\" =~ /^$action$/ GROUP BY \"method\", time($interval)",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -1154,15 +1237,29 @@
           "timeShift": null,
           "title": "Method Calls",
           "tooltip": {
+            "msResolution": false,
             "shared": false,
             "value_type": "individual"
           },
           "type": "graph",
-          "x-axis": true,
-          "y-axis": true,
-          "y_formats": [
-            "ms",
-            "short"
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "ms",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
           ]
         }
       ],
@@ -1215,7 +1312,6 @@
               "decimals": 2,
               "pattern": "Duration",
               "thresholds": [
-                "0",
                 "1000",
                 "3000"
               ],
@@ -1296,7 +1392,8 @@
               ],
               "hide": false,
               "measurement": "transactions",
-              "query": "SELECT \"duration\" AS \"Duration\", \"allocated_memory\" AS \"Memory\", \"request_method\" AS \"Method\", \"action\" AS \"Action\", \"request_uri\" AS \"URI\" FROM \"rails_transactions\" WHERE $timeFilter AND \"action\" =~ /^Grape#/internal/allowed/ ORDER BY time DESC LIMIT 100",
+              "policy": "default",
+              "query": "SELECT \"duration\" AS \"Duration\", \"allocated_memory\" AS \"Memory\", \"request_method\" AS \"Method\", \"action\" AS \"Action\", \"request_uri\" AS \"URI\" FROM \"rails_transactions\" WHERE $timeFilter AND \"action\" =~ /^$action$/ ORDER BY time DESC LIMIT 100",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "table",
@@ -1340,7 +1437,7 @@
       "title": "New row"
     }
   ],
-  "schemaVersion": 8,
+  "schemaVersion": 12,
   "sharedCrosshair": false,
   "style": "dark",
   "tags": [
@@ -1348,7 +1445,414 @@
   ],
   "templating": {
     "list": [
-
+      {
+        "current": {
+          "text": "Grape#POST /internal/allowed",
+          "value": "Grape#POST /internal/allowed"
+        },
+        "datasource": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Action",
+        "multi": false,
+        "name": "action",
+        "options": [
+          {
+            "selected": false,
+            "text": "Grape#/internal/allowed",
+            "value": "Grape#/internal/allowed"
+          },
+          {
+            "selected": false,
+            "text": "Grape#/internal/authorized_keys",
+            "value": "Grape#/internal/authorized_keys"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /builds/:id/artifacts",
+            "value": "Grape#GET /builds/:id/artifacts"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /gitignores/:name",
+            "value": "Grape#GET /gitignores/:name"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /groups",
+            "value": "Grape#GET /groups"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /groups/:id",
+            "value": "Grape#GET /groups/:id"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /groups/:id/members",
+            "value": "Grape#GET /groups/:id/members"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /groups/:id/projects",
+            "value": "Grape#GET /groups/:id/projects"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /internal/authorized_keys",
+            "value": "Grape#GET /internal/authorized_keys"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /internal/broadcast_message",
+            "value": "Grape#GET /internal/broadcast_message"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /internal/discover",
+            "value": "Grape#GET /internal/discover"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /issues",
+            "value": "Grape#GET /issues"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /licenses/:key",
+            "value": "Grape#GET /licenses/:key"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /namespaces",
+            "value": "Grape#GET /namespaces"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects",
+            "value": "Grape#GET /projects"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id",
+            "value": "Grape#GET /projects/:id"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/builds",
+            "value": "Grape#GET /projects/:id/builds"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/builds/:build_id",
+            "value": "Grape#GET /projects/:id/builds/:build_id"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/builds/:build_id/artifacts",
+            "value": "Grape#GET /projects/:id/builds/:build_id/artifacts"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/events",
+            "value": "Grape#GET /projects/:id/events"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/hooks",
+            "value": "Grape#GET /projects/:id/hooks"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/issues",
+            "value": "Grape#GET /projects/:id/issues"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/issues/:issue_id",
+            "value": "Grape#GET /projects/:id/issues/:issue_id"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/issues/:issue_id/notes",
+            "value": "Grape#GET /projects/:id/issues/:issue_id/notes"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/keys",
+            "value": "Grape#GET /projects/:id/keys"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/labels",
+            "value": "Grape#GET /projects/:id/labels"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/members",
+            "value": "Grape#GET /projects/:id/members"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/merge_request/:merge_request_id",
+            "value": "Grape#GET /projects/:id/merge_request/:merge_request_id"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/merge_requests",
+            "value": "Grape#GET /projects/:id/merge_requests"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/merge_requests/:merge_request_id/notes",
+            "value": "Grape#GET /projects/:id/merge_requests/:merge_request_id/notes"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/milestones",
+            "value": "Grape#GET /projects/:id/milestones"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/milestones/:milestone_id/issues",
+            "value": "Grape#GET /projects/:id/milestones/:milestone_id/issues"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/repository/archive",
+            "value": "Grape#GET /projects/:id/repository/archive"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/repository/blobs/:sha",
+            "value": "Grape#GET /projects/:id/repository/blobs/:sha"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/repository/branches",
+            "value": "Grape#GET /projects/:id/repository/branches"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/repository/branches/:branch",
+            "value": "Grape#GET /projects/:id/repository/branches/:branch"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/repository/commits",
+            "value": "Grape#GET /projects/:id/repository/commits"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/repository/commits/:sha",
+            "value": "Grape#GET /projects/:id/repository/commits/:sha"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/repository/commits/:sha/comments",
+            "value": "Grape#GET /projects/:id/repository/commits/:sha/comments"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/repository/commits/:sha/diff",
+            "value": "Grape#GET /projects/:id/repository/commits/:sha/diff"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/repository/commits/:sha/statuses",
+            "value": "Grape#GET /projects/:id/repository/commits/:sha/statuses"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/repository/compare",
+            "value": "Grape#GET /projects/:id/repository/compare"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/repository/contributors",
+            "value": "Grape#GET /projects/:id/repository/contributors"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/repository/files",
+            "value": "Grape#GET /projects/:id/repository/files"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/repository/raw_blobs/:sha",
+            "value": "Grape#GET /projects/:id/repository/raw_blobs/:sha"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/repository/tags",
+            "value": "Grape#GET /projects/:id/repository/tags"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/repository/tree",
+            "value": "Grape#GET /projects/:id/repository/tree"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/:id/snippets",
+            "value": "Grape#GET /projects/:id/snippets"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/owned",
+            "value": "Grape#GET /projects/owned"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /projects/starred",
+            "value": "Grape#GET /projects/starred"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /runners",
+            "value": "Grape#GET /runners"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /runners/:id",
+            "value": "Grape#GET /runners/:id"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /user",
+            "value": "Grape#GET /user"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /user/keys",
+            "value": "Grape#GET /user/keys"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /users",
+            "value": "Grape#GET /users"
+          },
+          {
+            "selected": false,
+            "text": "Grape#GET /users/:id",
+            "value": "Grape#GET /users/:id"
+          },
+          {
+            "selected": false,
+            "text": "Grape#PATCH /builds/:id/trace.txt",
+            "value": "Grape#PATCH /builds/:id/trace.txt"
+          },
+          {
+            "selected": false,
+            "text": "Grape#POST /builds/:id/artifacts",
+            "value": "Grape#POST /builds/:id/artifacts"
+          },
+          {
+            "selected": false,
+            "text": "Grape#POST /builds/:id/artifacts/authorize",
+            "value": "Grape#POST /builds/:id/artifacts/authorize"
+          },
+          {
+            "selected": false,
+            "text": "Grape#POST /builds/register",
+            "value": "Grape#POST /builds/register"
+          },
+          {
+            "selected": true,
+            "text": "Grape#POST /internal/allowed",
+            "value": "Grape#POST /internal/allowed"
+          },
+          {
+            "selected": false,
+            "text": "Grape#POST /projects",
+            "value": "Grape#POST /projects"
+          },
+          {
+            "selected": false,
+            "text": "Grape#POST /projects/:id/hooks",
+            "value": "Grape#POST /projects/:id/hooks"
+          },
+          {
+            "selected": false,
+            "text": "Grape#POST /projects/:id/issues",
+            "value": "Grape#POST /projects/:id/issues"
+          },
+          {
+            "selected": false,
+            "text": "Grape#POST /projects/:id/issues/:issue_id/notes",
+            "value": "Grape#POST /projects/:id/issues/:issue_id/notes"
+          },
+          {
+            "selected": false,
+            "text": "Grape#POST /projects/:id/labels",
+            "value": "Grape#POST /projects/:id/labels"
+          },
+          {
+            "selected": false,
+            "text": "Grape#POST /projects/:id/members",
+            "value": "Grape#POST /projects/:id/members"
+          },
+          {
+            "selected": false,
+            "text": "Grape#POST /projects/:id/merge_requests",
+            "value": "Grape#POST /projects/:id/merge_requests"
+          },
+          {
+            "selected": false,
+            "text": "Grape#POST /projects/:id/repository/commits/:sha/comments",
+            "value": "Grape#POST /projects/:id/repository/commits/:sha/comments"
+          },
+          {
+            "selected": false,
+            "text": "Grape#POST /projects/:id/statuses/:sha",
+            "value": "Grape#POST /projects/:id/statuses/:sha"
+          },
+          {
+            "selected": false,
+            "text": "Grape#POST /projects/:id/trigger/builds",
+            "value": "Grape#POST /projects/:id/trigger/builds"
+          },
+          {
+            "selected": false,
+            "text": "Grape#POST /runners/register",
+            "value": "Grape#POST /runners/register"
+          },
+          {
+            "selected": false,
+            "text": "Grape#POST /session",
+            "value": "Grape#POST /session"
+          },
+          {
+            "selected": false,
+            "text": "Grape#POST /user/keys",
+            "value": "Grape#POST /user/keys"
+          },
+          {
+            "selected": false,
+            "text": "Grape#PUT /builds/:id",
+            "value": "Grape#PUT /builds/:id"
+          },
+          {
+            "selected": false,
+            "text": "Grape#PUT /groups(.:format)",
+            "value": "Grape#PUT /groups(.:format)"
+          },
+          {
+            "selected": false,
+            "text": "Grape#PUT /projects/:id/issues/:issue_id",
+            "value": "Grape#PUT /projects/:id/issues/:issue_id"
+          },
+          {
+            "selected": false,
+            "text": "Grape#PUT /projects/:id/snippets/:snippet_id",
+            "value": "Grape#PUT /projects/:id/snippets/:snippet_id"
+          }
+        ],
+        "query": "SHOW TAG VALUES FROM gitlab.downsampled.grape_transaction_counts_per_action WITH KEY = \"action\"",
+        "refresh": 1,
+        "regex": "/#/",
+        "type": "query"
+      }
     ]
   },
   "time": {
@@ -1382,6 +1886,6 @@
     ]
   },
   "timezone": "utc",
-  "title": "Grape#/internal/allowed",
-  "version": 7
+  "title": "Grape Endpoints",
+  "version": 4
 }
