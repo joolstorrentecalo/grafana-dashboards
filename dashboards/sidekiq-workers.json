@@ -513,7 +513,7 @@
       "title": "Last Hour"
     },
     {
-      "collapse": true,
+      "collapse": false,
       "editable": true,
       "height": "250px",
       "panels": [
@@ -1276,7 +1276,7 @@
               "yaxis": 1
             }
           ],
-          "span": 12,
+          "span": 6,
           "stack": false,
           "steppedLine": false,
           "targets": [
@@ -1326,6 +1326,127 @@
           "timeFrom": null,
           "timeShift": null,
           "title": "SQL Query Counts",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+            "95th Percentile": "#9AC48A",
+            "99th Percentile": "#E24D42",
+            "Maximum": "#EAB839"
+          },
+          "bars": false,
+          "datasource": "$database",
+          "editable": true,
+          "error": false,
+          "fill": 0,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 23,
+          "interval": "1m",
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null as zero",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "Maximum",
+              "yaxis": 1
+            }
+          ],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "$col",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "policy": "default",
+              "query": "SELECT \"new_redis_connections_95th\" AS \"95th Percentile\", \"new_redis_connections_99th\" AS \"99th Percentile\", \"new_redis_connections_mean\" AS \"Mean\", \"new_redis_connections_max\" AS \"Maximum\" FROM downsampled.sidekiq_transaction_new_redis_connection_counts_per_action WHERE $timeFilter AND \"action\" = '[[worker]]'",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [
+
+                    ],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+
+              ]
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "New Redis Connections",
           "tooltip": {
             "msResolution": false,
             "shared": true,
@@ -1729,6 +1850,7 @@
           "columns": [
 
           ],
+          "datasource": "$database",
           "editable": true,
           "error": false,
           "fontSize": "100%",
@@ -1846,8 +1968,7 @@
           "title": "View Timings",
           "transform": "table",
           "transparent": false,
-          "type": "table",
-          "datasource": "$database"
+          "type": "table"
         }
       ],
       "title": "New row"
@@ -2002,6 +2123,16 @@
           },
           {
             "selected": false,
+            "text": "RepositoryCheck::ClearWorker#perform",
+            "value": "RepositoryCheck::ClearWorker#perform"
+          },
+          {
+            "selected": false,
+            "text": "RepositoryCheck::SingleRepositoryWorker#perform",
+            "value": "RepositoryCheck::SingleRepositoryWorker#perform"
+          },
+          {
+            "selected": false,
             "text": "RepositoryForkWorker#perform",
             "value": "RepositoryForkWorker#perform"
           },
@@ -2048,9 +2179,6 @@
       },
       {
         "current": {
-          "tags": [
-
-          ],
           "text": "Production",
           "value": "Production"
         },
@@ -2116,5 +2244,5 @@
   },
   "timezone": "utc",
   "title": "Sidekiq Workers",
-  "version": 16
+  "version": 3
 }
