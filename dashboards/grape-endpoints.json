@@ -234,6 +234,104 @@
             "thresholdMarkers": true
           },
           "height": "100px",
+          "id": 19,
+          "interval": null,
+          "isNew": true,
+          "links": [
+
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "span": 2,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "targets": [
+            {
+              "alias": "$col",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "policy": "default",
+              "query": "SELECT mean(\"duration_95th\") AS \"95th Percentile\" FROM rails_transactions WHERE $timeFilter AND \"action\" =~ /^$action$/",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [
+
+                    ],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+
+              ]
+            }
+          ],
+          "thresholds": "500,5000",
+          "title": "Git Time",
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "avg"
+        },
+        {
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": true,
+          "colors": [
+            "rgba(50, 172, 45, 0.97)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(245, 54, 54, 0.9)"
+          ],
+          "datasource": "$database",
+          "editable": true,
+          "error": false,
+          "format": "ms",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "height": "100px",
           "id": 14,
           "interval": null,
           "isNew": true,
@@ -247,7 +345,7 @@
           "postfixFontSize": "50%",
           "prefix": "",
           "prefixFontSize": "50%",
-          "span": 3,
+          "span": 2,
           "sparkline": {
             "fillColor": "rgba(31, 118, 189, 0.18)",
             "full": false,
@@ -316,14 +414,14 @@
           "colorBackground": false,
           "colorValue": true,
           "colors": [
-            "rgba(50, 172, 45, 0.97)",
+            "rgba(245, 54, 54, 0.9)",
             "rgba(237, 129, 40, 0.89)",
-            "rgba(245, 54, 54, 0.9)"
+            "rgba(50, 172, 45, 0.97)"
           ],
           "datasource": "$database",
           "editable": true,
           "error": false,
-          "format": "ms",
+          "format": "percent",
           "gauge": {
             "maxValue": 100,
             "minValue": 0,
@@ -332,12 +430,10 @@
             "thresholdMarkers": true
           },
           "height": "100px",
-          "id": 19,
+          "id": 26,
           "interval": null,
           "isNew": true,
-          "links": [
-
-          ],
+          "links": [],
           "maxDataPoints": 100,
           "nullPointMode": "connected",
           "nullText": null,
@@ -345,7 +441,7 @@
           "postfixFontSize": "50%",
           "prefix": "",
           "prefixFontSize": "50%",
-          "span": 3,
+          "span": 2,
           "sparkline": {
             "fillColor": "rgba(31, 118, 189, 0.18)",
             "full": false,
@@ -371,7 +467,7 @@
                 }
               ],
               "policy": "default",
-              "query": "SELECT mean(\"duration_95th\") AS \"95th Percentile\" FROM rails_transactions WHERE $timeFilter AND \"action\" =~ /^$action$/",
+              "query": "SELECT (sum(cache_read_hit_count) / (sum(cache_read_hit_count) + sum(cache_read_miss_count))) * 100 FROM rails_transactions WHERE $timeFilter AND \"action\" =~ /^$action$/",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -384,20 +480,16 @@
                     "type": "field"
                   },
                   {
-                    "params": [
-
-                    ],
+                    "params": [],
                     "type": "mean"
                   }
                 ]
               ],
-              "tags": [
-
-              ]
+              "tags": []
             }
           ],
-          "thresholds": "500,5000",
-          "title": "Git Time",
+          "thresholds": "33,83",
+          "title": "Cache Hit Ratio",
           "type": "singlestat",
           "valueFontSize": "80%",
           "valueMaps": [
@@ -407,7 +499,25 @@
               "value": "null"
             }
           ],
-          "valueName": "avg"
+          "valueName": "avg",
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "rangeMaps": [
+            {
+              "from": "null",
+              "to": "null",
+              "text": "N/A"
+            }
+          ],
+          "mappingType": 1
         }
       ],
       "showTitle": true,
@@ -2804,5 +2914,5 @@
   },
   "timezone": "utc",
   "title": "Grape Endpoints",
-  "version": 3
+  "version": 4
 }
