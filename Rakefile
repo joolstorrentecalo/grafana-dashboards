@@ -8,11 +8,19 @@ Dotenv.load('.env')
 DASHBOARDS = File.expand_path('../dashboards', __FILE__)
 TOKEN      = ENV['GRAFANA_API_TOKEN']
 URL        = ENV['GRAFANA_URL'] + '/api'
-HEADERS    = { 'Authorization' => "Bearer #{TOKEN}" }
+
+http = HTTP.headers('Content-Type' => 'application/json')
+
+if ENV['GRAFANA_API_USERNAME'] && !ENV['GRAFANA_API_USERNAME'].empty?
+  http = http.basic_auth(
+    user: ENV['GRAFANA_API_USERNAME'],
+    pass: ENV['GRAFANA_API_PASSWORD'])
+else
+  http = http.auth("Bearer #{TOKEN}")
+end
 
 desc 'Exports all dashboards from Grafana'
 task :export do
-  http     = HTTP.headers(HEADERS)
   response = http.get("#{URL}/search")
 
   if response.status == 200
@@ -56,7 +64,6 @@ end
 desc 'Imports all local dashboards to Grafana'
 task :import do
   Dir[File.join(DASHBOARDS, '*.json')].each do |file|
-    http     = HTTP.headers(HEADERS.merge('Content-Type' => 'application/json'))
     basename = File.basename(file)
     payload  = { dashboard: JSON.parse(File.read(file)), overwrite: true }
     response = http.post("#{URL}/dashboards/db", body: JSON.dump(payload))
