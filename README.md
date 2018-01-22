@@ -54,6 +54,10 @@ and retention policies to be set up. For more information on these requirements
 see <http://doc.gitlab.com/ce/monitoring/performance/grafana_configuration.html>
 under "Apply retention policies and create continuous queries".
 
+## Contributing
+
+Please see the [contribution guidelines](CONTRIBUTING.md).
+
 [gitlab-ce-docs]: http://docs.gitlab.com/ce/monitoring/performance/introduction.html
 [gitlab-ee-docs]: http://docs.gitlab.com/ee/monitoring/performance/introduction.html
 [continuous-queries]:https://docs.influxdata.com/influxdb/latest/query_language/continuous_queries/
