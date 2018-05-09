@@ -1,9 +1,9 @@
 # Grafana JSON Dashboards
 
 This repository contains sample dashboards that will display various GitLab
-performance metrics obtained from InfluxDB. See [GitLab CE][gitlab-ce-docs] or
-[GitLab EE][gitlab-ee-docs] for helping configuring/installing InfluxDB, Grafana
-and these dashboards.
+performance metrics obtained from Prometheus or InfluxDB. See
+[GitLab CE][gitlab-ce-docs] or [GitLab EE][gitlab-ee-docs] for helping
+configuring/installing Prometheus, InfluxDB, Grafana and these dashboards.
 
 ## Importing/Exporting Dashboards
 
@@ -43,6 +43,9 @@ To import dashboards into a Grafana instance simply run `bundle exec rake
 import`. This will _overwrite_ any existing dashboards with the same title.
 
 ## Provided Dashboards
+
+The dashboards residing in `./omnibus` are curated dashboards used to monitor
+Omnibus installs.
 
 The dashboards residing in `./dashboards` are _all_ dashboards used to monitor
 GitLab.com.
