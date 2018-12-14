@@ -12,4 +12,4 @@ It can also be found on [grafana.com](https://grafana.com/dashboards/5774).
 
 This dashboard provides an overview of the [Gitaly](https://docs.gitlab.com/ee/administration/gitaly/) service.
 
-It can also be found on [grafana.com](https://grafana.com/dashboards/TBD).
+It can also be found on [grafana.com](https://grafana.com/dashboards/9123).
