@@ -6,8 +6,10 @@ require 'fileutils'
 Dotenv.load('.env')
 
 DASHBOARDS = File.expand_path('../dashboards', __FILE__)
+IMPORT_DIR = File.expand_path('../import', __FILE__)
+
 TOKEN      = ENV['GRAFANA_API_TOKEN']
-URL        = ENV['GRAFANA_URL'] + '/api'
+URL        = (ENV['GRAFANA_URL'] || '') + '/api'
 
 http = HTTP.headers('Content-Type' => 'application/json')
 
@@ -61,7 +63,7 @@ task :export do
   end
 end
 
-desc 'Imports all local dashboards to Grafana'
+desc 'Imports all GitLab.com local dashboards to Grafana'
 task :import do
   Dir[File.join(DASHBOARDS, '*.json')].each do |file|
     basename = File.basename(file)
@@ -72,6 +74,23 @@ task :import do
       puts "Imported #{basename}"
     else
       raise "Failed to import #{basename}: #{response.reason}"
+    end
+  end
+end
+
+desc 'Converts all GitLab.com local dashboards ot Grafana Web import format'
+task :convert do
+  Dir[File.join(DASHBOARDS, '*.json')].each do |file|
+    basename = File.basename(file)
+    data = JSON.parse(File.read(file))
+    output_filename = File.join(IMPORT_DIR, "import-#{basename}")
+    output = File.open(output_filename, 'w')
+
+    if data['dashboard']
+      puts "Writing #{output_filename}"
+      output.write(JSON.dump(data['dashboard']))
+    else
+      raise "Dashboard file #{basename} is missing the dashboard key"
     end
   end
 end

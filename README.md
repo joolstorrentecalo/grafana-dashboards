@@ -5,7 +5,29 @@ performance metrics obtained from Prometheus or InfluxDB. See
 [GitLab CE][gitlab-ce-docs] or [GitLab EE][gitlab-ee-docs] for helping
 configuring/installing Prometheus, InfluxDB, Grafana and these dashboards.
 
-## Importing/Exporting Dashboards
+## Provided Dashboards
+
+|Directory|Import Method(s)|
+|---------|-------------|
+|`omnibus/`|Import via Grafana Web interface|
+|`dashboards/`|Grafana API, Rake task, Import via Grafana Web interface (see below)|
+
+### Curated Omnibus dashboards
+
+The dashboards residing in `omnibus/` are curated dashboards used to
+monitor Omnibus installs. You can only install these via the `Import`
+button in the Grafana Web interface.
+
+### GitLab.com dashboards
+
+The dashboards residing in `dashboards/` are _all_ dashboards used to
+monitor GitLab.com. You can install these in several ways:
+
+1. Using the bulk Rake task (see below)
+1. Using the [Grafana Create / Update dashboard API](http://docs.grafana.org/http_api/dashboard/#create-update-dashboard)
+1. Converting the files into the right format and importing them via the Grafana Web interface.
+
+## Bulk Importing/Exporting GitLab.com Dashboards
 
 To make it easier to import/export dashboards this repository contains a
 Rakefile that can take care of this. For this to work Ruby 2.x is required.
@@ -42,13 +64,23 @@ that are not present in the remote Grafana instance.
 To import dashboards into a Grafana instance simply run `bundle exec rake
 import`. This will _overwrite_ any existing dashboards with the same title.
 
-## Provided Dashboards
+### Converting GitLab.com dashboards to Import format
 
-The dashboards residing in `./omnibus` are curated dashboards used to monitor
-Omnibus installs.
+Attempting to import JSON files in `dashboards/` via the Grafana Web
+interface will result in a blank dashboard unless the files are
+converted to the right format. This conversion can also be done via
+`jq`. For example:
 
-The dashboards residing in `./dashboards` are _all_ dashboards used to monitor
-GitLab.com.
+```sh
+jq .dashboard dashboards/gitaly-fleet-overview.json > import/import-gitaly-fleet-overview.json
+```
+
+This repository also contains a Rake task that can convert all these
+files and save them in `import/`:
+
+```
+bundle exec rake convert
+```
 
 ## InfluxDB Requirements
 
