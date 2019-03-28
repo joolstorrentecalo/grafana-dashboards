@@ -15,8 +15,7 @@ configuring/installing Prometheus, InfluxDB, Grafana and these dashboards.
 ### Curated Omnibus dashboards
 
 The dashboards residing in `omnibus/` are curated dashboards used to
-monitor Omnibus installs. You can only install these via the `Import`
-button in the Grafana Web interface.
+monitor Omnibus installs. These dashbaords assume a datasource named `GitLab Omnibus`. They can be imported via the `Import` button, or via provisioning APIs.
 
 ### GitLab.com dashboards
 
