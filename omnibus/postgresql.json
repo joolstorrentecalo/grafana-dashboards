@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1542707262927,
+  "iteration": 1556027304979,
   "links": [],
   "panels": [
     {
@@ -80,8 +79,9 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "avg_over_time(pg_up{job=\"postgres\",instance=\"$instance\"}[$__interval]) or avg_over_time(up{job=\"postgres\",instance=\"$instance\"}[$__interval]) ",
+          "expr": "avg_over_time(pg_up{job=\"postgres\",instance=~\"$instance\"}[$__interval]) or avg_over_time(up{job=\"postgres\",instance=~\"$instance\"}[$__interval]) ",
           "format": "time_series",
+          "interval": "1m",
           "intervalFactor": 1,
           "legendFormat": "",
           "refId": "A"
@@ -161,9 +161,10 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "time() - pg_postmaster_start_time_seconds{instance=\"$instance\"}",
+          "expr": "avg(time() - pg_postmaster_start_time_seconds{instance=~\"$instance\"})",
           "format": "time_series",
           "instant": true,
+          "interval": "",
           "intervalFactor": 1,
           "legendFormat": "",
           "refId": "A"
@@ -209,6 +210,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "paceLength": 10,
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -219,7 +221,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "avg_over_time(pg_locks_count{instance=\"$instance\",datname=\"gitlabhq_production\"}[$__interval])",
+          "expr": "sum by (mode) (\n  avg_over_time(pg_locks_count{instance=~\"$instance\",datname=\"gitlabhq_production\"}[$__interval])\n)",
           "format": "time_series",
           "interval": "30s",
           "intervalFactor": 1,
@@ -229,6 +231,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Locks",
       "tooltip": {
@@ -294,6 +297,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "paceLength": 10,
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -309,15 +313,17 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(pg_slow_queries{instance=\"$instance\"}[$__interval])",
+          "expr": "sum(\n  rate(pg_slow_queries{instance=~\"$instance\"}[$__interval])\n)",
           "format": "time_series",
+          "interval": "1m",
           "intervalFactor": 1,
           "legendFormat": "Current",
           "refId": "A"
         },
         {
-          "expr": "rate(pg_slow_queries{instance=\"$instance\"}[$__interval] offset 1w)",
+          "expr": "sum(\n  rate(pg_slow_queries{instance=~\"$instance\"}[$__interval] offset 1w)\n)",
           "format": "time_series",
+          "interval": "1m",
           "intervalFactor": 1,
           "legendFormat": "Last Week",
           "refId": "B"
@@ -325,6 +331,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Slow Queries",
       "tooltip": {
@@ -373,7 +380,7 @@
         "#d44a3a"
       ],
       "datasource": "GitLab Omnibus",
-      "decimals": null,
+      "decimals": 1,
       "format": "percentunit",
       "gauge": {
         "maxValue": 1,
@@ -425,7 +432,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(avg_over_time(pg_stat_activity_count{instance=\"$instance\",state=\"active\"}[$__interval])) / sum(pg_settings_max_connections{instance=\"$instance\"})",
+          "expr": "sum(avg_over_time(pg_stat_activity_count{instance=~\"$instance\",state=\"active\"}[$__interval])) /\nsum(pg_settings_max_connections{instance=~\"$instance\"})",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -507,7 +514,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(avg_over_time(pg_stat_activity_count{instance=\"$instance\"}[$__interval])) / sum(pg_settings_max_connections{instance=\"$instance\"})",
+          "expr": "sum(avg_over_time(pg_stat_activity_count{instance=~\"$instance\"}[$__interval])) /\nsum(pg_settings_max_connections{instance=~\"$instance\"})",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -555,6 +562,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "paceLength": 10,
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -565,16 +573,17 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(pg_stat_database_xact_commit{instance=\"$instance\",datname=\"gitlabhq_production\"}[$__interval])",
+          "expr": "sum(\n  rate(pg_stat_database_xact_commit{instance=~\"$instance\",datname=\"gitlabhq_production\"}[$__interval])\n)",
           "format": "time_series",
-          "interval": "30s",
+          "interval": "1m",
           "intervalFactor": 1,
           "legendFormat": "Commit",
           "refId": "A"
         },
         {
-          "expr": "rate(pg_stat_database_xact_rollback{instance=\"$instance\",datname=\"gitlabhq_production\"}[$__interval])",
+          "expr": "sum(\n  rate(pg_stat_database_xact_rollback{instance=~\"$instance\",datname=\"gitlabhq_production\"}[$__interval])\n)",
           "format": "time_series",
+          "interval": "1m",
           "intervalFactor": 1,
           "legendFormat": "Rollback",
           "refId": "B"
@@ -582,6 +591,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Transactions",
       "tooltip": {
@@ -647,6 +657,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "paceLength": 10,
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -657,17 +668,17 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(pg_stat_database_blks_hit{instance=\"$instance\",datname=\"gitlabhq_production\"}[$__interval])",
+          "expr": "sum(\n  rate(pg_stat_database_blks_hit{instance=~\"$instance\",datname=\"gitlabhq_production\"}[$__interval])\n)",
           "format": "time_series",
-          "interval": "30s",
+          "interval": "1m",
           "intervalFactor": 1,
           "legendFormat": "Cache Hits",
           "refId": "B"
         },
         {
-          "expr": "rate(pg_stat_database_blks_read{instance=\"$instance\",datname=\"gitlabhq_production\"}[$__interval])",
+          "expr": "sum(\n  rate(pg_stat_database_blks_read{instance=~\"$instance\",datname=\"gitlabhq_production\"}[$__interval])\n)",
           "format": "time_series",
-          "interval": "30s",
+          "interval": "1m",
           "intervalFactor": 1,
           "legendFormat": "Reads",
           "refId": "A"
@@ -675,6 +686,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Block IO",
       "tooltip": {
@@ -740,6 +752,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "paceLength": 10,
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -750,7 +763,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(pg_stat_database_tup_fetched{instance=\"$instance\",datname=\"gitlabhq_production\"}[$__interval])",
+          "expr": "sum(\n  rate(pg_stat_database_tup_fetched{instance=~\"$instance\",datname=\"gitlabhq_production\"}[$__interval])\n)",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -758,22 +771,25 @@
           "refId": "A"
         },
         {
-          "expr": "rate(pg_stat_database_tup_deleted{instance=\"$instance\",datname=\"gitlabhq_production\"}[$__interval])",
+          "expr": "sum(\n  rate(pg_stat_database_tup_deleted{instance=~\"$instance\",datname=\"gitlabhq_production\"}[$__interval])\n)",
           "format": "time_series",
+          "interval": "1m",
           "intervalFactor": 1,
           "legendFormat": "Deleted",
           "refId": "B"
         },
         {
-          "expr": "rate(pg_stat_database_tup_inserted{instance=\"$instance\",datname=\"gitlabhq_production\"}[$__interval])",
+          "expr": "sum(\n  rate(pg_stat_database_tup_inserted{instance=~\"$instance\",datname=\"gitlabhq_production\"}[$__interval])\n)",
           "format": "time_series",
+          "interval": "1m",
           "intervalFactor": 1,
           "legendFormat": "Inserted",
           "refId": "C"
         },
         {
-          "expr": "rate(pg_stat_database_tup_updated{instance=\"$instance\",datname=\"gitlabhq_production\"}[$__interval])",
+          "expr": "sum(\n  rate(pg_stat_database_tup_updated{instance=~\"$instance\",datname=\"gitlabhq_production\"}[$__interval])\n)",
           "format": "time_series",
+          "interval": "1m",
           "intervalFactor": 1,
           "legendFormat": "Updated",
           "refId": "D"
@@ -781,6 +797,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Tuple Stats",
       "tooltip": {
@@ -821,23 +838,28 @@
     }
   ],
   "refresh": "1m",
-  "schemaVersion": 16,
+  "schemaVersion": 18,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
         "allValue": null,
-        "current": {},
+        "current": {
+          "tags": [],
+          "text": "All",
+          "value": "$__all"
+        },
         "datasource": "GitLab Omnibus",
+        "definition": "",
         "hide": 0,
-        "includeAll": false,
+        "includeAll": true,
         "label": null,
         "multi": false,
         "name": "instance",
         "options": [],
         "query": "label_values(up{job=\"postgres\"}, instance)",
-        "refresh": 2,
+        "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
@@ -881,5 +903,5 @@
   "timezone": "",
   "title": "GitLab Omnibus - PostgreSQL",
   "uid": "c_LJgXfmk",
-  "version": 9
+  "version": 10
 }
