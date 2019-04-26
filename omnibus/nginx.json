@@ -15,71 +15,93 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
   "links": [],
   "panels": [
     {
-      "cards": {
-        "cardPadding": null,
-        "cardRound": null
-      },
-      "color": {
-        "cardColor": "#b4ff00",
-        "colorScale": "sqrt",
-        "colorScheme": "interpolateOranges",
-        "exponent": 0.5,
-        "mode": "opacity"
-      },
-      "dataFormat": "timeseries",
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
       "datasource": "GitLab Omnibus",
+      "fill": 1,
       "gridPos": {
         "h": 11,
         "w": 24,
         "x": 0,
         "y": 0
       },
-      "heatmap": {},
-      "highlightCards": true,
       "id": 2,
-      "interval": "10s",
       "legend": {
-        "show": false
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
       },
+      "lines": true,
+      "linewidth": 1,
       "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "stack": false,
+      "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(nginx_vts_upstream_response_seconds_total[$__interval])) > 0",
+          "expr": "sum by (instance) (\n  rate(nginx_vts_upstream_request_seconds_total{instance=~\"$instance\"}[$__interval])\n) /\nsum by (instance) (\n  rate(nginx_vts_upstream_requests_total{instance=~\"$instance\"}[$__interval])\n)",
           "format": "heatmap",
+          "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "",
+          "legendFormat": "{{instance}}",
           "refId": "A"
         }
       ],
+      "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Latency",
       "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
         "show": true,
-        "showHistogram": false
+        "values": []
       },
-      "type": "heatmap",
-      "xAxis": {
-        "show": true
-      },
-      "xBucketNumber": null,
-      "xBucketSize": null,
-      "yAxis": {
-        "decimals": null,
-        "format": "s",
-        "logBase": 1,
-        "max": null,
-        "min": null,
-        "show": true,
-        "splitFactor": null
-      },
-      "yBucketBound": "auto",
-      "yBucketNumber": null,
-      "yBucketSize": null
+      "yaxes": [
+        {
+          "format": "s",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     },
     {
       "collapsed": false,
@@ -132,10 +154,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(nginx_vts_server_bytes_total[$__interval])",
+          "expr": "sum without (instance) (\n  rate(nginx_vts_server_bytes_total{instance=~\"$instance\"}[$__interval])\n)",
           "format": "time_series",
+          "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{direction}}-{{host}} / {{instance}}",
+          "legendFormat": "{{direction}}-{{host}}",
           "refId": "A"
         }
       ],
@@ -218,10 +241,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(nginx_vts_upstream_bytes_total[$__interval])",
+          "expr": "sum without (instance) (\n  rate(nginx_vts_upstream_bytes_total{instance=~\"$instance\"}[$__interval])\n)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{direction}}-{{backend}}-{{upstream}} / {{instance}}",
+          "legendFormat": "{{direction}}-{{backend}}-{{upstream}}",
           "refId": "A"
         }
       ],
@@ -317,9 +340,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(nginx_vts_server_requests_total[5m])",
+          "expr": "sum without (instance) (\n  rate(nginx_vts_server_requests_total{instance=~\"$instance\"}[$__interval])\n)",
           "format": "time_series",
           "instant": false,
+          "interval": "1m",
           "intervalFactor": 1,
           "legendFormat": "{{code}} {{host}}",
           "refId": "A"
@@ -405,8 +429,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(nginx_vts_upstream_requests_total[5m])",
+          "expr": "sum without (instance) (\n  rate(nginx_vts_upstream_requests_total{instance=~\"$instance\"}[$__interval])\n)",
           "format": "time_series",
+          "interval": "1m",
           "intervalFactor": 1,
           "legendFormat": "{{code}} {{backend}} {{upstream }}",
           "refId": "A"
@@ -454,11 +479,38 @@
       }
     }
   ],
+  "refresh": "1m",
   "schemaVersion": 18,
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "GitLab Omnibus",
+        "definition": "label_values(up{job=\"nginx\"}, instance)",
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": false,
+        "name": "instance",
+        "options": [],
+        "query": "label_values(up{job=\"nginx\"}, instance)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
   },
   "time": {
     "from": "now-6h",
@@ -492,5 +544,5 @@
   "timezone": "",
   "title": "GitLab Omnibus - NGINX VTS",
   "uid": "SIHl30qik",
-  "version": 6
+  "version": 7
 }
