@@ -20,7 +20,7 @@ monitor Omnibus installs. These dashbaords assume a datasource named `GitLab Omn
 ### GitLab.com dashboards
 
 The dashboards residing in `dashboards/` are _all_ dashboards used to
-monitor GitLab.com. You can install these in several ways:
+monitor GitLab.com at https://dashboards.gitlab.com. You can install these in several ways:
 
 1. Using the bulk Rake task (see below)
 1. Using the [Grafana Create / Update dashboard API](http://docs.grafana.org/http_api/dashboard/#create-update-dashboard)
