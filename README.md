@@ -43,7 +43,7 @@ Rakefile that can take care of this. For this to work Ruby 2.x is required.
 First make sure Bundler is installed. If you don't know what Bundler is or it's
 not installed run the following to install it:
 
-    gem install bundler --no-ri --no-rdoc
+    gem install bundler --no-document
 
 Next install all the required dependencies:
 
