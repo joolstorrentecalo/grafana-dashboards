@@ -23,7 +23,7 @@ The dashboards residing in `dashboards/` are _all_ dashboards used to
 monitor GitLab.com at https://dashboards.gitlab.com. Note that certain amount of
 customization is required to make these dashboards work for your instance.
 GitLab does not provide support for these dashboards, but you are more than
-welcome to play around on your own and make them work in your enviroment. If you
+welcome to play around on your own and make them work in your environment. If you
 would like specific one to be supported, please
 [open an issue in omnibus-gitlab project](https://gitlab.com/gitlab-org/omnibus-gitlab/issues)
 while sharing details about your use case and we will try to make them fit to
