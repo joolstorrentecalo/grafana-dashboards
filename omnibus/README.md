@@ -1,6 +1,6 @@
 # GitLab Omnibus Dashboards
 
-The Grafana dashbaord json files in this directory are tailored to the GitLab Omnibus install.
+The Grafana dashboard json files in this directory are tailored to the GitLab Omnibus install.
 
 ## [Overview Dashboard](overview.json)
 
