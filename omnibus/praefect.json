@@ -21,9 +21,11 @@
     {
       "aliasColors": {},
       "bars": false,
+      "cacheTimeout": null,
       "dashLength": 10,
       "dashes": false,
       "datasource": "GitLab Omnibus",
+      "description": "",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -33,7 +35,7 @@
         "y": 0
       },
       "hiddenSeries": false,
-      "id": 19,
+      "id": 17,
       "legend": {
         "avg": false,
         "current": false,
@@ -45,34 +47,54 @@
       },
       "lines": true,
       "linewidth": 1,
+      "links": [],
       "nullPointMode": "null",
       "options": {
         "dataLinks": []
       },
       "percentage": false,
+      "pluginVersion": "6.7.0",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "/Error.*/",
+          "color": "#F2495C"
+        },
+        {
+          "alias": "/Success.*/",
+          "color": "#73BF69"
+        }
+      ],
       "spaceLength": 10,
-      "stack": false,
+      "stack": true,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "gitaly_praefect_node_last_healthcheck_up",
+          "expr": "sum by (grpc_method)(rate(grpc_server_handled_total{job=\"praefect\",grpc_code!=\"OK\"}[5m]))",
           "interval": "",
-          "legendFormat": "{{instance}}[{{gitaly_storage}}]",
+          "legendFormat": "Error[{{grpc_method}}]",
           "refId": "A"
+        },
+        {
+          "expr": "sum by (grpc_method)(rate(grpc_server_handled_total{job=\"praefect\",grpc_code=\"OK\"}[5m]))",
+          "interval": "",
+          "legendFormat": "Success[{{grpc_method}}]",
+          "refId": "B"
+        },
+        {
+          "refId": "C"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Praefect Gitaly Node Uptime",
+      "title": "Praefect RPC Success/Error Rate",
       "tooltip": {
-        "shared": true,
-        "sort": 0,
+        "shared": false,
+        "sort": 1,
         "value_type": "individual"
       },
       "type": "graph",
@@ -85,12 +107,11 @@
       },
       "yaxes": [
         {
-          "decimals": null,
           "format": "short",
           "label": null,
-          "logBase": 1,
-          "max": "1",
-          "min": "0",
+          "logBase": 10,
+          "max": null,
+          "min": null,
           "show": true
         },
         {
@@ -201,7 +222,6 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "GitLab Omnibus",
-      "description": "All RPC's proxied by Praefect that did not yield the gRPC code for OK (i.e. success).",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -211,7 +231,7 @@
         "y": 8
       },
       "hiddenSeries": false,
-      "id": 17,
+      "id": 19,
       "legend": {
         "avg": false,
         "current": false,
@@ -237,9 +257,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(grpc_server_handled_total{job=\"praefect\",grpc_code!=\"OK\"}[5m])",
+          "expr": "gitaly_praefect_node_last_healthcheck_up",
           "interval": "",
-          "legendFormat": "{{grpc_service}}/{{grpc_method}}",
+          "legendFormat": "{{instance}}[{{gitaly_storage}}]",
           "refId": "A"
         }
       ],
@@ -247,7 +267,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Praefect RPC Error Rate",
+      "title": "Praefect Gitaly Node Uptime",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -263,11 +283,12 @@
       },
       "yaxes": [
         {
+          "decimals": null,
           "format": "short",
           "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
+          "max": "1",
+          "min": "0",
           "show": true
         },
         {
@@ -276,7 +297,7 @@
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": true
+          "show": false
         }
       ],
       "yaxis": {
@@ -720,5 +741,5 @@
   "variables": {
     "list": []
   },
-  "version": 10
+  "version": 17
 }
