@@ -53,7 +53,7 @@ Next you'll need to get two things:
 
 1. The URL of your Grafana instance (including the HTTP scheme)
 2. A Grafana API token that has the "Editor" permission. See
-   <http://docs.grafana.org/reference/http_api/> for information on creating API
+   <https://grafana.com/docs/grafana/latest/http_api/> for information on creating API
    tokens. Make sure the API token is linked to the correct Grafana organization if
    you're using multiple organizations.
 
@@ -94,13 +94,13 @@ bundle exec rake convert
 
 Some dashboards may depend on certain [continuous queries][continuous-queries]
 and retention policies to be set up. For more information on these requirements
-see <http://doc.gitlab.com/ce/monitoring/performance/grafana_configuration.html>
+see <https://docs.gitlab.com/ce/administration/monitoring/performance/grafana_configuration.html>
 under "Apply retention policies and create continuous queries".
 
 ## Contributing
 
 Please see the [contribution guidelines](CONTRIBUTING.md).
 
-[gitlab-ce-docs]: http://docs.gitlab.com/ce/monitoring/performance/introduction.html
-[gitlab-ee-docs]: http://docs.gitlab.com/ee/monitoring/performance/introduction.html
+[gitlab-ce-docs]: https://docs.gitlab.com/ce/administration/monitoring/performance/index.html
+[gitlab-ee-docs]: https://docs.gitlab.com/ee/administration/monitoring/performance/index.html
 [continuous-queries]:https://docs.influxdata.com/influxdb/latest/query_language/continuous_queries/
