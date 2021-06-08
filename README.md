@@ -103,4 +103,4 @@ Please see the [contribution guidelines](CONTRIBUTING.md).
 
 [gitlab-ce-docs]: https://docs.gitlab.com/ce/administration/monitoring/performance/index.html
 [gitlab-ee-docs]: https://docs.gitlab.com/ee/administration/monitoring/performance/index.html
-[continuous-queries]:https://docs.influxdata.com/influxdb/latest/query_language/continuous_queries/
+[continuous-queries]: https://docs.influxdata.com/influxdb/v2.0/upgrade/v1-to-v2/migrate-cqs/
