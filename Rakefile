@@ -29,7 +29,7 @@ task :export do
     remotes = []
 
     JSON.parse(response.body.to_s).each do |meta|
-      dash_response = http.get("#{URL}/dashboards/#{meta['uri']}")
+      dash_response = http.get("#{URL}/dashboards/uid/#{meta['uid']}")
 
       if dash_response.status == 200
         dash_json = JSON.parse(dash_response.body.to_s)
