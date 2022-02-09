@@ -1,0 +1,19 @@
+---
+stages:
+  - export
+
+dashboards:export:
+  stage: export
+  image: ruby:3.1-alpine
+  before_script:
+    - git config --global user.email 'ops-contact@gitlab.com'
+    - git config --global user.name 'Automated export'
+  script:
+    - bundle install
+    - bundle exec rake export
+    - git add dashboards
+    - git diff --cached --exit-code --quiet && exit 0
+    - git commit --message "Export of $(date -Iseconds -u)"
+    - git push origin https://${EXPORTER_GIT_USER}:${EXPORTER_GIT_PASSWORD}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git HEAD:master
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
