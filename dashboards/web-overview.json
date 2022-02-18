@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2106540293 at Thu Feb 17 16:18:55 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2110536345 at Fri Feb 18 12:40:09 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -7889,13 +7889,205 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "A GKE kubernetes node pool is close to it's maximum number of nodes.\n\nThe maximum is defined in terraform, via the `max_node_count` field of a node pool. The limit is per-zone, so for\nsingle zone clusters the number of nodes will match the limit, for regional clusters, the limit is multiplied by\nthe number of zones the cluster is deployed over.\n Lower is better.",
+          "description": "This resource measures average CPU utilization across an all cores in the node pool for\na service fleet.\n\nIf it is becoming saturated, it may indicate that the fleet needs horizontal scaling.\n Lower is better.",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
             "w": 12,
             "x": 0,
+            "y": 20
+          },
+          "id": 1839360107,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "sideWidth": null,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [
+            {
+              "alias": "/^Soft SLO/",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^Hard SLO/",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            },
+            {
+              "alias": "/aggregated /",
+              "color": "#E7D551",
+              "linewidth": 2,
+              "zindex": 3
+            },
+            {
+              "alias": "/^95th quantile for week/",
+              "color": "#37872D",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 1,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^99th quantile for week/",
+              "color": "#56A64B",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "saturation-kube_pool_cpu",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage) (\n  clamp_min(\n    clamp_max(\n      1 - avg by (environment, tier, type, stage) (\n        rate(node_cpu_seconds_total:labeled{mode=\"idle\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"web\"}[5m])\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{ type }}",
+              "refId": "A"
+            },
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"web\", component=\"kube_pool_cpu\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "aggregated {{ component }}",
+              "refId": "B"
+            },
+            {
+              "expr": "gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"web\", component=\"kube_pool_cpu\"}\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "95th quantile for week {{ component }}",
+              "refId": "C"
+            },
+            {
+              "expr": "gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"web\", component=\"kube_pool_cpu\"}\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "99th quantile for week {{ component }}",
+              "refId": "D"
+            },
+            {
+              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"kube_pool_cpu\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "Soft SLO: {{ component }}",
+              "refId": "E"
+            },
+            {
+              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"kube_pool_cpu\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "Hard SLO: {{ component }}",
+              "refId": "F"
+            }
+          ],
+          "thresholds": [
+
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "kube_pool_cpu component saturation: Average Node Pool CPU Utilization",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Saturation %",
+              "logBase": 1,
+              "max": 1,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "A GKE kubernetes node pool is close to it's maximum number of nodes.\n\nThe maximum is defined in terraform, via the `max_node_count` field of a node pool. The limit is per-zone, so for\nsingle zone clusters the number of nodes will match the limit, for regional clusters, the limit is multiplied by\nthe number of zones the cluster is deployed over.\n Lower is better.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
             "y": 20
           },
           "id": 1686893332,
@@ -8087,8 +8279,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 20
+            "x": 0,
+            "y": 30
           },
           "id": 1001792825,
           "legend": {
@@ -8279,7 +8471,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 30
           },
           "id": 391047339,
@@ -8471,8 +8663,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 30
+            "x": 0,
+            "y": 40
           },
           "id": 2359646072,
           "legend": {
@@ -8663,7 +8855,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 40
           },
           "id": 2677029523,
@@ -8855,8 +9047,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 40
+            "x": 0,
+            "y": 50
           },
           "id": 3379320113,
           "legend": {
@@ -9051,7 +9243,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 84,
+      "id": 85,
       "panels": [
 
       ],
@@ -9080,7 +9272,7 @@
         "x": 0,
         "y": 1001
       },
-      "id": 85,
+      "id": 86,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9192,7 +9384,7 @@
         "x": 12,
         "y": 1001
       },
-      "id": 86,
+      "id": 87,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9304,7 +9496,7 @@
         "x": 0,
         "y": 1011
       },
-      "id": 87,
+      "id": 88,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9416,7 +9608,7 @@
         "x": 12,
         "y": 1011
       },
-      "id": 88,
+      "id": 89,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9528,7 +9720,7 @@
         "x": 0,
         "y": 1021
       },
-      "id": 89,
+      "id": 90,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9640,7 +9832,7 @@
         "x": 12,
         "y": 1021
       },
-      "id": 90,
+      "id": 91,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9752,7 +9944,7 @@
         "x": 0,
         "y": 1031
       },
-      "id": 91,
+      "id": 92,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9856,7 +10048,7 @@
         "x": 0,
         "y": 3000
       },
-      "id": 92,
+      "id": 93,
       "panels": [
 
       ],
@@ -9885,7 +10077,7 @@
         "x": 0,
         "y": 3001
       },
-      "id": 93,
+      "id": 94,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9997,7 +10189,7 @@
         "x": 12,
         "y": 3001
       },
-      "id": 94,
+      "id": 95,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10109,7 +10301,7 @@
         "x": 0,
         "y": 3011
       },
-      "id": 95,
+      "id": 96,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10221,7 +10413,7 @@
         "x": 12,
         "y": 3011
       },
-      "id": 96,
+      "id": 97,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10333,7 +10525,7 @@
         "x": 0,
         "y": 3021
       },
-      "id": 97,
+      "id": 98,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10445,7 +10637,7 @@
         "x": 12,
         "y": 3021
       },
-      "id": 98,
+      "id": 99,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10557,7 +10749,7 @@
         "x": 0,
         "y": 3031
       },
-      "id": 99,
+      "id": 100,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10661,7 +10853,7 @@
         "x": 0,
         "y": 4000
       },
-      "id": 100,
+      "id": 101,
       "panels": [
         {
           "aliasColors": {
@@ -10680,7 +10872,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 101,
+          "id": 102,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10778,7 +10970,7 @@
             "x": 12,
             "y": 1
           },
-          "id": 102,
+          "id": 103,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10876,7 +11068,7 @@
             "x": 0,
             "y": 11
           },
-          "id": 103,
+          "id": 104,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10974,7 +11166,7 @@
             "x": 12,
             "y": 11
           },
-          "id": 104,
+          "id": 105,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11072,7 +11264,7 @@
             "x": 0,
             "y": 21
           },
-          "id": 105,
+          "id": 106,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11171,7 +11363,7 @@
         "x": 0,
         "y": 5000
       },
-      "id": 106,
+      "id": 107,
       "panels": [
         {
           "aliasColors": {
@@ -11190,7 +11382,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 107,
+          "id": 108,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11288,7 +11480,7 @@
             "x": 12,
             "y": 1
           },
-          "id": 108,
+          "id": 109,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11386,7 +11578,7 @@
             "x": 0,
             "y": 11
           },
-          "id": 109,
+          "id": 110,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11484,7 +11676,7 @@
             "x": 12,
             "y": 11
           },
-          "id": 110,
+          "id": 111,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11582,7 +11774,7 @@
             "x": 0,
             "y": 21
           },
-          "id": 111,
+          "id": 112,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11679,7 +11871,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 112,
+      "id": 113,
       "panels": [
         {
           "colors": [
@@ -11700,7 +11892,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 113,
+          "id": 114,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -11813,7 +12005,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 114,
+          "id": 115,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -11924,7 +12116,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 115,
+          "id": 116,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -12029,7 +12221,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 116,
+      "id": 117,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -12152,5 +12344,5 @@
   "timezone": "utc",
   "title": "web: Overview",
   "uid": "web-main",
-  "version": 2827
+  "version": 2829
 }

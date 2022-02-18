@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2106540293 at Thu Feb 17 16:24:45 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2110536345 at Fri Feb 18 12:45:48 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -2853,7 +2853,7 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "A GKE kubernetes node pool is close to it's maximum number of nodes.\n\nThe maximum is defined in terraform, via the `max_node_count` field of a node pool. The limit is per-zone, so for\nsingle zone clusters the number of nodes will match the limit, for regional clusters, the limit is multiplied by\nthe number of zones the cluster is deployed over.\n Lower is better.",
+          "description": "Open file descriptor utilization per instance.\n\nSaturation on file descriptor limits may indicate a resource-descriptor leak in the application.\n\nAs a temporary fix, you may want to consider restarting the affected process.\n Lower is better.",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -2861,198 +2861,6 @@
             "w": 12,
             "x": 12,
             "y": 10
-          },
-          "id": 1686893332,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "sideWidth": null,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [
-
-          ],
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "repeat": null,
-          "seriesOverrides": [
-            {
-              "alias": "/^Soft SLO/",
-              "color": "#FF4500",
-              "dashLength": 4,
-              "dashes": true,
-              "legend": true,
-              "lines": true,
-              "linewidth": 2,
-              "nullPointMode": "connected",
-              "spaceLength": 10,
-              "zindex": -2
-            },
-            {
-              "alias": "/^Hard SLO/",
-              "color": "#F2495C",
-              "dashLength": 4,
-              "dashes": true,
-              "legend": true,
-              "lines": true,
-              "linewidth": 4,
-              "nullPointMode": "connected",
-              "spaceLength": 4,
-              "zindex": -2
-            },
-            {
-              "alias": "/aggregated /",
-              "color": "#E7D551",
-              "linewidth": 2,
-              "zindex": 3
-            },
-            {
-              "alias": "/^95th quantile for week/",
-              "color": "#37872D",
-              "dashLength": 4,
-              "dashes": true,
-              "legend": true,
-              "lines": true,
-              "linewidth": 1,
-              "nullPointMode": "connected",
-              "spaceLength": 10,
-              "zindex": -2
-            },
-            {
-              "alias": "/^99th quantile for week/",
-              "color": "#56A64B",
-              "dashLength": 4,
-              "dashes": true,
-              "legend": true,
-              "lines": true,
-              "linewidth": 2,
-              "nullPointMode": "connected",
-              "spaceLength": 4,
-              "zindex": -2
-            }
-          ],
-          "spaceLength": 10,
-          "stableId": "saturation-kube_pool_max_nodes",
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(env, environment, tier, type, stage, cluster, label_pool, shard) (\n  clamp_min(\n    clamp_max(\n      count by (cluster, env, environment, label_pool, tier, type, stage, shard) (\n        kube_node_labels:labeled{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"nginx\"}\n      )\n      / on(cluster, env, environment, label_pool) group_left() (\n        label_replace(\n          terraform_report_google_cluster_node_pool_max_node_count,\n          \"label_pool\", \"$0\", \"pool_name\", \".*\"\n        )\n        * on(cluster, env, environment) group_left()\n        count by (cluster, env, environment) (\n          group by (cluster, env, environment, label_topology_kubernetes_io_zone) (\n            kube_node_labels:labeled{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"nginx\"}\n          )\n        )\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 3,
-              "legendFormat": "{{ cluster }} {{ label_pool }} {{ shard }}",
-              "refId": "A"
-            },
-            {
-              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"nginx\", component=\"kube_pool_max_nodes\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 3,
-              "legendFormat": "aggregated {{ component }}",
-              "refId": "B"
-            },
-            {
-              "expr": "gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"nginx\", component=\"kube_pool_max_nodes\"}\n",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 3,
-              "legendFormat": "95th quantile for week {{ component }}",
-              "refId": "C"
-            },
-            {
-              "expr": "gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"nginx\", component=\"kube_pool_max_nodes\"}\n",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 3,
-              "legendFormat": "99th quantile for week {{ component }}",
-              "refId": "D"
-            },
-            {
-              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"kube_pool_max_nodes\"}) by (component)\n",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 3,
-              "legendFormat": "Soft SLO: {{ component }}",
-              "refId": "E"
-            },
-            {
-              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"kube_pool_max_nodes\"}) by (component)\n",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 3,
-              "legendFormat": "Hard SLO: {{ component }}",
-              "refId": "F"
-            }
-          ],
-          "thresholds": [
-
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "kube_pool_max_nodes component saturation: Kube Pool Max Node Limit",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": [
-
-            ]
-          },
-          "yaxes": [
-            {
-              "format": "percentunit",
-              "label": "Saturation %",
-              "logBase": 1,
-              "max": 1,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
-        },
-        {
-          "aliasColors": {
-          },
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 2,
-          "description": "Open file descriptor utilization per instance.\n\nSaturation on file descriptor limits may indicate a resource-descriptor leak in the application.\n\nAs a temporary fix, you may want to consider restarting the affected process.\n Lower is better.",
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 12,
-            "x": 0,
-            "y": 20
           },
           "id": 1001792825,
           "legend": {
@@ -3247,7 +3055,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 31,
+      "id": 30,
       "panels": [
 
       ],
@@ -3276,7 +3084,7 @@
         "x": 0,
         "y": 1001
       },
-      "id": 32,
+      "id": 31,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -3374,7 +3182,7 @@
         "x": 12,
         "y": 1001
       },
-      "id": 33,
+      "id": 32,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -3462,7 +3270,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 34,
+      "id": 33,
       "panels": [
         {
           "colors": [
@@ -3483,7 +3291,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 35,
+          "id": 34,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -3596,7 +3404,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 36,
+          "id": 35,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -3707,7 +3515,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 37,
+          "id": 36,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -3812,7 +3620,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 38,
+      "id": 37,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -3935,5 +3743,5 @@
   "timezone": "utc",
   "title": "nginx: Overview",
   "uid": "nginx-main",
-  "version": 588
+  "version": 590
 }
