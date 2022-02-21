@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2115970410 at Mon Feb 21 05:07:03 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2118505905 at Mon Feb 21 15:45:11 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -336,7 +336,7 @@
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning 🔁�🥵"
                 },
                 "11": {
                   "color": "red",
@@ -2723,7 +2723,7 @@
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded 🔁�🥵"
                 },
                 "15": {
                   "color": "red",
@@ -3052,7 +3052,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  avg_over_time(stackdriver_cloudsql_database_cloudsql_googleapis_com_database_postgresql_transaction_count{database=\"praefect_production\",env=\"$environment\",environment=\"$environment\",job=\"stackdriver\",stage=\"$stage\",transaction_type=\"rollback\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  avg_over_time(stackdriver_cloudsql_database_cloudsql_googleapis_com_database_postgresql_transaction_count{database=~\"praefect_(canary|production)\",database_id=~\".+:praefect-db-.+\",env=\"$environment\",environment=\"$environment\",job=\"stackdriver\",stage=\"$stage\",transaction_type=\"rollback\"}[$__interval])\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
@@ -3128,7 +3128,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  avg_over_time(stackdriver_cloudsql_database_cloudsql_googleapis_com_database_postgresql_transaction_count{database=\"praefect_production\",env=\"$environment\",environment=\"$environment\",job=\"stackdriver\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  avg_over_time(stackdriver_cloudsql_database_cloudsql_googleapis_com_database_postgresql_transaction_count{database=~\"praefect_(canary|production)\",database_id=~\".+:praefect-db-.+\",env=\"$environment\",environment=\"$environment\",job=\"stackdriver\",stage=\"$stage\"}[$__interval])\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
@@ -3137,6 +3137,158 @@
             }
           ],
           "title": "praefect_cloudsql RPS - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 10
+          },
+          "id": 27,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (database_id) (\n  avg_over_time(stackdriver_cloudsql_database_cloudsql_googleapis_com_database_postgresql_transaction_count{database=~\"praefect_(canary|production)\",database_id!=\"\",env=\"$environment\",environment=\"$environment\",job=\"stackdriver\",stage=\"$stage\",transaction_type=\"rollback\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{database_id}}",
+              "refId": "A"
+            }
+          ],
+          "title": "praefect_cloudsql Errors - per database_id",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 10
+          },
+          "id": 28,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (database_id) (\n  avg_over_time(stackdriver_cloudsql_database_cloudsql_googleapis_com_database_postgresql_transaction_count{database=~\"praefect_(canary|production)\",database_id!=\"\",env=\"$environment\",environment=\"$environment\",job=\"stackdriver\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{database_id}}",
+              "refId": "A"
+            }
+          ],
+          "title": "praefect_cloudsql RPS - per database_id",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -3182,7 +3334,7 @@
         "x": 0,
         "y": 110
       },
-      "id": 27,
+      "id": 29,
       "panels": [
         {
           "bars": false,
@@ -3199,7 +3351,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 28,
+          "id": 30,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3295,7 +3447,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 29,
+          "id": 31,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3371,7 +3523,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 30,
+          "id": 32,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3447,7 +3599,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 31,
+          "id": 33,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3543,7 +3695,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 32,
+          "id": 34,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3624,7 +3776,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 33,
+          "id": 35,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3700,7 +3852,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 34,
+          "id": 36,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3779,7 +3931,7 @@
         "x": 0,
         "y": 120
       },
-      "id": 35,
+      "id": 37,
       "panels": [
         {
           "bars": false,
@@ -3796,7 +3948,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 36,
+          "id": 38,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3891,7 +4043,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 37,
+          "id": 39,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3967,7 +4119,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 38,
+          "id": 40,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4062,7 +4214,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 39,
+          "id": 41,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4143,7 +4295,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 40,
+          "id": 42,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4219,7 +4371,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 41,
+          "id": 43,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4314,7 +4466,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 42,
+          "id": 44,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4395,7 +4547,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 43,
+          "id": 45,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4474,7 +4626,7 @@
         "x": 0,
         "y": 300
       },
-      "id": 44,
+      "id": 46,
       "panels": [
         {
           "aliasColors": {
@@ -4493,7 +4645,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 45,
+          "id": 47,
           "legend": {
             "alignAsTable": false,
             "avg": false,
@@ -4591,7 +4743,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 46,
+          "id": 48,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4687,7 +4839,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 47,
+          "id": 49,
           "legend": {
             "alignAsTable": false,
             "avg": false,
@@ -4796,7 +4948,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 48,
+          "id": 50,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4892,7 +5044,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 49,
+          "id": 51,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4990,7 +5142,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 50,
+          "id": 52,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5088,7 +5240,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 51,
+          "id": 53,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5186,7 +5338,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 52,
+          "id": 54,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5284,7 +5436,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 53,
+          "id": 55,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5382,7 +5534,7 @@
             "x": 12,
             "y": 40
           },
-          "id": 54,
+          "id": 56,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5480,7 +5632,7 @@
             "x": 0,
             "y": 50
           },
-          "id": 55,
+          "id": 57,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5595,7 +5747,7 @@
             "x": 12,
             "y": 50
           },
-          "id": 56,
+          "id": 58,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5710,7 +5862,7 @@
             "x": 0,
             "y": 60
           },
-          "id": 57,
+          "id": 59,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5825,7 +5977,7 @@
             "x": 12,
             "y": 60
           },
-          "id": 58,
+          "id": 60,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5941,7 +6093,7 @@
         "x": 0,
         "y": 500
       },
-      "id": 59,
+      "id": 61,
       "panels": [
         {
           "aliasColors": {
@@ -6143,7 +6295,7 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "This resource measures average CPU utilization across an all cores in a service fleet.\nIf it is becoming saturated, it may indicate that the fleet needs\nhorizontal or vertical scaling.\n Lower is better.",
+          "description": "CloudSQL CPU utilization.\n\nSee https://cloud.google.com/monitoring/api/metrics_gcp#gcp-cloudsql for\nmore details\n Lower is better.",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -6151,6 +6303,582 @@
             "w": 12,
             "x": 12,
             "y": 0
+          },
+          "id": 3017284519,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "sideWidth": null,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [
+            {
+              "alias": "/^Soft SLO/",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^Hard SLO/",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            },
+            {
+              "alias": "/aggregated /",
+              "color": "#E7D551",
+              "linewidth": 2,
+              "zindex": 3
+            },
+            {
+              "alias": "/^95th quantile for week/",
+              "color": "#37872D",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 1,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^99th quantile for week/",
+              "color": "#56A64B",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "saturation-cloudsql_cpu",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, database_id) (\n  clamp_min(\n    clamp_max(\n      avg_over_time(stackdriver_cloudsql_database_cloudsql_googleapis_com_database_cpu_utilization{env=\"$environment\",environment=\"$environment\"}[5m])\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{ database_id }}",
+              "refId": "A"
+            },
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"praefect\", component=\"cloudsql_cpu\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "aggregated {{ component }}",
+              "refId": "B"
+            },
+            {
+              "expr": "gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"praefect\", component=\"cloudsql_cpu\"}\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "95th quantile for week {{ component }}",
+              "refId": "C"
+            },
+            {
+              "expr": "gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"praefect\", component=\"cloudsql_cpu\"}\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "99th quantile for week {{ component }}",
+              "refId": "D"
+            },
+            {
+              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"cloudsql_cpu\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "Soft SLO: {{ component }}",
+              "refId": "E"
+            },
+            {
+              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"cloudsql_cpu\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "Hard SLO: {{ component }}",
+              "refId": "F"
+            }
+          ],
+          "thresholds": [
+
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "cloudsql_cpu component saturation: CloudSQL CPU Utilization",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Saturation %",
+              "logBase": 1,
+              "max": 1,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "CloudSQL Disk utilization.\n\nSee https://cloud.google.com/monitoring/api/metrics_gcp#gcp-cloudsql for\nmore details\n Lower is better.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 10
+          },
+          "id": 2351208402,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "sideWidth": null,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [
+            {
+              "alias": "/^Soft SLO/",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^Hard SLO/",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            },
+            {
+              "alias": "/aggregated /",
+              "color": "#E7D551",
+              "linewidth": 2,
+              "zindex": 3
+            },
+            {
+              "alias": "/^95th quantile for week/",
+              "color": "#37872D",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 1,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^99th quantile for week/",
+              "color": "#56A64B",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "saturation-cloudsql_disk",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, database_id) (\n  clamp_min(\n    clamp_max(\n      avg_over_time(stackdriver_cloudsql_database_cloudsql_googleapis_com_database_disk_utilization{env=\"$environment\",environment=\"$environment\"}[5m])\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{ database_id }}",
+              "refId": "A"
+            },
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"praefect\", component=\"cloudsql_disk\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "aggregated {{ component }}",
+              "refId": "B"
+            },
+            {
+              "expr": "gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"praefect\", component=\"cloudsql_disk\"}\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "95th quantile for week {{ component }}",
+              "refId": "C"
+            },
+            {
+              "expr": "gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"praefect\", component=\"cloudsql_disk\"}\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "99th quantile for week {{ component }}",
+              "refId": "D"
+            },
+            {
+              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"cloudsql_disk\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "Soft SLO: {{ component }}",
+              "refId": "E"
+            },
+            {
+              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"cloudsql_disk\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "Hard SLO: {{ component }}",
+              "refId": "F"
+            }
+          ],
+          "thresholds": [
+
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "cloudsql_disk component saturation: CloudSQL Disk Utilization",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Saturation %",
+              "logBase": 1,
+              "max": 1,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "CloudSQL Memory utilization.\n\nSee https://cloud.google.com/monitoring/api/metrics_gcp#gcp-cloudsql for\nmore details\n Lower is better.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 10
+          },
+          "id": 395749012,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "sideWidth": null,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [
+            {
+              "alias": "/^Soft SLO/",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^Hard SLO/",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            },
+            {
+              "alias": "/aggregated /",
+              "color": "#E7D551",
+              "linewidth": 2,
+              "zindex": 3
+            },
+            {
+              "alias": "/^95th quantile for week/",
+              "color": "#37872D",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 1,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^99th quantile for week/",
+              "color": "#56A64B",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "saturation-cloudsql_memory",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, database_id) (\n  clamp_min(\n    clamp_max(\n      avg_over_time(stackdriver_cloudsql_database_cloudsql_googleapis_com_database_memory_utilization{env=\"$environment\",environment=\"$environment\"}[5m])\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{ database_id }}",
+              "refId": "A"
+            },
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"praefect\", component=\"cloudsql_memory\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "aggregated {{ component }}",
+              "refId": "B"
+            },
+            {
+              "expr": "gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"praefect\", component=\"cloudsql_memory\"}\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "95th quantile for week {{ component }}",
+              "refId": "C"
+            },
+            {
+              "expr": "gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"praefect\", component=\"cloudsql_memory\"}\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "99th quantile for week {{ component }}",
+              "refId": "D"
+            },
+            {
+              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"cloudsql_memory\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "Soft SLO: {{ component }}",
+              "refId": "E"
+            },
+            {
+              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"cloudsql_memory\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "Hard SLO: {{ component }}",
+              "refId": "F"
+            }
+          ],
+          "thresholds": [
+
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "cloudsql_memory component saturation: CloudSQL Memory Utilization",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Saturation %",
+              "logBase": 1,
+              "max": 1,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "This resource measures average CPU utilization across an all cores in a service fleet.\nIf it is becoming saturated, it may indicate that the fleet needs\nhorizontal or vertical scaling.\n Lower is better.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 20
           },
           "id": 1465724101,
           "legend": {
@@ -6341,8 +7069,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
-            "y": 10
+            "x": 12,
+            "y": 20
           },
           "id": 39965907,
           "legend": {
@@ -6533,8 +7261,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 10
+            "x": 0,
+            "y": 30
           },
           "id": 2661375984,
           "legend": {
@@ -6725,8 +7453,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
-            "y": 20
+            "x": 12,
+            "y": 30
           },
           "id": 3631721613,
           "legend": {
@@ -6917,8 +7645,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 20
+            "x": 0,
+            "y": 40
           },
           "id": 1955556769,
           "legend": {
@@ -7109,8 +7837,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
-            "y": 30
+            "x": 12,
+            "y": 40
           },
           "id": 503581002,
           "legend": {
@@ -7301,8 +8029,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 30
+            "x": 0,
+            "y": 50
           },
           "id": 1415313189,
           "legend": {
@@ -7493,8 +8221,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
-            "y": 40
+            "x": 12,
+            "y": 50
           },
           "id": 1001792825,
           "legend": {
@@ -7685,8 +8413,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 40
+            "x": 0,
+            "y": 60
           },
           "id": 1472933476,
           "legend": {
@@ -7877,8 +8605,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
-            "y": 50
+            "x": 12,
+            "y": 60
           },
           "id": 3372411356,
           "legend": {
@@ -8073,7 +8801,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 71,
+      "id": 76,
       "panels": [
 
       ],
@@ -8102,7 +8830,7 @@
         "x": 0,
         "y": 1001
       },
-      "id": 72,
+      "id": 77,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -8200,7 +8928,7 @@
         "x": 0,
         "y": 1011
       },
-      "id": 73,
+      "id": 78,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -8322,7 +9050,7 @@
         "x": 0,
         "y": 1021
       },
-      "id": 74,
+      "id": 79,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -8444,7 +9172,7 @@
         "x": 0,
         "y": 1031
       },
-      "id": 75,
+      "id": 80,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -8542,7 +9270,7 @@
         "x": 0,
         "y": 1041
       },
-      "id": 76,
+      "id": 81,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -8630,7 +9358,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 77,
+      "id": 82,
       "panels": [
         {
           "colors": [
@@ -8651,7 +9379,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 78,
+          "id": 83,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -8764,7 +9492,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 79,
+          "id": 84,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -8875,7 +9603,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 80,
+          "id": 85,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -8980,7 +9708,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 81,
+      "id": 86,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -9103,5 +9831,5 @@
   "timezone": "utc",
   "title": "praefect: Overview",
   "uid": "praefect-main",
-  "version": 2325
+  "version": 2329
 }
