@@ -9,31 +9,30 @@
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [
+
+          ],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       }
     ]
   },
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1636564495562,
+  "iteration": 1645556024221,
   "links": [
 
   ],
+  "liveNow": false,
   "panels": [
     {
-      "datasource": null,
       "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-          }
-        },
-        "overrides": [
-
-        ]
-      },
       "gridPos": {
         "h": 10,
         "w": 24,
@@ -45,15 +44,12 @@
         "content": "### Note: Metrics less than 5 minutes in the past are **not** valid. The exporter scrapes 5 minutes in the past.\n\nPlease select the Cloudflare zone you wish to see metrics for and the appropriate GitLab environment.\n\n`staging.gitlab.com` is scraped as part of `gstg`. `gitlab.net` and `gitlab.com` are scraped in `gprd`.\n\nThe Cloudflare / HAProxy comparison view shows Cloudflare at the bottom and HAProxy on top.  \nThe request count is unlikely to ever match, as Cloudflare will report cached responses, which never hit our backend, and the HAProxy metric also contains the internal LB as well as registry.\n\nThe `WAF quick view` should provide you with an easy view if something is outside the norm.  \nBlocked/Challenged is expected to be ~50-200 req/s depending on the time of day. `503 served by us` indicates a failure on our end, which we were still able to respond to. `Origin unreachable` is really bad, as this indicates requests that Cloudflare was unable to reach us for. If any of the latter 2 metrics are above 0, we might have networking issues, or are saturated.\n\n`Cloudflare WAF actions` view shows what kind of actions the firewall took. You should see an overwhelming amount of `bypass` traffic. If you see a surge in any action taken by the firewall, we might be under attack.\n\n`Traffic by country code` can give us possible insight, if there should be an attack, where that traffic is originating. This is reported by Cloudflare.",
         "mode": "markdown"
       },
-      "pluginVersion": "7.1.0",
-      "timeFrom": null,
-      "timeShift": null,
+      "pluginVersion": "8.4.1",
       "title": "Cloudflare Traffic overview",
       "type": "text"
     },
     {
       "collapsed": false,
-      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -73,12 +69,9 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
       "description": "Note: HAProxy traffic will in almost all cases be higher, as it also includes traffic from the internal load balancer, whereas Cloudflare does not.",
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -116,7 +109,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.4.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -177,7 +170,6 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
@@ -191,9 +183,7 @@
       "transparent": true,
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -203,25 +193,18 @@
         {
           "$$hashKey": "object:569",
           "format": "reqps",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:570",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -230,35 +213,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
       "description": "This shows ctraffic blocked/challenged by Cloudflare, 503 errors we served as well as requests in which cases our origin was unreachable by Cloudflare",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": null,
-            "filterable": false
-          },
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-
-        ]
-      },
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -290,7 +245,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.4.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -302,6 +257,11 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "exemplar": false,
           "expr": "",
           "hide": true,
           "interval": "",
@@ -310,18 +270,33 @@
           "refId": "A"
         },
         {
-          "expr": "sum(rate(cloudflare_zones_firewall_events_total{zone=~\"$cloudflare_zone\", edgeResponseStatus=~\"52(2|3)\", originResponseStatus=\"0\"}[5m])) or vector(0)",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "exemplar": false,
+          "expr": "sum(rate(cloudflare_zones_firewall_events_total{zone=~\"$cloudflare_zone\", edgeResponseStatus=~\"52[0-9]\", originResponseStatus=\"0\"}[5m])) by (edgeResponseStatus) or vector(0)",
           "interval": "",
-          "legendFormat": "Origin unreachable",
+          "legendFormat": "Origin unreachable ({{edgeResponseStatus}})",
           "refId": "C"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "exemplar": false,
           "expr": "sum(rate(cloudflare_zones_firewall_events_total{zone=~\"$cloudflare_zone\", edgeResponseStatus=~\"503\", originResponseStatus=\"503\"}[5m])) or vector(0)",
           "interval": "",
           "legendFormat": "503 served by us",
           "refId": "D"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "exemplar": false,
           "expr": "sum(rate(cloudflare_zones_firewall_events_total{zone=~\"$cloudflare_zone\", edgeResponseStatus=~\"503\", originResponseStatus=\"0\"}[5m])) or vector(0)",
           "interval": "",
           "legendFormat": "Blocked/Challenged",
@@ -331,7 +306,6 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
@@ -344,9 +318,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -356,25 +328,18 @@
         {
           "$$hashKey": "object:1318",
           "format": "reqps",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:1319",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -383,34 +348,6 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": null,
-            "filterable": false
-          },
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-
-        ]
-      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -445,7 +382,7 @@
         "alertThreshold": false
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.4.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -468,7 +405,6 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
@@ -482,9 +418,7 @@
       "transparent": true,
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -494,25 +428,18 @@
         {
           "$$hashKey": "object:764",
           "format": "Bps",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:765",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": false
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -521,11 +448,8 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -564,7 +488,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.4.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -586,7 +510,6 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
@@ -600,9 +523,7 @@
       "transparent": true,
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -612,25 +533,18 @@
         {
           "$$hashKey": "object:707",
           "format": "reqps",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:708",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -639,11 +553,8 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -681,7 +592,7 @@
         "alertThreshold": true
       },
       "percentage": true,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.4.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -717,7 +628,6 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
@@ -731,9 +641,7 @@
       "transparent": true,
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -743,7 +651,6 @@
         {
           "$$hashKey": "object:654",
           "format": "short",
-          "label": null,
           "logBase": 1,
           "max": "100",
           "min": "0",
@@ -752,21 +659,16 @@
         {
           "$$hashKey": "object:655",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
       "collapsed": false,
-      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -781,14 +683,9 @@
       "type": "row"
     },
     {
-      "datasource": null,
       "description": "This determines the ratio of NEL reports to responses.\n\nThe higher this number, the more dependable the other NEL-based metrics are.\n\n100% being, we can account for every response with a NEL.",
       "fieldConfig": {
         "defaults": {
-          "custom": {
-            "align": null,
-            "filterable": false
-          },
           "decimals": 3,
           "displayName": "Sampled traffic",
           "mappings": [
@@ -848,7 +745,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.4.1",
       "targets": [
         {
           "expr": "sum(rate(cloudflare_zones_network_error_logs_total{zone=~\"$cloudflare_zone\"}[$__interval])) / sum(rate(cloudflare_zones_http_responses_total{zone=~\"$cloudflare_zone\"}[$__interval]))",
@@ -857,20 +754,14 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
       "timeShift": "5m",
       "title": "Cloudflare Responses vs NEL traffic",
       "transparent": true,
       "type": "gauge"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
-          "custom": {
-            "align": null,
-            "filterable": false
-          },
           "decimals": 3,
           "displayName": "non-ok NEL",
           "mappings": [
@@ -921,7 +812,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.4.1",
       "targets": [
         {
           "expr": "(sum(rate(cloudflare_zones_network_error_logs_total{zone=~\"$cloudflare_zone\", exported_type!=\"ok\"}[$__interval])) / sum(rate(cloudflare_zones_network_error_logs_total{zone=~\"$cloudflare_zone\", exported_type=\"ok\"}[$__interval]))) or vector(0)",
@@ -930,7 +821,6 @@
           "refId": "B"
         }
       ],
-      "timeFrom": null,
       "timeShift": "5m",
       "title": "Non-OK NEL traffic",
       "type": "gauge"
@@ -941,37 +831,9 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
-          "custom": {
-            "align": null,
-            "filterable": false
-          },
-          "decimals": 3,
           "displayName": "non-ok NEL",
-          "mappings": [
-
-          ],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 10
-              },
-              {
-                "color": "red",
-                "value": 25
-              }
-            ]
-          },
           "unit": "percentunit"
         },
         "overrides": [
@@ -1005,7 +867,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.4.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1026,7 +888,6 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
@@ -1039,9 +900,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -1051,7 +910,6 @@
         {
           "$$hashKey": "object:1862",
           "format": "percentunit",
-          "label": null,
           "logBase": 1,
           "max": "1",
           "min": "0",
@@ -1060,16 +918,12 @@
         {
           "$$hashKey": "object:1863",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -1078,17 +932,6 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
-      "decimals": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-          }
-        },
-        "overrides": [
-
-        ]
-      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -1122,7 +965,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.4.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1143,7 +986,6 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
@@ -1156,9 +998,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -1170,23 +1010,17 @@
           "format": "short",
           "label": "Errors per Minute",
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:427",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -1195,17 +1029,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
       "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-          }
-        },
-        "overrides": [
-
-        ]
-      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -1239,7 +1063,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.4.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1265,7 +1089,6 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
@@ -1278,9 +1101,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -1292,23 +1113,17 @@
           "format": "short",
           "label": "Errors per Minute",
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:232",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": false
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -1317,17 +1132,6 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
-      "decimals": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-          }
-        },
-        "overrides": [
-
-        ]
-      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -1361,7 +1165,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.4.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1382,7 +1186,6 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
@@ -1395,9 +1198,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -1409,23 +1210,17 @@
           "format": "short",
           "label": "Errors per Minute",
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:427",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -1434,17 +1229,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
       "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-          }
-        },
-        "overrides": [
-
-        ]
-      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -1478,7 +1263,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.4.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1504,7 +1289,6 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
@@ -1517,9 +1301,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -1531,28 +1313,22 @@
           "format": "short",
           "label": "Errors per Minute",
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:232",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": false
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     }
   ],
   "refresh": "5m",
-  "schemaVersion": 26,
+  "schemaVersion": 35,
   "style": "dark",
   "tags": [
     "unmanaged"
@@ -1560,7 +1336,6 @@
   "templating": {
     "list": [
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": [
@@ -1570,7 +1345,10 @@
             "gitlab.com"
           ]
         },
-        "datasource": "Global",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PA258B30F88C30650"
+        },
         "definition": "label_values(cloudflare_zones_http_responses_total, zone)",
         "hide": 0,
         "includeAll": true,
@@ -1578,46 +1356,22 @@
         "multi": true,
         "name": "cloudflare_zone",
         "options": [
-          {
-            "$$hashKey": "object:274",
-            "selected": false,
-            "text": "All",
-            "value": "$__all"
-          },
-          {
-            "$$hashKey": "object:275",
-            "selected": true,
-            "text": "gitlab.com",
-            "value": "gitlab.com"
-          },
-          {
-            "$$hashKey": "object:276",
-            "selected": false,
-            "text": "gitlab.net",
-            "value": "gitlab.net"
-          },
-          {
-            "$$hashKey": "object:277",
-            "selected": false,
-            "text": "staging.gitlab.com",
-            "value": "staging.gitlab.com"
-          }
+
         ],
-        "query": "label_values(cloudflare_zones_http_responses_total, zone)",
-        "refresh": 0,
+        "query": {
+          "query": "label_values(cloudflare_zones_http_responses_total, zone)",
+          "refId": "Global-cloudflare_zone-Variable-Query"
+        },
+        "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [
-
-        ],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": [
@@ -1627,7 +1381,10 @@
             "gprd"
           ]
         },
-        "datasource": "Global",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PA258B30F88C30650"
+        },
         "definition": "label_values(haproxy_frontend_http_responses_total, env)",
         "hide": 0,
         "includeAll": true,
@@ -1635,34 +1392,17 @@
         "multi": true,
         "name": "gitlab_env",
         "options": [
-          {
-            "$$hashKey": "object:126",
-            "selected": false,
-            "text": "All",
-            "value": "$__all"
-          },
-          {
-            "$$hashKey": "object:127",
-            "selected": true,
-            "text": "gprd",
-            "value": "gprd"
-          },
-          {
-            "$$hashKey": "object:128",
-            "selected": false,
-            "text": "gstg",
-            "value": "gstg"
-          }
+
         ],
-        "query": "label_values(haproxy_frontend_http_responses_total, env)",
-        "refresh": 0,
+        "query": {
+          "query": "label_values(haproxy_frontend_http_responses_total, env)",
+          "refId": "Global-gitlab_env-Variable-Query"
+        },
+        "refresh": 1,
         "regex": "/^g...$/",
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [
-
-        ],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -1688,5 +1428,6 @@
   "timezone": "",
   "title": "Cloudflare traffic overview",
   "uid": "sPqgMv9Zk",
-  "version": 50
+  "version": 51,
+  "weekStart": ""
 }
