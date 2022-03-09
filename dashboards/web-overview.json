@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2174631057 at Tue Mar  8 03:28:52 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2179015968 at Tue Mar  8 21:36:15 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -4217,11 +4217,11 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.950000,\n  sum by (fqdn,le) (\n    rate(gitlab_workhorse_image_resize_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",stage=\"$stage\",type=\"web\"}[$__interval])\n  )\n)\n > 0",
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,region) (\n    rate(gitlab_workhorse_image_resize_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",region!=\"\",stage=\"$stage\",type=\"web\"}[$__interval])\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
-              "legendFormat": "p95 {{fqdn}}",
+              "legendFormat": "p95 {{region}}",
               "refId": "A"
             }
           ],
@@ -4245,7 +4245,7 @@
               "yaxis": "left"
             }
           ],
-          "title": "Estimated p95 imagescaler Latency - per fqdn",
+          "title": "Estimated p95 imagescaler Latency - per region",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -4319,15 +4319,15 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(clamp_max((\n  (\n    sum by (fqdn) (\n  rate(gitlab_workhorse_image_resize_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"+Inf\",stage=\"$stage\",type=\"web\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (fqdn) (\n    rate(gitlab_workhorse_image_resize_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"0.2\",stage=\"$stage\",type=\"web\"}[$__interval])\n  )\n  +\n  sum by (fqdn) (\n    rate(gitlab_workhorse_image_resize_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"0.8\",stage=\"$stage\",type=\"web\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(fqdn) group_left()\n  (\n    sum by () (\n  rate(gitlab_workhorse_image_resize_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"+Inf\",stage=\"$stage\",type=\"web\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (region) (\n  rate(gitlab_workhorse_image_resize_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"+Inf\",region!=\"\",stage=\"$stage\",type=\"web\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (region) (\n    rate(gitlab_workhorse_image_resize_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"0.2\",region!=\"\",stage=\"$stage\",type=\"web\"}[$__interval])\n  )\n  +\n  sum by (region) (\n    rate(gitlab_workhorse_image_resize_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"0.8\",region!=\"\",stage=\"$stage\",type=\"web\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(region) group_left()\n  (\n    sum by () (\n  rate(gitlab_workhorse_image_resize_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"+Inf\",region!=\"\",stage=\"$stage\",type=\"web\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
-              "legendFormat": "{{fqdn}}",
+              "legendFormat": "{{region}}",
               "refId": "A"
             }
           ],
-          "title": "Apdex attribution for imagescaler Latency - per fqdn",
+          "title": "Apdex attribution for imagescaler Latency - per region",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -4394,15 +4394,15 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (fqdn) (\n  rate(gitlab_workhorse_image_resize_requests_total{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",stage=\"$stage\",type=\"web\"}[$__interval])\n)\n > 0",
+              "expr": "sum by (region) (\n  rate(gitlab_workhorse_image_resize_requests_total{env=\"$environment\",environment=\"$environment\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",region!=\"\",stage=\"$stage\",type=\"web\"}[$__interval])\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
-              "legendFormat": "{{fqdn}}",
+              "legendFormat": "{{region}}",
               "refId": "A"
             }
           ],
-          "title": "imagescaler RPS - per fqdn",
+          "title": "imagescaler RPS - per region",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -4642,15 +4642,15 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (fqdn) (\n  sli_aggregations:http_requests_total_rate5m{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",job=\"gitlab-rails\",stage=\"$stage\",status=~\"5..\",type=\"web\"}\n)\n > 0",
+              "expr": "sum by (region) (\n  sli_aggregations:http_requests_total_rate5m{env=\"$environment\",environment=\"$environment\",job=\"gitlab-rails\",region!=\"\",stage=\"$stage\",status=~\"5..\",type=\"web\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
-              "legendFormat": "{{fqdn}}",
+              "legendFormat": "{{region}}",
               "refId": "A"
             }
           ],
-          "title": "puma Errors - per fqdn",
+          "title": "puma Errors - per region",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -4718,15 +4718,15 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (fqdn) (\n  sli_aggregations:http_requests_total_rate5m{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",job=\"gitlab-rails\",stage=\"$stage\",type=\"web\"}\n)\n > 0",
+              "expr": "sum by (region) (\n  sli_aggregations:http_requests_total_rate5m{env=\"$environment\",environment=\"$environment\",job=\"gitlab-rails\",region!=\"\",stage=\"$stage\",type=\"web\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
-              "legendFormat": "{{fqdn}}",
+              "legendFormat": "{{region}}",
               "refId": "A"
             }
           ],
-          "title": "puma RPS - per fqdn",
+          "title": "puma RPS - per region",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -5933,11 +5933,11 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.950000,\n  sum by (fqdn,le) (\n    rate(gitlab_workhorse_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",route!=\"^/([^/]+/){1,}[^/]+/uploads\\\\z\",route!=\"^/-/health$\",route!=\"^/-/(readiness|liveness)$\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/git-receive-pack\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/git-upload-pack\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/info/refs\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/gitlab-lfs/objects/([0-9a-f]{64})/([0-9]+)\\\\z\",stage=\"$stage\",type=\"web\"}[$__interval])\n  )\n)\n > 0",
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,region) (\n    rate(gitlab_workhorse_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",region!=\"\",route!=\"^/([^/]+/){1,}[^/]+/uploads\\\\z\",route!=\"^/-/health$\",route!=\"^/-/(readiness|liveness)$\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/git-receive-pack\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/git-upload-pack\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/info/refs\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/gitlab-lfs/objects/([0-9a-f]{64})/([0-9]+)\\\\z\",stage=\"$stage\",type=\"web\"}[$__interval])\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
-              "legendFormat": "p95 {{fqdn}}",
+              "legendFormat": "p95 {{region}}",
               "refId": "A"
             }
           ],
@@ -5961,7 +5961,7 @@
               "yaxis": "left"
             }
           ],
-          "title": "Estimated p95 workhorse Latency - per fqdn",
+          "title": "Estimated p95 workhorse Latency - per region",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -6035,15 +6035,15 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(clamp_max((\n  (\n    sum by (fqdn) (\n  rate(gitlab_workhorse_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"+Inf\",route!=\"^/([^/]+/){1,}[^/]+/uploads\\\\z\",route!=\"^/-/health$\",route!=\"^/-/(readiness|liveness)$\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/git-receive-pack\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/git-upload-pack\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/info/refs\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/gitlab-lfs/objects/([0-9a-f]{64})/([0-9]+)\\\\z\",stage=\"$stage\",type=\"web\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (fqdn) (\n    rate(gitlab_workhorse_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"1\",route!=\"^/([^/]+/){1,}[^/]+/uploads\\\\z\",route!=\"^/-/health$\",route!=\"^/-/(readiness|liveness)$\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/git-receive-pack\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/git-upload-pack\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/info/refs\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/gitlab-lfs/objects/([0-9a-f]{64})/([0-9]+)\\\\z\",stage=\"$stage\",type=\"web\"}[$__interval])\n  )\n  +\n  sum by (fqdn) (\n    rate(gitlab_workhorse_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"10\",route!=\"^/([^/]+/){1,}[^/]+/uploads\\\\z\",route!=\"^/-/health$\",route!=\"^/-/(readiness|liveness)$\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/git-receive-pack\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/git-upload-pack\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/info/refs\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/gitlab-lfs/objects/([0-9a-f]{64})/([0-9]+)\\\\z\",stage=\"$stage\",type=\"web\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(fqdn) group_left()\n  (\n    sum by () (\n  rate(gitlab_workhorse_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"+Inf\",route!=\"^/([^/]+/){1,}[^/]+/uploads\\\\z\",route!=\"^/-/health$\",route!=\"^/-/(readiness|liveness)$\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/git-receive-pack\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/git-upload-pack\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/info/refs\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/gitlab-lfs/objects/([0-9a-f]{64})/([0-9]+)\\\\z\",stage=\"$stage\",type=\"web\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (region) (\n  rate(gitlab_workhorse_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"+Inf\",region!=\"\",route!=\"^/([^/]+/){1,}[^/]+/uploads\\\\z\",route!=\"^/-/health$\",route!=\"^/-/(readiness|liveness)$\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/git-receive-pack\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/git-upload-pack\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/info/refs\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/gitlab-lfs/objects/([0-9a-f]{64})/([0-9]+)\\\\z\",stage=\"$stage\",type=\"web\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (region) (\n    rate(gitlab_workhorse_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"1\",region!=\"\",route!=\"^/([^/]+/){1,}[^/]+/uploads\\\\z\",route!=\"^/-/health$\",route!=\"^/-/(readiness|liveness)$\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/git-receive-pack\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/git-upload-pack\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/info/refs\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/gitlab-lfs/objects/([0-9a-f]{64})/([0-9]+)\\\\z\",stage=\"$stage\",type=\"web\"}[$__interval])\n  )\n  +\n  sum by (region) (\n    rate(gitlab_workhorse_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"10\",region!=\"\",route!=\"^/([^/]+/){1,}[^/]+/uploads\\\\z\",route!=\"^/-/health$\",route!=\"^/-/(readiness|liveness)$\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/git-receive-pack\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/git-upload-pack\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/info/refs\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/gitlab-lfs/objects/([0-9a-f]{64})/([0-9]+)\\\\z\",stage=\"$stage\",type=\"web\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(region) group_left()\n  (\n    sum by () (\n  rate(gitlab_workhorse_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"+Inf\",region!=\"\",route!=\"^/([^/]+/){1,}[^/]+/uploads\\\\z\",route!=\"^/-/health$\",route!=\"^/-/(readiness|liveness)$\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/git-receive-pack\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/git-upload-pack\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/info/refs\\\\z\",route!=\"^/([^/]+/){1,}[^/]+\\\\.git/gitlab-lfs/objects/([0-9a-f]{64})/([0-9]+)\\\\z\",stage=\"$stage\",type=\"web\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
-              "legendFormat": "{{fqdn}}",
+              "legendFormat": "{{region}}",
               "refId": "A"
             }
           ],
-          "title": "Apdex attribution for workhorse Latency - per fqdn",
+          "title": "Apdex attribution for workhorse Latency - per region",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -6110,15 +6110,15 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (fqdn) (\n  rate(gitlab_workhorse_http_requests_total{code=~\"^5.*\",env=\"$environment\",environment=\"$environment\",fqdn!=\"\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",route!=\"^/-/health$\",route!=\"^/-/(readiness|liveness)$\",stage=\"$stage\",type=\"web\"}[$__interval])\n)\n > 0",
+              "expr": "sum by (region) (\n  rate(gitlab_workhorse_http_requests_total{code=~\"^5.*\",env=\"$environment\",environment=\"$environment\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",region!=\"\",route!=\"^/-/health$\",route!=\"^/-/(readiness|liveness)$\",stage=\"$stage\",type=\"web\"}[$__interval])\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
-              "legendFormat": "{{fqdn}}",
+              "legendFormat": "{{region}}",
               "refId": "A"
             }
           ],
-          "title": "workhorse Errors - per fqdn",
+          "title": "workhorse Errors - per region",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -6186,15 +6186,15 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (fqdn) (\n  rate(gitlab_workhorse_http_requests_total{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",stage=\"$stage\",type=\"web\"}[$__interval])\n)\n > 0",
+              "expr": "sum by (region) (\n  rate(gitlab_workhorse_http_requests_total{env=\"$environment\",environment=\"$environment\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",region!=\"\",stage=\"$stage\",type=\"web\"}[$__interval])\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
-              "legendFormat": "{{fqdn}}",
+              "legendFormat": "{{region}}",
               "refId": "A"
             }
           ],
-          "title": "workhorse RPS - per fqdn",
+          "title": "workhorse RPS - per region",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -11955,7 +11955,7 @@
           "mode": "content",
           "nullPointMode": "connected",
           "options": {
-            "content": "graph TD\n  subgraph db\n  patroni\n  pgbouncer\n  redis\n  redis-cache\n  redis-ratelimiting\n  redis-sidekiq\nend\n\nsubgraph inf\n  search\nend\n\nsubgraph stor\n  gitaly\n  praefect\nend\n\nsubgraph sv\n  consul\n  pvs\n  web\nend\n\n\n  gitaly --> gitaly\npgbouncer --> patroni\npraefect --> gitaly\nweb --> consul\nweb --> gitaly\nweb --> patroni\nweb --> pgbouncer\nweb --> praefect\nweb --> pvs\nweb --> redis\nweb --> redis-cache\nweb --> redis-ratelimiting\nweb --> redis-sidekiq\nweb --> search\n"
+            "content": "graph TD\n  subgraph db\n  cloud-sql\n  patroni\n  pgbouncer\n  redis\n  redis-cache\n  redis-ratelimiting\n  redis-sessions\n  redis-sidekiq\nend\n\nsubgraph inf\n  search\nend\n\nsubgraph stor\n  gitaly\n  google-cloud-storage\n  praefect\nend\n\nsubgraph sv\n  consul\n  pvs\n  web\nend\n\n\n  gitaly --> gitaly\npgbouncer --> patroni\npraefect --> cloud-sql\npraefect --> gitaly\nweb --> consul\nweb --> gitaly\nweb --> google-cloud-storage\nweb --> patroni\nweb --> pgbouncer\nweb --> praefect\nweb --> pvs\nweb --> redis\nweb --> redis-cache\nweb --> redis-ratelimiting\nweb --> redis-sessions\nweb --> redis-sidekiq\nweb --> search\n"
           },
           "seriesOverrides": [
 
@@ -12068,7 +12068,7 @@
           "mode": "content",
           "nullPointMode": "connected",
           "options": {
-            "content": "graph TD\n  subgraph db\n  patroni\n  pgbouncer\n  redis\n  redis-cache\n  redis-ratelimiting\n  redis-sidekiq\nend\n\nsubgraph inf\n  search\nend\n\nsubgraph stor\n  gitaly\n  praefect\nend\n\nsubgraph sv\n  consul\n  pvs\n  web\nend\n\n\n  gitaly --> gitaly\npgbouncer --> patroni\npraefect --> gitaly\nweb --> consul\nweb --> gitaly\nweb --> patroni\nweb --> pgbouncer\nweb --> praefect\nweb --> pvs\nweb --> redis\nweb --> redis-cache\nweb --> redis-ratelimiting\nweb --> redis-sidekiq\nweb --> search\n"
+            "content": "graph TD\n  subgraph db\n  cloud-sql\n  patroni\n  pgbouncer\n  redis\n  redis-cache\n  redis-ratelimiting\n  redis-sessions\n  redis-sidekiq\nend\n\nsubgraph inf\n  search\nend\n\nsubgraph stor\n  gitaly\n  google-cloud-storage\n  praefect\nend\n\nsubgraph sv\n  consul\n  pvs\n  web\nend\n\n\n  gitaly --> gitaly\npgbouncer --> patroni\npraefect --> cloud-sql\npraefect --> gitaly\nweb --> consul\nweb --> gitaly\nweb --> google-cloud-storage\nweb --> patroni\nweb --> pgbouncer\nweb --> praefect\nweb --> pvs\nweb --> redis\nweb --> redis-cache\nweb --> redis-ratelimiting\nweb --> redis-sessions\nweb --> redis-sidekiq\nweb --> search\n"
           },
           "seriesOverrides": [
 
@@ -12179,7 +12179,7 @@
           "mode": "content",
           "nullPointMode": "connected",
           "options": {
-            "content": "graph TD\n  subgraph db\n  patroni[\"patroni (Level 3)\"]\n  pgbouncer[\"pgbouncer (Level 1)\"]\n  redis-cache[\"redis-cache (Level 3)\"]\n  redis-ratelimiting[\"redis-ratelimiting (Level 2)\"]\n  redis-sidekiq[\"redis-sidekiq (Level 2)\"]\n  redis[\"redis (Level 2)\"]\nend\n\nsubgraph inf\n  search[\"search (Level 1)\"]\nend\n\nsubgraph stor\n  gitaly[\"gitaly (Level 3)\"]\n  praefect[\"praefect (Level 3)\"]\nend\n\nsubgraph sv\n  consul[\"consul (Level 1)\"]\n  pvs[\"pvs (Level 3)\"]\n  web[\"web (Level 3)\"]\nend\n\n\n  gitaly[\"gitaly (Level 3)\"] --> gitaly\npgbouncer[\"pgbouncer (Level 1)\"] --> patroni\npraefect[\"praefect (Level 3)\"] --> gitaly\nweb[\"web (Level 3)\"] --> consul\nweb[\"web (Level 3)\"] --> gitaly\nweb[\"web (Level 3)\"] --> patroni\nweb[\"web (Level 3)\"] --> pgbouncer\nweb[\"web (Level 3)\"] --> praefect\nweb[\"web (Level 3)\"] --> pvs\nweb[\"web (Level 3)\"] --> redis\nweb[\"web (Level 3)\"] --> redis-cache\nweb[\"web (Level 3)\"] --> redis-ratelimiting\nweb[\"web (Level 3)\"] --> redis-sidekiq\nweb[\"web (Level 3)\"] --> search\n"
+            "content": "graph TD\n  subgraph db\n  cloud-sql[\"cloud-sql (Level 1)\"]\n  patroni[\"patroni (Level 3)\"]\n  pgbouncer[\"pgbouncer (Level 1)\"]\n  redis-cache[\"redis-cache (Level 3)\"]\n  redis-ratelimiting[\"redis-ratelimiting (Level 2)\"]\n  redis-sessions[\"redis-sessions (Level 2)\"]\n  redis-sidekiq[\"redis-sidekiq (Level 2)\"]\n  redis[\"redis (Level 2)\"]\nend\n\nsubgraph inf\n  search[\"search (Level 1)\"]\nend\n\nsubgraph stor\n  gitaly[\"gitaly (Level 3)\"]\n  google-cloud-storage[\"google-cloud-storage (Level 3)\"]\n  praefect[\"praefect (Level 3)\"]\nend\n\nsubgraph sv\n  consul[\"consul (Level 1)\"]\n  pvs[\"pvs (Level 3)\"]\n  web[\"web (Level 3)\"]\nend\n\n\n  gitaly[\"gitaly (Level 3)\"] --> gitaly\npgbouncer[\"pgbouncer (Level 1)\"] --> patroni\npraefect[\"praefect (Level 3)\"] --> cloud-sql\npraefect[\"praefect (Level 3)\"] --> gitaly\nweb[\"web (Level 3)\"] --> consul\nweb[\"web (Level 3)\"] --> gitaly\nweb[\"web (Level 3)\"] --> google-cloud-storage\nweb[\"web (Level 3)\"] --> patroni\nweb[\"web (Level 3)\"] --> pgbouncer\nweb[\"web (Level 3)\"] --> praefect\nweb[\"web (Level 3)\"] --> pvs\nweb[\"web (Level 3)\"] --> redis\nweb[\"web (Level 3)\"] --> redis-cache\nweb[\"web (Level 3)\"] --> redis-ratelimiting\nweb[\"web (Level 3)\"] --> redis-sessions\nweb[\"web (Level 3)\"] --> redis-sidekiq\nweb[\"web (Level 3)\"] --> search\n"
           },
           "seriesOverrides": [
 
@@ -12344,5 +12344,5 @@
   "timezone": "utc",
   "title": "web: Overview",
   "uid": "web-main",
-  "version": 2872
+  "version": 2875
 }

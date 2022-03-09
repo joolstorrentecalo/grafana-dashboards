@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2174631057 at Tue Mar  8 03:28:02 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2179015968 at Tue Mar  8 21:35:24 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -5731,15 +5731,15 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (fqdn) (\n  sli_aggregations:http_requests_total_rate5m{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",job=\"gitlab-rails\",stage=\"$stage\",status=~\"5..\",type=\"api\"}\n)\n > 0",
+              "expr": "sum by (region) (\n  sli_aggregations:http_requests_total_rate5m{env=\"$environment\",environment=\"$environment\",job=\"gitlab-rails\",region!=\"\",stage=\"$stage\",status=~\"5..\",type=\"api\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
-              "legendFormat": "{{fqdn}}",
+              "legendFormat": "{{region}}",
               "refId": "A"
             }
           ],
-          "title": "puma Errors - per fqdn",
+          "title": "puma Errors - per region",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -5807,15 +5807,15 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (fqdn) (\n  sli_aggregations:http_requests_total_rate5m{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",job=\"gitlab-rails\",stage=\"$stage\",type=\"api\"}\n)\n > 0",
+              "expr": "sum by (region) (\n  sli_aggregations:http_requests_total_rate5m{env=\"$environment\",environment=\"$environment\",job=\"gitlab-rails\",region!=\"\",stage=\"$stage\",type=\"api\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
-              "legendFormat": "{{fqdn}}",
+              "legendFormat": "{{region}}",
               "refId": "A"
             }
           ],
-          "title": "puma RPS - per fqdn",
+          "title": "puma RPS - per region",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -7022,6 +7022,335 @@
           "steppedLine": false,
           "targets": [
             {
+              "expr": "histogram_quantile(\n  0.900000,\n  sum by (le,region) (\n    rate(gitlab_workhorse_http_request_duration_seconds_bucket{job=~\"gitlab-workhorse-api|gitlab-workhorse\", type=\"api\", route!=\"\\\\A/api/v4/jobs/request\\\\z\", route!=\"^/api/v4/jobs/request\\\\z\", route!=\"^/-/health$\", route!=\"^/-/(readiness|liveness)$\", env=\"$environment\",environment=\"$environment\",region!=\"\",stage=\"$stage\"}[$__interval])\n  )\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "p90 {{region}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.5)",
+              "line": false,
+              "op": "gt",
+              "value": 10,
+              "yaxis": "left"
+            },
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.25)",
+              "line": false,
+              "op": "gt",
+              "value": 1,
+              "yaxis": "left"
+            }
+          ],
+          "title": "Estimated p90 workhorse Latency - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": "Duration",
+              "logBase": 10,
+              "min": 0.01,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 6,
+            "y": 10
+          },
+          "id": 73,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (region) (\n  rate(gitlab_workhorse_http_request_duration_seconds_bucket{job=~\"gitlab-workhorse-api|gitlab-workhorse\", type=\"api\", route!=\"\\\\A/api/v4/jobs/request\\\\z\", route!=\"^/api/v4/jobs/request\\\\z\", route!=\"^/-/health$\", route!=\"^/-/(readiness|liveness)$\", env=\"$environment\",environment=\"$environment\",region!=\"\",stage=\"$stage\", le=\"+Inf\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (region) (\n    rate(gitlab_workhorse_http_request_duration_seconds_bucket{job=~\"gitlab-workhorse-api|gitlab-workhorse\", type=\"api\", route!=\"\\\\A/api/v4/jobs/request\\\\z\", route!=\"^/api/v4/jobs/request\\\\z\", route!=\"^/-/health$\", route!=\"^/-/(readiness|liveness)$\", env=\"$environment\",environment=\"$environment\",region!=\"\",stage=\"$stage\", le=\"1\"}[$__interval])\n  )\n  +\n  sum by (region) (\n    rate(gitlab_workhorse_http_request_duration_seconds_bucket{job=~\"gitlab-workhorse-api|gitlab-workhorse\", type=\"api\", route!=\"\\\\A/api/v4/jobs/request\\\\z\", route!=\"^/api/v4/jobs/request\\\\z\", route!=\"^/-/health$\", route!=\"^/-/(readiness|liveness)$\", env=\"$environment\",environment=\"$environment\",region!=\"\",stage=\"$stage\", le=\"10\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(region) group_left()\n  (\n    sum by () (\n  rate(gitlab_workhorse_http_request_duration_seconds_bucket{job=~\"gitlab-workhorse-api|gitlab-workhorse\", type=\"api\", route!=\"\\\\A/api/v4/jobs/request\\\\z\", route!=\"^/api/v4/jobs/request\\\\z\", route!=\"^/-/health$\", route!=\"^/-/(readiness|liveness)$\", env=\"$environment\",environment=\"$environment\",region!=\"\",stage=\"$stage\", le=\"+Inf\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for workhorse Latency - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 12,
+            "y": 10
+          },
+          "id": 74,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (region) (\n  rate(gitlab_workhorse_http_requests_total{job=~\"gitlab-workhorse-api|gitlab-workhorse\", type=\"api\", code=~\"^5.*\", route!=\"^/-/health$\", route!=\"^/-/(readiness|liveness)$\", env=\"$environment\",environment=\"$environment\",region!=\"\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "workhorse Errors - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 18,
+            "y": 10
+          },
+          "id": 75,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (region) (\n  rate(gitlab_workhorse_http_requests_total{job=~\"gitlab-workhorse-api|gitlab-workhorse\", type=\"api\", env=\"$environment\",environment=\"$environment\",region!=\"\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "workhorse RPS - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 0,
+            "y": 20
+          },
+          "id": 76,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
               "expr": "histogram_quantile(\n  0.900000,\n  sum by (le,method) (\n    rate(gitlab_workhorse_http_request_duration_seconds_bucket{job=~\"gitlab-workhorse-api|gitlab-workhorse\", type=\"api\", route!=\"\\\\A/api/v4/jobs/request\\\\z\", route!=\"^/api/v4/jobs/request\\\\z\", route!=\"^/-/health$\", route!=\"^/-/(readiness|liveness)$\", env=\"$environment\",environment=\"$environment\",method!=\"\",stage=\"$stage\"}[$__interval])\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
@@ -7091,9 +7420,9 @@
             "h": 10,
             "w": 6,
             "x": 6,
-            "y": 10
+            "y": 20
           },
-          "id": 73,
+          "id": 77,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7172,9 +7501,9 @@
             "h": 10,
             "w": 6,
             "x": 12,
-            "y": 10
+            "y": 20
           },
-          "id": 74,
+          "id": 78,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7248,9 +7577,9 @@
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 10
+            "y": 20
           },
-          "id": 75,
+          "id": 79,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7324,9 +7653,9 @@
             "h": 10,
             "w": 6,
             "x": 0,
-            "y": 20
+            "y": 30
           },
-          "id": 76,
+          "id": 80,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7420,9 +7749,9 @@
             "h": 10,
             "w": 6,
             "x": 6,
-            "y": 20
+            "y": 30
           },
-          "id": 77,
+          "id": 81,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7501,9 +7830,9 @@
             "h": 10,
             "w": 6,
             "x": 12,
-            "y": 20
+            "y": 30
           },
-          "id": 78,
+          "id": 82,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7577,9 +7906,9 @@
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 20
+            "y": 30
           },
-          "id": 79,
+          "id": 83,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7658,7 +7987,7 @@
         "x": 0,
         "y": 400
       },
-      "id": 80,
+      "id": 84,
       "panels": [
         {
           "aliasColors": {
@@ -7677,7 +8006,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 81,
+          "id": 85,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7782,7 +8111,7 @@
             "x": 8,
             "y": 1
           },
-          "id": 82,
+          "id": 86,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7887,7 +8216,7 @@
             "x": 16,
             "y": 1
           },
-          "id": 83,
+          "id": 87,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -8003,7 +8332,7 @@
             "x": 0,
             "y": 9
           },
-          "id": 84,
+          "id": 88,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8101,7 +8430,7 @@
             "x": 12,
             "y": 9
           },
-          "id": 85,
+          "id": 89,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8200,7 +8529,7 @@
         "x": 0,
         "y": 500
       },
-      "id": 86,
+      "id": 90,
       "panels": [
         {
           "aliasColors": {
@@ -10140,7 +10469,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 97,
+      "id": 101,
       "panels": [
 
       ],
@@ -10169,7 +10498,7 @@
         "x": 0,
         "y": 1001
       },
-      "id": 98,
+      "id": 102,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10281,7 +10610,7 @@
         "x": 12,
         "y": 1001
       },
-      "id": 99,
+      "id": 103,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10393,7 +10722,7 @@
         "x": 0,
         "y": 1011
       },
-      "id": 100,
+      "id": 104,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10505,7 +10834,7 @@
         "x": 12,
         "y": 1011
       },
-      "id": 101,
+      "id": 105,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10617,7 +10946,7 @@
         "x": 0,
         "y": 1021
       },
-      "id": 102,
+      "id": 106,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10729,7 +11058,7 @@
         "x": 12,
         "y": 1021
       },
-      "id": 103,
+      "id": 107,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10841,7 +11170,7 @@
         "x": 0,
         "y": 1031
       },
-      "id": 104,
+      "id": 108,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10945,7 +11274,7 @@
         "x": 0,
         "y": 3000
       },
-      "id": 105,
+      "id": 109,
       "panels": [
 
       ],
@@ -10974,7 +11303,7 @@
         "x": 0,
         "y": 3001
       },
-      "id": 106,
+      "id": 110,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11086,7 +11415,7 @@
         "x": 12,
         "y": 3001
       },
-      "id": 107,
+      "id": 111,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11198,7 +11527,7 @@
         "x": 0,
         "y": 3011
       },
-      "id": 108,
+      "id": 112,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11310,7 +11639,7 @@
         "x": 12,
         "y": 3011
       },
-      "id": 109,
+      "id": 113,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11422,7 +11751,7 @@
         "x": 0,
         "y": 3021
       },
-      "id": 110,
+      "id": 114,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11534,7 +11863,7 @@
         "x": 12,
         "y": 3021
       },
-      "id": 111,
+      "id": 115,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11646,7 +11975,7 @@
         "x": 0,
         "y": 3031
       },
-      "id": 112,
+      "id": 116,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11748,7 +12077,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 113,
+      "id": 117,
       "panels": [
         {
           "colors": [
@@ -11769,7 +12098,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 114,
+          "id": 118,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -11832,7 +12161,7 @@
           "mode": "content",
           "nullPointMode": "connected",
           "options": {
-            "content": "graph TD\n  subgraph db\n  patroni\n  pgbouncer\n  redis\n  redis-cache\n  redis-ratelimiting\n  redis-sidekiq\n  redis-tracechunks\nend\n\nsubgraph inf\n  search\nend\n\nsubgraph stor\n  gitaly\n  praefect\nend\n\nsubgraph sv\n  api\n  consul\n  kas\n  pvs\nend\n\n\n  api --> consul\napi --> gitaly\napi --> kas\napi --> patroni\napi --> pgbouncer\napi --> praefect\napi --> pvs\napi --> redis\napi --> redis-cache\napi --> redis-ratelimiting\napi --> redis-sidekiq\napi --> redis-tracechunks\napi --> search\ngitaly --> gitaly\nkas --> api\nkas --> gitaly\nkas --> kas\nkas --> praefect\nkas --> redis\npgbouncer --> patroni\npraefect --> gitaly\n"
+            "content": "graph TD\n  subgraph db\n  cloud-sql\n  patroni\n  pgbouncer\n  redis\n  redis-cache\n  redis-ratelimiting\n  redis-sessions\n  redis-sidekiq\n  redis-tracechunks\nend\n\nsubgraph inf\n  search\nend\n\nsubgraph stor\n  gitaly\n  google-cloud-storage\n  praefect\nend\n\nsubgraph sv\n  api\n  consul\n  kas\n  pvs\nend\n\n\n  api --> consul\napi --> gitaly\napi --> google-cloud-storage\napi --> kas\napi --> patroni\napi --> pgbouncer\napi --> praefect\napi --> pvs\napi --> redis\napi --> redis-cache\napi --> redis-ratelimiting\napi --> redis-sessions\napi --> redis-sidekiq\napi --> redis-tracechunks\napi --> search\ngitaly --> gitaly\nkas --> api\nkas --> gitaly\nkas --> kas\nkas --> praefect\nkas --> redis\npgbouncer --> patroni\npraefect --> cloud-sql\npraefect --> gitaly\n"
           },
           "seriesOverrides": [
 
@@ -11882,7 +12211,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 115,
+          "id": 119,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -11945,7 +12274,7 @@
           "mode": "content",
           "nullPointMode": "connected",
           "options": {
-            "content": "graph TD\n  subgraph db\n  patroni\n  pgbouncer\n  redis\n  redis-cache\n  redis-ratelimiting\n  redis-sidekiq\n  redis-tracechunks\nend\n\nsubgraph inf\n  search\nend\n\nsubgraph stor\n  gitaly\n  praefect\nend\n\nsubgraph sv\n  api\n  consul\n  kas\n  pvs\nend\n\n\n  api --> consul\napi --> gitaly\napi --> kas\napi --> patroni\napi --> pgbouncer\napi --> praefect\napi --> pvs\napi --> redis\napi --> redis-cache\napi --> redis-ratelimiting\napi --> redis-sidekiq\napi --> redis-tracechunks\napi --> search\ngitaly --> gitaly\nkas --> api\nkas --> gitaly\nkas --> kas\nkas --> praefect\nkas --> redis\npgbouncer --> patroni\npraefect --> gitaly\n"
+            "content": "graph TD\n  subgraph db\n  cloud-sql\n  patroni\n  pgbouncer\n  redis\n  redis-cache\n  redis-ratelimiting\n  redis-sessions\n  redis-sidekiq\n  redis-tracechunks\nend\n\nsubgraph inf\n  search\nend\n\nsubgraph stor\n  gitaly\n  google-cloud-storage\n  praefect\nend\n\nsubgraph sv\n  api\n  consul\n  kas\n  pvs\nend\n\n\n  api --> consul\napi --> gitaly\napi --> google-cloud-storage\napi --> kas\napi --> patroni\napi --> pgbouncer\napi --> praefect\napi --> pvs\napi --> redis\napi --> redis-cache\napi --> redis-ratelimiting\napi --> redis-sessions\napi --> redis-sidekiq\napi --> redis-tracechunks\napi --> search\ngitaly --> gitaly\nkas --> api\nkas --> gitaly\nkas --> kas\nkas --> praefect\nkas --> redis\npgbouncer --> patroni\npraefect --> cloud-sql\npraefect --> gitaly\n"
           },
           "seriesOverrides": [
 
@@ -11993,7 +12322,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 116,
+          "id": 120,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -12056,7 +12385,7 @@
           "mode": "content",
           "nullPointMode": "connected",
           "options": {
-            "content": "graph TD\n  subgraph db\n  patroni[\"patroni (Level 3)\"]\n  pgbouncer[\"pgbouncer (Level 1)\"]\n  redis-cache[\"redis-cache (Level 3)\"]\n  redis-ratelimiting[\"redis-ratelimiting (Level 2)\"]\n  redis-sidekiq[\"redis-sidekiq (Level 2)\"]\n  redis-tracechunks[\"redis-tracechunks (Level 2)\"]\n  redis[\"redis (Level 2)\"]\nend\n\nsubgraph inf\n  search[\"search (Level 1)\"]\nend\n\nsubgraph stor\n  gitaly[\"gitaly (Level 3)\"]\n  praefect[\"praefect (Level 3)\"]\nend\n\nsubgraph sv\n  api[\"api (Level 3)\"]\n  consul[\"consul (Level 1)\"]\n  kas[\"kas (Level 1)\"]\n  pvs[\"pvs (Level 3)\"]\nend\n\n\n  api[\"api (Level 3)\"] --> consul\napi[\"api (Level 3)\"] --> gitaly\napi[\"api (Level 3)\"] --> kas\napi[\"api (Level 3)\"] --> patroni\napi[\"api (Level 3)\"] --> pgbouncer\napi[\"api (Level 3)\"] --> praefect\napi[\"api (Level 3)\"] --> pvs\napi[\"api (Level 3)\"] --> redis\napi[\"api (Level 3)\"] --> redis-cache\napi[\"api (Level 3)\"] --> redis-ratelimiting\napi[\"api (Level 3)\"] --> redis-sidekiq\napi[\"api (Level 3)\"] --> redis-tracechunks\napi[\"api (Level 3)\"] --> search\ngitaly[\"gitaly (Level 3)\"] --> gitaly\nkas[\"kas (Level 1)\"] --> api\nkas[\"kas (Level 1)\"] --> gitaly\nkas[\"kas (Level 1)\"] --> kas\nkas[\"kas (Level 1)\"] --> praefect\nkas[\"kas (Level 1)\"] --> redis\npgbouncer[\"pgbouncer (Level 1)\"] --> patroni\npraefect[\"praefect (Level 3)\"] --> gitaly\n"
+            "content": "graph TD\n  subgraph db\n  cloud-sql[\"cloud-sql (Level 1)\"]\n  patroni[\"patroni (Level 3)\"]\n  pgbouncer[\"pgbouncer (Level 1)\"]\n  redis-cache[\"redis-cache (Level 3)\"]\n  redis-ratelimiting[\"redis-ratelimiting (Level 2)\"]\n  redis-sessions[\"redis-sessions (Level 2)\"]\n  redis-sidekiq[\"redis-sidekiq (Level 2)\"]\n  redis-tracechunks[\"redis-tracechunks (Level 2)\"]\n  redis[\"redis (Level 2)\"]\nend\n\nsubgraph inf\n  search[\"search (Level 1)\"]\nend\n\nsubgraph stor\n  gitaly[\"gitaly (Level 3)\"]\n  google-cloud-storage[\"google-cloud-storage (Level 3)\"]\n  praefect[\"praefect (Level 3)\"]\nend\n\nsubgraph sv\n  api[\"api (Level 3)\"]\n  consul[\"consul (Level 1)\"]\n  kas[\"kas (Level 1)\"]\n  pvs[\"pvs (Level 3)\"]\nend\n\n\n  api[\"api (Level 3)\"] --> consul\napi[\"api (Level 3)\"] --> gitaly\napi[\"api (Level 3)\"] --> google-cloud-storage\napi[\"api (Level 3)\"] --> kas\napi[\"api (Level 3)\"] --> patroni\napi[\"api (Level 3)\"] --> pgbouncer\napi[\"api (Level 3)\"] --> praefect\napi[\"api (Level 3)\"] --> pvs\napi[\"api (Level 3)\"] --> redis\napi[\"api (Level 3)\"] --> redis-cache\napi[\"api (Level 3)\"] --> redis-ratelimiting\napi[\"api (Level 3)\"] --> redis-sessions\napi[\"api (Level 3)\"] --> redis-sidekiq\napi[\"api (Level 3)\"] --> redis-tracechunks\napi[\"api (Level 3)\"] --> search\ngitaly[\"gitaly (Level 3)\"] --> gitaly\nkas[\"kas (Level 1)\"] --> api\nkas[\"kas (Level 1)\"] --> gitaly\nkas[\"kas (Level 1)\"] --> kas\nkas[\"kas (Level 1)\"] --> praefect\nkas[\"kas (Level 1)\"] --> redis\npgbouncer[\"pgbouncer (Level 1)\"] --> patroni\npraefect[\"praefect (Level 3)\"] --> cloud-sql\npraefect[\"praefect (Level 3)\"] --> gitaly\n"
           },
           "seriesOverrides": [
 
@@ -12098,7 +12427,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 117,
+      "id": 121,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -12221,5 +12550,5 @@
   "timezone": "utc",
   "title": "api: Overview",
   "uid": "api-main",
-  "version": 2818
+  "version": 2821
 }

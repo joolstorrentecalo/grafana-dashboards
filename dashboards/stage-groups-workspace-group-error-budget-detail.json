@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2174631057 at Tue Mar  8 03:32:47 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2179015968 at Tue Mar  8 21:40:20 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -3323,11 +3323,11 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.950000,\n  sum by (fqdn,le) (\n    rate(gitlab_workhorse_image_resize_duration_seconds_bucket{environment=\"$environment\",feature_category=~\"subgroups|users|projects|\",fqdn!=\"\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",stage=\"$stage\"}[$__interval])\n  )\n)\n > 0",
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,region) (\n    rate(gitlab_workhorse_image_resize_duration_seconds_bucket{environment=\"$environment\",feature_category=~\"subgroups|users|projects|\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",region!=\"\",stage=\"$stage\"}[$__interval])\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
-              "legendFormat": "p95 {{fqdn}}",
+              "legendFormat": "p95 {{region}}",
               "refId": "A"
             }
           ],
@@ -3351,7 +3351,7 @@
               "yaxis": "left"
             }
           ],
-          "title": "Estimated p95 imagescaler Latency - per fqdn",
+          "title": "Estimated p95 imagescaler Latency - per region",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -3425,15 +3425,15 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(clamp_max((\n  (\n    sum by (fqdn) (\n  rate(gitlab_workhorse_image_resize_duration_seconds_bucket{environment=\"$environment\",feature_category=~\"subgroups|users|projects|\",fqdn!=\"\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"+Inf\",stage=\"$stage\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (fqdn) (\n    rate(gitlab_workhorse_image_resize_duration_seconds_bucket{environment=\"$environment\",feature_category=~\"subgroups|users|projects|\",fqdn!=\"\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"0.2\",stage=\"$stage\"}[$__interval])\n  )\n  +\n  sum by (fqdn) (\n    rate(gitlab_workhorse_image_resize_duration_seconds_bucket{environment=\"$environment\",feature_category=~\"subgroups|users|projects|\",fqdn!=\"\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"0.8\",stage=\"$stage\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(fqdn) group_left()\n  (\n    sum by () (\n  rate(gitlab_workhorse_image_resize_duration_seconds_bucket{environment=\"$environment\",feature_category=~\"subgroups|users|projects|\",fqdn!=\"\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"+Inf\",stage=\"$stage\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (region) (\n  rate(gitlab_workhorse_image_resize_duration_seconds_bucket{environment=\"$environment\",feature_category=~\"subgroups|users|projects|\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"+Inf\",region!=\"\",stage=\"$stage\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (region) (\n    rate(gitlab_workhorse_image_resize_duration_seconds_bucket{environment=\"$environment\",feature_category=~\"subgroups|users|projects|\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"0.2\",region!=\"\",stage=\"$stage\"}[$__interval])\n  )\n  +\n  sum by (region) (\n    rate(gitlab_workhorse_image_resize_duration_seconds_bucket{environment=\"$environment\",feature_category=~\"subgroups|users|projects|\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"0.8\",region!=\"\",stage=\"$stage\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(region) group_left()\n  (\n    sum by () (\n  rate(gitlab_workhorse_image_resize_duration_seconds_bucket{environment=\"$environment\",feature_category=~\"subgroups|users|projects|\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",le=\"+Inf\",region!=\"\",stage=\"$stage\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
-              "legendFormat": "{{fqdn}}",
+              "legendFormat": "{{region}}",
               "refId": "A"
             }
           ],
-          "title": "Apdex attribution for imagescaler Latency - per fqdn",
+          "title": "Apdex attribution for imagescaler Latency - per region",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -3500,15 +3500,15 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (fqdn) (\n  rate(gitlab_workhorse_image_resize_requests_total{environment=\"$environment\",feature_category=~\"subgroups|users|projects|\",fqdn!=\"\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "expr": "sum by (region) (\n  rate(gitlab_workhorse_image_resize_requests_total{environment=\"$environment\",feature_category=~\"subgroups|users|projects|\",job=~\"gitlab-workhorse|gitlab-workhorse-web\",region!=\"\",stage=\"$stage\"}[$__interval])\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
-              "legendFormat": "{{fqdn}}",
+              "legendFormat": "{{region}}",
               "refId": "A"
             }
           ],
-          "title": "imagescaler RPS - per fqdn",
+          "title": "imagescaler RPS - per region",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -3748,15 +3748,15 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (fqdn) (\n  sli_aggregations:http_requests_total_rate5m{environment=\"$environment\",feature_category=~\"subgroups|users|projects|\",fqdn!=\"\",job=\"gitlab-rails\",stage=\"$stage\",status=~\"5..\"}\n)\n > 0",
+              "expr": "sum by (region) (\n  sli_aggregations:http_requests_total_rate5m{environment=\"$environment\",feature_category=~\"subgroups|users|projects|\",job=\"gitlab-rails\",region!=\"\",stage=\"$stage\",status=~\"5..\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
-              "legendFormat": "{{fqdn}}",
+              "legendFormat": "{{region}}",
               "refId": "A"
             }
           ],
-          "title": "puma Errors - per fqdn",
+          "title": "puma Errors - per region",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -3824,15 +3824,15 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (fqdn) (\n  sli_aggregations:http_requests_total_rate5m{environment=\"$environment\",feature_category=~\"subgroups|users|projects|\",fqdn!=\"\",job=\"gitlab-rails\",stage=\"$stage\"}\n)\n > 0",
+              "expr": "sum by (region) (\n  sli_aggregations:http_requests_total_rate5m{environment=\"$environment\",feature_category=~\"subgroups|users|projects|\",job=\"gitlab-rails\",region!=\"\",stage=\"$stage\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
-              "legendFormat": "{{fqdn}}",
+              "legendFormat": "{{region}}",
               "refId": "A"
             }
           ],
-          "title": "puma RPS - per fqdn",
+          "title": "puma RPS - per region",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -4856,5 +4856,5 @@
   "timezone": "utc",
   "title": "stage-groups: Workspace: group error budget detail",
   "uid": "stage-groups-detail-workspace",
-  "version": 64
+  "version": 67
 }
