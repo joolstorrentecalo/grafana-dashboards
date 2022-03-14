@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2198373532 at Mon Mar 14 07:59:32 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2199980809 at Mon Mar 14 13:28:34 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -224,7 +224,7 @@
       "fieldConfig": {
         "defaults": {
           "decimals": "2",
-          "displayName": "Target: 99.95%",
+          "displayName": "",
           "mappings": [
             {
               "id": 0,
@@ -270,7 +270,7 @@
         }
       },
       "gridPos": {
-        "h": 2,
+        "h": 1.5,
         "w": 6,
         "x": 0,
         "y": 104
@@ -288,7 +288,207 @@
           "fields": "",
           "values": false
         },
+        "textMode": "value"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": "2",
+          "displayName": "Target:",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "gray"
+              }
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "gridPos": {
+        "h": 1.5,
+        "w": 6,
+        "x": 0,
+        "y": 105.5
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
         "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "0.9995 * 100.0",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": -315360000
+              },
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 100
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "# The number of seconds allowed to be spent in 28d\n1209.5999999998667\n-\n(\n  (\n     1 - clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n\n  ) * 2419200\n)\n\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Budget remaining",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": "2",
+          "displayName": "",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "from": 0,
+                "result": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "🥵 Unhealthy"
+                },
+                "to": 0.9995
+              },
+              "type": "range"
+            },
+            {
+              "id": 1,
+              "options": {
+                "from": 0.9995,
+                "result": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "🥳 Healthy"
+                },
+                "to": 1
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 0.9995
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 1.5,
+        "w": 6,
+        "x": 6,
+        "y": 104
+      },
+      "id": 9,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
       },
       "pluginVersion": "7",
       "targets": [
@@ -311,17 +511,12 @@
       "fieldConfig": {
         "defaults": {
           "decimals": 0,
-          "displayName": "",
+          "displayName": "28d budget:",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
-                "value": -2419200
-              },
-              {
-                "color": "green",
-                "value": 0
+                "color": "gray"
               }
             ]
           },
@@ -329,243 +524,10 @@
         }
       },
       "gridPos": {
-        "h": 4,
+        "h": 1.5,
         "w": 6,
         "x": 6,
-        "y": 100
-      },
-      "id": 7,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "7",
-      "targets": [
-        {
-          "expr": "# The number of seconds allowed to be spent in 28d\n1209\n-\n(\n  (\n     1 - clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n\n  ) * 2419200\n)\n\n",
-          "format": "time_series",
-          "instant": true,
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Budget remaining",
-      "transparent": false,
-      "type": "stat"
-    },
-    {
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "decimals": "2",
-          "displayName": "28d budget: 20 minutes",
-          "mappings": [
-            {
-              "id": 0,
-              "options": {
-                "from": -2419200,
-                "result": {
-                  "color": "red",
-                  "index": 0,
-                  "text": "🥵 Unhealthy"
-                },
-                "to": 0
-              },
-              "type": "range"
-            },
-            {
-              "id": 1,
-              "options": {
-                "from": 0,
-                "result": {
-                  "color": "green",
-                  "index": 1,
-                  "text": "🥳 Healthy"
-                },
-                "to": 1209.5999999998667
-              },
-              "type": "range"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": -2419200
-              },
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          },
-          "unit": "none"
-        }
-      },
-      "gridPos": {
-        "h": 2,
-        "w": 6,
-        "x": 6,
-        "y": 104
-      },
-      "id": 8,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "7",
-      "targets": [
-        {
-          "expr": "# The number of seconds allowed to be spent in 28d\n1209\n-\n(\n  (\n     1 - clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n\n  ) * 2419200\n)\n\n",
-          "format": "time_series",
-          "instant": true,
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "",
-      "transparent": false,
-      "type": "stat"
-    },
-    {
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "decimals": 0,
-          "displayName": "",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 1209.5999999998667
-              }
-            ]
-          },
-          "unit": "s"
-        }
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 12,
-        "y": 100
-      },
-      "id": 9,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "7",
-      "targets": [
-        {
-          "expr": "(\n  (\n     1 - clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n\n  ) * 2419200\n)\n",
-          "format": "time_series",
-          "instant": true,
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Budget spent",
-      "transparent": false,
-      "type": "stat"
-    },
-    {
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "decimals": "2",
-          "displayName": "Target: Less than 20 minutes in 28d",
-          "mappings": [
-            {
-              "id": 0,
-              "options": {
-                "from": 1209.5999999998667,
-                "result": {
-                  "color": "red",
-                  "index": 0,
-                  "text": "🥵 Unhealthy"
-                },
-                "to": 2419200
-              },
-              "type": "range"
-            },
-            {
-              "id": 1,
-              "options": {
-                "from": 0,
-                "result": {
-                  "color": "green",
-                  "index": 1,
-                  "text": "🥳 Healthy"
-                },
-                "to": 1209.5999999998667
-              },
-              "type": "range"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 1209.5999999998667
-              }
-            ]
-          },
-          "unit": "none"
-        }
-      },
-      "gridPos": {
-        "h": 2,
-        "w": 6,
-        "x": 12,
-        "y": 104
+        "y": 105.5
       },
       "id": 10,
       "options": {
@@ -585,7 +547,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "(\n  (\n     1 - clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n\n  ) * 2419200\n)\n",
+          "expr": "# The number of seconds allowed to be spent in 28d\n1209.5999999998667\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -599,14 +561,226 @@
       "type": "stat"
     },
     {
-      "content": "### [Error budget](https://about.gitlab.com/handbook/engineering/error-budgets/)\n\nThese error budget panels show an aggregate of SLIs across all components.\nHowever, not all components have been implemented yet.\n\nThe [handbook](https://about.gitlab.com/handbook/engineering/error-budgets/)\nexplains how these budgets are used.\n\nRead more about how the error budgets are calculated in the\n[stage group dashboard documentation](https://docs.gitlab.com/ee/development/stage_group_dashboards.html#error-budget).\n\nThe error budget is compared to our SLO of 99.95% and is always in\na range of 28 days from the selected end date in Grafana.\n\n### Availability\n\nThe availability shows the percentage of operations labeled with one of the\ncategories owned by Purchase with satisfactory completion.\n\n### Budget remaining\n\nThe error budget in minutes is calculated based on the 99.95%.\nThere are 40320 minutes in 28 days, we allow 0.05% of failures, which\nmeans the budget in minutes is 20 minutes.\n\nThe budget remaining shows how many minutes have not been spent in the\npast 28 days.\n\n### Minutes spent\n\nThis shows the total minutes spent over the past 28 days.\n\nFor example, if there were 403200 (28 * 24 * 60) operations in 28 days.\nThis would be 1 every minute. If 10 of those were unsatisfactory, that\nwould mean 10 minutes of the budget were spent.\n",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "",
+          "thresholds": {
+            "mode": "absolute"
+          },
+          "unit": "s"
+        }
+      },
       "gridPos": {
-        "h": 6,
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 100
+      },
+      "id": 11,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "(\n  (\n     1 - clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n\n  ) * 2419200\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        },
+        {
+          "expr": "# The number of seconds allowed to be spent in 28d\n1209.5999999998667\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "budget",
+          "refId": "B"
+        }
+      ],
+      "title": "Budget spent",
+      "transformations": [
+        {
+          "id": "configFromData",
+          "options": {
+            "configRefId": "B",
+            "mappings": [
+              {
+                "fieldName": "budget",
+                "handlerKey": "threshold1"
+              }
+            ]
+          }
+        }
+      ],
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": "2",
+          "displayName": "",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "from": 0,
+                "result": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "🥵 Unhealthy"
+                },
+                "to": 0.9995
+              },
+              "type": "range"
+            },
+            {
+              "id": 1,
+              "options": {
+                "from": 0.9995,
+                "result": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "🥳 Healthy"
+                },
+                "to": 1
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 0.9995
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 1.5,
+        "w": 6,
+        "x": 12,
+        "y": 104
+      },
+      "id": 12,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"purchase\"}[28d]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "28d budget:",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "gray"
+              }
+            ]
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": {
+        "h": 1.5,
+        "w": 6,
+        "x": 12,
+        "y": 105.5
+      },
+      "id": 13,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "# The number of seconds allowed to be spent in 28d\n1209.5999999998667\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "content": "### [Error budget](https://about.gitlab.com/handbook/engineering/error-budgets/)\n\nThese error budget panels show an aggregate of SLIs across all components.\nHowever, not all components have been implemented yet.\n\nThe [handbook](https://about.gitlab.com/handbook/engineering/error-budgets/)\nexplains how these budgets are used.\n\nRead more about how the error budgets are calculated in the\n[stage group dashboard documentation](https://docs.gitlab.com/ee/development/stage_group_dashboards.html#error-budget).\n\nThe error budget is compared to our SLO of 99.95% and is always in\na range of 28 days from the selected end date in Grafana.\n\n### Availability\n\nThe availability shows the percentage of operations labeled with one of the\ncategories owned by Purchase with satisfactory completion.\n\n### Budget remaining\n\nThe error budget in minutes is calculated based on the 99.95%.\nThere are 40320 minutes in 28 days, we allow 0.05% of failures, which\nmeans the budget in minutes is 20.159999999997776 minutes.\n\nThe budget remaining shows how many minutes have not been spent in the\npast 28 days.\n\n### Minutes spent\n\nThis shows the total minutes spent over the past 28 days.\n\nFor example, if there were 403200 (28 * 24 * 60) operations in 28 days.\nThis would be 1 every minute. If 10 of those were unsatisfactory, that\nwould mean 10 minutes of the budget were spent.\n",
+      "gridPos": {
+        "h": 7,
         "w": 6,
         "x": 18,
         "y": 100
       },
-      "id": 11,
+      "id": 14,
       "mode": "markdown",
       "title": "Info",
       "type": "text"
@@ -618,9 +792,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 110
+        "y": 150
       },
-      "id": 12,
+      "id": 15,
       "panels": [
         {
           "columns": [
@@ -678,9 +852,9 @@
             "h": 10,
             "w": 8,
             "x": 0,
-            "y": 111
+            "y": 151
           },
-          "id": 13,
+          "id": 16,
           "links": [
 
           ],
@@ -749,9 +923,9 @@
             "h": 10,
             "w": 8,
             "x": 8,
-            "y": 111
+            "y": 151
           },
-          "id": 14,
+          "id": 17,
           "mode": "markdown",
           "title": "Info",
           "type": "text"
@@ -763,9 +937,9 @@
             "h": 10,
             "w": 8,
             "x": 16,
-            "y": 111
+            "y": 151
           },
-          "id": 15,
+          "id": 18,
           "mode": "markdown",
           "title": "Failure log links",
           "type": "text"
@@ -788,7 +962,7 @@
         "x": 0,
         "y": 201
       },
-      "id": 16,
+      "id": 19,
       "panels": [
 
       ],
@@ -817,7 +991,7 @@
         "x": 0,
         "y": 202
       },
-      "id": 17,
+      "id": 20,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -915,7 +1089,7 @@
         "x": 8,
         "y": 202
       },
-      "id": 18,
+      "id": 21,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1005,7 +1179,7 @@
         "x": 16,
         "y": 202
       },
-      "id": 19,
+      "id": 22,
       "mode": "markdown",
       "title": "Extra links",
       "type": "text"
@@ -1019,7 +1193,7 @@
         "x": 0,
         "y": 301
       },
-      "id": 20,
+      "id": 23,
       "panels": [
 
       ],
@@ -1048,7 +1222,7 @@
         "x": 0,
         "y": 302
       },
-      "id": 21,
+      "id": 24,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1146,7 +1320,7 @@
         "x": 12,
         "y": 302
       },
-      "id": 22,
+      "id": 25,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1236,7 +1410,7 @@
         "x": 0,
         "y": 401
       },
-      "id": 23,
+      "id": 26,
       "panels": [
 
       ],
@@ -1265,7 +1439,7 @@
         "x": 0,
         "y": 402
       },
-      "id": 24,
+      "id": 27,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1363,7 +1537,7 @@
         "x": 12,
         "y": 402
       },
-      "id": 25,
+      "id": 28,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1453,7 +1627,7 @@
         "x": 0,
         "y": 501
       },
-      "id": 26,
+      "id": 29,
       "panels": [
 
       ],
@@ -1482,7 +1656,7 @@
         "x": 0,
         "y": 502
       },
-      "id": 27,
+      "id": 30,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1580,7 +1754,7 @@
         "x": 12,
         "y": 502
       },
-      "id": 28,
+      "id": 31,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1670,7 +1844,7 @@
         "x": 0,
         "y": 601
       },
-      "id": 29,
+      "id": 32,
       "panels": [
 
       ],
@@ -1699,7 +1873,7 @@
         "x": 0,
         "y": 602
       },
-      "id": 30,
+      "id": 33,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1797,7 +1971,7 @@
         "x": 12,
         "y": 602
       },
-      "id": 31,
+      "id": 34,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1887,7 +2061,7 @@
         "x": 0,
         "y": 701
       },
-      "id": 32,
+      "id": 35,
       "panels": [
 
       ],
@@ -1916,7 +2090,7 @@
         "x": 0,
         "y": 702
       },
-      "id": 33,
+      "id": 36,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -2014,7 +2188,7 @@
         "x": 12,
         "y": 702
       },
-      "id": 34,
+      "id": 37,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -2104,7 +2278,7 @@
         "x": 0,
         "y": 801
       },
-      "id": 35,
+      "id": 38,
       "panels": [
 
       ],
@@ -2133,7 +2307,7 @@
         "x": 0,
         "y": 802
       },
-      "id": 36,
+      "id": 39,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -2231,7 +2405,7 @@
         "x": 12,
         "y": 802
       },
-      "id": 37,
+      "id": 40,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -2321,7 +2495,7 @@
         "x": 0,
         "y": 901
       },
-      "id": 38,
+      "id": 41,
       "panels": [
 
       ],
@@ -2350,7 +2524,7 @@
         "x": 0,
         "y": 902
       },
-      "id": 39,
+      "id": 42,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -2448,7 +2622,7 @@
         "x": 8,
         "y": 902
       },
-      "id": 40,
+      "id": 43,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -2538,7 +2712,7 @@
         "x": 16,
         "y": 902
       },
-      "id": 41,
+      "id": 44,
       "mode": "markdown",
       "title": "Extra links",
       "type": "text"
@@ -2552,7 +2726,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 42,
+      "id": 45,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -2723,5 +2897,5 @@
   "timezone": "utc",
   "title": "stage-groups: Purchase: Group dashboard",
   "uid": "stage-groups-purchase",
-  "version": 1246
+  "version": 1247
 }

@@ -1,0 +1,668 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [
+
+          ],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "iteration": 1647266275550,
+  "links": [
+
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "description": "The OptimizeRepository RPC is combining all the different maintenance tasks like repacking objects, repacking references or pruning objects into a single RPC. This metric keeps track of which subtasks get executed as part of OptimizeRepository to improve visibility into what the RPC does.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "reqps"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "exemplar": true,
+          "expr": "sum(rate(gitaly_housekeeping_tasks_total{environment=\"$environment\"}[$__rate_interval])) by (housekeeping_task)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{housekeeping_task}}",
+          "refId": "B"
+        }
+      ],
+      "title": "OptimizeRepository: Performed Optimizations",
+      "type": "timeseries"
+    },
+    {
+      "description": "The OptimizeRepository RPC is combining all the different maintenance tasks like repacking objects, repacking references or pruning objects into a single RPC. This metric keeps track of the latency of each of the subtasks executed as part of OptimizeRepository to improve visibility into what the RPC does.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "exemplar": true,
+          "expr": "histogram_quantile(0.99, sum(rate(gitaly_housekeeping_tasks_latency_bucket[$__rate_interval])) by (le,housekeeping_task))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "P99: {{housekeeping_task}}",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "exemplar": true,
+          "expr": "histogram_quantile(0.95, sum(rate(gitaly_housekeeping_tasks_latency_bucket[$__rate_interval])) by (le,housekeeping_task))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "P95: {{housekeeping_task}}",
+          "refId": "B"
+        }
+      ],
+      "title": "OptimizeRepository: Per-Optimization Latencies",
+      "type": "timeseries"
+    },
+    {
+      "description": "Gitaly's housekeeping tasks prune files which are not needed for normal operations or which have been left behind by Git processes due to reasons like crashes. This metric counts the number of files and directories we are pruning as part of this housekeeping task.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 27,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "exemplar": true,
+          "expr": "sum(rate(gitaly_repository_optimizerepository_empty_dir_removal_total{environment=\"$environment\"}[$__rate_interval]))",
+          "interval": "",
+          "legendFormat": "pruned_dirs",
+          "refId": "A"
+        }
+      ],
+      "title": "Stale File Pruning",
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "reqps"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 25
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "repeat": "method",
+      "repeatDirection": "v",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "exemplar": true,
+          "expr": "sum(gitaly:grpc_server_handled_total:rate1m{job=\"gitaly\",environment=\"$environment\",grpc_method=\"$method\"} - sum(gitaly:grpc_server_handled_total:error_rate1m{job=\"gitaly\", environment=\"$environment\", grpc_method=\"$method\"}) without (grpc_code))",
+          "interval": "",
+          "legendFormat": "OK",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "exemplar": true,
+          "expr": "sum(gitaly:grpc_server_handled_total:error_rate1m{job=\"gitaly\", environment=\"$environment\", grpc_method=\"$method\"}) by (grpc_code)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{grpc_code}}",
+          "refId": "B"
+        }
+      ],
+      "title": "Housekeeping RPC Rate: $method",
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 25
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "repeat": "method",
+      "repeatDirection": "v",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "exemplar": true,
+          "expr": "histogram_quantile(0.99, sum(gitaly:grpc_server_handling_seconds_bucket:rate1m{job=\"gitaly\", environment=\"$environment\", grpc_method=\"$method\"}) by (le)) * 1000",
+          "interval": "",
+          "legendFormat": "P99",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "exemplar": true,
+          "expr": "histogram_quantile(0.95, sum(gitaly:grpc_server_handling_seconds_bucket:rate1m{job=\"gitaly\", environment=\"$environment\", grpc_method=\"$method\"}) by (le)) * 1000",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "P95",
+          "refId": "B"
+        }
+      ],
+      "title": "Housekeeping RPC Latency: $method",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 35,
+  "style": "dark",
+  "tags": [
+
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "gprd",
+          "value": "gprd"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "environment",
+        "options": [
+          {
+            "selected": true,
+            "text": "gprd",
+            "value": "gprd"
+          },
+          {
+            "selected": false,
+            "text": "gstg",
+            "value": "gstg"
+          }
+        ],
+        "query": "gprd,gstg",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "PackRefs",
+            "Cleanup",
+            "GarbageCollect",
+            "MidxRepack",
+            "OptimizeRepository",
+            "PruneUnreachableObjects",
+            "RepackFull",
+            "RepackIncremental",
+            "WriteCommitGraph"
+          ],
+          "value": [
+            "PackRefs",
+            "Cleanup",
+            "GarbageCollect",
+            "MidxRepack",
+            "OptimizeRepository",
+            "PruneUnreachableObjects",
+            "RepackFull",
+            "RepackIncremental",
+            "WriteCommitGraph"
+          ]
+        },
+        "description": "",
+        "hide": 0,
+        "includeAll": false,
+        "multi": true,
+        "name": "method",
+        "options": [
+          {
+            "selected": true,
+            "text": "PackRefs",
+            "value": "PackRefs"
+          },
+          {
+            "selected": true,
+            "text": "Cleanup",
+            "value": "Cleanup"
+          },
+          {
+            "selected": true,
+            "text": "GarbageCollect",
+            "value": "GarbageCollect"
+          },
+          {
+            "selected": true,
+            "text": "MidxRepack",
+            "value": "MidxRepack"
+          },
+          {
+            "selected": true,
+            "text": "OptimizeRepository",
+            "value": "OptimizeRepository"
+          },
+          {
+            "selected": true,
+            "text": "PruneUnreachableObjects",
+            "value": "PruneUnreachableObjects"
+          },
+          {
+            "selected": true,
+            "text": "RepackFull",
+            "value": "RepackFull"
+          },
+          {
+            "selected": true,
+            "text": "RepackIncremental",
+            "value": "RepackIncremental"
+          },
+          {
+            "selected": true,
+            "text": "WriteCommitGraph",
+            "value": "WriteCommitGraph"
+          }
+        ],
+        "query": "PackRefs,Cleanup,GarbageCollect,MidxRepack,OptimizeRepository,PruneUnreachableObjects,RepackFull,RepackIncremental,WriteCommitGraph",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+  },
+  "timezone": "",
+  "title": "Gitaly Housekeeping Statistics",
+  "uid": "Z2xwZIP7k",
+  "version": 4,
+  "weekStart": ""
+}
