@@ -18,7 +18,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2276074856 at Thu Mar 31 14:35:10 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2277458758 at Thu Mar 31 19:28:30 UTC 2022",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
@@ -152,7 +152,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(irate(container_network_receive_bytes_total{namespace=~\"$namespace\", pod=~\"$pod\"}[$interval:$resolution]))",
+          "expr": "sum(irate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace=~\"$namespace\", pod=~\"$pod\"}[$interval:$resolution]))",
           "format": "time_series",
           "instant": null,
           "intervalFactor": 1,
@@ -278,7 +278,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(irate(container_network_transmit_bytes_total{namespace=~\"$namespace\", pod=~\"$pod\"}[$interval:$resolution]))",
+          "expr": "sum(irate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace=~\"$namespace\", pod=~\"$pod\"}[$interval:$resolution]))",
           "format": "time_series",
           "instant": null,
           "intervalFactor": 1,
@@ -374,7 +374,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(irate(container_network_receive_bytes_total{namespace=~\"$namespace\", pod=~\"$pod\"}[$interval:$resolution])) by (pod)",
+          "expr": "sum(irate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace=~\"$namespace\", pod=~\"$pod\"}[$interval:$resolution])) by (pod)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{pod}}",
@@ -474,7 +474,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(irate(container_network_transmit_bytes_total{namespace=~\"$namespace\", pod=~\"$pod\"}[$interval:$resolution])) by (pod)",
+          "expr": "sum(irate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace=~\"$namespace\", pod=~\"$pod\"}[$interval:$resolution])) by (pod)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{pod}}",
@@ -585,7 +585,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(irate(container_network_receive_packets_total{namespace=~\"$namespace\", pod=~\"$pod\"}[$interval:$resolution])) by (pod)",
+              "expr": "sum(irate(container_network_receive_packets_total{cluster=\"$cluster\",namespace=~\"$namespace\", pod=~\"$pod\"}[$interval:$resolution])) by (pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{pod}}",
@@ -685,7 +685,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(irate(container_network_transmit_packets_total{namespace=~\"$namespace\", pod=~\"$pod\"}[$interval:$resolution])) by (pod)",
+              "expr": "sum(irate(container_network_transmit_packets_total{cluster=\"$cluster\",namespace=~\"$namespace\", pod=~\"$pod\"}[$interval:$resolution])) by (pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{pod}}",
@@ -805,7 +805,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(irate(container_network_receive_packets_dropped_total{namespace=~\"$namespace\", pod=~\"$pod\"}[$interval:$resolution])) by (pod)",
+              "expr": "sum(irate(container_network_receive_packets_dropped_total{cluster=\"$cluster\",namespace=~\"$namespace\", pod=~\"$pod\"}[$interval:$resolution])) by (pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{pod}}",
@@ -905,7 +905,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(irate(container_network_transmit_packets_dropped_total{namespace=~\"$namespace\", pod=~\"$pod\"}[$interval:$resolution])) by (pod)",
+              "expr": "sum(irate(container_network_transmit_packets_dropped_total{cluster=\"$cluster\",namespace=~\"$namespace\", pod=~\"$pod\"}[$interval:$resolution])) by (pod)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{pod}}",
@@ -983,7 +983,7 @@
           "value": "default"
         },
         "hide": 0,
-        "label": null,
+        "label": "Data Source",
         "name": "datasource",
         "options": [
 
@@ -992,6 +992,31 @@
         "refresh": 1,
         "regex": "",
         "type": "datasource"
+      },
+      {
+        "allValue": null,
+        "current": {
+        },
+        "datasource": "$datasource",
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "cluster",
+        "options": [
+
+        ],
+        "query": "label_values(up{job=\"kubelet\"}, cluster)",
+        "refresh": 2,
+        "regex": "",
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [
+
+        ],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       },
       {
         "allValue": ".+",
@@ -1003,7 +1028,7 @@
           "value": "kube-system"
         },
         "datasource": "$datasource",
-        "definition": "label_values(container_network_receive_packets_total, namespace)",
+        "definition": "label_values(container_network_receive_packets_total{cluster=\"$cluster\"}, namespace)",
         "hide": 0,
         "includeAll": true,
         "label": null,
@@ -1012,8 +1037,8 @@
         "options": [
 
         ],
-        "query": "label_values(container_network_receive_packets_total, namespace)",
-        "refresh": 1,
+        "query": "label_values(container_network_receive_packets_total{cluster=\"$cluster\"}, namespace)",
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -1035,7 +1060,7 @@
           "value": ""
         },
         "datasource": "$datasource",
-        "definition": "label_values(container_network_receive_packets_total{namespace=~\"$namespace\"}, pod)",
+        "definition": "label_values(container_network_receive_packets_total{cluster=\"$cluster\",namespace=~\"$namespace\"}, pod)",
         "hide": 0,
         "includeAll": false,
         "label": null,
@@ -1044,8 +1069,8 @@
         "options": [
 
         ],
-        "query": "label_values(container_network_receive_packets_total{namespace=~\"$namespace\"}, pod)",
-        "refresh": 1,
+        "query": "label_values(container_network_receive_packets_total{cluster=\"$cluster\",namespace=~\"$namespace\"}, pod)",
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -1171,5 +1196,5 @@
   "timezone": "UTC",
   "title": "kubernetes: Networking / Pod",
   "uid": "kubernetes-pod-total",
-  "version": 2560
+  "version": 2562
 }
