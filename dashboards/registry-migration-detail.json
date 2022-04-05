@@ -72,12 +72,12 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2291542134 at Tue Apr  5 05:36:42 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2268353838 at Wed Mar 30 08:13:22 UTC 2022",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1648808858174,
+  "iteration": 1648668832669,
   "links": [
     {
       "asDropdown": true,
@@ -539,13 +539,40 @@
       }
     },
     {
-      "description": "Percentage of requests handled by the new code path.",
+      "description": "Percentage of requests handled by old and new code paths.",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
-          "decimals": 0,
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
           "mappings": [
 
           ],
@@ -570,26 +597,25 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 6,
+        "w": 12,
         "x": 0,
         "y": 9
       },
       "id": 103,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
+        "legend": {
           "calcs": [
-            "mean"
+
           ],
-          "fields": "",
-          "values": false
+          "displayMode": "list",
+          "placement": "bottom"
         },
-        "textMode": "auto"
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
       },
-      "pluginVersion": "8.4.4",
+      "pluginVersion": "8.4.1",
       "targets": [
         {
           "datasource": {
@@ -599,13 +625,25 @@
           "expr": "sum (rate(registry_http_requests_total{environment=\"$environment\", stage=\"$stage\", migration_path=\"new\"}[$__interval]))\n/\nsum (rate(registry_http_requests_total{environment=\"$environment\", stage=\"$stage\", migration_path=~\"new|old\"}[$__interval]))",
           "hide": false,
           "interval": "",
-          "intervalFactor": 1,
+          "intervalFactor": 3,
           "legendFormat": "New",
           "refId": "B"
+        },
+        {
+          "datasource": {
+            "uid": "$PROMETHEUS_DS"
+          },
+          "exemplar": false,
+          "expr": "sum (rate(registry_http_requests_total{environment=\"$environment\", stage=\"$stage\", migration_path=\"old\"}[$__interval]))\n/\nsum (rate(registry_http_requests_total{environment=\"$environment\", stage=\"$stage\", migration_path=~\"new|old\"}[$__interval]))",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 3,
+          "legendFormat": "Old",
+          "refId": "C"
         }
       ],
-      "title": "New code path traffic share",
-      "type": "stat"
+      "title": "Traffic Split",
+      "type": "timeseries"
     },
     {
       "collapsed": false,
@@ -619,7 +657,7 @@
       "panels": [
 
       ],
-      "title": "Phase 2 - Registry",
+      "title": "Phase 2 (Registry)",
       "type": "row"
     },
     {
@@ -1844,7 +1882,7 @@
       "panels": [
 
       ],
-      "title": "Phase 2 Progress - Rails (General)",
+      "title": "Phase 2 Progress (Rails)",
       "type": "row"
     },
     {
@@ -2492,274 +2530,13 @@
       "type": "timeseries"
     },
     {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 77
-      },
-      "id": 135,
-      "panels": [
-
-      ],
-      "title": "Phase 2 Progress - Rails (Free tier)",
-      "type": "row"
-    },
-    {
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-
-          ],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 6,
-        "x": 0,
-        "y": 78
-      },
-      "id": 133,
-      "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
-      },
-      "pluginVersion": "8.4.4",
-      "targets": [
-        {
-          "datasource": {
-            "uid": "$PROMETHEUS_DS"
-          },
-          "exemplar": true,
-          "expr": "100 * avg(gitlab_database_rows{query_name=\"container_repositories_import_done_free\", environment=\"${environment}\"}) / avg(gitlab_database_rows{query_name=\"container_repositories_migration_all_free\", environment=\"${environment}\"})",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "% Free Complete",
-      "type": "gauge"
-    },
-    {
-      "description": "Count of container repositories imports that were aborted because an unexpected error occurred.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 6,
-        "x": 6,
-        "y": 78
-      },
-      "id": 129,
-      "options": {
-        "legend": {
-          "calcs": [
-
-          ],
-          "displayMode": "hidden",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "uid": "$PROMETHEUS_DS"
-          },
-          "exemplar": true,
-          "expr": "avg(gitlab_database_rows{query_name=\"container_repositories_migration_pending_free\", environment=\"$environment\"})",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Pending Free",
-      "type": "timeseries"
-    },
-    {
-      "description": "Count of container repositories imports that were aborted because an unexpected error occurred.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 6,
-        "x": 12,
-        "y": 78
-      },
-      "id": 131,
-      "options": {
-        "legend": {
-          "calcs": [
-
-          ],
-          "displayMode": "hidden",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "uid": "$PROMETHEUS_DS"
-          },
-          "exemplar": true,
-          "expr": "avg(gitlab_database_rows{query_name=\"container_repositories_import_done_free\", environment=\"$environment\"})",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Done Free",
-      "type": "timeseries"
-    },
-    {
       "collapse": true,
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 87
+        "y": 77
       },
       "id": 52,
       "panels": [
@@ -2787,7 +2564,7 @@
         "h": 10,
         "w": 8,
         "x": 0,
-        "y": 88
+        "y": 78
       },
       "hiddenSeries": false,
       "id": 53,
@@ -2904,7 +2681,7 @@
         "h": 10,
         "w": 8,
         "x": 8,
-        "y": 88
+        "y": 78
       },
       "hiddenSeries": false,
       "id": 54,
@@ -3004,7 +2781,7 @@
         "h": 10,
         "w": 8,
         "x": 16,
-        "y": 88
+        "y": 78
       },
       "hiddenSeries": false,
       "id": 55,
@@ -3104,7 +2881,7 @@
         "h": 10,
         "w": 6,
         "x": 0,
-        "y": 98
+        "y": 88
       },
       "hiddenSeries": false,
       "id": 56,
@@ -3221,7 +2998,7 @@
         "h": 10,
         "w": 6,
         "x": 6,
-        "y": 98
+        "y": 88
       },
       "hiddenSeries": false,
       "id": 57,
@@ -3324,7 +3101,7 @@
         "h": 10,
         "w": 6,
         "x": 12,
-        "y": 98
+        "y": 88
       },
       "hiddenSeries": false,
       "id": 58,
@@ -3430,7 +3207,7 @@
         "h": 10,
         "w": 6,
         "x": 18,
-        "y": 98
+        "y": 88
       },
       "hiddenSeries": false,
       "id": 59,
@@ -3530,7 +3307,7 @@
         "h": 10,
         "w": 6,
         "x": 0,
-        "y": 108
+        "y": 98
       },
       "hiddenSeries": false,
       "id": 60,
@@ -3647,7 +3424,7 @@
         "h": 10,
         "w": 6,
         "x": 6,
-        "y": 108
+        "y": 98
       },
       "hiddenSeries": false,
       "id": 61,
@@ -3749,7 +3526,7 @@
         "h": 10,
         "w": 6,
         "x": 12,
-        "y": 108
+        "y": 98
       },
       "hiddenSeries": false,
       "id": 62,
@@ -3849,7 +3626,7 @@
         "h": 10,
         "w": 6,
         "x": 18,
-        "y": 108
+        "y": 98
       },
       "hiddenSeries": false,
       "id": 63,
@@ -3939,7 +3716,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 118
+        "y": 108
       },
       "id": 68,
       "panels": [
@@ -4537,7 +4314,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 119
+        "y": 109
       },
       "id": 77,
       "panels": [
@@ -5135,7 +4912,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 120
+        "y": 110
       },
       "id": 86,
       "panels": [
@@ -5861,7 +5638,7 @@
     ]
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
@@ -5885,6 +5662,7 @@
   },
   "timezone": "utc",
   "title": "registry: Migration Detail",
-  "uid": "registry-migration",
-  "version": 516
+  "uid": "registry-migration-sabrams-test",
+  "version": 1,
+  "weekStart": ""
 }
