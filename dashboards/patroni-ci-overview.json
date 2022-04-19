@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2348419490 at Tue Apr 19 08:00:34 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2350295403 at Tue Apr 19 14:13:46 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -8437,7 +8437,199 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "pg_vacuum_activity component saturation: Postgres Autovacuum Activity",
+          "title": "pg_vacuum_activity component saturation: Postgres Autovacuum Activity (sampled)",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Saturation %",
+              "logBase": 1,
+              "max": 1,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "This measures the total amount of time spent each day by autovacuum workers, as a percentage of total autovacuum capacity.\n\nThis resource uses the `auto_vacuum_elapsed_seconds` value logged by the autovacuum worker, and aggregates this across all\nautovacuum jobs. In the case that there are 10 autovacuum workers, the total capacity is 10-days worth of autovacuum time per day.\n\nOnce the system is performing 10 days worth of autovacuum per day, the capacity will be saturated.\n\nThis resource is primarily intended to be used for long-term capacity planning.\n Lower is better.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 90
+          },
+          "id": 3412018865,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "sideWidth": null,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [
+            {
+              "alias": "/^Soft SLO/",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^Hard SLO/",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            },
+            {
+              "alias": "/aggregated /",
+              "color": "#E7D551",
+              "linewidth": 2,
+              "zindex": 3
+            },
+            {
+              "alias": "/^95th quantile for week/",
+              "color": "#37872D",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 1,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^99th quantile for week/",
+              "color": "#56A64B",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "saturation-pg_vacuum_activity_v2",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, tier, type, stage) (\n        rate(fluentd_pg_auto_vacuum_elapsed_seconds_total{env=\"gprd\"}[1d])\n        and on (fqdn) (pg_replication_is_replica{env=\"$environment\",environment=\"$environment\",type=\"patroni-ci\"} == 0)\n      )\n      /\n      avg by (environment, tier, type, stage) (\n        pg_settings_autovacuum_max_workers{env=\"$environment\",environment=\"$environment\",type=\"patroni-ci\"}\n        and on (instance, job) (pg_replication_is_replica{env=\"$environment\",environment=\"$environment\",type=\"patroni-ci\"} == 0)\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{ type }}",
+              "refId": "A"
+            },
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",type=\"patroni-ci\", component=\"pg_vacuum_activity_v2\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "aggregated {{ component }}",
+              "refId": "B"
+            },
+            {
+              "expr": "gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",type=\"patroni-ci\", component=\"pg_vacuum_activity_v2\"}\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "95th quantile for week {{ component }}",
+              "refId": "C"
+            },
+            {
+              "expr": "gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",type=\"patroni-ci\", component=\"pg_vacuum_activity_v2\"}\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "99th quantile for week {{ component }}",
+              "refId": "D"
+            },
+            {
+              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"pg_vacuum_activity_v2\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "Soft SLO: {{ component }}",
+              "refId": "E"
+            },
+            {
+              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"pg_vacuum_activity_v2\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "Hard SLO: {{ component }}",
+              "refId": "F"
+            }
+          ],
+          "thresholds": [
+
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "pg_vacuum_activity_v2 component saturation: Postgres Autovacuum Activity (non-sampled)",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -8486,8 +8678,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 90
+            "x": 0,
+            "y": 100
           },
           "id": 1879384722,
           "legend": {
@@ -8678,7 +8870,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 100
           },
           "id": 3666116359,
@@ -8870,8 +9062,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 100
+            "x": 0,
+            "y": 110
           },
           "id": 4069682945,
           "legend": {
@@ -9062,7 +9254,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 110
           },
           "id": 3093058894,
@@ -9254,8 +9446,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 110
+            "x": 0,
+            "y": 120
           },
           "id": 2061891964,
           "legend": {
@@ -9446,7 +9638,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 120
           },
           "id": 1472933476,
@@ -9638,8 +9830,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 120
+            "x": 0,
+            "y": 130
           },
           "id": 3372411356,
           "legend": {
@@ -9834,7 +10026,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 79,
+      "id": 80,
       "panels": [
 
       ],
@@ -9863,7 +10055,7 @@
         "x": 0,
         "y": 1001
       },
-      "id": 80,
+      "id": 81,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9961,7 +10153,7 @@
         "x": 12,
         "y": 1001
       },
-      "id": 81,
+      "id": 82,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10059,7 +10251,7 @@
         "x": 0,
         "y": 1011
       },
-      "id": 82,
+      "id": 83,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10157,7 +10349,7 @@
         "x": 12,
         "y": 1011
       },
-      "id": 83,
+      "id": 84,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10247,7 +10439,7 @@
         "x": 0,
         "y": 2000
       },
-      "id": 84,
+      "id": 85,
       "panels": [
 
       ],
@@ -10276,7 +10468,7 @@
         "x": 0,
         "y": 2001
       },
-      "id": 85,
+      "id": 86,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10374,7 +10566,7 @@
         "x": 12,
         "y": 2001
       },
-      "id": 86,
+      "id": 87,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10470,7 +10662,7 @@
         "x": 0,
         "y": 2011
       },
-      "id": 87,
+      "id": 88,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10566,7 +10758,7 @@
         "x": 12,
         "y": 2011
       },
-      "id": 88,
+      "id": 89,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10664,7 +10856,7 @@
         "x": 0,
         "y": 2021
       },
-      "id": 89,
+      "id": 90,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10762,7 +10954,7 @@
         "x": 12,
         "y": 2021
       },
-      "id": 90,
+      "id": 91,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10860,7 +11052,7 @@
         "x": 0,
         "y": 2031
       },
-      "id": 91,
+      "id": 92,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10958,7 +11150,7 @@
         "x": 12,
         "y": 2031
       },
-      "id": 92,
+      "id": 93,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11056,7 +11248,7 @@
         "x": 0,
         "y": 2041
       },
-      "id": 93,
+      "id": 94,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11144,7 +11336,7 @@
         "x": 0,
         "y": 3000
       },
-      "id": 94,
+      "id": 95,
       "panels": [
 
       ],
@@ -11173,7 +11365,7 @@
         "x": 0,
         "y": 3001
       },
-      "id": 95,
+      "id": 96,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11271,7 +11463,7 @@
         "x": 12,
         "y": 3001
       },
-      "id": 96,
+      "id": 97,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11361,7 +11553,7 @@
         "x": 0,
         "y": 4000
       },
-      "id": 97,
+      "id": 98,
       "panels": [
         {
           "aliasColors": {
@@ -11380,7 +11572,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 98,
+          "id": 99,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11478,7 +11670,7 @@
             "x": 12,
             "y": 1
           },
-          "id": 99,
+          "id": 100,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11576,7 +11768,7 @@
             "x": 0,
             "y": 11
           },
-          "id": 100,
+          "id": 101,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11674,7 +11866,7 @@
             "x": 12,
             "y": 11
           },
-          "id": 101,
+          "id": 102,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11772,7 +11964,7 @@
             "x": 0,
             "y": 21
           },
-          "id": 102,
+          "id": 103,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11871,7 +12063,7 @@
         "x": 0,
         "y": 4010
       },
-      "id": 103,
+      "id": 104,
       "panels": [
         {
           "aliasColors": {
@@ -11890,7 +12082,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 104,
+          "id": 105,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11988,7 +12180,7 @@
             "x": 12,
             "y": 1
           },
-          "id": 105,
+          "id": 106,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12086,7 +12278,7 @@
             "x": 0,
             "y": 11
           },
-          "id": 106,
+          "id": 107,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12184,7 +12376,7 @@
             "x": 12,
             "y": 11
           },
-          "id": 107,
+          "id": 108,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12282,7 +12474,7 @@
             "x": 0,
             "y": 21
           },
-          "id": 108,
+          "id": 109,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12381,7 +12573,7 @@
         "x": 0,
         "y": 4020
       },
-      "id": 109,
+      "id": 110,
       "panels": [
         {
           "aliasColors": {
@@ -12400,7 +12592,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 110,
+          "id": 111,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12498,7 +12690,7 @@
             "x": 12,
             "y": 1
           },
-          "id": 111,
+          "id": 112,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12596,7 +12788,7 @@
             "x": 0,
             "y": 11
           },
-          "id": 112,
+          "id": 113,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12694,7 +12886,7 @@
             "x": 12,
             "y": 11
           },
-          "id": 113,
+          "id": 114,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12792,7 +12984,7 @@
             "x": 0,
             "y": 21
           },
-          "id": 114,
+          "id": 115,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12889,7 +13081,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 115,
+      "id": 116,
       "panels": [
         {
           "colors": [
@@ -12910,7 +13102,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 116,
+          "id": 117,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -13023,7 +13215,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 117,
+          "id": 118,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -13134,7 +13326,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 118,
+          "id": 119,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -13239,7 +13431,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 119,
+      "id": 120,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -13333,5 +13525,5 @@
   "timezone": "utc",
   "title": "patroni-ci: Overview",
   "uid": "patroni-ci-main",
-  "version": 530
+  "version": 532
 }

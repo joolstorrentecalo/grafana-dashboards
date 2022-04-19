@@ -126,7 +126,7 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
-      "description": "Workhorse can scale images on-the-fly as requested. Since the actual work will be\nperformed by dedicated processes, we currently define a hard cap for how many\nsuch requests are allowed to be in the system concurrently.\n\nIf this resource is fully saturated, Workhorse will start ignoring image scaling\nrequests and serve the original image instead, which will ensure continued operation,\nbut comes at the cost of additional client latency and GCS egress traffic.\n Lower is better.",
+      "description": "This measures the total amount of time spent each day by autovacuum workers, as a percentage of total autovacuum capacity.\n\nThis resource uses the `auto_vacuum_elapsed_seconds` value logged by the autovacuum worker, and aggregates this across all\nautovacuum jobs. In the case that there are 10 autovacuum workers, the total capacity is 10-days worth of autovacuum time per day.\n\nOnce the system is performing 10 days worth of autovacuum per day, the capacity will be saturated.\n\nThis resource is primarily intended to be used for long-term capacity planning.\n Lower is better.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -135,7 +135,7 @@
         "x": 0,
         "y": 0
       },
-      "id": 3379320113,
+      "id": 3412018865,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -217,20 +217,20 @@
         }
       ],
       "spaceLength": 10,
-      "stableId": "saturation-workhorse_image_scaling",
+      "stableId": "saturation-pg_vacuum_activity_v2",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, fqdn) (\n  clamp_min(\n    clamp_max(\n      avg_over_time(gitlab_workhorse_image_resize_processes{env=\"$environment\",stage=\"$stage\",type=\"$type\"}[5m])\n        /\n      gitlab_workhorse_image_resize_max_processes{env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, tier, type, stage) (\n        rate(fluentd_pg_auto_vacuum_elapsed_seconds_total{env=\"gprd\"}[1d])\n        and on (fqdn) (pg_replication_is_replica{env=\"$environment\",stage=\"$stage\",type=\"$type\"} == 0)\n      )\n      /\n      avg by (environment, tier, type, stage) (\n        pg_settings_autovacuum_max_workers{env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n        and on (instance, job) (pg_replication_is_replica{env=\"$environment\",stage=\"$stage\",type=\"$type\"} == 0)\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ type }}",
           "refId": "A"
         },
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"workhorse_image_scaling\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"pg_vacuum_activity_v2\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -238,7 +238,7 @@
           "refId": "B"
         },
         {
-          "expr": "gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"workhorse_image_scaling\"}\n",
+          "expr": "gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"pg_vacuum_activity_v2\"}\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -246,7 +246,7 @@
           "refId": "C"
         },
         {
-          "expr": "gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"workhorse_image_scaling\"}\n",
+          "expr": "gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"pg_vacuum_activity_v2\"}\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -254,7 +254,7 @@
           "refId": "D"
         },
         {
-          "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"workhorse_image_scaling\"}) by (component)\n",
+          "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"pg_vacuum_activity_v2\"}) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -262,7 +262,7 @@
           "refId": "E"
         },
         {
-          "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"workhorse_image_scaling\"}) by (component)\n",
+          "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"pg_vacuum_activity_v2\"}) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -275,7 +275,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "workhorse_image_scaling component saturation: Workhorse Image Scaler Exhaustion per Node",
+      "title": "pg_vacuum_activity_v2 component saturation: Postgres Autovacuum Activity (non-sampled)",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -311,7 +311,7 @@
       ]
     },
     {
-      "content": "## Workhorse Image Scaler Exhaustion per Node\n\nWorkhorse can scale images on-the-fly as requested. Since the actual work will be\nperformed by dedicated processes, we currently define a hard cap for how many\nsuch requests are allowed to be in the system concurrently.\n\nIf this resource is fully saturated, Workhorse will start ignoring image scaling\nrequests and serve the original image instead, which will ensure continued operation,\nbut comes at the cost of additional client latency and GCS egress traffic.\n\n\n## What to do from here here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=workhorse_image_scaling)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+workhorse_image_scaling&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
+      "content": "## Postgres Autovacuum Activity (non-sampled)\n\nThis measures the total amount of time spent each day by autovacuum workers, as a percentage of total autovacuum capacity.\n\nThis resource uses the `auto_vacuum_elapsed_seconds` value logged by the autovacuum worker, and aggregates this across all\nautovacuum jobs. In the case that there are 10 autovacuum workers, the total capacity is 10-days worth of autovacuum time per day.\n\nOnce the system is performing 10 days worth of autovacuum per day, the capacity will be saturated.\n\nThis resource is primarily intended to be used for long-term capacity planning.\n\n\n## What to do from here here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=pg_vacuum_activity_v2)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+pg_vacuum_activity_v2&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
       "datasource": null,
       "gridPos": {
         "h": 14,
@@ -466,8 +466,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "web",
-          "value": "web"
+          "text": "patroni",
+          "value": "patroni"
         },
         "datasource": "$PROMETHEUS_DS",
         "hide": 0,
@@ -546,7 +546,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "alerts: workhorse_image_scaling: Saturation Detail",
-  "uid": "alerts-sat_wh_image_scaling",
-  "version": 1477
+  "title": "alerts: pg_vacuum_activity_v2: Saturation Detail",
+  "uid": "alerts-sat_pg_vacuum_activity_v2",
+  "version": 2
 }

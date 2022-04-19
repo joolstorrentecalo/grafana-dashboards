@@ -77,7 +77,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1650302887738,
+  "iteration": 1650359610527,
   "links": [
     {
       "asDropdown": true,
@@ -2194,7 +2194,7 @@
       "type": "timeseries"
     },
     {
-      "description": "The size of blobs transferred during repository (pre)imports.",
+      "description": "The size of all blobs transferred during repository (pre)imports.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2309,7 +2309,247 @@
           "refId": "A"
         }
       ],
-      "title": "Blob transfer bytes",
+      "title": "Blob transfer bytes total",
+      "type": "timeseries"
+    },
+    {
+      "description": "The rate of tags imported during repository (pre)imports.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": 3600000,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ops"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{import_type=\"final\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Final"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{import_type=\"pre\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Pre"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 8,
+        "x": 16,
+        "y": 58
+      },
+      "id": 145,
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "max",
+            "mean",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "$PROMETHEUS_DS"
+          },
+          "exemplar": true,
+          "expr": "sum by (import_type) (rate(registry_migration_tag_counts_count{environment=\"$environment\", stage=\"$stage\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Imported tags rate",
+      "type": "timeseries"
+    },
+    {
+      "description": "p90 count of tags imported per repository during (pre)imports.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": 3600000,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{import_type=\"final\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Final"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{import_type=\"pre\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Pre"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 8,
+        "x": 0,
+        "y": 68
+      },
+      "id": 142,
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "max",
+            "mean",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "$PROMETHEUS_DS"
+          },
+          "exemplar": true,
+          "expr": "histogram_quantile(\n  0.900000,\n  sum by (import_type, le) (\n    rate(registry_migration_tag_counts_bucket{environment=\"$environment\", stage=\"$stage\"}[$__interval])\n  )\n)",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Tags per repository p90 count",
       "type": "timeseries"
     },
     {
@@ -2367,14 +2607,37 @@
           "unit": "short"
         },
         "overrides": [
-
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{import_type=\"final\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Final"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{import_type=\"pre\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Pre"
+              }
+            ]
+          }
         ]
       },
       "gridPos": {
         "h": 10,
         "w": 8,
-        "x": 16,
-        "y": 58
+        "x": 8,
+        "y": 68
       },
       "id": 141,
       "options": {
@@ -2399,213 +2662,17 @@
             "uid": "$PROMETHEUS_DS"
           },
           "exemplar": true,
-          "expr": "sum by (import_type) (rate(registry_migration_tag_counts_sum{environment=\"$environment\", stage=\"$stage\"}[$__interval]))",
+          "expr": "sum by (import_type) (registry_migration_tag_counts_sum{environment=\"$environment\", stage=\"$stage\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Imported tags",
+      "title": "Imported tags total",
       "type": "timeseries"
     },
     {
-      "description": "p90 count of tags imported per repository during (pre)imports.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": 3600000,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 8,
-        "x": 0,
-        "y": 68
-      },
-      "id": 142,
-      "options": {
-        "legend": {
-          "calcs": [
-            "min",
-            "max",
-            "mean",
-            "lastNotNull"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "uid": "$PROMETHEUS_DS"
-          },
-          "exemplar": true,
-          "expr": "histogram_quantile(\n  0.900000,\n  sum by (import_type, le) (\n    rate(registry_migration_tag_counts_bucket{environment=\"$environment\", stage=\"$stage\"}[$__interval])\n  )\n)",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Imported tags p90",
-      "type": "timeseries"
-    },
-    {
-      "description": "p90 count of layers imported per repository during (pre)imports.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": 3600000,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 8,
-        "x": 8,
-        "y": 68
-      },
-      "id": 143,
-      "options": {
-        "legend": {
-          "calcs": [
-            "min",
-            "max",
-            "mean",
-            "lastNotNull"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "uid": "$PROMETHEUS_DS"
-          },
-          "exemplar": true,
-          "expr": "histogram_quantile(\n  0.900000,\n  sum by (le) (\n    rate(registry_migration_layer_counts_bucket{environment=\"$environment\", stage=\"$stage\"}[$__interval])\n  )\n)",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Imported layers p90",
-      "type": "timeseries"
-    },
-    {
-      "description": "The number of layers processed during (pre)imports.",
+      "description": "The rate of layers imported during (pre)imports.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2656,7 +2723,7 @@
               }
             ]
           },
-          "unit": "short"
+          "unit": "ops"
         },
         "overrides": [
 
@@ -2677,7 +2744,7 @@
             "mean",
             "lastNotNull"
           ],
-          "displayMode": "table",
+          "displayMode": "hidden",
           "placement": "bottom"
         },
         "tooltip": {
@@ -2691,13 +2758,111 @@
             "uid": "$PROMETHEUS_DS"
           },
           "exemplar": true,
-          "expr": "sum by (import_type) (rate(registry_migration_layer_counts_sum{environment=\"$environment\", stage=\"$stage\"}[$__interval]))",
+          "expr": "sum(rate(registry_migration_layer_counts_count{environment=\"$environment\", stage=\"$stage\"}[$__interval]))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Imported layers",
+      "title": "Imported layers rate",
+      "type": "timeseries"
+    },
+    {
+      "description": "p90 count of layers imported per image during (pre)imports.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": 3600000,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 8,
+        "x": 0,
+        "y": 78
+      },
+      "id": 143,
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "max",
+            "mean",
+            "lastNotNull"
+          ],
+          "displayMode": "hidden",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "$PROMETHEUS_DS"
+          },
+          "exemplar": true,
+          "expr": "histogram_quantile(\n  0.900000,\n  sum by (le) (\n    rate(registry_migration_layer_counts_bucket{environment=\"$environment\", stage=\"$stage\"}[$__interval])\n  )\n)",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Layers per image p90 count",
       "type": "timeseries"
     },
     {
@@ -2706,7 +2871,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 78
+        "y": 88
       },
       "id": 105,
       "panels": [
@@ -2776,7 +2941,7 @@
         "h": 9,
         "w": 6,
         "x": 0,
-        "y": 79
+        "y": 89
       },
       "id": 107,
       "options": {
@@ -2868,7 +3033,7 @@
         "h": 9,
         "w": 6,
         "x": 6,
-        "y": 79
+        "y": 89
       },
       "id": 109,
       "options": {
@@ -2960,7 +3125,7 @@
         "h": 9,
         "w": 6,
         "x": 12,
-        "y": 79
+        "y": 89
       },
       "id": 111,
       "options": {
@@ -3052,7 +3217,7 @@
         "h": 9,
         "w": 6,
         "x": 18,
-        "y": 79
+        "y": 89
       },
       "id": 108,
       "options": {
@@ -3144,7 +3309,7 @@
         "h": 9,
         "w": 6,
         "x": 0,
-        "y": 88
+        "y": 98
       },
       "id": 110,
       "options": {
@@ -3236,7 +3401,7 @@
         "h": 9,
         "w": 6,
         "x": 6,
-        "y": 88
+        "y": 98
       },
       "id": 112,
       "options": {
@@ -3328,7 +3493,7 @@
         "h": 9,
         "w": 6,
         "x": 12,
-        "y": 88
+        "y": 98
       },
       "id": 113,
       "options": {
@@ -3420,7 +3585,7 @@
         "h": 9,
         "w": 6,
         "x": 18,
-        "y": 88
+        "y": 98
       },
       "id": 136,
       "options": {
@@ -3481,7 +3646,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 97
+        "y": 107
       },
       "id": 135,
       "panels": [
@@ -3520,7 +3685,7 @@
         "h": 9,
         "w": 6,
         "x": 0,
-        "y": 98
+        "y": 108
       },
       "id": 133,
       "options": {
@@ -3613,7 +3778,7 @@
         "h": 9,
         "w": 6,
         "x": 6,
-        "y": 98
+        "y": 108
       },
       "id": 129,
       "options": {
@@ -3705,7 +3870,7 @@
         "h": 9,
         "w": 6,
         "x": 12,
-        "y": 98
+        "y": 108
       },
       "id": 131,
       "options": {
@@ -3743,7 +3908,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 107
+        "y": 117
       },
       "id": 52,
       "panels": [
@@ -3771,7 +3936,7 @@
         "h": 10,
         "w": 8,
         "x": 0,
-        "y": 108
+        "y": 118
       },
       "hiddenSeries": false,
       "id": 53,
@@ -3888,7 +4053,7 @@
         "h": 10,
         "w": 8,
         "x": 8,
-        "y": 108
+        "y": 118
       },
       "hiddenSeries": false,
       "id": 54,
@@ -3988,7 +4153,7 @@
         "h": 10,
         "w": 8,
         "x": 16,
-        "y": 108
+        "y": 118
       },
       "hiddenSeries": false,
       "id": 55,
@@ -4088,7 +4253,7 @@
         "h": 10,
         "w": 6,
         "x": 0,
-        "y": 118
+        "y": 128
       },
       "hiddenSeries": false,
       "id": 56,
@@ -4205,7 +4370,7 @@
         "h": 10,
         "w": 6,
         "x": 6,
-        "y": 118
+        "y": 128
       },
       "hiddenSeries": false,
       "id": 57,
@@ -4308,7 +4473,7 @@
         "h": 10,
         "w": 6,
         "x": 12,
-        "y": 118
+        "y": 128
       },
       "hiddenSeries": false,
       "id": 58,
@@ -4414,7 +4579,7 @@
         "h": 10,
         "w": 6,
         "x": 18,
-        "y": 118
+        "y": 128
       },
       "hiddenSeries": false,
       "id": 59,
@@ -4514,7 +4679,7 @@
         "h": 10,
         "w": 6,
         "x": 0,
-        "y": 128
+        "y": 138
       },
       "hiddenSeries": false,
       "id": 60,
@@ -4631,7 +4796,7 @@
         "h": 10,
         "w": 6,
         "x": 6,
-        "y": 128
+        "y": 138
       },
       "hiddenSeries": false,
       "id": 61,
@@ -4733,7 +4898,7 @@
         "h": 10,
         "w": 6,
         "x": 12,
-        "y": 128
+        "y": 138
       },
       "hiddenSeries": false,
       "id": 62,
@@ -4833,7 +4998,7 @@
         "h": 10,
         "w": 6,
         "x": 18,
-        "y": 128
+        "y": 138
       },
       "hiddenSeries": false,
       "id": 63,
@@ -4923,7 +5088,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 138
+        "y": 148
       },
       "id": 68,
       "panels": [
@@ -5521,7 +5686,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 139
+        "y": 149
       },
       "id": 77,
       "panels": [
@@ -6119,7 +6284,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 140
+        "y": 150
       },
       "id": 86,
       "panels": [
@@ -6870,6 +7035,6 @@
   "timezone": "utc",
   "title": "registry: Migration Detail (tmp)",
   "uid": "registry-migration-tmp",
-  "version": 2,
+  "version": 4,
   "weekStart": ""
 }
