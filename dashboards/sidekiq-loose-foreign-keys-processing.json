@@ -51,49 +51,14 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2378373424 at Tue Apr 26 13:27:29 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2378373424 at Tue Apr 26 13:20:36 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
   "hideControls": false,
   "id": null,
   "links": [
-    {
-      "asDropdown": true,
-      "icon": "external link",
-      "includeVars": false,
-      "keepTime": true,
-      "tags": "",
-      "targetBlank": false,
-      "title": "Platform Triage",
-      "type": "link",
-      "url": "https://dashboards.gitlab.net/d/general-triage/platform-triage?orgId=1"
-    },
-    {
-      "asDropdown": true,
-      "icon": "external link",
-      "includeVars": true,
-      "keepTime": true,
-      "tags": [
-        "managed",
-        "service overview"
-      ],
-      "targetBlank": false,
-      "title": "Service Overview Dashboards",
-      "type": "dashboards",
-      "url": ""
-    },
-    {
-      "asDropdown": true,
-      "icon": "dashboard",
-      "includeVars": true,
-      "keepTime": true,
-      "tags": "type:patroni",
-      "targetBlank": false,
-      "title": "Patroni Detail",
-      "type": "dashboards",
-      "url": ""
-    }
+
   ],
   "panels": [
     {
@@ -104,14 +69,14 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 0,
-      "description": "",
+      "description": "How long it took for the worker to finish running. Higher is worse.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
-        "w": 24,
+        "w": 12,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "id": 2,
       "legend": {
@@ -128,7 +93,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -146,12 +111,20 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10,\n  avg_over_time(pg_stat_activity_marginalia_sampler_active_count{env=\"$environment\", environment=\"$environment\", application=~\"$application\", fqdn=~\"$fqdn\", endpoint=~\"$endpoint\", state=~\"$state\", wait_event_type=~\"$wait_event_type\"}[$__interval])\n)\n",
+          "expr": "sum(rate(sidekiq_jobs_completion_seconds_sum{env=\"$environment\",worker=\"LooseForeignKeys::CleanupWorker\"}[$__interval]))",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "",
+          "legendFormat": "Total runtime",
           "refId": "A"
+        },
+        {
+          "expr": "sum(rate(sidekiq_jobs_db_seconds_sum{env=\"$environment\",worker=\"LooseForeignKeys::CleanupWorker\"}[$__interval]))",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "DB runtime",
+          "refId": "B"
         }
       ],
       "thresholds": [
@@ -159,7 +132,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Unaggregated Series",
+      "title": "LooseForeignKeys::CleanupWorker runtime",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -178,7 +151,7 @@
       "yaxes": [
         {
           "format": "short",
-          "label": "",
+          "label": "Duration (seconds)",
           "logBase": 1,
           "max": null,
           "min": 0,
@@ -202,14 +175,14 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 0,
-      "description": "",
+      "description": "How many deleted parents were processed over a time range by parent table. Higher means many deletes were occurring and being processed by the worker. A spike in this could be caused by a surge of deletes from a user.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 10
+        "w": 12,
+        "x": 12,
+        "y": 1
       },
       "id": 3,
       "legend": {
@@ -226,7 +199,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -244,11 +217,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10,\n  sum by (endpoint) (\n    avg_over_time(pg_stat_activity_marginalia_sampler_active_count{env=\"$environment\", environment=\"$environment\", application=~\"$application\", fqdn=~\"$fqdn\", endpoint=~\"$endpoint\", state=~\"$state\", wait_event_type=~\"$wait_event_type\"}[$__interval])\n  )\n)\n",
+          "expr": "sum(rate(loose_foreign_key_processed_deleted_records{env=\"$environment\"}[$__interval])) by (table)",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "",
+          "legendFormat": "{{ table }}",
           "refId": "A"
         }
       ],
@@ -257,7 +230,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Aggregated By Endpoint",
+      "title": "Processed deleted parent rows by table",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -300,14 +273,14 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 0,
-      "description": "",
+      "description": "How many child records were deleted over a time range by child table. Higher means many deletes were occurring and being processed by the worker. A spike in this could be caused by a surge of parent deletions from a user or a small number of deletes that cascaded to many child deletions.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
-        "w": 24,
+        "w": 12,
         "x": 0,
-        "y": 20
+        "y": 11
       },
       "id": 4,
       "legend": {
@@ -324,7 +297,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -342,11 +315,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10,\n  sum by (state, wait_event_type) (\n    avg_over_time(pg_stat_activity_marginalia_sampler_active_count{env=\"$environment\", environment=\"$environment\", application=~\"$application\", fqdn=~\"$fqdn\", endpoint=~\"$endpoint\", state=~\"$state\", wait_event_type=~\"$wait_event_type\"}[$__interval])\n  )\n)\n",
+          "expr": "sum(rate(loose_foreign_key_deletions{env=\"$environment\"}[$__interval])) by (table)",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "",
+          "legendFormat": "{{ table }}",
           "refId": "A"
         }
       ],
@@ -355,7 +328,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Aggregated By State and Wait Event Type",
+      "title": "Processed deleted child rows by table",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -391,18 +364,102 @@
       ]
     },
     {
-      "content": "Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards)\n",
-      "datasource": null,
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "How many child records were updated (nullified) over a time range by child table. Higher means many updates were occurring and being processed by the worker. A spike in this could be caused by a surge of parent deletions from a user or a small number of deletes that cascaded to many child updates.",
+      "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
-        "h": 2,
-        "w": 24,
-        "x": 0,
-        "y": 110000
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 11
       },
       "id": 5,
-      "mode": "markdown",
-      "title": "Source",
-      "type": "text"
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(rate(loose_foreign_key_updates{env=\"$environment\"}[$__interval])) by (table)",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "{{ table }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Processed updated child rows by table",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
     }
   ],
   "refresh": "",
@@ -413,8 +470,9 @@
   "style": "light",
   "tags": [
     "managed",
-    "patroni",
-    "type:patroni"
+    "sidekiq",
+    "sidekiq",
+    "stage_group:Sharding"
   ],
   "templating": {
     "list": [
@@ -460,131 +518,6 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      },
-      {
-        "allValue": ".*",
-        "current": {
-        },
-        "datasource": "$PROMETHEUS_DS",
-        "hide": 0,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "fqdn",
-        "options": [
-
-        ],
-        "query": "label_values(pg_stat_activity_marginalia_sampler_active_count{env=\"$environment\", environment=\"$environment\"}, fqdn)",
-        "refresh": 2,
-        "regex": "",
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tags": [
-
-        ],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": ".*",
-        "current": {
-        },
-        "datasource": "$PROMETHEUS_DS",
-        "hide": 0,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "application",
-        "options": [
-
-        ],
-        "query": "label_values(pg_stat_activity_marginalia_sampler_active_count{env=\"$environment\", environment=\"$environment\"}, application)",
-        "refresh": 2,
-        "regex": "",
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tags": [
-
-        ],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": ".*",
-        "current": {
-        },
-        "datasource": "$PROMETHEUS_DS",
-        "hide": 0,
-        "includeAll": true,
-        "label": null,
-        "multi": false,
-        "name": "endpoint",
-        "options": [
-
-        ],
-        "query": "label_values(pg_stat_activity_marginalia_sampler_active_count{env=\"$environment\", environment=\"$environment\", application=~\"$application\"}, endpoint)",
-        "refresh": 2,
-        "regex": "",
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tags": [
-
-        ],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": ".*",
-        "current": {
-        },
-        "datasource": "$PROMETHEUS_DS",
-        "hide": 0,
-        "includeAll": true,
-        "label": null,
-        "multi": false,
-        "name": "state",
-        "options": [
-
-        ],
-        "query": "label_values(pg_stat_activity_marginalia_sampler_active_count{env=\"$environment\", environment=\"$environment\"}, state)",
-        "refresh": 2,
-        "regex": "",
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tags": [
-
-        ],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": ".*",
-        "current": {
-        },
-        "datasource": "$PROMETHEUS_DS",
-        "hide": 0,
-        "includeAll": true,
-        "label": null,
-        "multi": false,
-        "name": "wait_event_type",
-        "options": [
-
-        ],
-        "query": "label_values(pg_stat_activity_marginalia_sampler_active_count{env=\"$environment\", environment=\"$environment\"}, wait_event_type)",
-        "refresh": 2,
-        "regex": "",
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tags": [
-
-        ],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
       }
     ]
   },
@@ -613,7 +546,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "patroni: Marginalia Sampler",
-  "uid": "patroni-marginalia-sampler",
-  "version": 1075
+  "title": "sidekiq: Loose Foreign Keys Processing",
+  "uid": "sidekiq-loose-foreign-keys",
+  "version": 4
 }
