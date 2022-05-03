@@ -3,7 +3,10 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -24,13 +27,17 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1650404650336,
+  "iteration": 1651522235392,
   "links": [
 
   ],
   "liveNow": false,
   "panels": [
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -86,7 +93,7 @@
         ]
       },
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 24,
         "x": 0,
         "y": 0
@@ -111,17 +118,207 @@
             "type": "prometheus",
             "uid": "PA258B30F88C30650"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "gitaly_requests_dropped_total",
+          "expr": "sum(rate(gitaly_requests_dropped_total{env=\"$environment\", reason=\"max_time\"}[$__rate_interval])) by (grpc_method)",
           "interval": "",
-          "legendFormat": "Total Dropped Requests",
+          "legendFormat": "{{reason}} {{grpc_method}}",
+          "range": true,
           "refId": "A"
         }
       ],
-      "title": "Total Dropped Requests",
+      "title": "Dropped Requests - Queue Wait Time",
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 24,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "expr": "sum(rate(gitaly_requests_dropped_total{env=\"$environment\", reason=\"max_size\"}[$__rate_interval])) by (grpc_method)",
+          "refId": "A"
+        }
+      ],
+      "title": "Dropped Requests - Max Queue Size",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 26,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "expr": "sum(rate(gitaly_requests_dropped_total{env=\"$environment\", reason=\"rate\"}[$__rate_interval])) by (grpc_method)",
+          "refId": "A"
+        }
+      ],
+      "title": "Dropped Requests - Rate Limit",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -181,7 +378,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 7
+        "y": 24
       },
       "id": 18,
       "options": {
@@ -204,7 +401,7 @@
             "uid": "PA258B30F88C30650"
           },
           "exemplar": true,
-          "expr": "histogram_quantile(0.99, sum(rate(gitaly_rate_limiting_acquiring_seconds_bucket{environment=\"$environment\",grpc_method=\"FetchRemote\"}[5m])) by (le))",
+          "expr": "histogram_quantile(0.99, sum(rate(gitaly_concurrency_limiting_acquiring_seconds_bucket{environment=\"$environment\",grpc_method=\"FetchRemote\"}[5m])) by (le))",
           "interval": "",
           "legendFormat": "Acquiring Seconds",
           "refId": "A"
@@ -214,6 +411,10 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -272,7 +473,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 7
+        "y": 24
       },
       "id": 20,
       "options": {
@@ -295,7 +496,7 @@
             "uid": "PA258B30F88C30650"
           },
           "exemplar": true,
-          "expr": "max(gitaly_rate_limiting_queued{environment=\"$environment\", grpc_method=\"FetchRemote\"})",
+          "expr": "max(gitaly_concurrency_limiting_queued{environment=\"$environment\", grpc_method=\"FetchRemote\"})",
           "interval": "",
           "legendFormat": "Max",
           "refId": "A"
@@ -305,6 +506,10 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -345,8 +550,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -364,7 +568,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 15
+        "y": 32
       },
       "id": 4,
       "options": {
@@ -387,7 +591,7 @@
             "uid": "PA258B30F88C30650"
           },
           "exemplar": true,
-          "expr": "histogram_quantile(0.99, sum(rate(gitaly_rate_limiting_acquiring_seconds_bucket{environment=\"$environment\",grpc_method=\"SSHUploadPackWithSidechannel\"}[5m])) by (le))",
+          "expr": "histogram_quantile(0.99, sum(rate(gitaly_concurrency_limiting_acquiring_seconds_bucket{environment=\"$environment\",grpc_method=\"SSHUploadPackWithSidechannel\"}[5m])) by (le))",
           "interval": "",
           "legendFormat": "Acquiring Seconds",
           "refId": "A"
@@ -397,6 +601,10 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -437,8 +645,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -455,7 +662,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 15
+        "y": 32
       },
       "id": 10,
       "options": {
@@ -478,7 +685,7 @@
             "uid": "PA258B30F88C30650"
           },
           "exemplar": true,
-          "expr": "max(gitaly_rate_limiting_queued{environment=\"$environment\", grpc_method=\"PostUploadPackWithSidechannel\"})",
+          "expr": "max(gitaly_concurrency_limiting_queued{environment=\"$environment\", grpc_method=\"PostUploadPackWithSidechannel\"})",
           "interval": "",
           "legendFormat": "Max",
           "refId": "A"
@@ -488,6 +695,10 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -528,8 +739,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -547,7 +757,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 23
+        "y": 40
       },
       "id": 2,
       "options": {
@@ -570,7 +780,7 @@
             "uid": "PA258B30F88C30650"
           },
           "exemplar": true,
-          "expr": "histogram_quantile(0.99, sum(rate(gitaly_rate_limiting_acquiring_seconds_bucket{environment=\"$environment\",grpc_method=\"PostUploadPackWithSidechannel\"}[5m])) by (le))",
+          "expr": "histogram_quantile(0.99, sum(rate(gitaly_concurrency_limiting_acquiring_seconds_bucket{environment=\"$environment\",grpc_method=\"PostUploadPackWithSidechannel\"}[5m])) by (le))",
           "interval": "",
           "legendFormat": "Acquiring Seconds",
           "refId": "A"
@@ -580,6 +790,10 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -620,8 +834,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -661,7 +874,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 23
+        "y": 40
       },
       "id": 12,
       "options": {
@@ -684,7 +897,7 @@
             "uid": "PA258B30F88C30650"
           },
           "exemplar": true,
-          "expr": "max(gitaly_rate_limiting_queued{environment=\"$environment\", grpc_method=\"SSHUploadPackWithSidechannel\"})",
+          "expr": "max(gitaly_concurrency_limiting_queued{environment=\"$environment\", grpc_method=\"SSHUploadPackWithSidechannel\"})",
           "interval": "",
           "legendFormat": "Max",
           "refId": "A"
@@ -694,6 +907,10 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -734,8 +951,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -753,7 +969,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 32
+        "y": 49
       },
       "id": 8,
       "options": {
@@ -776,7 +992,7 @@
             "uid": "PA258B30F88C30650"
           },
           "exemplar": true,
-          "expr": "histogram_quantile(0.99, sum(rate(gitaly_rate_limiting_acquiring_seconds_bucket{environment=\"$environment\",grpc_method=\"GetArchive\"}[5m])) by (le))",
+          "expr": "histogram_quantile(0.99, sum(rate(gitaly_concurrency_limiting_acquiring_seconds_bucket{environment=\"$environment\",grpc_method=\"GetArchive\"}[5m])) by (le))",
           "interval": "",
           "legendFormat": "Acquiring Seconds",
           "refId": "A"
@@ -786,6 +1002,10 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -826,8 +1046,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -844,7 +1063,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 32
+        "y": 49
       },
       "id": 14,
       "options": {
@@ -867,7 +1086,7 @@
             "uid": "PA258B30F88C30650"
           },
           "exemplar": true,
-          "expr": "max(gitaly_rate_limiting_queued{environment=\"$environment\", grpc_method=\"GetArchive\"})",
+          "expr": "max(gitaly_concurrency_limiting_queued{environment=\"$environment\", grpc_method=\"GetArchive\"})",
           "interval": "",
           "legendFormat": "Max",
           "refId": "A"
@@ -877,6 +1096,10 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -917,8 +1140,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -936,7 +1158,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 40
+        "y": 57
       },
       "id": 6,
       "options": {
@@ -959,7 +1181,7 @@
             "uid": "PA258B30F88C30650"
           },
           "exemplar": true,
-          "expr": "histogram_quantile(0.99, sum(rate(gitaly_rate_limiting_acquiring_seconds_bucket{environment=\"$environment\",grpc_method=\"InfoRefsUploadPack\"}[5m])) by (le))",
+          "expr": "histogram_quantile(0.99, sum(rate(gitaly_concurrency_limiting_acquiring_seconds_bucket{environment=\"$environment\",grpc_method=\"InfoRefsUploadPack\"}[5m])) by (le))",
           "interval": "",
           "legendFormat": "Acquiring Seconds",
           "refId": "A"
@@ -969,6 +1191,10 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1009,8 +1235,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1027,7 +1252,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 40
+        "y": 57
       },
       "id": 16,
       "options": {
@@ -1050,7 +1275,7 @@
             "uid": "PA258B30F88C30650"
           },
           "exemplar": true,
-          "expr": "max(gitaly_rate_limiting_queued{environment=\"$environment\", grpc_method=\"InfoRefsUploadPack\"})",
+          "expr": "max(gitaly_concurrency_limiting_queued{environment=\"$environment\", grpc_method=\"InfoRefsUploadPack\"})",
           "interval": "",
           "legendFormat": "Max",
           "refId": "A"
@@ -1061,7 +1286,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 35,
+  "schemaVersion": 36,
   "style": "dark",
   "tags": [
     "unmanaged"
@@ -1112,6 +1337,6 @@
   "timezone": "",
   "title": "Gitaly Request Limiting",
   "uid": "CP23bQfnz",
-  "version": 12,
+  "version": 28,
   "weekStart": ""
 }
