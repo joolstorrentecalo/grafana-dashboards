@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2429285168 at Mon May  9 07:37:53 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2429607290 at Mon May  9 08:52:16 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -1801,7 +1801,7 @@
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
-            "w": 8,
+            "w": 6,
             "x": 0,
             "y": 0
           },
@@ -1936,16 +1936,144 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
+          "description": "Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 6,
+            "y": 0
+          },
+          "id": 25,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": [
+              {
+                "targetBlank": true,
+                "title": "gitlab_sshd SLI Error-Rate SLO Analysis",
+                "url": "/d/alerts-service_component_stage_groups_slo_error?${__url_time_range}&${__all_variables}&var-component=gitlab_sshd&var-stage=$stage"
+              }
+            ]
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "6h Degradation SLO (5% of monthly error budget)",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "1h Outage SLO (2% of monthly error budget)",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "sli-gitlab_sshd-error-rate",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_max(\n  max_over_time(gitlab:component:stage_group:execution:error:ratio_5m{component=\"gitlab_sshd\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"source_code\"}[$__interval])\n,\n  1\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{ type }} error ratio",
+              "refId": "A"
+            },
+            {
+              "expr": "(6 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"gitlab_sshd\",monitor=\"global\"})\n)\n",
+              "format": "time_series",
+              "interval": "5m",
+              "intervalFactor": 3,
+              "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+              "refId": "B"
+            },
+            {
+              "expr": "(14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"gitlab_sshd\",monitor=\"global\"})\n)\n",
+              "format": "time_series",
+              "interval": "5m",
+              "intervalFactor": 3,
+              "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+              "refId": "C"
+            }
+          ],
+          "title": "gitlab_sshd SLI Error Ratio",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Error %",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
           "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
-            "w": 8,
-            "x": 8,
+            "w": 6,
+            "x": 12,
             "y": 0
           },
-          "id": 25,
+          "id": 26,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2011,11 +2139,11 @@
           "content": "### Description\n\nMonitors Gitlab-sshd, using the connections bucket, and http requests bucket.\n\n\n\n### Observability Tools\n\n* [📖 Kibana: GitLab Shell logs](https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.command,json.msg,json.level,json.gl_project_path,json.error),filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase))))),index:'AWORyp9K1NBBQZg_dXA9')&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📖 Kibana: GitLab Shell failed request logs](https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.command,json.msg,json.level,json.gl_project_path,json.error),filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.level,params:error,type:phrase),query:(match:(json.level:(query:error,type:phrase))))),index:'AWORyp9K1NBBQZg_dXA9')&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: GitLab Shell requests](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=AWORyp9K1NBBQZg_dXA9&_a=(filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(),schema:metric,type:count),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:json.time,interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: GitLab Shell failed requests](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=AWORyp9K1NBBQZg_dXA9&_a=(filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.level,params:error,type:phrase),query:(match:(json.level:(query:error,type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(),schema:metric,type:count),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:json.time,interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n\n",
           "gridPos": {
             "h": 10,
-            "w": 8,
-            "x": 16,
+            "w": 6,
+            "x": 18,
             "y": 0
           },
-          "id": 26,
+          "id": 27,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -2035,7 +2163,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 27,
+          "id": 28,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2175,7 +2303,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 28,
+          "id": 29,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2245,7 +2373,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 29,
+          "id": 30,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -2265,7 +2393,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 30,
+          "id": 31,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2393,7 +2521,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 31,
+          "id": 32,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2463,7 +2591,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 32,
+          "id": 33,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -2483,7 +2611,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 33,
+          "id": 34,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2623,7 +2751,7 @@
             "x": 8,
             "y": 30
           },
-          "id": 34,
+          "id": 35,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2693,7 +2821,7 @@
             "x": 16,
             "y": 30
           },
-          "id": 35,
+          "id": 36,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -2716,7 +2844,7 @@
         "x": 0,
         "y": 1200
       },
-      "id": 36,
+      "id": 37,
       "panels": [
         {
           "bars": false,
@@ -2729,11 +2857,11 @@
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
-            "w": 12,
+            "w": 8,
             "x": 0,
             "y": 0
           },
-          "id": 37,
+          "id": 38,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2773,7 +2901,7 @@
               "fillColor": "rgba(242, 73, 92, 0.5)",
               "line": false,
               "op": "gt",
-              "value": 20,
+              "value": 5,
               "yaxis": "left"
             },
             {
@@ -2782,7 +2910,7 @@
               "fillColor": "rgba(242, 73, 92, 0.25)",
               "line": false,
               "op": "gt",
-              "value": 10,
+              "value": 1,
               "yaxis": "left"
             }
           ],
@@ -2819,17 +2947,17 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
-          "decimals": 0,
+          "decimals": 2,
           "description": "",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
-            "w": 12,
-            "x": 12,
+            "w": 8,
+            "x": 8,
             "y": 0
           },
-          "id": 38,
+          "id": 39,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2854,7 +2982,83 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(gitlab_shell_sshd_session_established_duration_seconds_count{environment=\"$environment\",feature_category=~\"source_code_management|\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  rate(gitlab_sli:shell_sshd_sessions:errors_total{environment=\"$environment\",feature_category=~\"source_code_management|\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "overall",
+              "refId": "A"
+            }
+          ],
+          "title": "gitlab_sshd Errors - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 16,
+            "y": 0
+          },
+          "id": 40,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by () (\n  rate(gitlab_sli:shell_sshd_sessions:total{environment=\"$environment\",feature_category=~\"source_code_management|\",stage=\"$stage\"}[$__interval])\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
@@ -2908,7 +3112,7 @@
         "x": 0,
         "y": 1210
       },
-      "id": 39,
+      "id": 41,
       "panels": [
         {
           "bars": false,
@@ -2925,7 +3129,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 40,
+          "id": 42,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3001,7 +3205,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 41,
+          "id": 43,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3082,7 +3286,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 42,
+          "id": 44,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3158,7 +3362,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 43,
+          "id": 45,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3239,7 +3443,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 44,
+          "id": 46,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3315,7 +3519,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 45,
+          "id": 47,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3396,7 +3600,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 46,
+          "id": 48,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3475,7 +3679,7 @@
         "x": 0,
         "y": 1220
       },
-      "id": 47,
+      "id": 49,
       "panels": [
         {
           "bars": false,
@@ -3492,7 +3696,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 48,
+          "id": 50,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3568,7 +3772,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 49,
+          "id": 51,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3644,7 +3848,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 50,
+          "id": 52,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3720,7 +3924,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 51,
+          "id": 53,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3796,7 +4000,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 52,
+          "id": 54,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3872,7 +4076,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 53,
+          "id": 55,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3948,7 +4152,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 54,
+          "id": 56,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4024,7 +4228,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 55,
+          "id": 57,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4103,7 +4307,7 @@
         "x": 0,
         "y": 1230
       },
-      "id": 56,
+      "id": 58,
       "panels": [
         {
           "bars": false,
@@ -4120,7 +4324,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 57,
+          "id": 59,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4196,7 +4400,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 58,
+          "id": 60,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4277,7 +4481,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 59,
+          "id": 61,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4353,7 +4557,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 60,
+          "id": 62,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4434,7 +4638,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 61,
+          "id": 63,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4510,7 +4714,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 62,
+          "id": 64,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4591,7 +4795,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 63,
+          "id": 65,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4777,5 +4981,5 @@
   "timezone": "utc",
   "title": "stage-groups: Source Code: group error budget detail",
   "uid": "stage-groups-detail-source_code",
-  "version": 229
+  "version": 231
 }
