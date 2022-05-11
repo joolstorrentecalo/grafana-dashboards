@@ -4,7 +4,10 @@
       {
         "$$hashKey": "object:1825",
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": true,
         "hide": false,
         "iconColor": "#CA95E5",
@@ -15,15 +18,24 @@
           "feature-flag",
           "${environment}"
         ],
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [
+            "feature-flag",
+            "${environment}"
+          ],
+          "type": "tags"
+        },
         "type": "tags"
       }
     ]
   },
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1623152759526,
+  "iteration": 1652284957146,
   "links": [
     {
       "icon": "external link",
@@ -36,14 +48,16 @@
       "url": "https://log.gprd.gitlab.net/app/discover#/?_g=()&_a=(columns:!(json.grpc.method,json.grpc.code,json.msg),filters:!(),index:AW98WAQvqthdGjPJ8jTY,interval:auto,query:(language:lucene,query:(match_all:())),sort:!(!('@timestamp',desc)))"
     }
   ],
+  "liveNow": false,
   "panels": [
     {
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "description": "Number of repositories in read-only mode within a virtual storage.",
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "decimals": 0,
           "mappings": [
 
@@ -89,7 +103,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.5.2",
       "targets": [
         {
           "expr": "max(gitaly_praefect_read_only_repositories{environment=\"$environment\"}) by (virtual_storage)",
@@ -99,120 +113,110 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Read-Only Repositories",
       "type": "stat"
     },
     {
-      "aliasColors": {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
       },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
+      "description": "The number of completed verification jobs and their results. \n- error means the job failed and has to be retried\n- invalid means an expected replica did not exist\n- valid means the expected replica existed",
       "fieldConfig": {
         "defaults": {
-          "custom": {
+          "color": {
+            "mode": "palette-classic"
           },
-          "links": [
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 2,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
 
-          ]
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
         },
         "overrides": [
 
         ]
       },
-      "fill": 1,
-      "fillGradient": 0,
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 12,
         "y": 0
       },
-      "hiddenSeries": false,
-      "id": 20,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
+      "id": 47,
+      "interval": "60s",
       "options": {
-        "alertThreshold": true
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "list",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
       },
-      "percentage": false,
-      "pluginVersion": "7.2.0",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
+      "pluginVersion": "8.5.2",
       "targets": [
         {
-          "expr": "process_resident_memory_bytes{type=\"praefect\", job=\"praefect\", environment=\"$environment\"}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(increase(gitaly_praefect_verification_jobs_completed_total{environment=\"$environment\"}[$__interval])) by (result)",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
           "interval": "",
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{result}}",
+          "range": true,
           "refId": "A"
         }
       ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeRegions": [
-
-      ],
-      "timeShift": null,
-      "title": "Resident Memory",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "bytes",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
+      "title": "Completed Verification Jobs",
+      "type": "timeseries"
     },
     {
       "aliasColors": {
@@ -220,11 +224,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -259,7 +264,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.5.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -280,11 +285,9 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
-      "timeShift": null,
       "title": "Accessor vs. Mutator",
       "tooltip": {
         "shared": true,
@@ -293,9 +296,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -304,24 +305,17 @@
       "yaxes": [
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -330,11 +324,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -352,7 +347,7 @@
         "y": 8
       },
       "hiddenSeries": false,
-      "id": 28,
+      "id": 20,
       "legend": {
         "avg": false,
         "current": false,
@@ -369,7 +364,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.5.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -381,7 +376,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "go_memstats_alloc_bytes{type=\"praefect\", job=\"praefect\", environment=\"$environment\"}",
+          "expr": "process_resident_memory_bytes{type=\"praefect\", job=\"praefect\", environment=\"$environment\"}",
           "interval": "",
           "legendFormat": "{{ fqdn }}",
           "refId": "A"
@@ -390,12 +385,10 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
-      "timeShift": null,
-      "title": "Memory - Allocated Bytes",
+      "title": "Resident Memory",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -403,9 +396,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -413,25 +404,18 @@
       },
       "yaxes": [
         {
-          "format": "decbytes",
-          "label": null,
+          "format": "bytes",
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -440,11 +424,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Global",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -479,7 +464,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.5.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -499,11 +484,9 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
-      "timeShift": null,
       "title": "Deployed Praefect Versions",
       "tooltip": {
         "shared": true,
@@ -512,9 +495,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -523,24 +504,17 @@
       "yaxes": [
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -549,11 +523,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -571,7 +546,7 @@
         "y": 16
       },
       "hiddenSeries": false,
-      "id": 14,
+      "id": 28,
       "legend": {
         "avg": false,
         "current": false,
@@ -588,7 +563,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.5.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -600,26 +575,19 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(grpc_server_handled_total{type=\"praefect\", grpc_code=\"OK\",environment=\"$environment\"}[1m]))",
+          "expr": "go_memstats_alloc_bytes{type=\"praefect\", job=\"praefect\", environment=\"$environment\"}",
           "interval": "",
-          "legendFormat": "OK",
+          "legendFormat": "{{ fqdn }}",
           "refId": "A"
-        },
-        {
-          "expr": "sum(rate(grpc_server_handled_total{type=\"praefect\", grpc_code!=\"OK\"}[1m]))",
-          "legendFormat": "Error",
-          "refId": "B"
         }
       ],
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
-      "timeShift": null,
-      "title": "Total RPC Responses",
+      "title": "Memory - Allocated Bytes",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -627,9 +595,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -637,25 +603,18 @@
       },
       "yaxes": [
         {
-          "format": "short",
-          "label": null,
+          "format": "decbytes",
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -664,11 +623,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -703,7 +663,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.5.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -723,11 +683,9 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
-      "timeShift": null,
       "title": "Open FDs",
       "tooltip": {
         "shared": true,
@@ -736,9 +694,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -747,24 +703,17 @@
       "yaxes": [
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -773,11 +722,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -795,7 +745,7 @@
         "y": 24
       },
       "hiddenSeries": false,
-      "id": 18,
+      "id": 14,
       "legend": {
         "avg": false,
         "current": false,
@@ -812,7 +762,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.5.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -824,21 +774,24 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(go_goroutines{type=\"praefect\", job=\"praefect\", environment=\"$environment\"}[5m])",
+          "expr": "sum(rate(grpc_server_handled_total{type=\"praefect\", grpc_code=\"OK\",environment=\"$environment\"}[1m]))",
           "interval": "",
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "OK",
           "refId": "A"
+        },
+        {
+          "expr": "sum(rate(grpc_server_handled_total{type=\"praefect\", grpc_code!=\"OK\"}[1m]))",
+          "legendFormat": "Error",
+          "refId": "B"
         }
       ],
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
-      "timeShift": null,
-      "title": "Goroutines",
+      "title": "Total RPC Responses",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -846,9 +799,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -857,24 +808,17 @@
       "yaxes": [
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -883,11 +827,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -922,7 +867,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.5.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -943,11 +888,9 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
-      "timeShift": null,
       "title": "CPU Seconds",
       "tooltip": {
         "shared": true,
@@ -956,9 +899,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -967,24 +908,17 @@
       "yaxes": [
         {
           "format": "s",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -993,11 +927,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -1015,7 +950,7 @@
         "y": 32
       },
       "hiddenSeries": false,
-      "id": 12,
+      "id": 18,
       "legend": {
         "avg": false,
         "current": false,
@@ -1032,7 +967,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.5.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1044,7 +979,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(node_network_transmit_bytes_total{type=\"praefect\", device!=\"lo\", env=\"$environment\"}[5m])",
+          "expr": "rate(go_goroutines{type=\"praefect\", job=\"praefect\", environment=\"$environment\"}[5m])",
           "interval": "",
           "legendFormat": "{{ fqdn }}",
           "refId": "A"
@@ -1053,12 +988,10 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
-      "timeShift": null,
-      "title": "Network Bytes Transmitted",
+      "title": "Goroutines",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1066,9 +999,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -1076,25 +1007,18 @@
       },
       "yaxes": [
         {
-          "format": "decbytes",
-          "label": null,
+          "format": "short",
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -1103,11 +1027,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -1142,7 +1067,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.5.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1163,11 +1088,9 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
-      "timeShift": null,
       "title": "Network Bytes Received",
       "tooltip": {
         "shared": true,
@@ -1176,9 +1099,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -1187,24 +1108,17 @@
       "yaxes": [
         {
           "format": "decbytes",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -1213,12 +1127,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
-      "description": "Latency that Praefect adds to RPCs",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -1236,7 +1150,7 @@
         "y": 40
       },
       "hiddenSeries": false,
-      "id": 30,
+      "id": 12,
       "legend": {
         "avg": false,
         "current": false,
@@ -1253,7 +1167,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.5.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1265,21 +1179,19 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (grpc_method) (rate(grpc_client_handled_total{env=\"$environment\", type=\"praefect\"}[10m])) - sum by (grpc_method) (rate(grpc_server_handled_total{env=\"$environment\",  type=\"praefect\"}[10m]))",
+          "expr": "rate(node_network_transmit_bytes_total{type=\"praefect\", device!=\"lo\", env=\"$environment\"}[5m])",
           "interval": "",
-          "legendFormat": "{{ grpc_method }}",
+          "legendFormat": "{{ fqdn }}",
           "refId": "A"
         }
       ],
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
-      "timeShift": null,
-      "title": "Praefect Added Latency",
+      "title": "Network Bytes Transmitted",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1287,9 +1199,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -1297,25 +1207,18 @@
       },
       "yaxes": [
         {
-          "format": "s",
-          "label": null,
+          "format": "decbytes",
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -1324,11 +1227,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -1363,7 +1267,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.5.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1384,11 +1288,9 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
-      "timeShift": null,
       "title": "Transactions",
       "tooltip": {
         "shared": true,
@@ -1397,9 +1299,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -1409,40 +1309,33 @@
         {
           "$$hashKey": "object:1038",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:1039",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
       "aliasColors": {
       },
-      "bars": true,
+      "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Global",
-      "decimals": 0,
-      "description": "Replication jobs in flight graphed by change type on the positive Y-axis and by instance on the negative Y-axis.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "Latency that Praefect adds to RPCs",
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -1458,6 +1351,217 @@
         "w": 12,
         "x": 12,
         "y": 48
+      },
+      "hiddenSeries": false,
+      "id": 30,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.5.2",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by (grpc_method) (rate(grpc_client_handled_total{env=\"$environment\", type=\"praefect\"}[10m])) - sum by (grpc_method) (rate(grpc_server_handled_total{env=\"$environment\",  type=\"praefect\"}[10m]))",
+          "interval": "",
+          "legendFormat": "{{ grpc_method }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeRegions": [
+
+      ],
+      "title": "Praefect Added Latency",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "s",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+
+          ]
+        },
+        "overrides": [
+
+        ]
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 56
+      },
+      "hiddenSeries": false,
+      "id": 36,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.5.2",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(gitaly_praefect_transactions_delay_seconds_bucket{env=\"$environment\"}[$__rate_interval])))",
+          "interval": "1m",
+          "legendFormat": "Server-side delay",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(gitaly_hook_transaction_voting_delay_seconds_bucket{env=\"$environment\"}[$__rate_interval])))",
+          "interval": "1m",
+          "legendFormat": "Hook-side delay",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeRegions": [
+
+      ],
+      "title": "Transaction Delay",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1091",
+          "decimals": 2,
+          "format": "s",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1092",
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "decimals": 0,
+      "description": "Replication jobs in flight graphed by change type on the positive Y-axis and by instance on the negative Y-axis.",
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+
+          ]
+        },
+        "overrides": [
+
+        ]
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 56
       },
       "hiddenSeries": false,
       "id": 8,
@@ -1479,7 +1583,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.5.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1536,11 +1640,9 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
-      "timeShift": null,
       "title": "Replication Jobs In Flight",
       "tooltip": {
         "shared": true,
@@ -1549,9 +1651,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -1564,8 +1664,6 @@
           "format": "short",
           "label": "By Change Type",
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
@@ -1574,252 +1672,21 @@
           "format": "short",
           "label": "By Instance",
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": true,
-        "alignLevel": null
+        "align": true
       }
     },
     {
-      "aliasColors": {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
       },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-          },
-          "links": [
-
-          ]
-        },
-        "overrides": [
-
-        ]
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 56
-      },
-      "hiddenSeries": false,
-      "id": 36,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.2.0",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "histogram_quantile(0.95, sum by (le) (rate(gitaly_praefect_transactions_delay_seconds_bucket{env=\"$environment\"}[$__rate_interval])))",
-          "interval": "1m",
-          "legendFormat": "Server-side delay",
-          "refId": "A"
-        },
-        {
-          "expr": "histogram_quantile(0.95, sum by (le) (rate(gitaly_hook_transaction_voting_delay_seconds_bucket{env=\"$environment\"}[$__rate_interval])))",
-          "interval": "1m",
-          "legendFormat": "Hook-side delay",
-          "refId": "B"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeRegions": [
-
-      ],
-      "timeShift": null,
-      "title": "Transaction Delay",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1091",
-          "decimals": 2,
-          "format": "s",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1092",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "description": "Reason why replication jobs have been scheduled.",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-          }
-        },
-        "overrides": [
-
-        ]
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 56
-      },
-      "hiddenSeries": false,
-      "id": 46,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.2.0",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum(rate(gitaly_praefect_tx_replications_total{env=\"$environment\"}[$__rate_interval])) by (reason)",
-          "interval": "",
-          "legendFormat": "{{reason}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeRegions": [
-
-      ],
-      "timeShift": null,
-      "title": "Replication Reason",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:105",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:106",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "datasource": null,
       "description": "Number of subtransactions created as part of a transaction",
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "mappings": [
 
           ],
@@ -1827,8 +1694,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1850,6 +1716,8 @@
       "id": 42,
       "options": {
         "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -1860,7 +1728,7 @@
         },
         "showUnfilled": true
       },
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.5.2",
       "targets": [
         {
           "expr": "sum by (le) (increase(gitaly_praefect_subtransactions_per_transaction_total_bucket{env=\"$environment\"}[$__interval]))",
@@ -1870,8 +1738,6 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Subtransactions per Transaction",
       "type": "bargauge"
     },
@@ -1881,19 +1747,11 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-          },
-          "links": [
-
-          ]
-        },
-        "overrides": [
-
-        ]
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
       },
+      "description": "Reason why replication jobs have been scheduled.",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -1903,7 +1761,7 @@
         "y": 64
       },
       "hiddenSeries": false,
-      "id": 32,
+      "id": 46,
       "legend": {
         "avg": false,
         "current": false,
@@ -1920,7 +1778,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.5.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1932,33 +1790,19 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, sum(rate(gitaly_praefect_replication_delay_bucket{env=\"$environment\"}[5m])) by (le))",
+          "expr": "sum(rate(gitaly_praefect_tx_replications_total{env=\"$environment\"}[$__rate_interval])) by (reason)",
           "interval": "",
-          "legendFormat": "p99",
+          "legendFormat": "{{reason}}",
           "refId": "A"
-        },
-        {
-          "expr": "histogram_quantile(0.90, sum(rate(gitaly_praefect_replication_delay_bucket{env=\"$environment\"}[5m])) by (le))",
-          "interval": "",
-          "legendFormat": "p90",
-          "refId": "B"
-        },
-        {
-          "expr": "histogram_quantile(0.50, sum(rate(gitaly_praefect_replication_delay_bucket{env=\"$environment\"}[5m])) by (le))",
-          "interval": "",
-          "legendFormat": "p50",
-          "refId": "C"
         }
       ],
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
-      "timeShift": null,
-      "title": "Replication Delay",
+      "title": "Replication Reason",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1966,9 +1810,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -1976,36 +1818,30 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:336",
-          "format": "s",
-          "label": null,
+          "$$hashKey": "object:105",
+          "format": "short",
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
-          "$$hashKey": "object:337",
+          "$$hashKey": "object:106",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "description": "Number of voters registered for transactions",
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "mappings": [
 
           ],
@@ -2013,8 +1849,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2036,6 +1871,8 @@
       "id": 44,
       "options": {
         "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -2046,7 +1883,7 @@
         },
         "showUnfilled": true
       },
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.5.2",
       "targets": [
         {
           "expr": "sum by (le) (increase(gitaly_praefect_voters_per_transaction_total_bucket{env=\"$environment\"}[$__interval]))",
@@ -2056,8 +1893,6 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Voters per Transaction",
       "type": "bargauge"
     },
@@ -2067,11 +1902,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -2085,7 +1921,7 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 12,
+        "x": 0,
         "y": 72
       },
       "hiddenSeries": false,
@@ -2107,7 +1943,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "8.5.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2140,11 +1976,9 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
-      "timeShift": null,
       "title": "Replication Latency",
       "tooltip": {
         "shared": true,
@@ -2153,9 +1987,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -2165,30 +1997,138 @@
         {
           "$$hashKey": "object:262",
           "format": "s",
-          "label": null,
           "logBase": 1,
-          "max": null,
           "min": "0",
           "show": true
         },
         {
           "$$hashKey": "object:263",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+
+          ]
+        },
+        "overrides": [
+
+        ]
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 72
+      },
+      "hiddenSeries": false,
+      "id": 32,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.5.2",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(gitaly_praefect_replication_delay_bucket{env=\"$environment\"}[5m])) by (le))",
+          "interval": "",
+          "legendFormat": "p99",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.90, sum(rate(gitaly_praefect_replication_delay_bucket{env=\"$environment\"}[5m])) by (le))",
+          "interval": "",
+          "legendFormat": "p90",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(gitaly_praefect_replication_delay_bucket{env=\"$environment\"}[5m])) by (le))",
+          "interval": "",
+          "legendFormat": "p50",
+          "refId": "C"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeRegions": [
+
+      ],
+      "title": "Replication Delay",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:336",
+          "format": "s",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:337",
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
       }
     }
   ],
-  "refresh": "30s",
-  "schemaVersion": 26,
+  "refresh": "5m",
+  "schemaVersion": 36,
   "style": "dark",
   "tags": [
     "unmanaged"
@@ -2196,53 +2136,31 @@
   "templating": {
     "list": [
       {
-        "allValue": null,
         "current": {
           "text": "gprd",
           "value": "gprd"
         },
-        "datasource": "Global",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PA258B30F88C30650"
+        },
         "definition": "label_values(up{type=\"gitaly\"}, environment)",
         "hide": 0,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "environment",
         "options": [
-          {
-            "$$hashKey": "object:1887",
-            "selected": false,
-            "text": "gprd",
-            "value": "gprd"
-          },
-          {
-            "$$hashKey": "object:1888",
-            "selected": true,
-            "text": "gstg",
-            "value": "gstg"
-          },
-          {
-            "$$hashKey": "object:1889",
-            "selected": false,
-            "text": "pre",
-            "value": "pre"
-          },
-          {
-            "$$hashKey": "object:1890",
-            "selected": false,
-            "text": "testbed",
-            "value": "testbed"
-          }
+
         ],
-        "query": "label_values(up{type=\"gitaly\"}, environment)",
-        "refresh": 0,
+        "query": {
+          "query": "label_values(up{type=\"gitaly\"}, environment)",
+          "refId": "Global-environment-Variable-Query"
+        },
+        "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
-        "tags": [
-
-        ],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -2269,5 +2187,6 @@
   "timezone": "",
   "title": "Praefect",
   "uid": "8EAXC-AWz",
-  "version": 68
+  "version": 72,
+  "weekStart": ""
 }
