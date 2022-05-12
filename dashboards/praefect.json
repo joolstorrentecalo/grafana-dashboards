@@ -35,7 +35,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1652284957146,
+  "iteration": 1652353796774,
   "links": [
     {
       "icon": "external link",
@@ -55,66 +55,129 @@
         "type": "prometheus",
         "uid": "PA258B30F88C30650"
       },
-      "description": "Number of repositories in read-only mode within a virtual storage.",
+      "description": "",
       "fieldConfig": {
         "defaults": {
-          "decimals": 0,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 2,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
           "mappings": [
 
           ],
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 1
               }
             ]
-          },
-          "unit": "none"
+          }
         },
         "overrides": [
-
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "custom.transform",
+                "value": "negative-Y"
+              }
+            ]
+          }
         ]
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 11,
         "x": 0,
         "y": 0
       },
-      "id": 40,
+      "id": 49,
+      "interval": "60s",
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
+        "legend": {
           "calcs": [
-            "last"
+            "sum"
           ],
-          "fields": "",
-          "values": false
+          "displayMode": "list",
+          "placement": "right"
         },
-        "textMode": "auto"
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
       },
       "pluginVersion": "8.5.2",
       "targets": [
         {
-          "expr": "max(gitaly_praefect_read_only_repositories{environment=\"$environment\"}) by (virtual_storage)",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(increase(gitaly_praefect_verification_jobs_completed_total{environment=\"$environment\"}[$__interval])) by (virtual_storage, storage)",
+          "format": "time_series",
+          "hide": false,
           "instant": false,
           "interval": "",
-          "legendFormat": "{{virtual_storage}}",
+          "legendFormat": "{{virtual_storage}}/{{storage}}",
+          "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(increase(gitaly_praefect_verification_jobs_completed_total{environment=\"$environment\"}[$__interval])) by (instance)",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{instance}}",
+          "range": true,
+          "refId": "B"
         }
       ],
-      "title": "Read-Only Repositories",
-      "type": "stat"
+      "title": "Completed Verification Jobs by Node",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -177,8 +240,8 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
-        "x": 12,
+        "w": 9,
+        "x": 11,
         "y": 0
       },
       "id": 47,
@@ -215,108 +278,176 @@
           "refId": "A"
         }
       ],
-      "title": "Completed Verification Jobs",
+      "title": "Completed Verification Jobs by Result",
       "type": "timeseries"
     },
     {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
       "datasource": {
         "type": "prometheus",
         "uid": "PA258B30F88C30650"
       },
+      "description": "The number of leases that had to be released due to the verification worker not expectedly releasing the lease on job completion.",
       "fieldConfig": {
         "defaults": {
-          "links": [
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 2,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
 
-          ]
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
         },
         "overrides": [
 
         ]
       },
-      "fill": 1,
-      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 4,
+        "x": 20,
+        "y": 0
+      },
+      "id": 48,
+      "interval": "60s",
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "hidden",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(increase(gitaly_praefect_stale_verification_leases_released_total{environment=\"$environment\"}[$__interval]))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{result}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Stale Verification Leases Released",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "Number of repositories in read-only mode within a virtual storage.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "mappings": [
+
+          ],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+
+        ]
+      },
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 0,
         "y": 8
       },
-      "hiddenSeries": false,
-      "id": 26,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
+      "id": 40,
       "options": {
-        "alertThreshold": true
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
       },
-      "percentage": false,
       "pluginVersion": "8.5.2",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (method_type)(rate(gitaly_praefect_method_types{environment=\"$environment\"}[5m]))",
+          "expr": "max(gitaly_praefect_read_only_repositories{environment=\"$environment\"}) by (virtual_storage)",
+          "instant": false,
           "interval": "",
-          "legendFormat": "{{ method_type }}",
+          "legendFormat": "{{virtual_storage}}",
           "refId": "A"
         }
       ],
-      "thresholds": [
-
-      ],
-      "timeRegions": [
-
-      ],
-      "title": "Accessor vs. Mutator",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "mode": "time",
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "logBase": 1,
-          "show": true
-        },
-        {
-          "format": "short",
-          "logBase": 1,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false
-      }
+      "title": "Read-Only Repositories",
+      "type": "stat"
     },
     {
       "aliasColors": {
@@ -447,7 +578,7 @@
         "y": 16
       },
       "hiddenSeries": false,
-      "id": 4,
+      "id": 26,
       "legend": {
         "avg": false,
         "current": false,
@@ -459,7 +590,7 @@
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "null as zero",
+      "nullPointMode": "null",
       "options": {
         "alertThreshold": true
       },
@@ -476,8 +607,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(gitlab_build_info{job=\"praefect\",environment=\"$environment\"}) by (version)",
-          "legendFormat": "{{ version }}",
+          "expr": "sum by (method_type)(rate(gitaly_praefect_method_types{environment=\"$environment\"}[5m]))",
+          "interval": "",
+          "legendFormat": "{{ method_type }}",
           "refId": "A"
         }
       ],
@@ -487,7 +619,7 @@
       "timeRegions": [
 
       ],
-      "title": "Deployed Praefect Versions",
+      "title": "Accessor vs. Mutator",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -646,7 +778,7 @@
         "y": 24
       },
       "hiddenSeries": false,
-      "id": 24,
+      "id": 4,
       "legend": {
         "avg": false,
         "current": false,
@@ -658,7 +790,7 @@
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "null",
+      "nullPointMode": "null as zero",
       "options": {
         "alertThreshold": true
       },
@@ -675,8 +807,8 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "process_open_fds{type=\"praefect\", job=\"praefect\", environment=\"gprd\"}",
-          "legendFormat": "{{ fqdn }}",
+          "expr": "sum(gitlab_build_info{job=\"praefect\",environment=\"$environment\"}) by (version)",
+          "legendFormat": "{{ version }}",
           "refId": "A"
         }
       ],
@@ -686,7 +818,7 @@
       "timeRegions": [
 
       ],
-      "title": "Open FDs",
+      "title": "Deployed Praefect Versions",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -850,7 +982,7 @@
         "y": 32
       },
       "hiddenSeries": false,
-      "id": 22,
+      "id": 24,
       "legend": {
         "avg": false,
         "current": false,
@@ -879,8 +1011,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(process_cpu_seconds_total{type=\"praefect\", job=\"praefect\", environment=\"$environment\"}[5m])",
-          "interval": "",
+          "expr": "process_open_fds{type=\"praefect\", job=\"praefect\", environment=\"gprd\"}",
           "legendFormat": "{{ fqdn }}",
           "refId": "A"
         }
@@ -891,7 +1022,7 @@
       "timeRegions": [
 
       ],
-      "title": "CPU Seconds",
+      "title": "Open FDs",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -907,7 +1038,7 @@
       },
       "yaxes": [
         {
-          "format": "s",
+          "format": "short",
           "logBase": 1,
           "show": true
         },
@@ -1050,7 +1181,7 @@
         "y": 40
       },
       "hiddenSeries": false,
-      "id": 16,
+      "id": 22,
       "legend": {
         "avg": false,
         "current": false,
@@ -1079,7 +1210,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(node_network_receive_bytes_total{type=\"praefect\", device!=\"lo\", env=\"$environment\"}[5m])",
+          "expr": "rate(process_cpu_seconds_total{type=\"praefect\", job=\"praefect\", environment=\"$environment\"}[5m])",
           "interval": "",
           "legendFormat": "{{ fqdn }}",
           "refId": "A"
@@ -1091,7 +1222,7 @@
       "timeRegions": [
 
       ],
-      "title": "Network Bytes Received",
+      "title": "CPU Seconds",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1107,7 +1238,7 @@
       },
       "yaxes": [
         {
-          "format": "decbytes",
+          "format": "s",
           "logBase": 1,
           "show": true
         },
@@ -1250,7 +1381,7 @@
         "y": 48
       },
       "hiddenSeries": false,
-      "id": 34,
+      "id": 16,
       "legend": {
         "avg": false,
         "current": false,
@@ -1279,9 +1410,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (action) (increase(gitaly_praefect_transactions_total{env=\"$environment\"}[$__rate_interval]))",
-          "interval": "1m",
-          "legendFormat": "{{action}}",
+          "expr": "rate(node_network_receive_bytes_total{type=\"praefect\", device!=\"lo\", env=\"$environment\"}[5m])",
+          "interval": "",
+          "legendFormat": "{{ fqdn }}",
           "refId": "A"
         }
       ],
@@ -1291,7 +1422,7 @@
       "timeRegions": [
 
       ],
-      "title": "Transactions",
+      "title": "Network Bytes Received",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1307,13 +1438,11 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:1038",
-          "format": "short",
+          "format": "decbytes",
           "logBase": 1,
           "show": true
         },
         {
-          "$$hashKey": "object:1039",
           "format": "short",
           "logBase": 1,
           "show": true
@@ -1397,7 +1526,7 @@
       "title": "Praefect Added Latency",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -1453,7 +1582,7 @@
         "y": 56
       },
       "hiddenSeries": false,
-      "id": 36,
+      "id": 34,
       "legend": {
         "avg": false,
         "current": false,
@@ -1482,16 +1611,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum by (le) (rate(gitaly_praefect_transactions_delay_seconds_bucket{env=\"$environment\"}[$__rate_interval])))",
+          "expr": "sum by (action) (increase(gitaly_praefect_transactions_total{env=\"$environment\"}[$__rate_interval]))",
           "interval": "1m",
-          "legendFormat": "Server-side delay",
+          "legendFormat": "{{action}}",
           "refId": "A"
-        },
-        {
-          "expr": "histogram_quantile(0.95, sum by (le) (rate(gitaly_hook_transaction_voting_delay_seconds_bucket{env=\"$environment\"}[$__rate_interval])))",
-          "interval": "1m",
-          "legendFormat": "Hook-side delay",
-          "refId": "B"
         }
       ],
       "thresholds": [
@@ -1500,7 +1623,7 @@
       "timeRegions": [
 
       ],
-      "title": "Transaction Delay",
+      "title": "Transactions",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1516,14 +1639,13 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:1091",
-          "decimals": 2,
-          "format": "s",
+          "$$hashKey": "object:1038",
+          "format": "short",
           "logBase": 1,
           "show": true
         },
         {
-          "$$hashKey": "object:1092",
+          "$$hashKey": "object:1039",
           "format": "short",
           "logBase": 1,
           "show": true
@@ -1680,66 +1802,113 @@
       }
     },
     {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
       "datasource": {
         "type": "prometheus",
         "uid": "PA258B30F88C30650"
       },
-      "description": "Number of subtransactions created as part of a transaction",
       "fieldConfig": {
         "defaults": {
-          "mappings": [
+          "links": [
 
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
+          ]
         },
         "overrides": [
 
         ]
       },
+      "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
-        "h": 4,
+        "h": 8,
         "w": 12,
         "x": 0,
         "y": 64
       },
-      "id": 42,
-      "options": {
-        "displayMode": "gradient",
-        "minVizHeight": 10,
-        "minVizWidth": 0,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true
+      "hiddenSeries": false,
+      "id": 36,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
       },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
       "pluginVersion": "8.5.2",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (le) (increase(gitaly_praefect_subtransactions_per_transaction_total_bucket{env=\"$environment\"}[$__interval]))",
-          "format": "heatmap",
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(gitaly_praefect_transactions_delay_seconds_bucket{env=\"$environment\"}[$__rate_interval])))",
           "interval": "1m",
-          "legendFormat": "{{le}}",
+          "legendFormat": "Server-side delay",
           "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(gitaly_hook_transaction_voting_delay_seconds_bucket{env=\"$environment\"}[$__rate_interval])))",
+          "interval": "1m",
+          "legendFormat": "Hook-side delay",
+          "refId": "B"
         }
       ],
-      "title": "Subtransactions per Transaction",
-      "type": "bargauge"
+      "thresholds": [
+
+      ],
+      "timeRegions": [
+
+      ],
+      "title": "Transaction Delay",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1091",
+          "decimals": 2,
+          "format": "s",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1092",
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
     },
     {
       "aliasColors": {
@@ -1839,7 +2008,7 @@
         "type": "prometheus",
         "uid": "PA258B30F88C30650"
       },
-      "description": "Number of voters registered for transactions",
+      "description": "Number of subtransactions created as part of a transaction",
       "fieldConfig": {
         "defaults": {
           "mappings": [
@@ -1849,7 +2018,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1866,9 +2036,9 @@
         "h": 4,
         "w": 12,
         "x": 0,
-        "y": 68
+        "y": 72
       },
-      "id": 44,
+      "id": 42,
       "options": {
         "displayMode": "gradient",
         "minVizHeight": 10,
@@ -1886,131 +2056,15 @@
       "pluginVersion": "8.5.2",
       "targets": [
         {
-          "expr": "sum by (le) (increase(gitaly_praefect_voters_per_transaction_total_bucket{env=\"$environment\"}[$__interval]))",
+          "expr": "sum by (le) (increase(gitaly_praefect_subtransactions_per_transaction_total_bucket{env=\"$environment\"}[$__interval]))",
           "format": "heatmap",
           "interval": "1m",
           "legendFormat": "{{le}}",
           "refId": "A"
         }
       ],
-      "title": "Voters per Transaction",
+      "title": "Subtransactions per Transaction",
       "type": "bargauge"
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PA258B30F88C30650"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "links": [
-
-          ]
-        },
-        "overrides": [
-
-        ]
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 72
-      },
-      "hiddenSeries": false,
-      "id": 10,
-      "interval": "",
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.5.2",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "histogram_quantile(0.99, sum(rate(gitaly_praefect_replication_latency_bucket{env=\"$environment\"}[5m])) by (le))",
-          "interval": "",
-          "legendFormat": "p99",
-          "refId": "A"
-        },
-        {
-          "expr": "histogram_quantile(0.90, sum(rate(gitaly_praefect_replication_latency_bucket{env=\"$environment\"}[5m])) by (le))",
-          "interval": "",
-          "legendFormat": "p90",
-          "refId": "B"
-        },
-        {
-          "expr": "histogram_quantile(0.50, sum(rate(gitaly_praefect_replication_latency_bucket{env=\"$environment\"}[5m])) by (le))",
-          "interval": "",
-          "legendFormat": "p50",
-          "refId": "C"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeRegions": [
-
-      ],
-      "title": "Replication Latency",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "mode": "time",
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:262",
-          "format": "s",
-          "logBase": 1,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:263",
-          "format": "short",
-          "logBase": 1,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false
-      }
     },
     {
       "aliasColors": {
@@ -2125,9 +2179,188 @@
       "yaxis": {
         "align": false
       }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "Number of voters registered for transactions",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 12,
+        "x": 0,
+        "y": 76
+      },
+      "id": 44,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true
+      },
+      "pluginVersion": "8.5.2",
+      "targets": [
+        {
+          "expr": "sum by (le) (increase(gitaly_praefect_voters_per_transaction_total_bucket{env=\"$environment\"}[$__interval]))",
+          "format": "heatmap",
+          "interval": "1m",
+          "legendFormat": "{{le}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Voters per Transaction",
+      "type": "bargauge"
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+
+          ]
+        },
+        "overrides": [
+
+        ]
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 80
+      },
+      "hiddenSeries": false,
+      "id": 10,
+      "interval": "",
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.5.2",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(gitaly_praefect_replication_latency_bucket{env=\"$environment\"}[5m])) by (le))",
+          "interval": "",
+          "legendFormat": "p99",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.90, sum(rate(gitaly_praefect_replication_latency_bucket{env=\"$environment\"}[5m])) by (le))",
+          "interval": "",
+          "legendFormat": "p90",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(gitaly_praefect_replication_latency_bucket{env=\"$environment\"}[5m])) by (le))",
+          "interval": "",
+          "legendFormat": "p50",
+          "refId": "C"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeRegions": [
+
+      ],
+      "title": "Replication Latency",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:262",
+          "format": "s",
+          "logBase": 1,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:263",
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
     }
   ],
-  "refresh": "5m",
+  "refresh": false,
   "schemaVersion": 36,
   "style": "dark",
   "tags": [
@@ -2154,7 +2387,7 @@
         ],
         "query": {
           "query": "label_values(up{type=\"gitaly\"}, environment)",
-          "refId": "Global-environment-Variable-Query"
+          "refId": "StandardVariableQuery"
         },
         "refresh": 1,
         "regex": "",
@@ -2187,6 +2420,6 @@
   "timezone": "",
   "title": "Praefect",
   "uid": "8EAXC-AWz",
-  "version": 72,
+  "version": 75,
   "weekStart": ""
 }
