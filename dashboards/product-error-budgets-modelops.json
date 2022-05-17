@@ -1,10 +1,16 @@
 {
+  "__inputs": [
+
+  ],
+  "__requires": [
+
+  ],
   "annotations": {
     "list": [
       {
         "builtIn": 1,
         "datasource": "-- Grafana --",
-        "enable": true,
+        "enable": false,
         "hide": false,
         "iconColor": "#96D98D",
         "name": "deploy",
@@ -13,21 +19,12 @@
           "deploy",
           "$environment"
         ],
-        "target": {
-          "limit": 100,
-          "matchAny": false,
-          "tags": [
-            "deploy",
-            "$environment"
-          ],
-          "type": "tags"
-        },
         "type": "tags"
       },
       {
         "builtIn": 1,
         "datasource": "-- Grafana --",
-        "enable": true,
+        "enable": false,
         "hide": false,
         "iconColor": "#FFEE52",
         "name": "canary-deploy",
@@ -36,21 +33,12 @@
           "deploy",
           "${environment}-cny"
         ],
-        "target": {
-          "limit": 100,
-          "matchAny": false,
-          "tags": [
-            "deploy",
-            "${environment}-cny"
-          ],
-          "type": "tags"
-        },
         "type": "tags"
       },
       {
         "builtIn": 1,
         "datasource": "-- Grafana --",
-        "enable": true,
+        "enable": false,
         "hide": false,
         "iconColor": "#CA95E5",
         "name": "feature-flags",
@@ -59,30 +47,34 @@
           "feature-flag",
           "${environment}"
         ],
-        "target": {
-          "limit": 100,
-          "matchAny": false,
-          "tags": [
-            "feature-flag",
-            "${environment}"
-          ],
-          "type": "tags"
-        },
         "type": "tags"
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/1345350573 at Mon Jun 14 15:45:37 UTC 2021",
-  "editable": true,
-  "fiscalYearStartMonth": 0,
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2467576738 at Tue May 17 13:03:56 UTC 2022",
+  "editable": false,
+  "gnetId": null,
   "graphTooltip": 1,
+  "hideControls": false,
   "id": null,
-  "iteration": 1648019904311,
   "links": [
 
   ],
-  "liveNow": false,
   "panels": [
+    {
+      "content": "### [Error budget](https://about.gitlab.com/handbook/engineering/error-budgets/)\n\nThese error budget panels show an aggregate of SLIs across all components.\nHowever, not all components have been implemented yet.\n\nThe [handbook](https://about.gitlab.com/handbook/engineering/error-budgets/)\nexplains how these budgets are used.\n\nRead more about how the error budgets are calculated in the\n[stage group dashboard documentation](https://docs.gitlab.com/ee/development/stage_group_dashboards.html#error-budget).\n\nThe error budget is compared to our SLO of 99.95% and is always in\na range of 28 days from the selected end date in Grafana.\n\n### Availability\n\nThe availability shows the percentage of operations labeled with one of the\ncategories owned by modelops with satisfactory completion.\n\n### Budget remaining\n\nThe error budget in minutes is calculated based on the 99.95%.\nThere are 40320 minutes in 28 days, we allow 0.05% of failures, which\nmeans the budget in minutes is (1 - 0.9995) * $__range_s / 60.0 minutes.\n\nThe budget remaining shows how many minutes have not been spent in the\npast 28 days.\n\n### Minutes spent\n\nThis shows the total minutes spent over the past 28 days.\n\nFor example, if there were 403200 (28 * 24 * 60) operations in 28 days.\nThis would be 1 every minute. If 10 of those were unsatisfactory, that\nwould mean 10 minutes of the budget were spent.\n",
+      "datasource": null,
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 400
+      },
+      "id": 2,
+      "mode": "markdown",
+      "title": "Info",
+      "type": "text"
+    },
     {
       "collapse": false,
       "collapsed": false,
@@ -90,33 +82,32 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 100
       },
       "id": 3,
       "panels": [
 
       ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
       "showTitle": true,
-      "title": "Applied Machine Learning's Error Budgets (past 28d)",
+      "title": "Applied Machine Learning's Error Budgets (From ${__from:date:YYYY-MM-DD HHːmm} to ${__to:date:YYYY-MM-DD HHːmm})",
       "titleSize": "h6",
       "type": "row"
     },
     {
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "decimals": 2,
           "displayName": "",
-          "mappings": [
-
-          ],
-          "max": 1,
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "red",
-                "value": null
+                "value": 0
               },
               {
                 "color": "green",
@@ -125,16 +116,13 @@
             ]
           },
           "unit": "percentunit"
-        },
-        "overrides": [
-
-        ]
+        }
       },
       "gridPos": {
         "h": 4,
         "w": 6,
         "x": 0,
-        "y": 1
+        "y": 100
       },
       "id": 4,
       "options": {
@@ -151,10 +139,10 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.4",
+      "pluginVersion": "7",
       "targets": [
         {
-          "expr": "# Account for missing metrics that are turned into 0 by `vector(0)`.\nclamp_max(\n  # Number of successful measurements\n  sum by ()(\n    # Reuest with satisfactory apdex\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n    ) or vector(0)\n    +\n    # Requests without error\n    (\n      sum_over_time(\n        gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n      )\n      -\n      sum_over_time(\n        gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n      ) or vector(0)\n    )\n  )\n  /\n  # Number of measurements\n  sum by ()(\n    # Apdex Measurements\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n    ) or vector(0)\n    +\n    # Requests\n    sum_over_time(\n      gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n    )\n  ),\n1)\n",
+          "expr": "clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -164,40 +152,118 @@
         }
       ],
       "title": "Availability",
+      "transparent": false,
       "type": "stat"
     },
     {
+      "description": "",
       "fieldConfig": {
         "defaults": {
-          "decimals": 0,
+          "decimals": "2",
           "displayName": "",
           "mappings": [
-
+            {
+              "id": 0,
+              "options": {
+                "from": 0,
+                "result": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "🥵 Unhealthy"
+                },
+                "to": 0.9995
+              },
+              "type": "range"
+            },
+            {
+              "id": 1,
+              "options": {
+                "from": 0.9995,
+                "result": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "🥳 Healthy"
+                },
+                "to": 1
+              },
+              "type": "range"
+            }
           ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "red",
-                "value": null
+                "value": 0
               },
               {
                 "color": "green",
-                "value": 0
+                "value": 0.9995
               }
             ]
           },
-          "unit": "s"
-        },
-        "overrides": [
-
-        ]
+          "unit": "none"
+        }
       },
       "gridPos": {
-        "h": 4,
+        "h": 1.5,
         "w": 6,
-        "x": 6,
-        "y": 1
+        "x": 0,
+        "y": 104
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": "2",
+          "displayName": "Target:",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "gray"
+              }
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "gridPos": {
+        "h": 1.5,
+        "w": 6,
+        "x": 0,
+        "y": 105.5
       },
       "id": 6,
       "options": {
@@ -214,10 +280,10 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.4",
+      "pluginVersion": "7",
       "targets": [
         {
-          "expr": "# The number of seconds allowed to be spent in 28d\n1209\n-\n(\n  (\n     1 - # Account for missing metrics that are turned into 0 by `vector(0)`.\nclamp_max(\n  # Number of successful measurements\n  sum by ()(\n    # Reuest with satisfactory apdex\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n    ) or vector(0)\n    +\n    # Requests without error\n    (\n      sum_over_time(\n        gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n      )\n      -\n      sum_over_time(\n        gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n      ) or vector(0)\n    )\n  )\n  /\n  # Number of measurements\n  sum by ()(\n    # Apdex Measurements\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n    ) or vector(0)\n    +\n    # Requests\n    sum_over_time(\n      gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n    )\n  ),\n1)\n\n  ) * 2419200\n)\n\n",
+          "expr": "0.9995 * 100.0",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -226,190 +292,22 @@
           "refId": "A"
         }
       ],
-      "title": "Budget remaining",
+      "title": "",
+      "transparent": false,
       "type": "stat"
     },
     {
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "decimals": 0,
           "displayName": "",
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 1209.5999999998667
-              }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 12,
-        "y": 1
-      },
-      "id": 8,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.4.4",
-      "targets": [
-        {
-          "expr": "(\n  (\n     1 - # Account for missing metrics that are turned into 0 by `vector(0)`.\nclamp_max(\n  # Number of successful measurements\n  sum by ()(\n    # Reuest with satisfactory apdex\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n    ) or vector(0)\n    +\n    # Requests without error\n    (\n      sum_over_time(\n        gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n      )\n      -\n      sum_over_time(\n        gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n      ) or vector(0)\n    )\n  )\n  /\n  # Number of measurements\n  sum by ()(\n    # Apdex Measurements\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n    ) or vector(0)\n    +\n    # Requests\n    sum_over_time(\n      gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n    )\n  ),\n1)\n\n  ) * 2419200\n)\n",
-          "format": "time_series",
-          "instant": true,
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Budget spent",
-      "type": "stat"
-    },
-    {
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 18,
-        "y": 1
-      },
-      "id": 10,
-      "options": {
-        "content": "- [Applied Machine Learning's handbook page](https://about.gitlab.com/handbook/product/categories/#applied-ml-group)\n* [Grafana: Applied Machine Learning's group dashboard](/d/stage-groups-applied_ml?)\n\n",
-        "mode": "markdown"
-      },
-      "pluginVersion": "8.4.4",
-      "title": "Extra links",
-      "type": "text"
-    },
-    {
-      "fieldConfig": {
-        "defaults": {
-          "decimals": "2",
-          "displayName": "Target: 99.95%",
-          "mappings": [
-            {
-              "color": "red",
-              "from": 0,
-              "text": "🥵 Unhealthy",
-              "to": 0.9995,
-              "type": 2
-            },
-            {
-              "color": "green",
-              "from": 0.9995,
-              "text": "🥳 Healthy",
-              "to": 1,
-              "type": 2
-            }
-          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 0.9995
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 2,
-        "w": 6,
-        "x": 0,
-        "y": 5
-      },
-      "id": 5,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.4.4",
-      "targets": [
-        {
-          "expr": "# Account for missing metrics that are turned into 0 by `vector(0)`.\nclamp_max(\n  # Number of successful measurements\n  sum by ()(\n    # Reuest with satisfactory apdex\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n    ) or vector(0)\n    +\n    # Requests without error\n    (\n      sum_over_time(\n        gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n      )\n      -\n      sum_over_time(\n        gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n      ) or vector(0)\n    )\n  )\n  /\n  # Number of measurements\n  sum by ()(\n    # Apdex Measurements\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n    ) or vector(0)\n    +\n    # Requests\n    sum_over_time(\n      gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n    )\n  ),\n1)\n",
-          "format": "time_series",
-          "instant": true,
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "type": "stat"
-    },
-    {
-      "fieldConfig": {
-        "defaults": {
-          "decimals": "2",
-          "displayName": "28d budget: 20 minutes",
-          "mappings": [
-            {
-              "color": "red",
-              "from": -2419200,
-              "text": "🥵 Unhealthy",
-              "to": 0,
-              "type": 2
-            },
-            {
-              "color": "green",
-              "from": 0,
-              "text": "🥳 Healthy",
-              "to": 1209.5999999998667,
-              "type": 2
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
+                "value": -315360000
               },
               {
                 "color": "green",
@@ -417,17 +315,14 @@
               }
             ]
           },
-          "unit": "none"
-        },
-        "overrides": [
-
-        ]
+          "unit": "s"
+        }
       },
       "gridPos": {
-        "h": 2,
+        "h": 4,
         "w": 6,
         "x": 6,
-        "y": 5
+        "y": 100
       },
       "id": 7,
       "options": {
@@ -444,10 +339,10 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.4",
+      "pluginVersion": "7",
       "targets": [
         {
-          "expr": "# The number of seconds allowed to be spent in 28d\n1209\n-\n(\n  (\n     1 - # Account for missing metrics that are turned into 0 by `vector(0)`.\nclamp_max(\n  # Number of successful measurements\n  sum by ()(\n    # Reuest with satisfactory apdex\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n    ) or vector(0)\n    +\n    # Requests without error\n    (\n      sum_over_time(\n        gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n      )\n      -\n      sum_over_time(\n        gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n      ) or vector(0)\n    )\n  )\n  /\n  # Number of measurements\n  sum by ()(\n    # Apdex Measurements\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n    ) or vector(0)\n    +\n    # Requests\n    sum_over_time(\n      gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n    )\n  ),\n1)\n\n  ) * 2419200\n)\n\n",
+          "expr": "# The number of seconds allowed to be spent in $__range\n(1 - 0.9995) * $__range_s\n-\n(\n  (\n     1 - clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n\n  ) * $__range_s\n)\n\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -456,53 +351,119 @@
           "refId": "A"
         }
       ],
+      "title": "Budget remaining",
+      "transparent": false,
       "type": "stat"
     },
     {
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "decimals": "2",
-          "displayName": "Target: Less than 20 minutes in 28d",
+          "displayName": "",
           "mappings": [
             {
-              "color": "red",
-              "from": 1209.5999999998667,
-              "text": "🥵 Unhealthy",
-              "to": 2419200,
-              "type": 2
+              "id": 0,
+              "options": {
+                "from": 0,
+                "result": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "🥵 Unhealthy"
+                },
+                "to": 0.9995
+              },
+              "type": "range"
             },
             {
-              "color": "green",
-              "from": 0,
-              "text": "🥳 Healthy",
-              "to": 1209.5999999998667,
-              "type": 2
+              "id": 1,
+              "options": {
+                "from": 0.9995,
+                "result": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "🥳 Healthy"
+                },
+                "to": 1
+              },
+              "type": "range"
             }
           ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "red",
+                "value": 0
               },
               {
-                "color": "red",
-                "value": 1209.5999999998667
+                "color": "green",
+                "value": 0.9995
               }
             ]
           },
           "unit": "none"
-        },
-        "overrides": [
-
-        ]
+        }
       },
       "gridPos": {
-        "h": 2,
+        "h": 1.5,
         "w": 6,
-        "x": 12,
-        "y": 5
+        "x": 6,
+        "y": 104
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "Budget:",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "gray"
+              }
+            ]
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": {
+        "h": 1.5,
+        "w": 6,
+        "x": 6,
+        "y": 105.5
       },
       "id": 9,
       "options": {
@@ -519,10 +480,10 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.4",
+      "pluginVersion": "7",
       "targets": [
         {
-          "expr": "(\n  (\n     1 - # Account for missing metrics that are turned into 0 by `vector(0)`.\nclamp_max(\n  # Number of successful measurements\n  sum by ()(\n    # Reuest with satisfactory apdex\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n    ) or vector(0)\n    +\n    # Requests without error\n    (\n      sum_over_time(\n        gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n      )\n      -\n      sum_over_time(\n        gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n      ) or vector(0)\n    )\n  )\n  /\n  # Number of measurements\n  sum by ()(\n    # Apdex Measurements\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n    ) or vector(0)\n    +\n    # Requests\n    sum_over_time(\n      gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[28d]\n    )\n  ),\n1)\n\n  ) * 2419200\n)\n",
+          "expr": "# The number of seconds allowed to be spent in $__range\n(1 - 0.9995) * $__range_s\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -531,42 +492,121 @@
           "refId": "A"
         }
       ],
+      "title": "",
+      "transparent": false,
       "type": "stat"
     },
     {
-      "collapse": false,
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 7
-      },
-      "id": 11,
-      "panels": [
-
-      ],
-      "showTitle": true,
-      "title": "DataOps's Error Budgets (past 28d)",
-      "titleSize": "h6",
-      "type": "row"
-    },
-    {
+      "description": "",
       "fieldConfig": {
         "defaults": {
-          "decimals": 2,
+          "decimals": 0,
+          "displayName": "",
+          "thresholds": {
+            "mode": "absolute"
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 100
+      },
+      "id": 10,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "(\n  (\n     1 - clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n\n  ) * $__range_s\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        },
+        {
+          "expr": "# The number of seconds allowed to be spent in $__range\n(1 - 0.9995) * $__range_s\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "budget",
+          "refId": "B"
+        }
+      ],
+      "title": "Budget spent",
+      "transformations": [
+        {
+          "id": "configFromData",
+          "options": {
+            "configRefId": "B",
+            "mappings": [
+              {
+                "fieldName": "budget",
+                "handlerKey": "threshold1"
+              }
+            ]
+          }
+        }
+      ],
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": "2",
           "displayName": "",
           "mappings": [
-
+            {
+              "id": 0,
+              "options": {
+                "from": 0,
+                "result": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "🥵 Unhealthy"
+                },
+                "to": 0.9995
+              },
+              "type": "range"
+            },
+            {
+              "id": 1,
+              "options": {
+                "from": 0.9995,
+                "result": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "🥳 Healthy"
+                },
+                "to": 1
+              },
+              "type": "range"
+            }
           ],
-          "max": 1,
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "red",
-                "value": null
+                "value": 0
               },
               {
                 "color": "green",
@@ -574,17 +614,68 @@
               }
             ]
           },
-          "unit": "percentunit"
-        },
-        "overrides": [
-
-        ]
+          "unit": "none"
+        }
       },
       "gridPos": {
-        "h": 4,
+        "h": 1.5,
         "w": 6,
-        "x": 0,
-        "y": 8
+        "x": 12,
+        "y": 104
+      },
+      "id": 11,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"applied_ml\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "Budget:",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "gray"
+              }
+            ]
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": {
+        "h": 1.5,
+        "w": 6,
+        "x": 12,
+        "y": 105.5
       },
       "id": 12,
       "options": {
@@ -601,73 +692,10 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.4",
+      "pluginVersion": "7",
       "targets": [
         {
-          "expr": "# Account for missing metrics that are turned into 0 by `vector(0)`.\nclamp_max(\n  # Number of successful measurements\n  sum by ()(\n    # Reuest with satisfactory apdex\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests without error\n    (\n      sum_over_time(\n        gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n      )\n      -\n      sum_over_time(\n        gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n      ) or vector(0)\n    )\n  )\n  /\n  # Number of measurements\n  sum by ()(\n    # Apdex Measurements\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests\n    sum_over_time(\n      gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n    )\n  ),\n1)\n",
-          "format": "time_series",
-          "instant": true,
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "%",
-          "refId": "A"
-        }
-      ],
-      "title": "Availability",
-      "type": "stat"
-    },
-    {
-      "fieldConfig": {
-        "defaults": {
-          "decimals": 0,
-          "displayName": "",
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 6,
-        "y": 8
-      },
-      "id": 14,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.4.4",
-      "targets": [
-        {
-          "expr": "# The number of seconds allowed to be spent in 28d\n1209\n-\n(\n  (\n     1 - # Account for missing metrics that are turned into 0 by `vector(0)`.\nclamp_max(\n  # Number of successful measurements\n  sum by ()(\n    # Reuest with satisfactory apdex\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests without error\n    (\n      sum_over_time(\n        gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n      )\n      -\n      sum_over_time(\n        gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n      ) or vector(0)\n    )\n  )\n  /\n  # Number of measurements\n  sum by ()(\n    # Apdex Measurements\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests\n    sum_over_time(\n      gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n    )\n  ),\n1)\n\n  ) * 2419200\n)\n\n",
+          "expr": "# The number of seconds allowed to be spent in $__range\n(1 - 0.9995) * $__range_s\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -676,115 +704,56 @@
           "refId": "A"
         }
       ],
-      "title": "Budget remaining",
+      "title": "",
+      "transparent": false,
       "type": "stat"
     },
     {
-      "fieldConfig": {
-        "defaults": {
-          "decimals": 0,
-          "displayName": "",
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 1209.5999999998667
-              }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": [
-
-        ]
-      },
+      "content": "- [Applied Machine Learning's handbook page](https://about.gitlab.com/handbook/product/categories/#applied-ml-group)\n* [Grafana: Applied Machine Learning's group dashboard](/d/stage-groups-applied_ml?)\n\n",
       "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 12,
-        "y": 8
-      },
-      "id": 16,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.4.4",
-      "targets": [
-        {
-          "expr": "(\n  (\n     1 - # Account for missing metrics that are turned into 0 by `vector(0)`.\nclamp_max(\n  # Number of successful measurements\n  sum by ()(\n    # Reuest with satisfactory apdex\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests without error\n    (\n      sum_over_time(\n        gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n      )\n      -\n      sum_over_time(\n        gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n      ) or vector(0)\n    )\n  )\n  /\n  # Number of measurements\n  sum by ()(\n    # Apdex Measurements\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests\n    sum_over_time(\n      gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n    )\n  ),\n1)\n\n  ) * 2419200\n)\n",
-          "format": "time_series",
-          "instant": true,
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Budget spent",
-      "type": "stat"
-    },
-    {
-      "gridPos": {
-        "h": 6,
+        "h": 7,
         "w": 6,
         "x": 18,
-        "y": 8
+        "y": 100
       },
-      "id": 18,
-      "options": {
-        "content": "- [DataOps's handbook page](https://about.gitlab.com/handbook/product/categories/#dataops-group)\n* [Grafana: DataOps's group dashboard](/d/stage-groups-dataops?)\n\n",
-        "mode": "markdown"
-      },
-      "pluginVersion": "8.4.4",
+      "id": 13,
+      "mode": "markdown",
       "title": "Extra links",
       "type": "text"
     },
     {
+      "collapse": false,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 200
+      },
+      "id": 14,
+      "panels": [
+
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "DataOps's Error Budgets (From ${__from:date:YYYY-MM-DD HHːmm} to ${__to:date:YYYY-MM-DD HHːmm})",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "description": "",
       "fieldConfig": {
         "defaults": {
-          "decimals": "2",
-          "displayName": "Target: 99.95%",
-          "mappings": [
-            {
-              "color": "red",
-              "from": 0,
-              "text": "🥵 Unhealthy",
-              "to": 0.9995,
-              "type": 2
-            },
-            {
-              "color": "green",
-              "from": 0.9995,
-              "text": "🥳 Healthy",
-              "to": 1,
-              "type": 2
-            }
-          ],
+          "decimals": 2,
+          "displayName": "",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "red",
-                "value": null
+                "value": 0
               },
               {
                 "color": "green",
@@ -792,92 +761,14 @@
               }
             ]
           },
-          "unit": "none"
-        },
-        "overrides": [
-
-        ]
+          "unit": "percentunit"
+        }
       },
       "gridPos": {
-        "h": 2,
+        "h": 4,
         "w": 6,
         "x": 0,
-        "y": 12
-      },
-      "id": 13,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.4.4",
-      "targets": [
-        {
-          "expr": "# Account for missing metrics that are turned into 0 by `vector(0)`.\nclamp_max(\n  # Number of successful measurements\n  sum by ()(\n    # Reuest with satisfactory apdex\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests without error\n    (\n      sum_over_time(\n        gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n      )\n      -\n      sum_over_time(\n        gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n      ) or vector(0)\n    )\n  )\n  /\n  # Number of measurements\n  sum by ()(\n    # Apdex Measurements\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests\n    sum_over_time(\n      gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n    )\n  ),\n1)\n",
-          "format": "time_series",
-          "instant": true,
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "type": "stat"
-    },
-    {
-      "fieldConfig": {
-        "defaults": {
-          "decimals": "2",
-          "displayName": "28d budget: 20 minutes",
-          "mappings": [
-            {
-              "color": "red",
-              "from": -2419200,
-              "text": "🥵 Unhealthy",
-              "to": 0,
-              "type": 2
-            },
-            {
-              "color": "green",
-              "from": 0,
-              "text": "🥳 Healthy",
-              "to": 1209.5999999998667,
-              "type": 2
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 2,
-        "w": 6,
-        "x": 6,
-        "y": 12
+        "y": 200
       },
       "id": 15,
       "options": {
@@ -894,10 +785,97 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.4",
+      "pluginVersion": "7",
       "targets": [
         {
-          "expr": "# The number of seconds allowed to be spent in 28d\n1209\n-\n(\n  (\n     1 - # Account for missing metrics that are turned into 0 by `vector(0)`.\nclamp_max(\n  # Number of successful measurements\n  sum by ()(\n    # Reuest with satisfactory apdex\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests without error\n    (\n      sum_over_time(\n        gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n      )\n      -\n      sum_over_time(\n        gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n      ) or vector(0)\n    )\n  )\n  /\n  # Number of measurements\n  sum by ()(\n    # Apdex Measurements\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests\n    sum_over_time(\n      gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n    )\n  ),\n1)\n\n  ) * 2419200\n)\n\n",
+          "expr": "clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "%",
+          "refId": "A"
+        }
+      ],
+      "title": "Availability",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": "2",
+          "displayName": "",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "from": 0,
+                "result": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "🥵 Unhealthy"
+                },
+                "to": 0.9995
+              },
+              "type": "range"
+            },
+            {
+              "id": 1,
+              "options": {
+                "from": 0.9995,
+                "result": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "🥳 Healthy"
+                },
+                "to": 1
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 0.9995
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 1.5,
+        "w": 6,
+        "x": 0,
+        "y": 204
+      },
+      "id": 16,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -906,53 +884,32 @@
           "refId": "A"
         }
       ],
+      "title": "",
+      "transparent": false,
       "type": "stat"
     },
     {
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "decimals": "2",
-          "displayName": "Target: Less than 20 minutes in 28d",
-          "mappings": [
-            {
-              "color": "red",
-              "from": 1209.5999999998667,
-              "text": "🥵 Unhealthy",
-              "to": 2419200,
-              "type": 2
-            },
-            {
-              "color": "green",
-              "from": 0,
-              "text": "🥳 Healthy",
-              "to": 1209.5999999998667,
-              "type": 2
-            }
-          ],
+          "displayName": "Target:",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 1209.5999999998667
+                "color": "gray"
               }
             ]
           },
-          "unit": "none"
-        },
-        "overrides": [
-
-        ]
+          "unit": "percent"
+        }
       },
       "gridPos": {
-        "h": 2,
+        "h": 1.5,
         "w": 6,
-        "x": 12,
-        "y": 12
+        "x": 0,
+        "y": 205.5
       },
       "id": 17,
       "options": {
@@ -969,10 +926,10 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.4",
+      "pluginVersion": "7",
       "targets": [
         {
-          "expr": "(\n  (\n     1 - # Account for missing metrics that are turned into 0 by `vector(0)`.\nclamp_max(\n  # Number of successful measurements\n  sum by ()(\n    # Reuest with satisfactory apdex\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests without error\n    (\n      sum_over_time(\n        gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n      )\n      -\n      sum_over_time(\n        gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n      ) or vector(0)\n    )\n  )\n  /\n  # Number of measurements\n  sum by ()(\n    # Apdex Measurements\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests\n    sum_over_time(\n      gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[28d]\n    )\n  ),\n1)\n\n  ) * 2419200\n)\n",
+          "expr": "0.9995 * 100.0",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -981,42 +938,109 @@
           "refId": "A"
         }
       ],
+      "title": "",
+      "transparent": false,
       "type": "stat"
     },
     {
-      "collapse": false,
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 14
-      },
-      "id": 19,
-      "panels": [
-
-      ],
-      "showTitle": true,
-      "title": "MLOps's Error Budgets (past 28d)",
-      "titleSize": "h6",
-      "type": "row"
-    },
-    {
+      "description": "",
       "fieldConfig": {
         "defaults": {
-          "decimals": 2,
+          "decimals": 0,
           "displayName": "",
-          "mappings": [
-
-          ],
-          "max": 1,
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "red",
-                "value": null
+                "value": -315360000
+              },
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 200
+      },
+      "id": 18,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "# The number of seconds allowed to be spent in $__range\n(1 - 0.9995) * $__range_s\n-\n(\n  (\n     1 - clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n\n  ) * $__range_s\n)\n\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Budget remaining",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": "2",
+          "displayName": "",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "from": 0,
+                "result": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "🥵 Unhealthy"
+                },
+                "to": 0.9995
+              },
+              "type": "range"
+            },
+            {
+              "id": 1,
+              "options": {
+                "from": 0.9995,
+                "result": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "🥳 Healthy"
+                },
+                "to": 1
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
               },
               {
                 "color": "green",
@@ -1024,17 +1048,68 @@
               }
             ]
           },
-          "unit": "percentunit"
-        },
-        "overrides": [
-
-        ]
+          "unit": "none"
+        }
       },
       "gridPos": {
-        "h": 4,
+        "h": 1.5,
         "w": 6,
-        "x": 0,
-        "y": 15
+        "x": 6,
+        "y": 204
+      },
+      "id": 19,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "Budget:",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "gray"
+              }
+            ]
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": {
+        "h": 1.5,
+        "w": 6,
+        "x": 6,
+        "y": 205.5
       },
       "id": 20,
       "options": {
@@ -1051,73 +1126,10 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.4",
+      "pluginVersion": "7",
       "targets": [
         {
-          "expr": "# Account for missing metrics that are turned into 0 by `vector(0)`.\nclamp_max(\n  # Number of successful measurements\n  sum by ()(\n    # Reuest with satisfactory apdex\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests without error\n    (\n      sum_over_time(\n        gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n      )\n      -\n      sum_over_time(\n        gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n      ) or vector(0)\n    )\n  )\n  /\n  # Number of measurements\n  sum by ()(\n    # Apdex Measurements\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests\n    sum_over_time(\n      gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n    )\n  ),\n1)\n",
-          "format": "time_series",
-          "instant": true,
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "%",
-          "refId": "A"
-        }
-      ],
-      "title": "Availability",
-      "type": "stat"
-    },
-    {
-      "fieldConfig": {
-        "defaults": {
-          "decimals": 0,
-          "displayName": "",
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 6,
-        "y": 15
-      },
-      "id": 22,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.4.4",
-      "targets": [
-        {
-          "expr": "# The number of seconds allowed to be spent in 28d\n1209\n-\n(\n  (\n     1 - # Account for missing metrics that are turned into 0 by `vector(0)`.\nclamp_max(\n  # Number of successful measurements\n  sum by ()(\n    # Reuest with satisfactory apdex\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests without error\n    (\n      sum_over_time(\n        gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n      )\n      -\n      sum_over_time(\n        gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n      ) or vector(0)\n    )\n  )\n  /\n  # Number of measurements\n  sum by ()(\n    # Apdex Measurements\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests\n    sum_over_time(\n      gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n    )\n  ),\n1)\n\n  ) * 2419200\n)\n\n",
+          "expr": "# The number of seconds allowed to be spent in $__range\n(1 - 0.9995) * $__range_s\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -1126,133 +1138,27 @@
           "refId": "A"
         }
       ],
-      "title": "Budget remaining",
+      "title": "",
+      "transparent": false,
       "type": "stat"
     },
     {
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "decimals": 0,
           "displayName": "",
-          "mappings": [
-
-          ],
           "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 1209.5999999998667
-              }
-            ]
+            "mode": "absolute"
           },
           "unit": "s"
-        },
-        "overrides": [
-
-        ]
+        }
       },
       "gridPos": {
         "h": 4,
         "w": 6,
         "x": 12,
-        "y": 15
-      },
-      "id": 24,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.4.4",
-      "targets": [
-        {
-          "expr": "(\n  (\n     1 - # Account for missing metrics that are turned into 0 by `vector(0)`.\nclamp_max(\n  # Number of successful measurements\n  sum by ()(\n    # Reuest with satisfactory apdex\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests without error\n    (\n      sum_over_time(\n        gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n      )\n      -\n      sum_over_time(\n        gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n      ) or vector(0)\n    )\n  )\n  /\n  # Number of measurements\n  sum by ()(\n    # Apdex Measurements\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests\n    sum_over_time(\n      gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n    )\n  ),\n1)\n\n  ) * 2419200\n)\n",
-          "format": "time_series",
-          "instant": true,
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Budget spent",
-      "type": "stat"
-    },
-    {
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 18,
-        "y": 15
-      },
-      "id": 26,
-      "options": {
-        "content": "- [MLOps's handbook page](https://about.gitlab.com/handbook/product/categories/#mlops-group)\n* [Grafana: MLOps's group dashboard](/d/stage-groups-mlops?)\n\n",
-        "mode": "markdown"
-      },
-      "pluginVersion": "8.4.4",
-      "title": "Extra links",
-      "type": "text"
-    },
-    {
-      "fieldConfig": {
-        "defaults": {
-          "decimals": "2",
-          "displayName": "Target: 99.95%",
-          "mappings": [
-            {
-              "color": "red",
-              "from": 0,
-              "text": "🥵 Unhealthy",
-              "to": 0.9995,
-              "type": 2
-            },
-            {
-              "color": "green",
-              "from": 0.9995,
-              "text": "🥳 Healthy",
-              "to": 1,
-              "type": 2
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 0.9995
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 2,
-        "w": 6,
-        "x": 0,
-        "y": 19
+        "y": 200
       },
       "id": 21,
       "options": {
@@ -1269,10 +1175,119 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.4",
+      "pluginVersion": "7",
       "targets": [
         {
-          "expr": "# Account for missing metrics that are turned into 0 by `vector(0)`.\nclamp_max(\n  # Number of successful measurements\n  sum by ()(\n    # Reuest with satisfactory apdex\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests without error\n    (\n      sum_over_time(\n        gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n      )\n      -\n      sum_over_time(\n        gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n      ) or vector(0)\n    )\n  )\n  /\n  # Number of measurements\n  sum by ()(\n    # Apdex Measurements\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests\n    sum_over_time(\n      gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n    )\n  ),\n1)\n",
+          "expr": "(\n  (\n     1 - clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n\n  ) * $__range_s\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        },
+        {
+          "expr": "# The number of seconds allowed to be spent in $__range\n(1 - 0.9995) * $__range_s\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "budget",
+          "refId": "B"
+        }
+      ],
+      "title": "Budget spent",
+      "transformations": [
+        {
+          "id": "configFromData",
+          "options": {
+            "configRefId": "B",
+            "mappings": [
+              {
+                "fieldName": "budget",
+                "handlerKey": "threshold1"
+              }
+            ]
+          }
+        }
+      ],
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": "2",
+          "displayName": "",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "from": 0,
+                "result": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "🥵 Unhealthy"
+                },
+                "to": 0.9995
+              },
+              "type": "range"
+            },
+            {
+              "id": 1,
+              "options": {
+                "from": 0.9995,
+                "result": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "🥳 Healthy"
+                },
+                "to": 1
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 0.9995
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 1.5,
+        "w": 6,
+        "x": 12,
+        "y": 204
+      },
+      "id": 22,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"dataops\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -1281,53 +1296,32 @@
           "refId": "A"
         }
       ],
+      "title": "",
+      "transparent": false,
       "type": "stat"
     },
     {
+      "description": "",
       "fieldConfig": {
         "defaults": {
-          "decimals": "2",
-          "displayName": "28d budget: 20 minutes",
-          "mappings": [
-            {
-              "color": "red",
-              "from": -2419200,
-              "text": "🥵 Unhealthy",
-              "to": 0,
-              "type": 2
-            },
-            {
-              "color": "green",
-              "from": 0,
-              "text": "🥳 Healthy",
-              "to": 1209.5999999998667,
-              "type": 2
-            }
-          ],
+          "decimals": 0,
+          "displayName": "Budget:",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 0
+                "color": "gray"
               }
             ]
           },
-          "unit": "none"
-        },
-        "overrides": [
-
-        ]
+          "unit": "s"
+        }
       },
       "gridPos": {
-        "h": 2,
+        "h": 1.5,
         "w": 6,
-        "x": 6,
-        "y": 19
+        "x": 12,
+        "y": 205.5
       },
       "id": 23,
       "options": {
@@ -1344,10 +1338,10 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.4",
+      "pluginVersion": "7",
       "targets": [
         {
-          "expr": "# The number of seconds allowed to be spent in 28d\n1209\n-\n(\n  (\n     1 - # Account for missing metrics that are turned into 0 by `vector(0)`.\nclamp_max(\n  # Number of successful measurements\n  sum by ()(\n    # Reuest with satisfactory apdex\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests without error\n    (\n      sum_over_time(\n        gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n      )\n      -\n      sum_over_time(\n        gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n      ) or vector(0)\n    )\n  )\n  /\n  # Number of measurements\n  sum by ()(\n    # Apdex Measurements\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests\n    sum_over_time(\n      gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n    )\n  ),\n1)\n\n  ) * 2419200\n)\n\n",
+          "expr": "# The number of seconds allowed to be spent in $__range\n(1 - 0.9995) * $__range_s\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -1356,55 +1350,73 @@
           "refId": "A"
         }
       ],
+      "title": "",
+      "transparent": false,
       "type": "stat"
     },
     {
+      "content": "- [DataOps's handbook page](https://about.gitlab.com/handbook/product/categories/#dataops-group)\n* [Grafana: DataOps's group dashboard](/d/stage-groups-dataops?)\n\n",
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 200
+      },
+      "id": 24,
+      "mode": "markdown",
+      "title": "Extra links",
+      "type": "text"
+    },
+    {
+      "collapse": false,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 300
+      },
+      "id": 25,
+      "panels": [
+
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "MLOps's Error Budgets (From ${__from:date:YYYY-MM-DD HHːmm} to ${__to:date:YYYY-MM-DD HHːmm})",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "description": "",
       "fieldConfig": {
         "defaults": {
-          "decimals": "2",
-          "displayName": "Target: Less than 20 minutes in 28d",
-          "mappings": [
-            {
-              "color": "red",
-              "from": 1209.5999999998667,
-              "text": "🥵 Unhealthy",
-              "to": 2419200,
-              "type": 2
-            },
-            {
-              "color": "green",
-              "from": 0,
-              "text": "🥳 Healthy",
-              "to": 1209.5999999998667,
-              "type": 2
-            }
-          ],
+          "decimals": 2,
+          "displayName": "",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "red",
+                "value": 0
               },
               {
-                "color": "red",
-                "value": 1209.5999999998667
+                "color": "green",
+                "value": 0.9995
               }
             ]
           },
-          "unit": "none"
-        },
-        "overrides": [
-
-        ]
+          "unit": "percentunit"
+        }
       },
       "gridPos": {
-        "h": 2,
+        "h": 4,
         "w": 6,
-        "x": 12,
-        "y": 19
+        "x": 0,
+        "y": 300
       },
-      "id": 25,
+      "id": 26,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -1419,10 +1431,97 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.4",
+      "pluginVersion": "7",
       "targets": [
         {
-          "expr": "(\n  (\n     1 - # Account for missing metrics that are turned into 0 by `vector(0)`.\nclamp_max(\n  # Number of successful measurements\n  sum by ()(\n    # Reuest with satisfactory apdex\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests without error\n    (\n      sum_over_time(\n        gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n      )\n      -\n      sum_over_time(\n        gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n      ) or vector(0)\n    )\n  )\n  /\n  # Number of measurements\n  sum by ()(\n    # Apdex Measurements\n    sum_over_time(\n      gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n    ) or vector(0)\n    +\n    # Requests\n    sum_over_time(\n      gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[28d]\n    )\n  ),\n1)\n\n  ) * 2419200\n)\n",
+          "expr": "clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "%",
+          "refId": "A"
+        }
+      ],
+      "title": "Availability",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": "2",
+          "displayName": "",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "from": 0,
+                "result": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "🥵 Unhealthy"
+                },
+                "to": 0.9995
+              },
+              "type": "range"
+            },
+            {
+              "id": 1,
+              "options": {
+                "from": 0.9995,
+                "result": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "🥳 Healthy"
+                },
+                "to": 1
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 0.9995
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 1.5,
+        "w": 6,
+        "x": 0,
+        "y": 304
+      },
+      "id": 27,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -1431,48 +1530,514 @@
           "refId": "A"
         }
       ],
+      "title": "",
+      "transparent": false,
       "type": "stat"
     },
     {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": "2",
+          "displayName": "Target:",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "gray"
+              }
+            ]
+          },
+          "unit": "percent"
+        }
+      },
       "gridPos": {
-        "h": 6,
-        "w": 24,
+        "h": 1.5,
+        "w": 6,
         "x": 0,
-        "y": 21
+        "y": 305.5
       },
-      "id": 2,
+      "id": 28,
       "options": {
-        "content": "### [Error budget](https://about.gitlab.com/handbook/engineering/error-budgets/)\n\nThese error budget panels show an aggregate of SLIs across all components.\nHowever, not all components have been implemented yet.\n\nThe [handbook](https://about.gitlab.com/handbook/engineering/error-budgets/)\nexplains how these budgets are used.\n\nRead more about how the error budgets are calculated in the\n[stage group dashboard documentation](https://docs.gitlab.com/ee/development/stage_group_dashboards.html#error-budget).\n\nThe error budget is compared to our SLO of 99.95% and is always in\na range of 28 days from the selected end date in Grafana.\n\n### Availability\n\nThe availability shows the percentage of operations labeled with one of the\ncategories owned by ModelOps with satisfactory completion.\n\n### Budget remaining\n\nThe error budget in minutes is calculated based on the 99.95%.\nThere are 40320 minutes in 28 days, we allow 0.05% of failures, which\nmeans the budget in minutes is 20 minutes.\n\nThe budget remaining shows how many minutes have not been spent in the\npast 28 days.\n\n### Minutes spent\n\nThis shows the total minutes spent over the past 28 days.\n\nFor example, if there were 403200 (28 * 24 * 60) operations in 28 days.\nThis would be 1 every minute. If 10 of those were unsatisfactory, that\nwould mean 10 minutes of the budget were spent.\n",
-        "mode": "markdown"
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
       },
-      "pluginVersion": "8.4.4",
-      "title": "Info",
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "0.9995 * 100.0",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": -315360000
+              },
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 300
+      },
+      "id": 29,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "# The number of seconds allowed to be spent in $__range\n(1 - 0.9995) * $__range_s\n-\n(\n  (\n     1 - clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n\n  ) * $__range_s\n)\n\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Budget remaining",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": "2",
+          "displayName": "",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "from": 0,
+                "result": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "🥵 Unhealthy"
+                },
+                "to": 0.9995
+              },
+              "type": "range"
+            },
+            {
+              "id": 1,
+              "options": {
+                "from": 0.9995,
+                "result": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "🥳 Healthy"
+                },
+                "to": 1
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 0.9995
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 1.5,
+        "w": 6,
+        "x": 6,
+        "y": 304
+      },
+      "id": 30,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "Budget:",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "gray"
+              }
+            ]
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": {
+        "h": 1.5,
+        "w": 6,
+        "x": 6,
+        "y": 305.5
+      },
+      "id": 31,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "# The number of seconds allowed to be spent in $__range\n(1 - 0.9995) * $__range_s\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "",
+          "thresholds": {
+            "mode": "absolute"
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 300
+      },
+      "id": 32,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "(\n  (\n     1 - clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n\n  ) * $__range_s\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        },
+        {
+          "expr": "# The number of seconds allowed to be spent in $__range\n(1 - 0.9995) * $__range_s\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "budget",
+          "refId": "B"
+        }
+      ],
+      "title": "Budget spent",
+      "transformations": [
+        {
+          "id": "configFromData",
+          "options": {
+            "configRefId": "B",
+            "mappings": [
+              {
+                "fieldName": "budget",
+                "handlerKey": "threshold1"
+              }
+            ]
+          }
+        }
+      ],
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": "2",
+          "displayName": "",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "from": 0,
+                "result": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "🥵 Unhealthy"
+                },
+                "to": 0.9995
+              },
+              "type": "range"
+            },
+            {
+              "id": 1,
+              "options": {
+                "from": 0.9995,
+                "result": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "🥳 Healthy"
+                },
+                "to": 1
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 0.9995
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 1.5,
+        "w": 6,
+        "x": 12,
+        "y": 304
+      },
+      "id": 33,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"mlops\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "Budget:",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "gray"
+              }
+            ]
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": {
+        "h": 1.5,
+        "w": 6,
+        "x": 12,
+        "y": 305.5
+      },
+      "id": 34,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "# The number of seconds allowed to be spent in $__range\n(1 - 0.9995) * $__range_s\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "content": "- [MLOps's handbook page](https://about.gitlab.com/handbook/product/categories/#mlops-group)\n* [Grafana: MLOps's group dashboard](/d/stage-groups-mlops?)\n\n",
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 300
+      },
+      "id": 35,
+      "mode": "markdown",
+      "title": "Extra links",
       "type": "text"
     },
     {
+      "content": "Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards)\n",
+      "datasource": null,
       "gridPos": {
         "h": 2,
         "w": 24,
         "x": 0,
-        "y": 27
+        "y": 110000
       },
-      "id": 27,
-      "options": {
-        "content": "Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards/./product/ModelOps_error_budget.dashboard.jsonnet)\n",
-        "mode": "markdown"
-      },
-      "pluginVersion": "8.4.4",
+      "id": 36,
+      "mode": "markdown",
       "title": "Source",
       "type": "text"
     }
   ],
   "refresh": "",
-  "schemaVersion": 35,
+  "rows": [
+
+  ],
+  "schemaVersion": 16,
   "style": "light",
   "tags": [
+    "managed",
     "product",
-    "product performance",
-    "unmanaged"
+    "product performance"
   ],
   "templating": {
     "list": [
@@ -1482,49 +2047,45 @@
           "value": "Global"
         },
         "hide": 0,
-        "includeAll": false,
-        "multi": false,
+        "label": null,
         "name": "PROMETHEUS_DS",
         "options": [
 
         ],
         "query": "prometheus",
         "refresh": 1,
-        "regex": "/(.*-gprd|Frank|Global|gprd-.*)/",
-        "skipUrlSync": false,
+        "regex": "",
         "type": "datasource"
       },
       {
+        "allValue": null,
         "current": {
           "text": "gprd",
           "value": "gprd"
         },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "$PROMETHEUS_DS"
-        },
-        "definition": "",
+        "datasource": "$PROMETHEUS_DS",
         "hide": 0,
         "includeAll": false,
+        "label": null,
         "multi": false,
         "name": "environment",
         "options": [
 
         ],
-        "query": {
-          "query": "label_values(gitlab_service_ops:rate, environment)",
-          "refId": "Global-environment-Variable-Query"
-        },
+        "query": "label_values(gitlab_service_ops:rate, environment)",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
+        "tags": [
+
+        ],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
+        "allValue": null,
         "current": {
           "text": "main",
           "value": "main"
@@ -1536,24 +2097,20 @@
         "name": "stage",
         "options": [
           {
-            "selected": true,
             "text": "main",
             "value": "main"
           },
           {
-            "selected": false,
             "text": "cny",
             "value": "cny"
           },
           {
-            "selected": false,
             "text": "",
             "value": ""
           }
         ],
         "query": "main,cny,",
         "refresh": 0,
-        "skipUrlSync": false,
         "type": "custom"
       }
     ]
@@ -1564,16 +2121,11 @@
   },
   "timepicker": {
     "refresh_intervals": [
-      "5s",
-      "10s",
-      "30s",
       "1m",
       "5m",
+      "10m",
       "15m",
-      "30m",
-      "1h",
-      "2h",
-      "1d"
+      "30m"
     ],
     "time_options": [
       "5m",
@@ -1588,8 +2140,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "product: Error Budgets - ModelOps",
+  "title": "product: Error Budgets - modelops",
   "uid": "product-ModelOps_error_budget",
-  "version": 44,
-  "weekStart": ""
+  "version": 45
 }
