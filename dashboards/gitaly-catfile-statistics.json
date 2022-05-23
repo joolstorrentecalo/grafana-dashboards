@@ -3,7 +3,10 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": true,
         "hide": false,
         "iconColor": "light-purple",
@@ -23,17 +26,19 @@
   },
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1637742054764,
+  "iteration": 1653296022693,
   "links": [
 
   ],
   "liveNow": false,
   "panels": [
     {
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -105,7 +110,8 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.2.4",
@@ -123,13 +129,14 @@
           "refId": "B"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Active catfile processes",
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -201,7 +208,8 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.2.4",
@@ -213,13 +221,14 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Catfile Lookups",
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "description": "Median latency of catfile-based method.",
       "fieldConfig": {
         "defaults": {
@@ -277,8 +286,8 @@
         ]
       },
       "gridPos": {
-        "h": 6,
-        "w": 24,
+        "h": 8,
+        "w": 12,
         "x": 0,
         "y": 16
       },
@@ -294,7 +303,8 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.2.4",
@@ -308,13 +318,121 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Catfile-based method latency: $method",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "reqps"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "repeat": "method",
+      "repeatDirection": "v",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "sum(gitaly:grpc_server_handled_total:rate1m{job=\"gitaly\",environment=\"$environment\",grpc_method=\"$method\"} - sum(gitaly:grpc_server_handled_total:error_rate1m{job=\"gitaly\", environment=\"$environment\", grpc_method=\"$method\"}) without (grpc_code))",
+          "legendFormat": "OK",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "sum(gitaly:grpc_server_handled_total:error_rate1m{job=\"gitaly\", environment=\"$environment\", grpc_method=\"$method\"}) by (grpc_code)",
+          "hide": false,
+          "legendFormat": "{{grpc_code}}",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Catfile-based method rate: $method",
       "type": "timeseries"
     }
   ],
-  "schemaVersion": 32,
+  "schemaVersion": 36,
   "style": "dark",
   "tags": [
     "unmanaged"
@@ -322,17 +440,13 @@
   "templating": {
     "list": [
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "gprd",
           "value": "gprd"
         },
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "environment",
         "options": [
@@ -352,7 +466,6 @@
         "type": "custom"
       },
       {
-        "allValue": null,
         "current": {
           "selected": true,
           "tags": [
@@ -365,8 +478,6 @@
             "FindAllTags"
           ]
         },
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "method",
@@ -374,37 +485,37 @@
         "name": "method",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "ListBlobs",
             "value": "ListBlobs"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "ListAllBlobs",
             "value": "ListAllBlobs"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "ListLFSPointers",
             "value": "ListLFSPointers"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "ListAllLFSPointers",
             "value": "ListAllLFSPointers"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "GetLFSPointers",
             "value": "GetLFSPointers"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "ListAllCommits",
             "value": "ListAllCommits"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "ListCommits",
             "value": "ListCommits"
           },
@@ -414,12 +525,12 @@
             "value": "FindAllTags"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "GetTagSignatures",
             "value": "GetTagSignatures"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "GetTreeEntries",
             "value": "GetTreeEntries"
           }
@@ -440,5 +551,6 @@
   "timezone": "",
   "title": "Gitaly Catfile Statistics",
   "uid": "lov2nqd7k",
-  "version": 6
+  "version": 8,
+  "weekStart": ""
 }
