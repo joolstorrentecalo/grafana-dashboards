@@ -7,11 +7,62 @@
   ],
   "annotations": {
     "list": [
-
+      {
+        "datasource": "-- Grafana --",
+        "enable": false,
+        "hide": false,
+        "iconColor": "#19730E",
+        "name": "Production deploys",
+        "showIn": 0,
+        "tags": [
+          "deploy",
+          "gprd"
+        ],
+        "type": "tags"
+      },
+      {
+        "datasource": "-- Grafana --",
+        "enable": false,
+        "hide": false,
+        "iconColor": "#E08400",
+        "name": "Canary deploys",
+        "showIn": 0,
+        "tags": [
+          "deploy",
+          "gprd-cny"
+        ],
+        "type": "tags"
+      },
+      {
+        "datasource": "-- Grafana --",
+        "enable": false,
+        "hide": false,
+        "iconColor": "#5794F2",
+        "name": "Staging deploys",
+        "showIn": 0,
+        "tags": [
+          "deploy",
+          "gstg"
+        ],
+        "type": "tags"
+      },
+      {
+        "datasource": "-- Grafana --",
+        "enable": false,
+        "hide": false,
+        "iconColor": "#8F3BB8",
+        "name": "Staging Canary deploys",
+        "showIn": 0,
+        "tags": [
+          "deploy",
+          "gstg-cny"
+        ],
+        "type": "tags"
+      }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2500035604 at Tue May 24 15:06:42 UTC 2022",
-  "editable": false,
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2500035604 at Tue May 24 15:05:14 UTC 2022",
+  "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
   "hideControls": false,
@@ -21,44 +72,29 @@
   ],
   "panels": [
     {
-      "content": "Application demand is used as a way to identify that there may have been an application level change that\nalters how the application makes requests of the underlying infrastructure.\n\nFor more information, please view the [Indicators section on the Scalability Team\nHandbook Page](https://about.gitlab.com/handbook/engineering/infrastructure/team/scalability#application-demand).\n",
-      "datasource": null,
-      "gridPos": {
-        "h": 4,
-        "w": 24,
-        "x": 0,
-        "y": 100
-      },
-      "id": 2,
-      "mode": "markdown",
-      "title": "Application Demand Indicators Help",
-      "type": "text"
-    },
-    {
       "aliasColors": {
       },
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
+      "datasource": null,
       "decimals": 0,
-      "description": "",
-      "fill": 0,
+      "description": "Number of packages tagged per day.",
+      "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 12,
+        "h": 10,
         "w": 24,
         "x": 0,
-        "y": 100
+        "y": 0
       },
-      "id": 3,
+      "id": 2,
       "legend": {
         "alignAsTable": true,
-        "avg": true,
+        "avg": false,
         "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
+        "max": false,
+        "min": false,
         "rightSide": false,
         "show": true,
         "sideWidth": null,
@@ -66,7 +102,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 2,
+      "linewidth": 1,
       "links": [
 
       ],
@@ -84,12 +120,18 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(sum by (env) (avg_over_time(gitlab_service_ops:rate{type=\"sidekiq\", stage=\"main\", env=\"gprd\", monitor=\"global\"}[1w]))\n or\n sum by (env) (avg_over_time(gitlab_service_ops:rate{type=\"sidekiq\", stage=\"main\", env=\"gprd\", monitor!=\"global\"}[1w]))\n ) * 86400 * 7\n",
+          "expr": "sum(increase(delivery_packages_tagging_total{pkg_type=\"auto_deploy\"}[1d])) by (pkg_type)",
           "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{env}}",
+          "intervalFactor": 2,
+          "legendFormat": "Tagged packages",
           "refId": "A"
+        },
+        {
+          "expr": "clamp_min(\n  sum(increase(delivery_packages_tagging_total{pkg_type=\"auto_deploy\"}[1d])) -\n  sum(increase(delivery_deployment_started_total{target_env=\"gprd\"}[1d]))\n, 0)\n",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "Not promoted",
+          "refId": "B"
         }
       ],
       "thresholds": [
@@ -97,10 +139,10 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Sidekiq - average operations per week",
+      "title": "📦 Number of packages tagged per day",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "type": "graph",
@@ -115,20 +157,22 @@
       },
       "yaxes": [
         {
-          "format": "short",
-          "label": "",
+          "decimals": 0,
+          "format": "none",
+          "label": null,
           "logBase": 1,
           "max": null,
           "min": 0,
           "show": true
         },
         {
-          "format": "short",
+          "decimals": 0,
+          "format": "none",
           "label": null,
           "logBase": 1,
-          "max": 1,
+          "max": null,
           "min": 0,
-          "show": false
+          "show": true
         }
       ]
     },
@@ -138,25 +182,24 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
+      "datasource": null,
       "decimals": 0,
-      "description": "",
-      "fill": 0,
+      "description": "Number of deployments started per day.",
+      "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 100
+        "y": 10
       },
-      "id": 4,
+      "id": 3,
       "legend": {
         "alignAsTable": true,
-        "avg": true,
+        "avg": false,
         "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
+        "max": false,
+        "min": false,
         "rightSide": false,
         "show": true,
         "sideWidth": null,
@@ -164,7 +207,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 2,
+      "linewidth": 1,
       "links": [
 
       ],
@@ -182,11 +225,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(sum by (env, type) (avg_over_time(gitlab_service_ops:rate{type=~\"redis|redis-cache|redis-sidekiq\", stage=\"main\", env=\"gprd\", monitor=\"global\"}[1w]))\nor\nsum by (env, type) (avg_over_time(gitlab_service_ops:rate{type=~\"redis(-cache|-sidekiq)?\", stage=\"main\", env=\"gprd\", monitor!=\"global\"}[1w]))\n) * 86400 * 7\n",
+          "expr": "sum(increase(delivery_deployment_started_total{target_env!=\"gstg-ref\"}[1d])) by (target_env)",
           "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{env}} - {{type}}",
+          "intervalFactor": 2,
+          "legendFormat": "{{target_env}}",
           "refId": "A"
         }
       ],
@@ -195,10 +237,10 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Redis - average operations per week",
+      "title": "🚀 Number of deployments started per day",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "type": "graph",
@@ -213,20 +255,22 @@
       },
       "yaxes": [
         {
-          "format": "short",
-          "label": "",
+          "decimals": 0,
+          "format": "none",
+          "label": null,
           "logBase": 1,
           "max": null,
           "min": 0,
           "show": true
         },
         {
-          "format": "short",
+          "decimals": 0,
+          "format": "none",
           "label": null,
           "logBase": 1,
-          "max": 1,
+          "max": null,
           "min": 0,
-          "show": false
+          "show": true
         }
       ]
     }
@@ -239,8 +283,8 @@
   "style": "light",
   "tags": [
     "managed",
-    "general",
-    "general"
+    "delivery",
+    "release"
   ],
   "templating": {
     "list": [
@@ -259,39 +303,12 @@
         "refresh": 1,
         "regex": "",
         "type": "datasource"
-      },
-      {
-        "allValue": null,
-        "current": {
-          "text": "gprd",
-          "value": "gprd"
-        },
-        "datasource": "$PROMETHEUS_DS",
-        "hide": 0,
-        "includeAll": false,
-        "label": null,
-        "multi": false,
-        "name": "environment",
-        "options": [
-
-        ],
-        "query": "label_values(gitlab_service_ops:rate, environment)",
-        "refresh": 1,
-        "regex": "",
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tags": [
-
-        ],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
       }
     ]
   },
   "time": {
-    "from": "now-6M",
-    "to": "now"
+    "from": "now-14d",
+    "to": "now/m"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -314,7 +331,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "general: Application Demand Indicators",
-  "uid": "general-application-demand",
-  "version": 1905
+  "title": "delivery: Auto-Deploy packages information",
+  "uid": "delivery-auto_deploy_packages",
+  "version": 6
 }
