@@ -1,67 +1,104 @@
 {
+  "__inputs": [
+
+  ],
   "__requires": [
-    {
-      "id": "grafana",
-      "name": "Grafana",
-      "type": "grafana",
-      "version": "5.1.4"
-    },
-    {
-      "id": "graph",
-      "name": "Graph",
-      "type": "panel",
-      "version": "5.0.0"
-    },
-    {
-      "id": "prometheus",
-      "name": "Prometheus",
-      "type": "datasource",
-      "version": "5.0.0"
-    }
+
   ],
   "annotations": {
     "list": [
-      {
-        "builtIn": 1,
-        "datasource": "-- Grafana --",
-        "enable": true,
-        "hide": true,
-        "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
-        "type": "dashboard"
-      }
+
     ]
   },
-  "description": "Process status published by Go Prometheus client library, e.g. memory used, fds open, GC details",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2563868715 at Wed Jun  8 16:13:05 UTC 2022",
   "editable": true,
-  "gnetId": 6671,
-  "graphTooltip": 0,
+  "gnetId": null,
+  "graphTooltip": 1,
+  "hideControls": false,
   "id": null,
-  "iteration": 1530003369936,
   "links": [
 
   ],
   "panels": [
+    {
+      "content": "This dashboard shows information about [delivery-metrics](https://gitlab.com/gitlab-org/release-tools/-/tree/master/metrics) deployment.\n\nThis is for monitoring and debugging and should have no implications on release managers activities.\n",
+      "datasource": null,
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "mode": "markdown",
+      "title": "delivery-metrics Explainer",
+      "type": "text"
+    },
+    {
+      "columns": [
+
+      ],
+      "datasource": "$PROMETHEUS_DS",
+      "description": "This table shows the pods running delivery-metrics with their revision and build date, except during a deployment, we expect to see only one pod",
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 100
+      },
+      "id": 3,
+      "links": [
+
+      ],
+      "styles": [
+
+      ],
+      "targets": [
+        {
+          "expr": "count(delivery_version_info) by (revision, build_date, pod)",
+          "format": "table",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "PODs",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "revision",
+                "build_date",
+                "pod"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
     {
       "aliasColors": {
       },
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "PA258B30F88C30650",
-      "editable": true,
-      "error": false,
+      "datasource": null,
       "fill": 1,
-      "grid": {
-      },
+      "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 12,
         "x": 0,
-        "y": 0
+        "y": 200
       },
-      "id": 1,
-      "isNew": true,
+      "id": 4,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -70,46 +107,41 @@
         "min": false,
         "rightSide": false,
         "show": true,
+        "sideWidth": null,
         "total": false,
         "values": true
       },
       "lines": true,
-      "linewidth": 2,
+      "linewidth": 1,
       "links": [
 
       ],
-      "nullPointMode": "connected",
+      "nullPointMode": "null",
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
+      "repeat": null,
       "seriesOverrides": [
-        {
-          "alias": "resident",
-          "yaxis": 2
-        }
+
       ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "process_resident_memory_bytes{namespace=~\"^($namespace)$\",pod=~\"^($pod)$\"}",
+          "expr": "process_resident_memory_bytes{namespace=\"delivery\",service=\"delivery-metrics\"}",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{pod}} - resident",
-          "metric": "process_resident_memory_bytes",
-          "refId": "A",
-          "step": 4
+          "refId": "A"
         },
         {
-          "expr": "process_virtual_memory_bytes{namespace=~\"^($namespace)$\",pod=~\"^($pod)$\"}",
+          "expr": "process_virtual_memory_bytes{namespace=\"delivery\",service=\"delivery-metrics\"}",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{pod}} - virtual",
-          "metric": "process_virtual_memory_bytes",
-          "refId": "B",
-          "step": 4
+          "refId": "B"
         }
       ],
       "thresholds": [
@@ -119,10 +151,9 @@
       "timeShift": null,
       "title": "process memory",
       "tooltip": {
-        "msResolution": false,
         "shared": true,
         "sort": 0,
-        "value_type": "cumulative"
+        "value_type": "individual"
       },
       "type": "graph",
       "xaxis": {
@@ -151,11 +182,7 @@
           "min": null,
           "show": true
         }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
+      ]
     },
     {
       "aliasColors": {
@@ -163,67 +190,59 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "PA258B30F88C30650",
-      "editable": true,
-      "error": false,
+      "datasource": null,
       "fill": 1,
-      "grid": {
-      },
+      "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 12,
         "x": 12,
-        "y": 0
+        "y": 200
       },
-      "id": 4,
-      "isNew": true,
+      "id": 5,
       "legend": {
         "alignAsTable": true,
         "avg": true,
         "current": true,
         "max": true,
         "min": false,
+        "rightSide": false,
         "show": true,
+        "sideWidth": null,
         "total": false,
         "values": true
       },
       "lines": true,
-      "linewidth": 2,
+      "linewidth": 1,
       "links": [
 
       ],
-      "nullPointMode": "connected",
+      "nullPointMode": "null",
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
+      "repeat": null,
       "seriesOverrides": [
-        {
-          "alias": "resident",
-          "yaxis": 1
-        }
+
       ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(process_resident_memory_bytes{namespace=~\"^($namespace)$\",pod=~\"^($pod)$\"}[$interval])",
+          "expr": "rate(process_resident_memory_bytes{namespace=\"delivery\",service=\"delivery-metrics\"}[$__interval])",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{pod}} - resident",
-          "metric": "process_resident_memory_bytes",
-          "refId": "A",
-          "step": 4
+          "refId": "A"
         },
         {
-          "expr": "deriv(process_virtual_memory_bytes{namespace=~\"^($namespace)$\",pod=~\"^($pod)$\"}[$interval])",
+          "expr": "deriv(process_virtual_memory_bytes{namespace=\"delivery\",service=\"delivery-metrics\"}[$__interval])",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{pod}} - virtual",
-          "metric": "process_virtual_memory_bytes",
-          "refId": "B",
-          "step": 4
+          "refId": "B"
         }
       ],
       "thresholds": [
@@ -233,10 +252,9 @@
       "timeShift": null,
       "title": "process memory deriv",
       "tooltip": {
-        "msResolution": false,
         "shared": true,
         "sort": 0,
-        "value_type": "cumulative"
+        "value_type": "individual"
       },
       "type": "graph",
       "xaxis": {
@@ -265,11 +283,7 @@
           "min": null,
           "show": true
         }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
+      ]
     },
     {
       "aliasColors": {
@@ -277,86 +291,73 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "PA258B30F88C30650",
-      "editable": true,
-      "error": false,
+      "datasource": null,
       "fill": 1,
-      "grid": {
-      },
+      "fillGradient": 0,
       "gridPos": {
-        "h": 7,
+        "h": 10,
         "w": 12,
         "x": 0,
-        "y": 8
+        "y": 210
       },
-      "id": 2,
-      "isNew": true,
+      "id": 6,
       "legend": {
         "alignAsTable": true,
         "avg": true,
         "current": true,
         "max": true,
         "min": false,
+        "rightSide": false,
         "show": true,
+        "sideWidth": null,
         "total": false,
         "values": true
       },
       "lines": true,
-      "linewidth": 2,
+      "linewidth": 1,
       "links": [
 
       ],
-      "nullPointMode": "connected",
+      "nullPointMode": "null",
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
+      "repeat": null,
       "seriesOverrides": [
-        {
-          "alias": "alloc rate",
-          "yaxis": 2
-        }
+
       ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "go_memstats_alloc_bytes{namespace=~\"^($namespace)$\",pod=~\"^($pod)$\"}",
+          "expr": "go_memstats_alloc_bytes{namespace=\"delivery\",service=\"delivery-metrics\"}",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{pod}} - bytes allocated",
-          "metric": "go_memstats_alloc_bytes",
-          "refId": "A",
-          "step": 4
+          "refId": "A"
         },
         {
-          "expr": "rate(go_memstats_alloc_bytes_total{namespace=~\"^($namespace)$\",pod=~\"^($pod)$\"}[30s])",
+          "expr": "rate(go_memstats_alloc_bytes_total{namespace=\"delivery\",service=\"delivery-metrics\"}[30s])",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{pod}} - alloc rate",
-          "metric": "go_memstats_alloc_bytes_total",
-          "refId": "B",
-          "step": 4
+          "refId": "B"
         },
         {
-          "expr": "go_memstats_stack_inuse_bytes{namespace=~\"^($namespace)$\",pod=~\"^($pod)$\"}",
+          "expr": "go_memstats_stack_inuse_bytes{namespace=\"delivery\",service=\"delivery-metrics\"}",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{pod}} - stack inuse",
-          "metric": "go_memstats_stack_inuse_bytes",
-          "refId": "C",
-          "step": 4
+          "refId": "C"
         },
         {
-          "expr": "go_memstats_heap_inuse_bytes{namespace=~\"^($namespace)$\",pod=~\"^($pod)$\"}",
+          "expr": "go_memstats_heap_inuse_bytes{namespace=\"delivery\",service=\"delivery-metrics\"}",
           "format": "time_series",
-          "hide": false,
           "intervalFactor": 2,
           "legendFormat": "{{pod}} - heap inuse",
-          "metric": "go_memstats_heap_inuse_bytes",
-          "refId": "D",
-          "step": 4
+          "refId": "D"
         }
       ],
       "thresholds": [
@@ -364,12 +365,11 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "go memstats",
+      "title": "go memestat",
       "tooltip": {
-        "msResolution": false,
         "shared": true,
         "sort": 0,
-        "value_type": "cumulative"
+        "value_type": "individual"
       },
       "type": "graph",
       "xaxis": {
@@ -398,11 +398,7 @@
           "min": null,
           "show": true
         }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
+      ]
     },
     {
       "aliasColors": {
@@ -410,86 +406,73 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "PA258B30F88C30650",
-      "editable": true,
-      "error": false,
+      "datasource": null,
       "fill": 1,
-      "grid": {
-      },
+      "fillGradient": 0,
       "gridPos": {
-        "h": 7,
+        "h": 10,
         "w": 12,
         "x": 12,
-        "y": 8
+        "y": 210
       },
-      "id": 5,
-      "isNew": true,
+      "id": 7,
       "legend": {
         "alignAsTable": true,
         "avg": true,
         "current": true,
         "max": true,
         "min": false,
+        "rightSide": false,
         "show": true,
+        "sideWidth": null,
         "total": false,
         "values": true
       },
       "lines": true,
-      "linewidth": 2,
+      "linewidth": 1,
       "links": [
 
       ],
-      "nullPointMode": "connected",
+      "nullPointMode": "null",
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
+      "repeat": null,
       "seriesOverrides": [
-        {
-          "alias": "alloc rate",
-          "yaxis": 2
-        }
+
       ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "deriv(go_memstats_alloc_bytes{namespace=~\"^($namespace)$\",pod=~\"^($pod)$\"}[$interval])",
+          "expr": "deriv(go_memstats_alloc_bytes{namespace=\"delivery\",service=\"delivery-metrics\"}[$__interval])",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{pod}} - bytes allocated",
-          "metric": "go_memstats_alloc_bytes",
-          "refId": "A",
-          "step": 4
+          "refId": "A"
         },
         {
-          "expr": "rate(go_memstats_alloc_bytes_total{namespace=~\"^($namespace)$\",pod=~\"^($pod)$\"}[$interval])",
+          "expr": "rate(go_memstats_alloc_bytes_total{namespace=\"delivery\",service=\"delivery-metrics\"}[$__interval])",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{pod}} - alloc rate",
-          "metric": "go_memstats_alloc_bytes_total",
-          "refId": "B",
-          "step": 4
+          "refId": "B"
         },
         {
-          "expr": "deriv(go_memstats_stack_inuse_bytes{namespace=~\"^($namespace)$\",pod=~\"^($pod)$\"}[$interval])",
+          "expr": "deriv(go_memstats_stack_inuse_bytes{namespace=\"delivery\",service=\"delivery-metrics\"}[$__interval])",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{pod}} - stack inuse",
-          "metric": "go_memstats_stack_inuse_bytes",
-          "refId": "C",
-          "step": 4
+          "refId": "C"
         },
         {
-          "expr": "deriv(go_memstats_heap_inuse_bytes{namespace=~\"^($namespace)$\",pod=~\"^($pod)$\"}[$interval])",
+          "expr": "deriv(go_memstats_heap_inuse_bytes{namespace=\"delivery\",service=\"delivery-metrics\"}[$__interval])",
           "format": "time_series",
-          "hide": false,
           "intervalFactor": 2,
           "legendFormat": "{{pod}} - heap inuse",
-          "metric": "go_memstats_heap_inuse_bytes",
-          "refId": "D",
-          "step": 4
+          "refId": "D"
         }
       ],
       "thresholds": [
@@ -499,10 +482,9 @@
       "timeShift": null,
       "title": "go memstats deriv",
       "tooltip": {
-        "msResolution": false,
         "shared": true,
         "sort": 0,
-        "value_type": "cumulative"
+        "value_type": "individual"
       },
       "type": "graph",
       "xaxis": {
@@ -531,11 +513,7 @@
           "min": null,
           "show": true
         }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
+      ]
     },
     {
       "aliasColors": {
@@ -543,40 +521,39 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "PA258B30F88C30650",
-      "editable": true,
-      "error": false,
+      "datasource": null,
       "fill": 1,
-      "grid": {
-      },
+      "fillGradient": 0,
       "gridPos": {
-        "h": 7,
+        "h": 10,
         "w": 12,
         "x": 0,
-        "y": 15
+        "y": 300
       },
-      "id": 3,
-      "isNew": true,
+      "id": 8,
       "legend": {
         "alignAsTable": true,
         "avg": true,
         "current": true,
         "max": true,
         "min": false,
+        "rightSide": false,
         "show": true,
+        "sideWidth": null,
         "total": false,
         "values": true
       },
       "lines": true,
-      "linewidth": 2,
+      "linewidth": 1,
       "links": [
 
       ],
-      "nullPointMode": "connected",
+      "nullPointMode": "null",
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
+      "repeat": null,
       "seriesOverrides": [
 
       ],
@@ -585,13 +562,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "process_open_fds{namespace=~\"^($namespace)$\",pod=~\"^($pod)$\"}",
+          "expr": "process_open_fds{namespace=\"delivery\",service=\"delivery-metrics\"}",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{pod}}",
-          "metric": "process_open_fds",
-          "refId": "A",
-          "step": 4
+          "refId": "A"
         }
       ],
       "thresholds": [
@@ -601,10 +576,9 @@
       "timeShift": null,
       "title": "open fds",
       "tooltip": {
-        "msResolution": false,
         "shared": true,
         "sort": 0,
-        "value_type": "cumulative"
+        "value_type": "individual"
       },
       "type": "graph",
       "xaxis": {
@@ -633,11 +607,7 @@
           "min": null,
           "show": true
         }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
+      ]
     },
     {
       "aliasColors": {
@@ -645,40 +615,39 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "PA258B30F88C30650",
-      "editable": true,
-      "error": false,
+      "datasource": null,
       "fill": 1,
-      "grid": {
-      },
+      "fillGradient": 0,
       "gridPos": {
-        "h": 7,
+        "h": 10,
         "w": 12,
         "x": 12,
-        "y": 15
+        "y": 300
       },
-      "id": 6,
-      "isNew": true,
+      "id": 9,
       "legend": {
         "alignAsTable": true,
         "avg": true,
         "current": true,
         "max": true,
         "min": false,
+        "rightSide": false,
         "show": true,
+        "sideWidth": null,
         "total": false,
         "values": true
       },
       "lines": true,
-      "linewidth": 2,
+      "linewidth": 1,
       "links": [
 
       ],
-      "nullPointMode": "connected",
+      "nullPointMode": "null",
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
+      "repeat": null,
       "seriesOverrides": [
 
       ],
@@ -687,13 +656,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "deriv(process_open_fds{namespace=~\"^($namespace)$\",pod=~\"^($pod)$\"}[$interval])",
+          "expr": "deriv(process_open_fds{namespace=\"delivery\",service=\"delivery-metrics\"}[$__interval])",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{pod}}",
-          "metric": "process_open_fds",
-          "refId": "A",
-          "step": 4
+          "refId": "A"
         }
       ],
       "thresholds": [
@@ -703,10 +670,9 @@
       "timeShift": null,
       "title": "open fds deriv",
       "tooltip": {
-        "msResolution": false,
         "shared": true,
         "sort": 0,
-        "value_type": "cumulative"
+        "value_type": "individual"
       },
       "type": "graph",
       "xaxis": {
@@ -735,11 +701,7 @@
           "min": null,
           "show": true
         }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
+      ]
     },
     {
       "aliasColors": {
@@ -747,40 +709,39 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "PA258B30F88C30650",
-      "editable": true,
-      "error": false,
+      "datasource": null,
       "fill": 1,
-      "grid": {
-      },
+      "fillGradient": 0,
       "gridPos": {
-        "h": 7,
+        "h": 10,
         "w": 12,
         "x": 0,
-        "y": 22
+        "y": 400
       },
-      "id": 7,
-      "isNew": true,
+      "id": 10,
       "legend": {
         "alignAsTable": true,
         "avg": true,
         "current": true,
         "max": true,
         "min": false,
+        "rightSide": false,
         "show": true,
+        "sideWidth": null,
         "total": false,
         "values": true
       },
       "lines": true,
-      "linewidth": 2,
+      "linewidth": 1,
       "links": [
 
       ],
-      "nullPointMode": "connected",
+      "nullPointMode": "null",
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
+      "repeat": null,
       "seriesOverrides": [
 
       ],
@@ -789,13 +750,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "go_goroutines{namespace=~\"^($namespace)$\",pod=~\"^($pod)$\"}",
+          "expr": "go_goroutines{namespace=\"delivery\",service=\"delivery-metrics\"}",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{pod}}",
-          "metric": "go_goroutines",
-          "refId": "A",
-          "step": 4
+          "refId": "A"
         }
       ],
       "thresholds": [
@@ -803,114 +762,11 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Goroutines",
+      "title": "gorountines",
       "tooltip": {
-        "msResolution": false,
         "shared": true,
         "sort": 0,
-        "value_type": "cumulative"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "PA258B30F88C30650",
-      "editable": true,
-      "error": false,
-      "fill": 1,
-      "grid": {
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
-        "y": 22
-      },
-      "id": 8,
-      "isNew": true,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [
-
-      ],
-      "nullPointMode": "connected",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "go_gc_duration_seconds{namespace=~\"^($namespace)$\",pod=~\"^($pod)$\"}",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "{{pod}}: {{quantile}}",
-          "metric": "go_gc_duration_seconds",
-          "refId": "A",
-          "step": 4
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "GC duration quantiles",
-      "tooltip": {
-        "msResolution": false,
-        "shared": true,
-        "sort": 0,
-        "value_type": "cumulative"
+        "value_type": "individual"
       },
       "type": "graph",
       "xaxis": {
@@ -939,134 +795,158 @@
           "min": null,
           "show": true
         }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 400
+      },
+      "id": 11,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [
+
       ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "go_gc_duration_seconds{namespace=\"delivery\",service=\"delivery-metrics\"}",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "{{pod}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "GC duration quintile",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ]
+    },
+    {
+      "content": "Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards)\n",
+      "datasource": null,
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 110000
+      },
+      "id": 12,
+      "mode": "markdown",
+      "title": "Source",
+      "type": "text"
     }
   ],
-  "refresh": "5m",
-  "schemaVersion": 17,
-  "style": "dark",
+  "refresh": "",
+  "rows": [
+
+  ],
+  "schemaVersion": 16,
+  "style": "light",
   "tags": [
-    "unmanaged"
+    "managed",
+    "delivery"
   ],
   "templating": {
     "list": [
       {
-        "allValue": ".*",
         "current": {
+          "text": "Global",
+          "value": "Global"
         },
-        "datasource": "PA258B30F88C30650",
         "hide": 0,
-        "includeAll": true,
         "label": null,
-        "multi": true,
-        "name": "namespace",
+        "name": "PROMETHEUS_DS",
         "options": [
 
         ],
-        "query": "label_values(go_memstats_alloc_bytes, namespace)",
-        "refresh": 2,
+        "query": "prometheus",
+        "refresh": 1,
         "regex": "",
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tags": [
-
-        ],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": ".*",
-        "current": {
-        },
-        "datasource": "PA258B30F88C30650",
-        "hide": 0,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "pod",
-        "options": [
-
-        ],
-        "query": "label_values(process_resident_memory_bytes, pod)",
-        "refresh": 2,
-        "regex": "",
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tags": [
-
-        ],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "auto": false,
-        "auto_count": 30,
-        "auto_min": "10s",
-        "current": {
-          "text": "5m",
-          "value": "5m"
-        },
-        "datasource": null,
-        "hide": 0,
-        "includeAll": false,
-        "label": "",
-        "multi": false,
-        "name": "interval",
-        "options": [
-          {
-            "selected": false,
-            "text": "1m",
-            "value": "1m"
-          },
-          {
-            "selected": true,
-            "text": "5m",
-            "value": "5m"
-          },
-          {
-            "selected": false,
-            "text": "10m",
-            "value": "10m"
-          },
-          {
-            "selected": false,
-            "text": "30m",
-            "value": "30m"
-          },
-          {
-            "selected": false,
-            "text": "1h",
-            "value": "1h"
-          }
-        ],
-        "query": "1m,5m,10m,30m,1h",
-        "refresh": 2,
-        "type": "interval"
+        "type": "datasource"
       }
     ]
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-7d",
     "to": "now"
   },
   "timepicker": {
     "refresh_intervals": [
-      "5s",
-      "10s",
-      "30s",
       "1m",
       "5m",
+      "10m",
       "15m",
-      "30m",
-      "1h",
-      "2h",
-      "1d"
+      "30m"
     ],
     "time_options": [
       "5m",
@@ -1080,8 +960,8 @@
       "30d"
     ]
   },
-  "timezone": "browser",
-  "title": "Go Processes",
-  "uid": "ypFZFgvmz",
-  "version": 2
+  "timezone": "utc",
+  "title": "delivery: delivery-metrics deployment",
+  "uid": "delivery-delivery_metrics",
+  "version": 1
 }
