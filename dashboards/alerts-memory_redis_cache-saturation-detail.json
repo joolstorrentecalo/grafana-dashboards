@@ -126,7 +126,7 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
-      "description": "This saturation metric measures the capacity of the Postgres primary instance to perform autovacuum operations\non all tables.\n\nIt measures the total time spent in vacuum operations, over a 24 hour period divided the maximum number of autovacuum processes\nto give the total vacuum activity, in seconds. This value is divided by the TXID wraparound horizon for the database to\nproduce a percentage.\n\nThis value will approach 100% as two situation occur:\n\n1. The amount of time spent performing autovacuum operations goes up, due to high dead-tuple generation in the database.\n1. The write transaction volume goes up, decreasing the wraparound horizon.\n\nIf the total time spent vacuuming approached the wraparound time horizon, this would mean that the database would be at risk\nof being unable to complete a vacuum of all tables within the wraparound time horizon. This would put the database at risk of XID\nwraparound and immediate shutdown.\n Lower is better.",
+      "description": "Memory utilization per device per node.\n\n\nredis-cache has a separate saturation point for this to exclude it from capacity planning calculations.\n Lower is better.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -135,7 +135,7 @@
         "x": 0,
         "y": 0
       },
-      "id": 4019870218,
+      "id": 2178235391,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -217,20 +217,20 @@
         }
       ],
       "spaceLength": 10,
-      "stableId": "saturation-pg_txid_vacuum_to_wraparound",
+      "stableId": "saturation-memory_redis_cache",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage) (\n  clamp_min(\n    clamp_max(\n      (\n        sum by (environment, tier, type, stage) (\n          increase(fluentd_pg_auto_vacuum_elapsed_seconds_total{env=\"$environment\",stage=\"$stage\",type=\"$type\"}[1d])\n        )\n        / on(environment, type) group_left() (\n          pg_settings_autovacuum_max_workers and\n          on (instance) pg_replication_is_replica == 0\n        )\n      )\n      /\n      (\n        (2^31 - 10^6)\n        /\n        (\n          avg by (environment, tier, type, stage) (\n            deriv(pg_txid_current{env=\"$environment\",stage=\"$stage\",type=\"$type\"}[1d]) and\n            on (instance) pg_replication_is_replica == 0\n          )\n        )\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, fqdn) (\n  clamp_min(\n    clamp_max(\n      instance:node_memory_utilization:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\"} or instance:node_memory_utilisation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "{{ type }}",
+          "legendFormat": "{{ fqdn }}",
           "refId": "A"
         },
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"pg_txid_vacuum_to_wraparound\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"memory_redis_cache\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -238,7 +238,7 @@
           "refId": "B"
         },
         {
-          "expr": "gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"pg_txid_vacuum_to_wraparound\"}\n",
+          "expr": "gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"memory_redis_cache\"}\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -246,7 +246,7 @@
           "refId": "C"
         },
         {
-          "expr": "gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"pg_txid_vacuum_to_wraparound\"}\n",
+          "expr": "gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"memory_redis_cache\"}\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -254,7 +254,7 @@
           "refId": "D"
         },
         {
-          "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"pg_txid_vacuum_to_wraparound\"}) by (component)\n",
+          "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"memory_redis_cache\"}) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -262,7 +262,7 @@
           "refId": "E"
         },
         {
-          "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"pg_txid_vacuum_to_wraparound\"}) by (component)\n",
+          "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"memory_redis_cache\"}) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -275,7 +275,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "pg_txid_vacuum_to_wraparound component saturation: Total autovacuum time to TXID wraparound horizon",
+      "title": "memory_redis_cache component saturation: Memory Utilization per Node",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -311,7 +311,7 @@
       ]
     },
     {
-      "content": "## Total autovacuum time to TXID wraparound horizon\n\nThis saturation metric measures the capacity of the Postgres primary instance to perform autovacuum operations\non all tables.\n\nIt measures the total time spent in vacuum operations, over a 24 hour period divided the maximum number of autovacuum processes\nto give the total vacuum activity, in seconds. This value is divided by the TXID wraparound horizon for the database to\nproduce a percentage.\n\nThis value will approach 100% as two situation occur:\n\n1. The amount of time spent performing autovacuum operations goes up, due to high dead-tuple generation in the database.\n1. The write transaction volume goes up, decreasing the wraparound horizon.\n\nIf the total time spent vacuuming approached the wraparound time horizon, this would mean that the database would be at risk\nof being unable to complete a vacuum of all tables within the wraparound time horizon. This would put the database at risk of XID\nwraparound and immediate shutdown.\n\n\n## What to do from here here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=pg_txid_vacuum_to_wraparound)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+pg_txid_vacuum_to_wraparound&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
+      "content": "## Memory Utilization per Node\n\nMemory utilization per device per node.\n\n\nredis-cache has a separate saturation point for this to exclude it from capacity planning calculations.\n\n\n## What to do from here here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=memory_redis_cache)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+memory_redis_cache&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
       "datasource": null,
       "gridPos": {
         "h": 14,
@@ -466,8 +466,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "patroni",
-          "value": "patroni"
+          "text": "redis-cache",
+          "value": "redis-cache"
         },
         "datasource": "$PROMETHEUS_DS",
         "hide": 0,
@@ -546,7 +546,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "alerts: pg_txid_vacuum_to_wraparound: Saturation Detail",
-  "uid": "alerts-sat_pg_txid_vac_wraparound",
-  "version": 683
+  "title": "alerts: memory_redis_cache: Saturation Detail",
+  "uid": "alerts-sat_memory_redis_cache",
+  "version": 1
 }
