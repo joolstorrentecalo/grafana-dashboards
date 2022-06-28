@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2644651785 at Mon Jun 27 13:27:16 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2646409972 at Mon Jun 27 18:31:22 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -1612,7 +1612,7 @@
       ]
     },
     {
-      "content": "### Description\n\nMeasures aggregated HTTP request traffic through the HAProxy.\n5xx responses are considered to be failures.\n\n",
+      "content": "### Observability Tools\n\n* [Google Load Balancer](https://console.cloud.google.com/net-services/loadbalancing/details/http/k8s2-um-8kvupfyn-camoproxy-camoproxy-6ygs428t?project=gitlab-production)\n* [Stackdriver Logs: Loadbalancer Access Logs](https://console.cloud.google.com/logs/query;query=resource%2Elabels%2Eurl%5Fmap%5Fname%3D%22k8s2%2Dum%2D8kvupfyn%2Dcamoproxy%2Dcamoproxy%2D6ygs428t%22%0Aresource%2Etype%3D%22http%5Fload%5Fbalancer%22;timeRange=PT30M?project=gitlab-production)\n* [Stackdriver Logs: Loadbalancer Access 5xx Logs](https://console.cloud.google.com/logs/query;query=httpRequest%2Estatus%3E%3D500%0Aresource%2Elabels%2Eurl%5Fmap%5Fname%3D%22k8s2%2Dum%2D8kvupfyn%2Dcamoproxy%2Dcamoproxy%2D6ygs428t%22%0Aresource%2Etype%3D%22http%5Fload%5Fbalancer%22;timeRange=PT30M?project=gitlab-production)\n\n",
       "gridPos": {
         "h": 8,
         "w": 8,
@@ -2521,11 +2521,487 @@
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
-            "w": 8,
+            "w": 12,
             "x": 0,
             "y": 0
           },
           "id": 21,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by () (\n  rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{env=\"$environment\",environment=\"$environment\",project_id=\"gitlab-production\",response_code_class=\"500\",url_map_name=\"k8s2-um-8kvupfyn-camoproxy-camoproxy-6ygs428t\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "overall",
+              "refId": "A"
+            }
+          ],
+          "title": "loadbalancer Errors - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 0
+          },
+          "id": 22,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by () (\n  rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{env=\"$environment\",environment=\"$environment\",project_id=\"gitlab-production\",url_map_name=\"k8s2-um-8kvupfyn-camoproxy-camoproxy-6ygs428t\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "overall",
+              "refId": "A"
+            }
+          ],
+          "title": "loadbalancer RPS - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 10
+          },
+          "id": 23,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (proxy_continent) (\n  rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{env=\"$environment\",environment=\"$environment\",project_id=\"gitlab-production\",proxy_continent!=\"\",response_code_class=\"500\",url_map_name=\"k8s2-um-8kvupfyn-camoproxy-camoproxy-6ygs428t\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{proxy_continent}}",
+              "refId": "A"
+            }
+          ],
+          "title": "loadbalancer Errors - per proxy_continent",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 10
+          },
+          "id": 24,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (proxy_continent) (\n  rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{env=\"$environment\",environment=\"$environment\",project_id=\"gitlab-production\",proxy_continent!=\"\",url_map_name=\"k8s2-um-8kvupfyn-camoproxy-camoproxy-6ygs428t\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{proxy_continent}}",
+              "refId": "A"
+            }
+          ],
+          "title": "loadbalancer RPS - per proxy_continent",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 20
+          },
+          "id": 25,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (response_code) (\n  rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{env=\"$environment\",environment=\"$environment\",project_id=\"gitlab-production\",response_code!=\"\",response_code_class=\"500\",url_map_name=\"k8s2-um-8kvupfyn-camoproxy-camoproxy-6ygs428t\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{response_code}}",
+              "refId": "A"
+            }
+          ],
+          "title": "loadbalancer Errors - per response_code",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 20
+          },
+          "id": 26,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (response_code) (\n  rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{env=\"$environment\",environment=\"$environment\",project_id=\"gitlab-production\",response_code!=\"\",url_map_name=\"k8s2-um-8kvupfyn-camoproxy-camoproxy-6ygs428t\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{response_code}}",
+              "refId": "A"
+            }
+          ],
+          "title": "loadbalancer RPS - per response_code",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "🔬 SLI Detail: loadbalancer",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "collapse": true,
+      "collapsed": true,
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 110
+      },
+      "id": 27,
+      "panels": [
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 0
+          },
+          "id": 28,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2621,7 +3097,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 22,
+          "id": 29,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2697,7 +3173,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 23,
+          "id": 30,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2773,7 +3249,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 24,
+          "id": 31,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2869,7 +3345,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 25,
+          "id": 32,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2950,7 +3426,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 26,
+          "id": 33,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3026,7 +3502,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 27,
+          "id": 34,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3105,7 +3581,7 @@
         "x": 0,
         "y": 400
       },
-      "id": 28,
+      "id": 35,
       "panels": [
         {
           "aliasColors": {
@@ -3124,7 +3600,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 29,
+          "id": 36,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3222,7 +3698,7 @@
             "x": 12,
             "y": 1
           },
-          "id": 30,
+          "id": 37,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3321,7 +3797,7 @@
         "x": 0,
         "y": 500
       },
-      "id": 31,
+      "id": 38,
       "panels": [
         {
           "aliasColors": {
@@ -3811,7 +4287,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, horizontalpodautoscaler, shard) (\n  clamp_min(\n    clamp_max(\n      kube_horizontalpodautoscaler_status_desired_replicas:labeled{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"camoproxy\", shard!~\"authorized-projects-throttled|database-throttled|elasticsearch|gitaly-throttled|imports|urgent-other\"}\n      /\n      kube_horizontalpodautoscaler_spec_max_replicas:labeled{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"camoproxy\", shard!~\"authorized-projects-throttled|database-throttled|elasticsearch|gitaly-throttled|imports|urgent-other\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, horizontalpodautoscaler, shard) (\n  clamp_min(\n    clamp_max(\n      kube_horizontalpodautoscaler_status_desired_replicas:labeled{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"camoproxy\", shard!~\"database-throttled|elasticsearch|gitaly-throttled|imports|urgent-other\"}\n      /\n      kube_horizontalpodautoscaler_spec_max_replicas:labeled{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"camoproxy\", shard!~\"database-throttled|elasticsearch|gitaly-throttled|imports|urgent-other\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -4109,7 +4585,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 36,
+      "id": 43,
       "panels": [
 
       ],
@@ -4138,7 +4614,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 37,
+      "id": 44,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -4236,7 +4712,7 @@
         "x": 12,
         "y": 1000
       },
-      "id": 38,
+      "id": 45,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -4348,7 +4824,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 39,
+      "id": 46,
       "panels": [
         {
           "colors": [
@@ -4369,7 +4845,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 40,
+          "id": 47,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -4482,7 +4958,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 41,
+          "id": 48,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -4593,7 +5069,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 42,
+          "id": 49,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -4698,7 +5174,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 43,
+      "id": 50,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -4821,5 +5297,5 @@
   "timezone": "utc",
   "title": "camoproxy: Overview",
   "uid": "camoproxy-main",
-  "version": 2106
+  "version": 2109
 }
