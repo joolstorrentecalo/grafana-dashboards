@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2652430407 at Tue Jun 28 20:00:11 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2656912430 at Wed Jun 29 15:08:52 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -93,7 +93,7 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 7,
-        "w": 8,
+        "w": 6,
         "x": 0,
         "y": 1
       },
@@ -431,7 +431,7 @@
       },
       "gridPos": {
         "h": 1,
-        "w": 8,
+        "w": 6,
         "x": 0,
         "y": 8
       },
@@ -472,16 +472,389 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
+      "description": "Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 1
+      },
+      "id": 5,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": [
+          {
+            "targetBlank": true,
+            "title": "customersdot Service Error-Rate SLO Analysis",
+            "url": "/d/alerts-service_slo_error?${__url_time_range}&${__all_variables}&var-type=customersdot&var-stage=$stage"
+          }
+        ]
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "6h Degradation SLO (5% of monthly error budget)",
+          "color": "#FF4500",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "connected",
+          "spaceLength": 10,
+          "zindex": -2
+        },
+        {
+          "alias": "1h Outage SLO (2% of monthly error budget)",
+          "color": "#F2495C",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 4,
+          "nullPointMode": "connected",
+          "spaceLength": 4,
+          "zindex": -2
+        },
+        {
+          "alias": "customersdot error ratio",
+          "color": "#E7D551",
+          "fillBelowTo": "customersdot error ratio avg",
+          "zindex": 3
+        },
+        {
+          "alias": "customersdot error ratio avg",
+          "color": "#5794F2",
+          "dashLength": 1,
+          "fillGradient": 10,
+          "linewidth": 1,
+          "spaceLength": 1,
+          "zindex": -3
+        },
+        {
+          "alias": "last week",
+          "color": "#dddddd80",
+          "dashLength": 4,
+          "dashes": true,
+          "fill": 0,
+          "legend": true,
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "spaceLength": 2,
+          "zindex": -3
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "service-customersdot-error-rate",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "clamp_max(\n  max_over_time(gitlab_service_errors:ratio_5m{env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"customersdot\"}[$__interval])\n,\n  1\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "customersdot error ratio",
+          "refId": "A"
+        },
+        {
+          "expr": "(6 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"customersdot\"})\n)\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 3,
+          "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+          "refId": "B"
+        },
+        {
+          "expr": "(14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"customersdot\"})\n)\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 3,
+          "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+          "refId": "C"
+        },
+        {
+          "expr": "clamp_max(\n  avg_over_time(gitlab_service_errors:ratio_5m{env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"customersdot\"}[$__interval])\n,\n  1\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "customersdot error ratio avg",
+          "refId": "D"
+        },
+        {
+          "expr": "clamp_max(\n  gitlab_service_errors:ratio_5m{env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"customersdot\"} offset 1w\n,\n  scalar(max((14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"customersdot\"})\n)\n))\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "last week",
+          "refId": "E"
+        }
+      ],
+      "title": "customersdot Service Error Ratio",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "",
+          "logBase": 1,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "displayName": "Status",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "0": {
+                  "color": "black",
+                  "index": 0,
+                  "text": "Healthy"
+                },
+                "1": {
+                  "color": "orange",
+                  "index": 1,
+                  "text": "Warning 🔥"
+                },
+                "10": {
+                  "color": "orange",
+                  "index": 10,
+                  "text": "Warning 🔥🥵"
+                },
+                "11": {
+                  "color": "red",
+                  "index": 11,
+                  "text": "Degraded 🔥🥵"
+                },
+                "12": {
+                  "color": "red",
+                  "index": 12,
+                  "text": "Degraded 🥵"
+                },
+                "13": {
+                  "color": "red",
+                  "index": 13,
+                  "text": "Degraded 🔥🥵"
+                },
+                "14": {
+                  "color": "red",
+                  "index": 14,
+                  "text": "Degraded 🔥🥵"
+                },
+                "15": {
+                  "color": "red",
+                  "index": 15,
+                  "text": "Degraded 🔥🥵"
+                },
+                "2": {
+                  "color": "orange",
+                  "index": 2,
+                  "text": "Warning 🔥"
+                },
+                "3": {
+                  "color": "red",
+                  "index": 3,
+                  "text": "Degraded 🔥"
+                },
+                "4": {
+                  "color": "orange",
+                  "index": 4,
+                  "text": "Warning 🥵"
+                },
+                "5": {
+                  "color": "orange",
+                  "index": 5,
+                  "text": "Warning 🔥🥵"
+                },
+                "6": {
+                  "color": "orange",
+                  "index": 6,
+                  "text": "Warning 🔥🥵"
+                },
+                "7": {
+                  "color": "red",
+                  "index": 7,
+                  "text": "Degraded 🔥🥵"
+                },
+                "8": {
+                  "color": "orange",
+                  "index": 8,
+                  "text": "Warning 🥵"
+                },
+                "9": {
+                  "color": "orange",
+                  "index": 9,
+                  "text": "Warning 🔥🥵"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "black",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "orange",
+                "value": 2
+              },
+              {
+                "color": "red",
+                "value": 3
+              },
+              {
+                "color": "orange",
+                "value": 4
+              },
+              {
+                "color": "orange",
+                "value": 5
+              },
+              {
+                "color": "orange",
+                "value": 6
+              },
+              {
+                "color": "red",
+                "value": 7
+              },
+              {
+                "color": "orange",
+                "value": 8
+              },
+              {
+                "color": "orange",
+                "value": 9
+              },
+              {
+                "color": "orange",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 11
+              },
+              {
+                "color": "red",
+                "value": 12
+              },
+              {
+                "color": "red",
+                "value": 13
+              },
+              {
+                "color": "red",
+                "value": 14
+              },
+              {
+                "color": "red",
+                "value": 15
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 6,
+        "x": 6,
+        "y": 8
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_service_errors:ratio_1h{env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"customersdot\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_service_errors:ratio_5m{env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"customersdot\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"customersdot\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_service_errors:ratio_1h{env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"customersdot\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"customersdot\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_service_errors:ratio_30m{env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"customersdot\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"customersdot\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_service_errors:ratio_6h{env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"customersdot\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"customersdot\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "customersdot Service | Errors",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
       "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 8,
+        "w": 6,
+        "x": 12,
         "y": 1
       },
-      "id": 5,
+      "id": 7,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -623,11 +996,11 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 16,
+        "w": 6,
+        "x": 18,
         "y": 1
       },
-      "id": 6,
+      "id": 8,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -698,7 +1071,7 @@
         "x": 0,
         "y": 20
       },
-      "id": 7,
+      "id": 9,
       "panels": [
 
       ],
@@ -721,11 +1094,11 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 7,
-        "w": 8,
+        "w": 6,
         "x": 0,
         "y": 21
       },
-      "id": 8,
+      "id": 10,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1059,11 +1432,11 @@
       },
       "gridPos": {
         "h": 1,
-        "w": 8,
+        "w": 6,
         "x": 0,
         "y": 28
       },
-      "id": 9,
+      "id": 11,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -1100,16 +1473,389 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
+      "description": "Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 21
+      },
+      "id": 12,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": [
+          {
+            "targetBlank": true,
+            "title": "rails_requests SLI Error-Rate SLO Analysis",
+            "url": "/d/alerts-component_slo_error?${__url_time_range}&${__all_variables}&var-component=rails_requests&var-type=customersdot&var-stage=$stage"
+          }
+        ]
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "6h Degradation SLO (5% of monthly error budget)",
+          "color": "#FF4500",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "connected",
+          "spaceLength": 10,
+          "zindex": -2
+        },
+        {
+          "alias": "1h Outage SLO (2% of monthly error budget)",
+          "color": "#F2495C",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 4,
+          "nullPointMode": "connected",
+          "spaceLength": 4,
+          "zindex": -2
+        },
+        {
+          "alias": "rails_requests error ratio",
+          "color": "#E7D551",
+          "fillBelowTo": "rails_requests error ratio avg",
+          "zindex": 3
+        },
+        {
+          "alias": "rails_requests error ratio avg",
+          "color": "#5794F2",
+          "dashLength": 1,
+          "fillGradient": 10,
+          "linewidth": 1,
+          "spaceLength": 1,
+          "zindex": -3
+        },
+        {
+          "alias": "last week",
+          "color": "#dddddd80",
+          "dashLength": 4,
+          "dashes": true,
+          "fill": 0,
+          "legend": true,
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "spaceLength": 2,
+          "zindex": -3
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "sli-rails_requests-error-rate",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "clamp_max(\n  max_over_time(gitlab_component_errors:ratio_5m{component=\"rails_requests\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"customersdot\"}[$__interval])\n,\n  1\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "rails_requests error ratio",
+          "refId": "A"
+        },
+        {
+          "expr": "(6 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"rails_requests\",monitor=\"global\",type=\"customersdot\"})\n)\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 3,
+          "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+          "refId": "B"
+        },
+        {
+          "expr": "(14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"rails_requests\",monitor=\"global\",type=\"customersdot\"})\n)\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 3,
+          "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+          "refId": "C"
+        },
+        {
+          "expr": "clamp_max(\n  avg_over_time(gitlab_component_errors:ratio_5m{component=\"rails_requests\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"customersdot\"}[$__interval])\n,\n  1\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "rails_requests error ratio avg",
+          "refId": "D"
+        },
+        {
+          "expr": "clamp_max(\n  gitlab_component_errors:ratio_5m{component=\"rails_requests\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"customersdot\"} offset 1w\n,\n  scalar(max((14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"rails_requests\",monitor=\"global\",type=\"customersdot\"})\n)\n))\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "last week",
+          "refId": "E"
+        }
+      ],
+      "title": "rails_requests SLI Error Ratio",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "Error %",
+          "logBase": 1,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "displayName": "Status",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "0": {
+                  "color": "black",
+                  "index": 0,
+                  "text": "Healthy"
+                },
+                "1": {
+                  "color": "orange",
+                  "index": 1,
+                  "text": "Warning 🔥"
+                },
+                "10": {
+                  "color": "orange",
+                  "index": 10,
+                  "text": "Warning 🔥🥵"
+                },
+                "11": {
+                  "color": "red",
+                  "index": 11,
+                  "text": "Degraded 🔥🥵"
+                },
+                "12": {
+                  "color": "red",
+                  "index": 12,
+                  "text": "Degraded 🥵"
+                },
+                "13": {
+                  "color": "red",
+                  "index": 13,
+                  "text": "Degraded 🔥🥵"
+                },
+                "14": {
+                  "color": "red",
+                  "index": 14,
+                  "text": "Degraded 🔥🥵"
+                },
+                "15": {
+                  "color": "red",
+                  "index": 15,
+                  "text": "Degraded 🔥🥵"
+                },
+                "2": {
+                  "color": "orange",
+                  "index": 2,
+                  "text": "Warning 🔥"
+                },
+                "3": {
+                  "color": "red",
+                  "index": 3,
+                  "text": "Degraded 🔥"
+                },
+                "4": {
+                  "color": "orange",
+                  "index": 4,
+                  "text": "Warning 🥵"
+                },
+                "5": {
+                  "color": "orange",
+                  "index": 5,
+                  "text": "Warning 🔥🥵"
+                },
+                "6": {
+                  "color": "orange",
+                  "index": 6,
+                  "text": "Warning 🔥🥵"
+                },
+                "7": {
+                  "color": "red",
+                  "index": 7,
+                  "text": "Degraded 🔥🥵"
+                },
+                "8": {
+                  "color": "orange",
+                  "index": 8,
+                  "text": "Warning 🥵"
+                },
+                "9": {
+                  "color": "orange",
+                  "index": 9,
+                  "text": "Warning 🔥🥵"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "black",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "orange",
+                "value": 2
+              },
+              {
+                "color": "red",
+                "value": 3
+              },
+              {
+                "color": "orange",
+                "value": 4
+              },
+              {
+                "color": "orange",
+                "value": 5
+              },
+              {
+                "color": "orange",
+                "value": 6
+              },
+              {
+                "color": "red",
+                "value": 7
+              },
+              {
+                "color": "orange",
+                "value": 8
+              },
+              {
+                "color": "orange",
+                "value": 9
+              },
+              {
+                "color": "orange",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 11
+              },
+              {
+                "color": "red",
+                "value": 12
+              },
+              {
+                "color": "red",
+                "value": 13
+              },
+              {
+                "color": "red",
+                "value": 14
+              },
+              {
+                "color": "red",
+                "value": 15
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 6,
+        "x": 6,
+        "y": 28
+      },
+      "id": 13,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"rails_requests\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"customersdot\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_component_errors:ratio_5m{component=\"rails_requests\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"customersdot\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"rails_requests\",monitor=\"global\",type=\"customersdot\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_component_errors:ratio_1h{component=\"rails_requests\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"customersdot\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"rails_requests\",monitor=\"global\",type=\"customersdot\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_component_errors:ratio_30m{component=\"rails_requests\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"customersdot\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"rails_requests\",monitor=\"global\",type=\"customersdot\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_component_errors:ratio_6h{component=\"rails_requests\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"customersdot\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"rails_requests\",monitor=\"global\",type=\"customersdot\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "rails_requests SLI | Errors",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
       "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 8,
+        "w": 6,
+        "x": 12,
         "y": 21
       },
-      "id": 10,
+      "id": 14,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1203,11 +1949,11 @@
       "content": "### Description\n\nThe number of CustomersDot requests meeting their duration target based on the urgency\nof the endpoint. By default, a request should take no more than 0.4s. But\nthis can be adjusted by endpoint.\n\n\n\n### Observability Tools\n\n* [Stackdriver Logs: CustomersDot](https://console.cloud.google.com/logs/query;query=jsonPayload%2Econtroller%3A%2A%0AjsonPayload%2Eduration%3A%2A%0Aresource%2Etype%3D%22gce%5Finstance%22;timeRange=PT30M?project=gitlab-subscriptions-prod)\n\n",
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 16,
+        "w": 6,
+        "x": 18,
         "y": 21
       },
-      "id": 11,
+      "id": 15,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -1221,24 +1967,24 @@
         "x": 0,
         "y": 100
       },
-      "id": 12,
+      "id": 16,
       "panels": [
         {
           "bars": false,
           "dashLength": 10,
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
-          "decimals": 0,
+          "decimals": 2,
           "description": "",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
-            "w": 24,
+            "w": 12,
             "x": 0,
             "y": 0
           },
-          "id": 13,
+          "id": 17,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -1263,7 +2009,83 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(gitlab_sli:customers_dot_requests_apdex:total{env=\"$environment\",environment=\"$environment\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  rate(gitlab_sli:customers_dot_requests:error_total{env=\"$environment\",environment=\"$environment\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "overall",
+              "refId": "A"
+            }
+          ],
+          "title": "rails_requests Errors - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 0
+          },
+          "id": 18,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by () (\n  rate(gitlab_sli:customers_dot_requests:total{env=\"$environment\",environment=\"$environment\",stage=\"$stage\"}[$__interval])\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
@@ -1310,11 +2132,11 @@
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
-            "w": 12,
+            "w": 8,
             "x": 0,
             "y": 10
           },
-          "id": 14,
+          "id": 19,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -1385,17 +2207,17 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
-          "decimals": 0,
+          "decimals": 2,
           "description": "",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
-            "w": 12,
-            "x": 12,
+            "w": 8,
+            "x": 8,
             "y": 10
           },
-          "id": 15,
+          "id": 20,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -1420,7 +2242,83 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (endpoint_id) (\n  rate(gitlab_sli:customers_dot_requests_apdex:total{endpoint_id!=\"\",env=\"$environment\",environment=\"$environment\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "expr": "sum by (endpoint_id) (\n  rate(gitlab_sli:customers_dot_requests:error_total{endpoint_id!=\"\",env=\"$environment\",environment=\"$environment\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{endpoint_id}}",
+              "refId": "A"
+            }
+          ],
+          "title": "rails_requests Errors - per endpoint_id",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 16,
+            "y": 10
+          },
+          "id": 21,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (endpoint_id) (\n  rate(gitlab_sli:customers_dot_requests:total{endpoint_id!=\"\",env=\"$environment\",environment=\"$environment\",stage=\"$stage\"}[$__interval])\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
@@ -1474,7 +2372,7 @@
         "x": 0,
         "y": 300
       },
-      "id": 16,
+      "id": 22,
       "panels": [
         {
           "aliasColors": {
@@ -1493,7 +2391,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 17,
+          "id": 23,
           "legend": {
             "alignAsTable": false,
             "avg": false,
@@ -1591,7 +2489,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 18,
+          "id": 24,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -1687,7 +2585,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 19,
+          "id": 25,
           "legend": {
             "alignAsTable": false,
             "avg": false,
@@ -1796,7 +2694,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 20,
+          "id": 26,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -1892,7 +2790,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 21,
+          "id": 27,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -1990,7 +2888,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 22,
+          "id": 28,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2088,7 +2986,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 23,
+          "id": 29,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2186,7 +3084,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 24,
+          "id": 30,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2284,7 +3182,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 25,
+          "id": 31,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2382,7 +3280,7 @@
             "x": 12,
             "y": 40
           },
-          "id": 26,
+          "id": 32,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2480,7 +3378,7 @@
             "x": 0,
             "y": 50
           },
-          "id": 27,
+          "id": 33,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2595,7 +3493,7 @@
             "x": 12,
             "y": 50
           },
-          "id": 28,
+          "id": 34,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2710,7 +3608,7 @@
             "x": 0,
             "y": 60
           },
-          "id": 29,
+          "id": 35,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2825,7 +3723,7 @@
             "x": 12,
             "y": 60
           },
-          "id": 30,
+          "id": 36,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2941,7 +3839,7 @@
         "x": 0,
         "y": 500
       },
-      "id": 31,
+      "id": 37,
       "panels": [
         {
           "aliasColors": {
@@ -2960,7 +3858,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 32,
+          "id": 38,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3152,7 +4050,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 33,
+          "id": 39,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3344,7 +4242,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 34,
+          "id": 40,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3536,7 +4434,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 35,
+          "id": 41,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3728,7 +4626,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 36,
+          "id": 42,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3920,7 +4818,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 37,
+          "id": 43,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4112,7 +5010,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 38,
+          "id": 44,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4304,7 +5202,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 39,
+          "id": 45,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4496,7 +5394,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 40,
+          "id": 46,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4798,5 +5696,5 @@
   "timezone": "utc",
   "title": "customersdot: Overview",
   "uid": "customersdot-main",
-  "version": 127
+  "version": 131
 }
