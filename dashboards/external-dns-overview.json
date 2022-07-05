@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2680934046 at Tue Jul  5 15:41:31 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2680934046 at Tue Jul  5 15:42:01 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -88,9 +88,9 @@
       "icon": "dashboard",
       "includeVars": true,
       "keepTime": true,
-      "tags": "type:cloud-sql",
+      "tags": "type:external-dns",
       "targetBlank": false,
-      "title": "cloud-sql Detail",
+      "title": "external-dns Detail",
       "type": "dashboards",
       "url": ""
     },
@@ -101,11 +101,11 @@
       "keepTime": true,
       "tags": [
         "managed",
-        "type:cloud-sql",
+        "type:external-dns",
         "kube detail"
       ],
       "targetBlank": false,
-      "title": "☸️ cloud-sql Kubernetes Detail",
+      "title": "☸️ external-dns Kubernetes Detail",
       "type": "dashboards",
       "url": ""
     }
@@ -173,7 +173,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "max(\n  max_over_time(\n    gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"cloud-sql\"}[$__interval]\n  )\n) by (component)\n",
+          "expr": "max(\n  max_over_time(\n    gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\"}[$__interval]\n  )\n) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -237,7 +237,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 500
+        "y": 400
       },
       "id": 5,
       "panels": [
@@ -248,8 +248,224 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "Ratio of requested CPU resources from allocatable resources.\nIdeally we have requests utilization close to 100%. Values are\nbelow 100% typically because pods do not fit well on nodes or\nbecause we might be bound by memory requests already.\n",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 1
+          },
+          "id": 6,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "sideWidth": null,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [
+
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (node) (\n  kube_pod_container_resource_requests{resource=\"cpu\", unit=\"core\"}\n)\n/ on (node) group_left()\nkube_node_status_allocatable:labeled{env=\"$environment\",environment=\"$environment\",type=\"external-dns\",resource=\"cpu\"}\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{ node }}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Node CPU Requests Utilization",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "Ratio of requested Memory resources from allocatable resources.\nIdeally we have requests utilization close to 100%. Values are\nbelow 100% typically because pods do not fit well on nodes or\nbecause we might be bound by CPU requests already.\n",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 1
+          },
+          "id": 7,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "sideWidth": null,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [
+
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (node) (\n  kube_pod_container_resource_requests{resource=\"memory\", unit=\"byte\"}\n)\n/ on (node) group_left()\nkube_node_status_allocatable:labeled{env=\"$environment\",environment=\"$environment\",type=\"external-dns\",resource=\"memory\"}\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{ node }}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Node Memory Requests Utilization",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "☸️ Kubernetes Overview",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "collapse": true,
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 500
+      },
+      "id": 8,
+      "panels": [
+        {
+          "aliasColors": {
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "CloudSQL CPU utilization.\n\nSee https://cloud.google.com/monitoring/api/metrics_gcp#gcp-cloudsql for\nmore details\n Lower is better.",
+          "description": "Kubernetes containers are allocated a share of CPU. When this is exhausted, the container may be thottled.\n Lower is better.",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -258,7 +474,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 3017284519,
+          "id": 2713861591,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -340,20 +556,20 @@
             }
           ],
           "spaceLength": 10,
-          "stableId": "saturation-cloudsql_cpu",
+          "stableId": "saturation-kube_container_cpu",
           "stack": false,
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, database_id) (\n  clamp_min(\n    clamp_max(\n      avg_over_time(stackdriver_cloudsql_database_cloudsql_googleapis_com_database_cpu_utilization{env=\"$environment\",environment=\"$environment\"}[5m])\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, pod, container) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, tier, type, stage, pod, container) (\n        rate(container_cpu_usage_seconds_total:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\"}[5m])\n      )\n      /\n      sum by(environment, tier, type, stage, pod, container) (\n        container_spec_cpu_quota:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\"}\n        /\n        container_spec_cpu_period:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
-              "legendFormat": "{{ database_id }}",
+              "legendFormat": "{{ pod }} {{ container }}",
               "refId": "A"
             },
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"cloud-sql\", component=\"cloudsql_cpu\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\", component=\"kube_container_cpu\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -361,7 +577,7 @@
               "refId": "B"
             },
             {
-              "expr": "gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"cloud-sql\", component=\"cloudsql_cpu\"}\n",
+              "expr": "gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\", component=\"kube_container_cpu\"}\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -369,7 +585,7 @@
               "refId": "C"
             },
             {
-              "expr": "gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"cloud-sql\", component=\"cloudsql_cpu\"}\n",
+              "expr": "gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\", component=\"kube_container_cpu\"}\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -377,7 +593,7 @@
               "refId": "D"
             },
             {
-              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"cloudsql_cpu\"}) by (component)\n",
+              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"kube_container_cpu\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -385,7 +601,7 @@
               "refId": "E"
             },
             {
-              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"cloudsql_cpu\"}) by (component)\n",
+              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"kube_container_cpu\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -398,7 +614,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "cloudsql_cpu component saturation: CloudSQL CPU Utilization",
+          "title": "kube_container_cpu component saturation: Kube Container CPU Utilization",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -441,7 +657,7 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "CloudSQL Disk utilization.\n\nSee https://cloud.google.com/monitoring/api/metrics_gcp#gcp-cloudsql for\nmore details\n Lower is better.",
+          "description": "Records the total memory utilization for containers for this service, as a percentage of\nthe memory limit as configured through Kubernetes.\n Lower is better.",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -450,7 +666,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 2351208402,
+          "id": 172578411,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -532,20 +748,20 @@
             }
           ],
           "spaceLength": 10,
-          "stableId": "saturation-cloudsql_disk",
+          "stableId": "saturation-kube_container_memory",
           "stack": false,
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, database_id) (\n  clamp_min(\n    clamp_max(\n      avg_over_time(stackdriver_cloudsql_database_cloudsql_googleapis_com_database_disk_utilization{env=\"$environment\",environment=\"$environment\"}[5m])\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage) (\n  clamp_min(\n    clamp_max(\n      container_memory_working_set_bytes:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\"}\n      /\n      (container_spec_memory_limit_bytes:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\"} > 0)\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
-              "legendFormat": "{{ database_id }}",
+              "legendFormat": "{{ type }}",
               "refId": "A"
             },
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"cloud-sql\", component=\"cloudsql_disk\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\", component=\"kube_container_memory\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -553,7 +769,7 @@
               "refId": "B"
             },
             {
-              "expr": "gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"cloud-sql\", component=\"cloudsql_disk\"}\n",
+              "expr": "gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\", component=\"kube_container_memory\"}\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -561,7 +777,7 @@
               "refId": "C"
             },
             {
-              "expr": "gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"cloud-sql\", component=\"cloudsql_disk\"}\n",
+              "expr": "gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\", component=\"kube_container_memory\"}\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -569,7 +785,7 @@
               "refId": "D"
             },
             {
-              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"cloudsql_disk\"}) by (component)\n",
+              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"kube_container_memory\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -577,7 +793,7 @@
               "refId": "E"
             },
             {
-              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"cloudsql_disk\"}) by (component)\n",
+              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"kube_container_memory\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -590,7 +806,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "cloudsql_disk component saturation: CloudSQL Disk Utilization",
+          "title": "kube_container_memory component saturation: Kube Container Memory Utilization",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -633,7 +849,7 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "CloudSQL Memory utilization.\n\nSee https://cloud.google.com/monitoring/api/metrics_gcp#gcp-cloudsql for\nmore details\n Lower is better.",
+          "description": "The [Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)\nautomatically scales the number of Pods in a deployment based on metrics.\n\nThe Horizontal Pod Autoscaler has a configured upper maximum. When this\nlimit is reached, the HPA will not increase the number of pods and other\nresource saturation (eg, CPU, memory) may occur.\n Lower is better.",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -642,7 +858,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 395749012,
+          "id": 351198712,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -724,20 +940,20 @@
             }
           ],
           "spaceLength": 10,
-          "stableId": "saturation-cloudsql_memory",
+          "stableId": "saturation-kube_horizontalpodautoscaler_desired_replicas",
           "stack": false,
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, database_id) (\n  clamp_min(\n    clamp_max(\n      avg_over_time(stackdriver_cloudsql_database_cloudsql_googleapis_com_database_memory_utilization{env=\"$environment\",environment=\"$environment\"}[5m])\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, horizontalpodautoscaler, shard) (\n  clamp_min(\n    clamp_max(\n      kube_horizontalpodautoscaler_status_desired_replicas:labeled{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\", shard!~\"database-throttled|elasticsearch|gitaly-throttled|imports|urgent-other\"}\n      /\n      kube_horizontalpodautoscaler_spec_max_replicas:labeled{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\", shard!~\"database-throttled|elasticsearch|gitaly-throttled|imports|urgent-other\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
-              "legendFormat": "{{ database_id }}",
+              "legendFormat": "{{ horizontalpodautoscaler }} {{ shard }}",
               "refId": "A"
             },
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"cloud-sql\", component=\"cloudsql_memory\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\", component=\"kube_horizontalpodautoscaler_desired_replicas\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -745,7 +961,7 @@
               "refId": "B"
             },
             {
-              "expr": "gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"cloud-sql\", component=\"cloudsql_memory\"}\n",
+              "expr": "gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\", component=\"kube_horizontalpodautoscaler_desired_replicas\"}\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -753,7 +969,7 @@
               "refId": "C"
             },
             {
-              "expr": "gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"cloud-sql\", component=\"cloudsql_memory\"}\n",
+              "expr": "gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\", component=\"kube_horizontalpodautoscaler_desired_replicas\"}\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -761,7 +977,7 @@
               "refId": "D"
             },
             {
-              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"cloudsql_memory\"}) by (component)\n",
+              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"kube_horizontalpodautoscaler_desired_replicas\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -769,7 +985,7 @@
               "refId": "E"
             },
             {
-              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"cloudsql_memory\"}) by (component)\n",
+              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"kube_horizontalpodautoscaler_desired_replicas\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -782,7 +998,199 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "cloudsql_memory component saturation: CloudSQL Memory Utilization",
+          "title": "kube_horizontalpodautoscaler_desired_replicas component saturation: Horizontal Pod Autoscaler Desired Replicas",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Saturation %",
+              "logBase": 1,
+              "max": 1,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Open file descriptor utilization per instance.\n\nSaturation on file descriptor limits may indicate a resource-descriptor leak in the application.\n\nAs a temporary fix, you may want to consider restarting the affected process.\n Lower is better.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 10
+          },
+          "id": 1001792825,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "sideWidth": null,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [
+            {
+              "alias": "/^Soft SLO/",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^Hard SLO/",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            },
+            {
+              "alias": "/aggregated /",
+              "color": "#E7D551",
+              "linewidth": 2,
+              "zindex": 3
+            },
+            {
+              "alias": "/^95th quantile for week/",
+              "color": "#37872D",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 1,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^99th quantile for week/",
+              "color": "#56A64B",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "saturation-open_fds",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, job, instance) (\n  clamp_min(\n    clamp_max(\n      (\n        process_open_fds{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\"}\n        /\n        process_max_fds{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\"}\n      )\n      or\n      (\n        ruby_file_descriptors{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\"}\n        /\n        ruby_process_max_fds{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{ job }} {{ instance }}",
+              "refId": "A"
+            },
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\", component=\"open_fds\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "aggregated {{ component }}",
+              "refId": "B"
+            },
+            {
+              "expr": "gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\", component=\"open_fds\"}\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "95th quantile for week {{ component }}",
+              "refId": "C"
+            },
+            {
+              "expr": "gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"external-dns\", component=\"open_fds\"}\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "99th quantile for week {{ component }}",
+              "refId": "D"
+            },
+            {
+              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"open_fds\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "Soft SLO: {{ component }}",
+              "refId": "E"
+            },
+            {
+              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"open_fds\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "Hard SLO: {{ component }}",
+              "refId": "F"
+            }
+          ],
+          "thresholds": [
+
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "open_fds component saturation: Open file descriptor utilization per instance",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -833,7 +1241,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 9,
+      "id": 13,
       "panels": [
         {
           "colors": [
@@ -854,7 +1262,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 10,
+          "id": 14,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -917,7 +1325,7 @@
           "mode": "content",
           "nullPointMode": "connected",
           "options": {
-            "content": "graph TD\n  subgraph db\n  cloud-sql\nend\n\n\n  \n"
+            "content": "graph TD\n  subgraph sv\n  external-dns\nend\n\n\n  \n"
           },
           "seriesOverrides": [
 
@@ -967,7 +1375,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 11,
+          "id": 15,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -1030,7 +1438,7 @@
           "mode": "content",
           "nullPointMode": "connected",
           "options": {
-            "content": "graph TD\n  subgraph db\n  cloud-sql\nend\n\n\n  \n"
+            "content": "graph TD\n  subgraph sv\n  external-dns\nend\n\n\n  \n"
           },
           "seriesOverrides": [
 
@@ -1078,7 +1486,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 12,
+          "id": 16,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -1141,7 +1549,7 @@
           "mode": "content",
           "nullPointMode": "connected",
           "options": {
-            "content": "graph TD\n  subgraph db\n  cloud-sql[\"cloud-sql (Level 1)\"]\nend\n\n\n  \n"
+            "content": "graph TD\n  subgraph sv\n  external-dns[\"external-dns (Level 0)\"]\nend\n\n\n  \n"
           },
           "seriesOverrides": [
 
@@ -1183,7 +1591,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 13,
+      "id": 17,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -1197,10 +1605,10 @@
   "style": "light",
   "tags": [
     "managed",
-    "cloud-sql",
+    "external-dns",
     "gitlab",
-    "type:cloud-sql",
-    "cloud-sql",
+    "type:external-dns",
+    "external-dns",
     "service overview"
   ],
   "templating": {
@@ -1304,7 +1712,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "cloud-sql: Overview",
-  "uid": "cloud-sql-main",
-  "version": 386
+  "title": "external-dns: Overview",
+  "uid": "external-dns-main",
+  "version": 1
 }
