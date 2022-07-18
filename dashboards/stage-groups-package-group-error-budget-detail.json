@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2733398599 at Mon Jul 18 07:49:05 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2735455387 at Mon Jul 18 14:21:18 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -2643,6 +2643,224 @@
             "dataLinks": [
               {
                 "targetBlank": true,
+                "title": "loadbalancer SLI Error-Rate SLO Analysis",
+                "url": "/d/alerts-service_component_stage_groups_slo_error?${__url_time_range}&${__all_variables}&var-component=loadbalancer&var-stage=$stage"
+              }
+            ]
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "6h Degradation SLO (5% of monthly error budget)",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "1h Outage SLO (2% of monthly error budget)",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "sli-loadbalancer-error-rate",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_max(\n  max_over_time(gitlab:component:stage_group:execution:error:ratio_5m{component=\"loadbalancer\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"package\"}[$__interval])\n,\n  1\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{ type }} error ratio",
+              "refId": "A"
+            },
+            {
+              "expr": "(6 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"loadbalancer\",monitor=\"global\"})\n)\n",
+              "format": "time_series",
+              "interval": "5m",
+              "intervalFactor": 3,
+              "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+              "refId": "B"
+            },
+            {
+              "expr": "(14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"loadbalancer\",monitor=\"global\"})\n)\n",
+              "format": "time_series",
+              "interval": "5m",
+              "intervalFactor": 3,
+              "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+              "refId": "C"
+            }
+          ],
+          "title": "loadbalancer SLI Error Ratio",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Error %",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 8,
+            "y": 30
+          },
+          "id": 35,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stableId": "sli-loadbalancer-ops-rate",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "avg_over_time(gitlab:component:stage_group:execution:ops:rate_5m{component=\"loadbalancer\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"package\"}[$__interval])\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{ type }} RPS",
+              "refId": "A"
+            }
+          ],
+          "title": "loadbalancer SLI RPS - Requests per Second",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Operations per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "content": "### Description\n\nMeasures aggregated HTTP request traffic through the HAProxy.\n5xx responses are considered to be failures.\n\n",
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 16,
+            "y": 30
+          },
+          "id": 36,
+          "mode": "markdown",
+          "title": "Details",
+          "type": "text"
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 40
+          },
+          "id": 37,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": [
+              {
+                "targetBlank": true,
                 "title": "puma SLI Error-Rate SLO Analysis",
                 "url": "/d/alerts-service_component_stage_groups_slo_error?${__url_time_range}&${__all_variables}&var-component=puma&var-stage=$stage"
               }
@@ -2749,9 +2967,9 @@
             "h": 10,
             "w": 8,
             "x": 8,
-            "y": 30
+            "y": 40
           },
-          "id": 35,
+          "id": 38,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2814,14 +3032,14 @@
           ]
         },
         {
-          "content": "### Description\n\nThis SLI monitors API traffic in aggregate, in the GitLab rails monolith, via its\nHTTP interface. 5xx responses are treated as failures.\n\n\n\n### Observability Tools\n\n* [🐞 Sentry Releases: gitlab/gitlabcom](https://sentry.gitlab.net/gitlab/gitlabcom/releases?environment=${environment})\n* [🐞 Sentry api issues](https://sentry.gitlab.net/gitlab/gitlabcom/issues?environment=${environment}&query=stage%3A${stage}+type%3Aapi)\n* [📖 Kibana: Rails logs](https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.status,json.method,json.meta.caller_id,json.meta.feature_category,json.path,json.request_urgency,json.duration_s,json.target_duration_s),filters:!((meta:(key:json.subcomponent,negate:!t,params:graphql_json,type:phrase),query:(match:(json.subcomponent:(query:graphql_json,type:phrase)))),(meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.meta.feature_category,params:!(container_registry,package_registry,helm_chart_registry,dependency_proxy,dependency_firewall,git_lfs),type:phrases),query:(bool:(minimum_should_match:1,should:!((match_phrase:(json.meta.feature_category:container_registry)),(match_phrase:(json.meta.feature_category:package_registry)),(match_phrase:(json.meta.feature_category:helm_chart_registry)),(match_phrase:(json.meta.feature_category:dependency_proxy)),(match_phrase:(json.meta.feature_category:dependency_firewall)),(match_phrase:(json.meta.feature_category:git_lfs))))))),index:'7092c4e2-4eb5-46f2-8305-a7da2edad090')&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📖 Kibana: Rails slow request logs](https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.status,json.method,json.meta.caller_id,json.meta.feature_category,json.path,json.request_urgency,json.duration_s,json.target_duration_s),filters:!((meta:(key:json.subcomponent,negate:!t,params:graphql_json,type:phrase),query:(match:(json.subcomponent:(query:graphql_json,type:phrase)))),(meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.meta.feature_category,params:!(container_registry,package_registry,helm_chart_registry,dependency_proxy,dependency_firewall,git_lfs),type:phrases),query:(bool:(minimum_should_match:1,should:!((match_phrase:(json.meta.feature_category:container_registry)),(match_phrase:(json.meta.feature_category:package_registry)),(match_phrase:(json.meta.feature_category:helm_chart_registry)),(match_phrase:(json.meta.feature_category:dependency_proxy)),(match_phrase:(json.meta.feature_category:dependency_firewall)),(match_phrase:(json.meta.feature_category:git_lfs)))))),(meta:(key:exists,type:json.target_duration_s,value:exists),query:(exists:(field:json.target_duration_s))),(meta:(key:exists,type:json.duration_s,value:exists),query:(exists:(field:json.duration_s))),!((meta:(key:query,type:custom,value:'{\"bool\":+{\"minimum_should_match\":+1,+\"should\":+[{\"script\":+{\"script\":+{\"source\":+\"doc[!'json.duration_s!'].value+>+doc[!'json.target_duration_s!'].value\"}}}]}}'),query:(bool:(minimum_should_match:1,should:!((script:(script:(source:'doc[!'json.duration_s!'].value+>+doc[!'json.target_duration_s!'].value'))))))))),index:'7092c4e2-4eb5-46f2-8305-a7da2edad090',sort:!(!(json.duration_s,desc)))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📖 Kibana: Rails failed request logs](https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.status,json.method,json.meta.caller_id,json.meta.feature_category,json.path,json.request_urgency,json.duration_s,json.target_duration_s),filters:!((meta:(key:json.subcomponent,negate:!t,params:graphql_json,type:phrase),query:(match:(json.subcomponent:(query:graphql_json,type:phrase)))),(meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.meta.feature_category,params:!(container_registry,package_registry,helm_chart_registry,dependency_proxy,dependency_firewall,git_lfs),type:phrases),query:(bool:(minimum_should_match:1,should:!((match_phrase:(json.meta.feature_category:container_registry)),(match_phrase:(json.meta.feature_category:package_registry)),(match_phrase:(json.meta.feature_category:helm_chart_registry)),(match_phrase:(json.meta.feature_category:dependency_proxy)),(match_phrase:(json.meta.feature_category:dependency_firewall)),(match_phrase:(json.meta.feature_category:git_lfs)))))),(meta:(key:json.status,params:(gte:500),type:range),query:(range:(json.status:(gte:500))))),index:'7092c4e2-4eb5-46f2-8305-a7da2edad090')&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Rails requests](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=7092c4e2-4eb5-46f2-8305-a7da2edad090&_a=(filters:!((meta:(key:json.subcomponent,negate:!t,params:graphql_json,type:phrase),query:(match:(json.subcomponent:(query:graphql_json,type:phrase)))),(meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.meta.feature_category,params:!(container_registry,package_registry,helm_chart_registry,dependency_proxy,dependency_firewall,git_lfs),type:phrases),query:(bool:(minimum_should_match:1,should:!((match_phrase:(json.meta.feature_category:container_registry)),(match_phrase:(json.meta.feature_category:package_registry)),(match_phrase:(json.meta.feature_category:helm_chart_registry)),(match_phrase:(json.meta.feature_category:dependency_proxy)),(match_phrase:(json.meta.feature_category:dependency_firewall)),(match_phrase:(json.meta.feature_category:git_lfs))))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(),schema:metric,type:count),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:json.time,interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Rails failed requests](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=7092c4e2-4eb5-46f2-8305-a7da2edad090&_a=(filters:!((meta:(key:json.subcomponent,negate:!t,params:graphql_json,type:phrase),query:(match:(json.subcomponent:(query:graphql_json,type:phrase)))),(meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.meta.feature_category,params:!(container_registry,package_registry,helm_chart_registry,dependency_proxy,dependency_firewall,git_lfs),type:phrases),query:(bool:(minimum_should_match:1,should:!((match_phrase:(json.meta.feature_category:container_registry)),(match_phrase:(json.meta.feature_category:package_registry)),(match_phrase:(json.meta.feature_category:helm_chart_registry)),(match_phrase:(json.meta.feature_category:dependency_proxy)),(match_phrase:(json.meta.feature_category:dependency_firewall)),(match_phrase:(json.meta.feature_category:git_lfs)))))),(meta:(key:json.status,params:(gte:500),type:range),query:(range:(json.status:(gte:500))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(),schema:metric,type:count),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:json.time,interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Rails sum latency aggregated](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=7092c4e2-4eb5-46f2-8305-a7da2edad090&_a=(filters:!((meta:(key:json.subcomponent,negate:!t,params:graphql_json,type:phrase),query:(match:(json.subcomponent:(query:graphql_json,type:phrase)))),(meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.meta.feature_category,params:!(container_registry,package_registry,helm_chart_registry,dependency_proxy,dependency_firewall,git_lfs),type:phrases),query:(bool:(minimum_should_match:1,should:!((match_phrase:(json.meta.feature_category:container_registry)),(match_phrase:(json.meta.feature_category:package_registry)),(match_phrase:(json.meta.feature_category:helm_chart_registry)),(match_phrase:(json.meta.feature_category:dependency_proxy)),(match_phrase:(json.meta.feature_category:dependency_firewall)),(match_phrase:(json.meta.feature_category:git_lfs))))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.duration_s),schema:metric,type:sum),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:json.time,interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram),(enabled:!t,id:'3',params:(field:json.meta.caller_id,missingBucket:!f,missingBucketLabel:Missing,order:desc,orderBy:'1',otherBucket:!t,otherBucketLabel:Other,size:5),schema:group,type:terms)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'Sum+Request+Duration:+json.duration_s'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Rails sum latency aggregated (split)](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=7092c4e2-4eb5-46f2-8305-a7da2edad090&_a=(filters:!((meta:(key:json.subcomponent,negate:!t,params:graphql_json,type:phrase),query:(match:(json.subcomponent:(query:graphql_json,type:phrase)))),(meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.meta.feature_category,params:!(container_registry,package_registry,helm_chart_registry,dependency_proxy,dependency_firewall,git_lfs),type:phrases),query:(bool:(minimum_should_match:1,should:!((match_phrase:(json.meta.feature_category:container_registry)),(match_phrase:(json.meta.feature_category:package_registry)),(match_phrase:(json.meta.feature_category:helm_chart_registry)),(match_phrase:(json.meta.feature_category:dependency_proxy)),(match_phrase:(json.meta.feature_category:dependency_firewall)),(match_phrase:(json.meta.feature_category:git_lfs))))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.duration_s),schema:metric,type:sum),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:json.time,interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram),(enabled:!t,id:'3',params:(field:json.meta.caller_id,missingBucket:!f,missingBucketLabel:Missing,order:desc,orderBy:'1',otherBucket:!t,otherBucketLabel:Other,size:5),schema:group,type:terms)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'Sum+Request+Duration:+json.duration_s'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Rails percentile latency aggregated](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=7092c4e2-4eb5-46f2-8305-a7da2edad090&_a=(filters:!((meta:(key:json.subcomponent,negate:!t,params:graphql_json,type:phrase),query:(match:(json.subcomponent:(query:graphql_json,type:phrase)))),(meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.meta.feature_category,params:!(container_registry,package_registry,helm_chart_registry,dependency_proxy,dependency_firewall,git_lfs),type:phrases),query:(bool:(minimum_should_match:1,should:!((match_phrase:(json.meta.feature_category:container_registry)),(match_phrase:(json.meta.feature_category:package_registry)),(match_phrase:(json.meta.feature_category:helm_chart_registry)),(match_phrase:(json.meta.feature_category:dependency_proxy)),(match_phrase:(json.meta.feature_category:dependency_firewall)),(match_phrase:(json.meta.feature_category:git_lfs))))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.duration_s,percents:!(95)),schema:metric,type:percentiles),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:json.time,interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'p95+Request+Duration:+json.duration_s'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Rails percentile latency aggregated (split)](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=7092c4e2-4eb5-46f2-8305-a7da2edad090&_a=(filters:!((meta:(key:json.subcomponent,negate:!t,params:graphql_json,type:phrase),query:(match:(json.subcomponent:(query:graphql_json,type:phrase)))),(meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.meta.feature_category,params:!(container_registry,package_registry,helm_chart_registry,dependency_proxy,dependency_firewall,git_lfs),type:phrases),query:(bool:(minimum_should_match:1,should:!((match_phrase:(json.meta.feature_category:container_registry)),(match_phrase:(json.meta.feature_category:package_registry)),(match_phrase:(json.meta.feature_category:helm_chart_registry)),(match_phrase:(json.meta.feature_category:dependency_proxy)),(match_phrase:(json.meta.feature_category:dependency_firewall)),(match_phrase:(json.meta.feature_category:git_lfs))))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.duration_s,percents:!(95)),schema:metric,type:percentiles),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:json.time,interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram),(enabled:!t,id:'3',params:(field:json.meta.caller_id,missingBucket:!f,missingBucketLabel:Missing,order:desc,orderAgg:(enabled:!t,id:'3-orderAgg',params:(field:json.duration_s),schema:orderAgg,type:sum),orderBy:custom,otherBucket:!t,otherBucketLabel:Other,size:5),schema:group,type:terms)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'p95+Request+Duration:+json.duration_s'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n\n",
+          "content": "### Description\n\nAggregation of most web requests that pass through the puma to the GitLab rails monolith.\nHealthchecks are excluded.\n\n\n\n### Observability Tools\n\n* [🐞 Sentry Releases: gitlab/gitlabcom](https://sentry.gitlab.net/gitlab/gitlabcom/releases?environment=${environment})\n* [🐞 Sentry web issues](https://sentry.gitlab.net/gitlab/gitlabcom/issues?environment=${environment}&query=stage%3A${stage}+type%3Aweb)\n\n",
           "gridPos": {
             "h": 10,
             "w": 8,
             "x": 16,
-            "y": 30
+            "y": 40
           },
-          "id": 36,
+          "id": 39,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -2839,9 +3057,9 @@
             "h": 10,
             "w": 8,
             "x": 0,
-            "y": 40
+            "y": 50
           },
-          "id": 37,
+          "id": 40,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2979,9 +3197,9 @@
             "h": 10,
             "w": 8,
             "x": 8,
-            "y": 40
+            "y": 50
           },
-          "id": 38,
+          "id": 41,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3049,9 +3267,9 @@
             "h": 10,
             "w": 8,
             "x": 16,
-            "y": 40
+            "y": 50
           },
-          "id": 39,
+          "id": 42,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -3069,9 +3287,9 @@
             "h": 10,
             "w": 8,
             "x": 0,
-            "y": 50
+            "y": 60
           },
-          "id": 40,
+          "id": 43,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3209,9 +3427,9 @@
             "h": 10,
             "w": 8,
             "x": 8,
-            "y": 50
+            "y": 60
           },
-          "id": 41,
+          "id": 44,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3279,9 +3497,367 @@
             "h": 10,
             "w": 8,
             "x": 16,
-            "y": 50
+            "y": 60
           },
-          "id": 42,
+          "id": 45,
+          "mode": "markdown",
+          "title": "Details",
+          "type": "text"
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 0,
+            "y": 70
+          },
+          "id": 46,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": [
+              {
+                "targetBlank": true,
+                "title": "server SLI Apdex SLO Analysis",
+                "url": "/d/alerts-service_component_stage_groups_slo_apdex?${__url_time_range}&${__all_variables}&var-component=server&var-stage=$stage"
+              }
+            ]
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "6h Degradation SLO (5% of monthly error budget)",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "1h Outage SLO (2% of monthly error budget)",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            },
+            {
+              "alias": "SLO",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "sli-server-apdex",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "min_over_time(gitlab:component:stage_group:execution:apdex:ratio_5m{component=\"server\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"package\"}[$__interval])\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{ type }} apdex",
+              "refId": "A"
+            },
+            {
+              "expr": "(1 - 6 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"server\",monitor=\"global\"})\n))\n",
+              "format": "time_series",
+              "interval": "5m",
+              "intervalFactor": 3,
+              "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+              "refId": "B"
+            },
+            {
+              "expr": "(1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"server\",monitor=\"global\"})\n))\n",
+              "format": "time_series",
+              "interval": "5m",
+              "intervalFactor": 3,
+              "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+              "refId": "C"
+            }
+          ],
+          "title": "server SLI Apdex",
+          "tooltip": {
+            "shared": true,
+            "sort": 1,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Apdex %",
+              "logBase": 1,
+              "max": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 6,
+            "y": 70
+          },
+          "id": 47,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": [
+              {
+                "targetBlank": true,
+                "title": "server SLI Error-Rate SLO Analysis",
+                "url": "/d/alerts-service_component_stage_groups_slo_error?${__url_time_range}&${__all_variables}&var-component=server&var-stage=$stage"
+              }
+            ]
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "6h Degradation SLO (5% of monthly error budget)",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "1h Outage SLO (2% of monthly error budget)",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "sli-server-error-rate",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_max(\n  max_over_time(gitlab:component:stage_group:execution:error:ratio_5m{component=\"server\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"package\"}[$__interval])\n,\n  1\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{ type }} error ratio",
+              "refId": "A"
+            },
+            {
+              "expr": "(6 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"server\",monitor=\"global\"})\n)\n",
+              "format": "time_series",
+              "interval": "5m",
+              "intervalFactor": 3,
+              "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+              "refId": "B"
+            },
+            {
+              "expr": "(14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"server\",monitor=\"global\"})\n)\n",
+              "format": "time_series",
+              "interval": "5m",
+              "intervalFactor": 3,
+              "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+              "refId": "C"
+            }
+          ],
+          "title": "server SLI Error Ratio",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Error %",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 12,
+            "y": 70
+          },
+          "id": 48,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stableId": "sli-server-ops-rate",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "avg_over_time(gitlab:component:stage_group:execution:ops:rate_5m{component=\"server\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"package\"}[$__interval])\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{ type }} RPS",
+              "refId": "A"
+            }
+          ],
+          "title": "server SLI RPS - Requests per Second",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Operations per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "content": "### Description\n\nAggregation of all registry requests.\n\n\n\n### Observability Tools\n\n* [GKE Deployment: gitlab-registry](https://console.cloud.google.com/kubernetes/deployment/us-east1/gprd-gitlab-gke/gitlab/gitlab-registry/overview?project=gitlab-production)\n* [Stackdriver Logs: GKE Container Logs](https://console.cloud.google.com/logs/query;query=labels%2E%22k8s%2Dpod%2Ftype%22%3D%22registry%22%0Aresource%2Elabels%2Ecluster%5Fname%3D%22gprd%2Dgitlab%2Dgke%22%0Aresource%2Elabels%2Econtainer%5Fname%3D%22registry%22%0Aresource%2Elabels%2Enamespace%5Fname%3D%22gitlab%22%0Aresource%2Elabels%2Eproject%5Fid%3D%22gitlab%2Dproduction%22%0Aresource%2Etype%3D%22k8s%5Fcontainer%22;timeRange=PT30M?project=gitlab-production)\n* [📖 Kibana: Registry logs](https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.remote_ip,json.duration_ms,json.code,json.msg,json.status,json.error,json.method,json.uri),filters:!((meta:(key:json.type.keyword,params:registry,type:phrase),query:(match:(json.type.keyword:(query:registry,type:phrase)))),(meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase))))),index:'97ce8e90-63ad-11ea-8617-2347010d3aab')&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📖 Kibana: Registry slow request logs](https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.remote_ip,json.duration_ms,json.code,json.msg,json.status,json.error,json.method,json.uri),filters:!((meta:(key:json.type.keyword,params:registry,type:phrase),query:(match:(json.type.keyword:(query:registry,type:phrase)))),(meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.duration_ms,params:(gte:10000),type:range),query:(range:(json.duration_ms:(gte:10000))))),index:'97ce8e90-63ad-11ea-8617-2347010d3aab',sort:!(!(json.duration_ms,desc)))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📖 Kibana: Registry failed request logs](https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.remote_ip,json.duration_ms,json.code,json.msg,json.status,json.error,json.method,json.uri),filters:!((meta:(key:json.type.keyword,params:registry,type:phrase),query:(match:(json.type.keyword:(query:registry,type:phrase)))),(meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.status,params:(gte:500),type:range),query:(range:(json.status:(gte:500))))),index:'97ce8e90-63ad-11ea-8617-2347010d3aab')&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Registry requests](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=97ce8e90-63ad-11ea-8617-2347010d3aab&_a=(filters:!((meta:(key:json.type.keyword,params:registry,type:phrase),query:(match:(json.type.keyword:(query:registry,type:phrase)))),(meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(),schema:metric,type:count),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:json.time,interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Registry failed requests](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=97ce8e90-63ad-11ea-8617-2347010d3aab&_a=(filters:!((meta:(key:json.type.keyword,params:registry,type:phrase),query:(match:(json.type.keyword:(query:registry,type:phrase)))),(meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.status,params:(gte:500),type:range),query:(range:(json.status:(gte:500))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(),schema:metric,type:count),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:json.time,interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Registry sum latency aggregated](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=97ce8e90-63ad-11ea-8617-2347010d3aab&_a=(filters:!((meta:(key:json.type.keyword,params:registry,type:phrase),query:(match:(json.type.keyword:(query:registry,type:phrase)))),(meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.duration_ms),schema:metric,type:sum),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:json.time,interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram),(enabled:!t,id:'3',params:(field:json.remote_ip,missingBucket:!f,missingBucketLabel:Missing,order:desc,orderBy:'1',otherBucket:!t,otherBucketLabel:Other,size:5),schema:group,type:terms)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'Sum+Request+Duration:+json.duration_ms'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Registry sum latency aggregated (split)](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=97ce8e90-63ad-11ea-8617-2347010d3aab&_a=(filters:!((meta:(key:json.type.keyword,params:registry,type:phrase),query:(match:(json.type.keyword:(query:registry,type:phrase)))),(meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.duration_ms),schema:metric,type:sum),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:json.time,interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram),(enabled:!t,id:'3',params:(field:json.remote_ip,missingBucket:!f,missingBucketLabel:Missing,order:desc,orderBy:'1',otherBucket:!t,otherBucketLabel:Other,size:5),schema:group,type:terms)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'Sum+Request+Duration:+json.duration_ms'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Registry percentile latency aggregated](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=97ce8e90-63ad-11ea-8617-2347010d3aab&_a=(filters:!((meta:(key:json.type.keyword,params:registry,type:phrase),query:(match:(json.type.keyword:(query:registry,type:phrase)))),(meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.duration_ms,percents:!(95)),schema:metric,type:percentiles),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:json.time,interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'p95+Request+Duration:+json.duration_ms'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Registry percentile latency aggregated (split)](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=97ce8e90-63ad-11ea-8617-2347010d3aab&_a=(filters:!((meta:(key:json.type.keyword,params:registry,type:phrase),query:(match:(json.type.keyword:(query:registry,type:phrase)))),(meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.duration_ms,percents:!(95)),schema:metric,type:percentiles),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:json.time,interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram),(enabled:!t,id:'3',params:(field:json.remote_ip,missingBucket:!f,missingBucketLabel:Missing,order:desc,orderAgg:(enabled:!t,id:'3-orderAgg',params:(field:json.duration_ms),schema:orderAgg,type:sum),orderBy:custom,otherBucket:!t,otherBucketLabel:Other,size:5),schema:group,type:terms)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'p95+Request+Duration:+json.duration_ms'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [Google Stackdriver Continuous Profiling](https://console.cloud.google.com/profiler;timespan=4h/gitlab-registry;type=CPU/cpu?project=gitlab-production)\n\n",
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 18,
+            "y": 70
+          },
+          "id": 49,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -3299,9 +3875,9 @@
             "h": 10,
             "w": 8,
             "x": 0,
-            "y": 60
+            "y": 80
           },
-          "id": 43,
+          "id": 50,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3439,9 +4015,9 @@
             "h": 10,
             "w": 8,
             "x": 8,
-            "y": 60
+            "y": 80
           },
-          "id": 44,
+          "id": 51,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3509,9 +4085,9 @@
             "h": 10,
             "w": 8,
             "x": 16,
-            "y": 60
+            "y": 80
           },
-          "id": 45,
+          "id": 52,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -3529,9 +4105,9 @@
             "h": 10,
             "w": 8,
             "x": 0,
-            "y": 70
+            "y": 90
           },
-          "id": 46,
+          "id": 53,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3669,9 +4245,9 @@
             "h": 10,
             "w": 8,
             "x": 8,
-            "y": 70
+            "y": 90
           },
-          "id": 47,
+          "id": 54,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3739,9 +4315,9 @@
             "h": 10,
             "w": 8,
             "x": 16,
-            "y": 70
+            "y": 90
           },
-          "id": 48,
+          "id": 55,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -3764,7 +4340,7 @@
         "x": 0,
         "y": 1200
       },
-      "id": 49,
+      "id": 56,
       "panels": [
         {
           "bars": false,
@@ -3781,7 +4357,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 50,
+          "id": 57,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3877,7 +4453,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 51,
+          "id": 58,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3953,7 +4529,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 52,
+          "id": 59,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4049,7 +4625,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 53,
+          "id": 60,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4130,7 +4706,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 54,
+          "id": 61,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4209,7 +4785,7 @@
         "x": 0,
         "y": 1210
       },
-      "id": 55,
+      "id": 62,
       "panels": [
         {
           "bars": false,
@@ -4226,7 +4802,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 56,
+          "id": 63,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4322,7 +4898,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 57,
+          "id": 64,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4398,7 +4974,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 58,
+          "id": 65,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4474,7 +5050,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 59,
+          "id": 66,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4570,7 +5146,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 60,
+          "id": 67,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4651,7 +5227,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 61,
+          "id": 68,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4727,7 +5303,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 62,
+          "id": 69,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4806,7 +5382,7 @@
         "x": 0,
         "y": 1220
       },
-      "id": 63,
+      "id": 70,
       "panels": [
         {
           "bars": false,
@@ -4823,7 +5399,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 64,
+          "id": 71,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4899,7 +5475,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 65,
+          "id": 72,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4980,7 +5556,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 66,
+          "id": 73,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5056,7 +5632,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 67,
+          "id": 74,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5137,7 +5713,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 68,
+          "id": 75,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5213,7 +5789,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 69,
+          "id": 76,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5294,7 +5870,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 70,
+          "id": 77,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5373,7 +5949,7 @@
         "x": 0,
         "y": 1230
       },
-      "id": 71,
+      "id": 78,
       "panels": [
         {
           "bars": false,
@@ -5390,7 +5966,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 72,
+          "id": 79,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5466,7 +6042,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 73,
+          "id": 80,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5542,7 +6118,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 74,
+          "id": 81,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5618,7 +6194,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 75,
+          "id": 82,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5694,7 +6270,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 76,
+          "id": 83,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5770,7 +6346,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 77,
+          "id": 84,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5846,7 +6422,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 78,
+          "id": 85,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5922,7 +6498,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 79,
+          "id": 86,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6001,7 +6577,7 @@
         "x": 0,
         "y": 1240
       },
-      "id": 80,
+      "id": 87,
       "panels": [
         {
           "bars": false,
@@ -6018,7 +6594,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 81,
+          "id": 88,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6094,7 +6670,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 82,
+          "id": 89,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6175,7 +6751,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 83,
+          "id": 90,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6251,7 +6827,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 84,
+          "id": 91,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6332,7 +6908,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 85,
+          "id": 92,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6408,7 +6984,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 86,
+          "id": 93,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6489,7 +7065,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 87,
+          "id": 94,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6568,7 +7144,7 @@
         "x": 0,
         "y": 1250
       },
-      "id": 88,
+      "id": 95,
       "panels": [
         {
           "bars": false,
@@ -6585,7 +7161,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 89,
+          "id": 96,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6680,7 +7256,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 90,
+          "id": 97,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6756,7 +7332,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 91,
+          "id": 98,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6851,7 +7427,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 92,
+          "id": 99,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6932,7 +7508,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 93,
+          "id": 100,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7008,7 +7584,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 94,
+          "id": 101,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7103,7 +7679,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 95,
+          "id": 102,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7184,7 +7760,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 96,
+          "id": 103,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7263,7 +7839,7 @@
         "x": 0,
         "y": 1260
       },
-      "id": 97,
+      "id": 104,
       "panels": [
         {
           "bars": false,
@@ -7280,7 +7856,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 98,
+          "id": 105,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7376,7 +7952,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 99,
+          "id": 106,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7452,7 +8028,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 100,
+          "id": 107,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7528,7 +8104,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 101,
+          "id": 108,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7624,7 +8200,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 102,
+          "id": 109,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7705,7 +8281,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 103,
+          "id": 110,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7781,7 +8357,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 104,
+          "id": 111,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7857,7 +8433,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 105,
+          "id": 112,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7953,7 +8529,7 @@
             "x": 6,
             "y": 20
           },
-          "id": 106,
+          "id": 113,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8034,7 +8610,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 107,
+          "id": 114,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8110,7 +8686,7 @@
             "x": 18,
             "y": 20
           },
-          "id": 108,
+          "id": 115,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8186,7 +8762,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 109,
+          "id": 116,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8282,7 +8858,7 @@
             "x": 6,
             "y": 30
           },
-          "id": 110,
+          "id": 117,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8363,7 +8939,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 111,
+          "id": 118,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8439,7 +9015,7 @@
             "x": 18,
             "y": 30
           },
-          "id": 112,
+          "id": 119,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8518,7 +9094,7 @@
         "x": 0,
         "y": 1270
       },
-      "id": 113,
+      "id": 120,
       "panels": [
         {
           "bars": false,
@@ -8535,7 +9111,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 114,
+          "id": 121,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8631,7 +9207,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 115,
+          "id": 122,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8707,7 +9283,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 116,
+          "id": 123,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8803,7 +9379,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 117,
+          "id": 124,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8884,7 +9460,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 118,
+          "id": 125,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8960,7 +9536,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 119,
+          "id": 126,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9056,7 +9632,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 120,
+          "id": 127,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9137,7 +9713,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 121,
+          "id": 128,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9216,7 +9792,7 @@
         "x": 0,
         "y": 1280
       },
-      "id": 122,
+      "id": 129,
       "panels": [
         {
           "bars": false,
@@ -9233,7 +9809,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 123,
+          "id": 130,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9329,7 +9905,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 124,
+          "id": 131,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9405,7 +9981,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 125,
+          "id": 132,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9501,7 +10077,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 126,
+          "id": 133,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9582,7 +10158,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 127,
+          "id": 134,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9658,7 +10234,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 128,
+          "id": 135,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9754,7 +10330,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 129,
+          "id": 136,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9835,7 +10411,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 130,
+          "id": 137,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10021,5 +10597,5 @@
   "timezone": "utc",
   "title": "stage-groups: Package: group error budget detail",
   "uid": "stage-groups-detail-package",
-  "version": 440
+  "version": 442
 }
