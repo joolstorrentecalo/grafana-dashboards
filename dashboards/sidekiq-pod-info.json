@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2735455387 at Mon Jul 18 14:17:19 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2737034863 at Mon Jul 18 19:38:25 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -167,7 +167,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "count(kube_pod_container_info{container_id!=\"\", cluster=\"$cluster\", namespace=\"$namespace\"}) by (image)",
+          "expr": "count(kube_pod_container_info{env=~\"$environment\", cluster=\"$cluster\", node=~\"^$Node.*$\", namespace=\"$namespace\", container_id!=\"\", pod=~\"^$Deployment.*$\"}) by (image)",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -265,7 +265,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "avg(kube_replicaset_spec_replicas{replicaset=~\"^$Deployment.*\", cluster=\"$cluster\", namespace=\"$namespace\"}) by (replicaset)",
+          "expr": "avg(kube_replicaset_spec_replicas{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", replicaset=~\"^$Deployment.*\"}) by (replicaset)",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -394,7 +394,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (container_memory_working_set_bytes{env=~\"$environment\", pod=~\"^$Deployment.*$\", kubernetes_io_hostname=~\"^$Node$\", pod!=\"\", cluster=\"$cluster\", namespace=\"$namespace\"}) / sum (kube_node_status_allocatable{resource=\"memory\", unit= \"byte\", env=~\"$environment\", node=~\"^$Node.*$\"}) * 100",
+          "expr": "sum (container_memory_working_set_bytes{env=~\"$environment\", cluster=\"$cluster\", node=~\"^$Node.*$\", namespace=\"$namespace\", pod=~\"^$Deployment.*$\"}) / sum (kube_node_status_allocatable{resource=\"memory\", unit= \"byte\", env=~\"$environment\", node=~\"^$Node.*$\"}) * 100",
           "format": "time_series",
           "instant": false,
           "interval": "1m",
@@ -467,7 +467,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (rate (container_cpu_usage_seconds_total{env=~\"$environment\", pod=~\"^$Deployment.*$\", cluster=\"$cluster\", kubernetes_io_hostname=~\"^$Node$\"}[2m])) / sum (machine_cpu_cores{env=~\"$environment\", cluster=\"$cluster\", kubernetes_io_hostname=~\"^$Node$\"}) * 100",
+          "expr": "sum (rate (container_cpu_usage_seconds_total{env=~\"$environment\", cluster=\"$cluster\", node=~\"^$Node.*$\", pod=~\"^$Deployment.*$\"}[2m])) / sum (machine_cpu_cores{env=~\"$environment\", cluster=\"$cluster\", node=~\"^$Node.*$\"}) * 100",
           "format": "time_series",
           "instant": false,
           "interval": "1m",
@@ -541,7 +541,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "((sum(kube_deployment_status_replicas{env=~\"$environment\", deployment=~\"$Deployment.*\", cluster=\"$cluster\", namespace=\"$namespace\"}) or vector(0)) - ((sum(kube_deployment_status_replicas_available{env=~\"$environment\", deployment=~\"$Deployment.*\", cluster=\"$cluster\", namespace=\"$namespace\"}) or vector(0)))) / (sum(kube_deployment_status_replicas{env=~\"$environment\", deployment=~\"$Deployment.*\", cluster=\"$cluster\", namespace=\"$namespace\"}) or vector(0))",
+          "expr": "((sum(kube_deployment_status_replicas{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", deployment=~\"$Deployment.*\"}) or vector(0)) - ((sum(kube_deployment_status_replicas_available{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", deployment=~\"$Deployment.*\"}) or vector(0)))) / (sum(kube_deployment_status_replicas{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", deployment=~\"$Deployment.*\"}) or vector(0))",
           "format": "time_series",
           "instant": false,
           "interval": "1m",
@@ -606,7 +606,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (container_memory_working_set_bytes{env=~\"$environment\", pod=~\"^$Deployment.*$\", kubernetes_io_hostname=~\"^$Node$\", pod!=\"\", cluster=\"$cluster\", namespace=\"$namespace\"})",
+          "expr": "sum (container_memory_working_set_bytes{env=~\"$environment\", cluster=\"$cluster\", node=~\"^$Node.*$\", namespace=\"$namespace\", pod=~\"^$Deployment.*$\"})",
           "format": "time_series",
           "instant": false,
           "interval": "1m",
@@ -671,7 +671,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (kube_node_status_allocatable{resource=\"memory\", unit=\"byte\", env=~\"$environment\", cluster=\"$cluster\", node=~\"^$Node.*$\"})",
+          "expr": "sum (kube_node_status_allocatable{env=~\"$environment\", cluster=\"$cluster\", resource=\"memory\", unit=\"byte\"})",
           "format": "time_series",
           "instant": false,
           "interval": "1m",
@@ -736,7 +736,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (rate (container_cpu_usage_seconds_total{env=~\"$environment\", pod=~\"^$Deployment.*$\", kubernetes_io_hostname=~\"^$Node$\", cluster=\"$cluster\", namespace=\"$namespace\"}[1m]))",
+          "expr": "sum (rate (container_cpu_usage_seconds_total{env=~\"$environment\", cluster=\"$cluster\", node=~\"^$Node.*$\", namespace=\"$namespace\", pod=~\"^$Deployment.*$\"}[1m]))",
           "format": "time_series",
           "instant": false,
           "interval": "1m",
@@ -801,7 +801,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (machine_cpu_cores{env=~\"$environment\", cluster=\"$cluster\", kubernetes_io_hostname=~\"^$Node$\"})",
+          "expr": "sum (machine_cpu_cores{env=~\"$environment\", cluster=\"$cluster\"})",
           "format": "time_series",
           "instant": false,
           "interval": "1m",
@@ -866,7 +866,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum(kube_deployment_status_replicas_available{env=~\"$environment\", deployment=~\"$Deployment.*\", cluster=\"$cluster\", namespace=\"$namespace\"})",
+          "expr": "sum(kube_deployment_status_replicas_available{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", deployment=~\"$Deployment.*\"})",
           "format": "time_series",
           "instant": false,
           "interval": "1m",
@@ -931,7 +931,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum(kube_deployment_status_replicas{env=~\"$environment\", deployment=~\"$Deployment.*\", cluster=\"$cluster\", namespace=\"$namespace\"})",
+          "expr": "sum(kube_deployment_status_replicas{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", deployment=~\"$Deployment.*\"})",
           "format": "time_series",
           "instant": false,
           "interval": "1m",
@@ -1014,7 +1014,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum (rate (container_cpu_usage_seconds_total{env=~\"$environment\", image!=\"\", pod=~\"^$Deployment.*$\", node=~\"^$Node$\", cluster=\"$cluster\", namespace=\"$namespace\"}[1m])) by (pod,node)",
+          "expr": "sum (rate (container_cpu_usage_seconds_total{env=~\"$environment\", cluster=\"$cluster\", node=~\"^$Node.*$\", namespace=\"$namespace\", image!=\"\", pod=~\"^$Deployment.*$\"}[1m])) by (pod,node)",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -1022,7 +1022,7 @@
           "refId": "A"
         },
         {
-          "expr": "sum (kube_pod_container_resource_requests{resource=\"cpu\", unit=\"core\", env=~\"$environment\", pod=~\"^$Deployment.*$\",node=~\"^$Node$\", cluster=\"$cluster\", namespace=\"$namespace\"}) by (pod,node)",
+          "expr": "sum (kube_pod_container_resource_requests{env=~\"$environment\", cluster=\"$cluster\", node=~\"^$Node.*$\", namespace=\"$namespace\", resource=\"cpu\", unit=\"core\", pod=~\"^$Deployment.*$\"}) by (pod,node)",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -1125,7 +1125,7 @@
       ],
       "targets": [
         {
-          "expr": "sum(label_replace(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{env=~\"$environment\"}, \"pod\", \"$1\", \"pod\", \"(.*)\") * on(namespace,pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", workload=~\"^$Deployment.*\", cluster=\"$cluster\", namespace=\"$namespace\"}) by (pod)",
+          "expr": "sum(label_replace(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{env=~\"$environment\"}, \"pod\", \"$1\", \"pod\", \"(.*)\") * on(namespace,pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"^$Deployment.*\"}) by (pod)",
           "format": "table",
           "instant": true,
           "interval": "1m",
@@ -1134,7 +1134,7 @@
           "refId": "A"
         },
         {
-          "expr": "sum(kube_pod_container_resource_requests{resource=\"cpu\", unit=\"core\", env=~\"$environment\"} * on(namespace,pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", workload=~\"^$Deployment.*\", cluster=\"$cluster\", namespace=\"$namespace\"}) by (pod)",
+          "expr": "sum(kube_pod_container_resource_requests{resource=\"cpu\", unit=\"core\", env=~\"$environment\"} * on(namespace,pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"^$Deployment.*\"}) by (pod)",
           "format": "table",
           "instant": true,
           "interval": "1m",
@@ -1143,7 +1143,7 @@
           "refId": "B"
         },
         {
-          "expr": "sum(label_replace(namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{env=~\"$environment\"}, \"pod\", \"$1\", \"pod\", \"(.*)\") * on(pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", workload=~\"^$Deployment.*\", cluster=\"$cluster\", namespace=\"$namespace\"}) by (pod) / sum(kube_pod_container_resource_requests{resource=\"cpu\", unit=\"core\", env=~\"$environment\"} * on(pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", workload=~\"^$Deployment.*\", cluster=\"$cluster\", namespace=\"$namespace\"}) by (pod)",
+          "expr": "sum(label_replace(namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{env=~\"$environment\"}, \"pod\", \"$1\", \"pod\", \"(.*)\") * on(pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"^$Deployment.*\"}) by (pod) / sum(kube_pod_container_resource_requests{resource=\"cpu\", unit=\"core\", env=~\"$environment\"} * on(pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"^$Deployment.*\"}) by (pod)",
           "format": "table",
           "instant": true,
           "interval": "1m",
@@ -1227,7 +1227,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum (container_memory_working_set_bytes{env=~\"$environment\", id!=\"/\",pod=~\"^$Deployment.*$\",node=~\"^$Node$\", container=\"sidekiq\", cluster=\"$cluster\", namespace=\"$namespace\"}) by (pod)",
+          "expr": "sum (container_memory_working_set_bytes{env=~\"$environment\", cluster=\"$cluster\", node=~\"^$Node.*$\", namespace=\"$namespace\", id!=\"/\",pod=~\"^$Deployment.*$\", container=\"sidekiq\"}) by (pod)",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -1332,7 +1332,7 @@
       ],
       "targets": [
         {
-          "expr": "sum(label_replace(container_memory_usage_bytes{env=~\"$environment\", container!=\"\"}, \"pod\", \"$1\", \"pod\", \"(.*)\") * on(pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", workload=~\"^$Deployment.*\", cluster=\"$cluster\", namespace=\"$namespace\"}) by (pod)",
+          "expr": "sum(label_replace(container_memory_usage_bytes{env=~\"$environment\", container!=\"\"}, \"pod\", \"$1\", \"pod\", \"(.*)\") * on(pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"^$Deployment.*\"}) by (pod)",
           "format": "table",
           "instant": true,
           "interval": "1m",
@@ -1341,7 +1341,7 @@
           "refId": "A"
         },
         {
-          "expr": "sum(kube_pod_container_resource_requests{resource=\"memory\", unit=\"byte\", env=~\"$environment\"} * on(pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", workload=~\"^$Deployment.*\", cluster=\"$cluster\", namespace=\"$namespace\"}) by (pod)",
+          "expr": "sum(kube_pod_container_resource_requests{resource=\"memory\", unit=\"byte\", env=~\"$environment\"} * on(pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"^$Deployment.*\"}) by (pod)",
           "format": "table",
           "instant": true,
           "interval": "1m",
@@ -1350,7 +1350,7 @@
           "refId": "B"
         },
         {
-          "expr": "sum(label_replace(container_memory_usage_bytes{env=~\"$environment\", container!=\"\"}, \"pod\", \"$1\", \"pod\", \"(.*)\") * on(pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", workload=~\"^$Deployment.*\", cluster=\"$cluster\", namespace=\"$namespace\"}) by (pod) /sum(kube_pod_container_resource_requests{resource=\"memory\", unit=\"byte\", env=~\"$environment\", } * on(pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", workload=~\"^$Deployment.*\", cluster=\"$cluster\", namespace=\"$namespace\"}) by (pod)",
+          "expr": "sum(label_replace(container_memory_usage_bytes{env=~\"$environment\", container!=\"\"}, \"pod\", \"$1\", \"pod\", \"(.*)\") * on(pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"^$Deployment.*\"}) by (pod) /sum(kube_pod_container_resource_requests{resource=\"memory\", unit=\"byte\", env=~\"$environment\"} * on(pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"^$Deployment.*\"}) by (pod)",
           "format": "table",
           "instant": true,
           "interval": "1m",
@@ -1434,7 +1434,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum (rate (container_network_receive_bytes_total{env=~\"$environment\", id!=\"/\",pod=~\"^$Deployment.*$\",node=~\"^$Node$\", cluster=\"$cluster\", namespace=\"$namespace\"}[1m])) by (pod)",
+          "expr": "sum (rate (container_network_receive_bytes_total{env=~\"$environment\", cluster=\"$cluster\", node=~\"^$Node.*$\", namespace=\"$namespace\", id!=\"/\",pod=~\"^$Deployment.*$\"}[1m])) by (pod)",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -1442,7 +1442,7 @@
           "refId": "A"
         },
         {
-          "expr": "- sum( rate (container_network_transmit_bytes_total{env=~\"$environment\", id!=\"/\",pod=~\"^$Deployment.*$\",node=~\"^$Node$\", cluster=\"$cluster\", namespace=\"$namespace\"}[1m])) by (pod)",
+          "expr": "- sum( rate (container_network_transmit_bytes_total{env=~\"$environment\", cluster=\"$cluster\", node=~\"^$Node.*$\", namespace=\"$namespace\", id!=\"/\",pod=~\"^$Deployment.*$\"}[1m])) by (pod)",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -1713,5 +1713,5 @@
   "timezone": "utc",
   "title": "sidekiq: Pod Info",
   "uid": "sidekiq-pod",
-  "version": 2739
+  "version": 2740
 }
