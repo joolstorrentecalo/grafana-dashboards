@@ -51,72 +51,72 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2759007319 at Fri Jul 22 17:20:23 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2759007319 at Fri Jul 22 17:13:24 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
   "hideControls": false,
   "id": null,
   "links": [
-    {
-      "asDropdown": true,
-      "icon": "external link",
-      "includeVars": false,
-      "keepTime": true,
-      "tags": "",
-      "targetBlank": false,
-      "title": "🔙 Back to mailroom service",
-      "type": "link",
-      "url": "https://dashboards.gitlab.net/d/mailroom-main/mailroom-overview?orgId=1"
-    },
-    {
-      "asDropdown": true,
-      "icon": "dashboard",
-      "includeVars": true,
-      "keepTime": true,
-      "tags": "type:mailroom",
-      "targetBlank": false,
-      "title": "mailroom Detail",
-      "type": "dashboards",
-      "url": ""
-    },
-    {
-      "asDropdown": true,
-      "icon": "external link",
-      "includeVars": true,
-      "keepTime": true,
-      "tags": [
-        "managed",
-        "type:mailroom",
-        "kube detail"
-      ],
-      "targetBlank": false,
-      "title": "☸️ mailroom Kubernetes Detail",
-      "type": "dashboards",
-      "url": ""
-    }
+
   ],
   "panels": [
     {
-      "collapse": false,
-      "collapsed": false,
+      "cards": {
+        "cardPadding": null,
+        "cardRound": null
+      },
+      "color": {
+        "cardColor": "#b4ff00",
+        "colorScale": "sqrt",
+        "exponent": 0.5,
+        "mode": "opacity"
+      },
+      "dataFormat": "tsbuckets",
+      "datasource": "$PROMETHEUS_DS",
+      "description": "Time it takes kas to find a suitable reverse tunnel from an agent",
       "gridPos": {
-        "h": 8,
-        "w": 24,
+        "h": 10,
+        "w": 8,
         "x": 0,
         "y": 0
       },
+      "heatmap": {
+      },
+      "hideZeroBuckets": true,
+      "highlightCards": true,
       "id": 2,
-      "panels": [
-
+      "legend": {
+        "show": false
+      },
+      "targets": [
+        {
+          "expr": "sum by (le) (rate(k8s_api_proxy_routing_duration_seconds_bucket{env=\"$environment\", stage=\"$stage\", app=\"kas\"}[$__rate_interval]))",
+          "format": "heatmap",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "__auto",
+          "refId": "A"
+        }
       ],
-      "repeat": null,
-      "repeatIteration": null,
-      "repeatRowId": null,
-      "showTitle": true,
-      "title": "mailroom deployment",
-      "titleSize": "h6",
-      "type": "row"
+      "title": "Routing latency",
+      "tooltip": {
+        "show": true,
+        "showHistogram": false
+      },
+      "type": "heatmap",
+      "xAxis": {
+        "show": true
+      },
+      "xBucketNumber": null,
+      "xBucketSize": null,
+      "yAxis": {
+        "decimals": null,
+        "format": "s",
+        "show": true,
+        "splitFactor": null
+      },
+      "yBucketBound": "auto"
     },
     {
       "aliasColors": {
@@ -126,14 +126,14 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 0,
-      "description": "",
+      "description": "OK gRPC calls related to CI tunnel",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 8,
-        "x": 0,
-        "y": 8
+        "x": 8,
+        "y": 0
       },
       "id": 3,
       "legend": {
@@ -168,11 +168,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      deployment=\"mailroom\",env=\"$environment\",environment=\"$environment\",type=\"mailroom\"\n    }[$__rate_interval]\n  )\n)\n",
+          "expr": "sum by (grpc_service, grpc_method) (\n  rate(grpc_server_handled_total{env=\"$environment\", stage=\"$stage\", app=\"kas\", grpc_code=\"OK\",\n    grpc_service=~\"gitlab.agent.reverse_tunnel.rpc.ReverseTunnel|gitlab.agent.kubernetes_api.rpc.KubernetesApi\"\n  }[$__rate_interval])\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "{{ cluster }}",
+          "legendFormat": "{{grpc_service}}/{{grpc_method}}",
           "refId": "A"
         }
       ],
@@ -181,7 +181,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "mailroom Deployment: CPU",
+      "title": "OK gRPC calls/second",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -200,7 +200,7 @@
       "yaxes": [
         {
           "format": "short",
-          "label": "",
+          "label": "rps",
           "logBase": 1,
           "max": null,
           "min": 0,
@@ -224,14 +224,14 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 0,
-      "description": "",
+      "description": "Not OK gRPC calls related to CI tunnel",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 8,
-        "x": 8,
-        "y": 8
+        "x": 16,
+        "y": 0
       },
       "id": 4,
       "legend": {
@@ -266,11 +266,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    deployment=\"mailroom\",env=\"$environment\",environment=\"$environment\",type=\"mailroom\"\n  }\n)\n",
+          "expr": "sum by (grpc_service, grpc_method, grpc_code) (\n  rate(grpc_server_handled_total{env=\"$environment\", stage=\"$stage\", app=\"kas\", grpc_code!=\"OK\",\n    grpc_service=~\"gitlab.agent.reverse_tunnel.rpc.ReverseTunnel|gitlab.agent.kubernetes_api.rpc.KubernetesApi\"\n  }[$__rate_interval])\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "{{ cluster }}",
+          "legendFormat": "{{grpc_service}}/{{grpc_method}} {{grpc_code}}",
           "refId": "A"
         }
       ],
@@ -279,7 +279,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "mailroom Deployment: Memory",
+      "title": "Not OK gRPC calls/second",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -297,8 +297,8 @@
       },
       "yaxes": [
         {
-          "format": "bytes",
-          "label": "",
+          "format": "short",
+          "label": "rps",
           "logBase": 1,
           "max": null,
           "min": 0,
@@ -313,129 +313,6 @@
           "show": false
         }
       ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "Network utilization",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 8
-      },
-      "id": 5,
-      "legend": {
-        "alignAsTable": false,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-        {
-          "alias": "/receive .*/",
-          "transform": "negative-Y"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_transmit_bytes_total:labeled{\n      deployment=\"mailroom\",env=\"$environment\",environment=\"$environment\",type=\"mailroom\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "send {{ cluster }}",
-          "refId": "A"
-        },
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_receive_bytes_total:labeled{\n      deployment=\"mailroom\",env=\"$environment\",environment=\"$environment\",type=\"mailroom\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "receive {{ cluster }}",
-          "refId": "B"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "mailroom Deployment: Network IO",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "Bps",
-          "label": "Network utilization",
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "content": "Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards)\n",
-      "datasource": null,
-      "gridPos": {
-        "h": 2,
-        "w": 24,
-        "x": 0,
-        "y": 110000
-      },
-      "id": 6,
-      "mode": "markdown",
-      "title": "Source",
-      "type": "text"
     }
   ],
   "refresh": "",
@@ -446,11 +323,8 @@
   "style": "light",
   "tags": [
     "managed",
-    "mailroom",
-    "mailroom",
-    "type:mailroom",
-    "kube",
-    "kube detail"
+    "kas",
+    "kas"
   ],
   "templating": {
     "list": [
@@ -496,6 +370,35 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "main",
+          "value": "main"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "stage",
+        "options": [
+          {
+            "text": "main",
+            "value": "main"
+          },
+          {
+            "text": "cny",
+            "value": "cny"
+          },
+          {
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "main,cny,",
+        "refresh": 0,
+        "type": "custom"
       }
     ]
   },
@@ -524,7 +427,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "mailroom: Kube Deployment Detail",
-  "uid": "mailroom-kube-deployments",
-  "version": 1679
+  "title": "kas: CI tunnel",
+  "uid": "kas-ci-tunnel",
+  "version": 1
 }
