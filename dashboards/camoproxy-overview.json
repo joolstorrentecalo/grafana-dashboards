@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2833538365 at Tue Aug  9 14:33:15 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2838834677 at Wed Aug 10 13:12:51 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -3591,12 +3591,12 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 0,
-          "description": "Ratio of requested CPU resources from allocatable resources.\nIdeally we have requests utilization close to 100%. Values are\nbelow 100% typically because pods do not fit well on nodes or\nbecause we might be bound by memory requests already.\n",
+          "description": "",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
             "h": 8,
-            "w": 12,
+            "w": 8,
             "x": 0,
             "y": 1
           },
@@ -3617,7 +3617,14 @@
           "lines": true,
           "linewidth": 1,
           "links": [
-
+            {
+              "title": "☸️ camoproxy Kubernetes Deployment Detail",
+              "url": "/d/camoproxy-kube-deployments?${__url_time_range}&${__all_variables}"
+            },
+            {
+              "title": "☸️ camoproxy Kubernetes Container Detail",
+              "url": "/d/camoproxy-kube-containers?${__url_time_range}&${__all_variables}"
+            }
           ],
           "nullPointMode": "null",
           "percentage": false,
@@ -3633,11 +3640,11 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (node) (\n  kube_pod_container_resource_requests{resource=\"cpu\", unit=\"core\"}\n)\n/ on (node) group_left()\nkube_node_status_allocatable:labeled{env=\"$environment\",environment=\"$environment\",type=\"camoproxy\",resource=\"cpu\"}\n",
+              "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      deployment=\"camoproxy\",env=\"$environment\",environment=\"$environment\",type=\"camoproxy\"\n    }[$__rate_interval]\n  )\n)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
-              "legendFormat": "{{ node }}",
+              "legendFormat": "{{ cluster }}",
               "refId": "A"
             }
           ],
@@ -3646,7 +3653,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Node CPU Requests Utilization",
+          "title": "camoproxy Deployment: CPU",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -3664,7 +3671,7 @@
           },
           "yaxes": [
             {
-              "format": "percentunit",
+              "format": "short",
               "label": "",
               "logBase": 1,
               "max": null,
@@ -3689,13 +3696,13 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 0,
-          "description": "Ratio of requested Memory resources from allocatable resources.\nIdeally we have requests utilization close to 100%. Values are\nbelow 100% typically because pods do not fit well on nodes or\nbecause we might be bound by CPU requests already.\n",
+          "description": "",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
             "h": 8,
-            "w": 12,
-            "x": 12,
+            "w": 8,
+            "x": 8,
             "y": 1
           },
           "id": 37,
@@ -3715,7 +3722,14 @@
           "lines": true,
           "linewidth": 1,
           "links": [
-
+            {
+              "title": "☸️ camoproxy Kubernetes Deployment Detail",
+              "url": "/d/camoproxy-kube-deployments?${__url_time_range}&${__all_variables}"
+            },
+            {
+              "title": "☸️ camoproxy Kubernetes Container Detail",
+              "url": "/d/camoproxy-kube-containers?${__url_time_range}&${__all_variables}"
+            }
           ],
           "nullPointMode": "null",
           "percentage": false,
@@ -3731,11 +3745,11 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (node) (\n  kube_pod_container_resource_requests{resource=\"memory\", unit=\"byte\"}\n)\n/ on (node) group_left()\nkube_node_status_allocatable:labeled{env=\"$environment\",environment=\"$environment\",type=\"camoproxy\",resource=\"memory\"}\n",
+              "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    deployment=\"camoproxy\",env=\"$environment\",environment=\"$environment\",type=\"camoproxy\"\n  }\n)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
-              "legendFormat": "{{ node }}",
+              "legendFormat": "{{ cluster }}",
               "refId": "A"
             }
           ],
@@ -3744,7 +3758,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Node Memory Requests Utilization",
+          "title": "camoproxy Deployment: Memory",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -3762,11 +3776,127 @@
           },
           "yaxes": [
             {
-              "format": "percentunit",
+              "format": "bytes",
               "label": "",
               "logBase": 1,
               "max": null,
               "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Network utilization",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 1
+          },
+          "id": 38,
+          "legend": {
+            "alignAsTable": false,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "sideWidth": null,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+            {
+              "title": "☸️ camoproxy Kubernetes Deployment Detail",
+              "url": "/d/camoproxy-kube-deployments?${__url_time_range}&${__all_variables}"
+            },
+            {
+              "title": "☸️ camoproxy Kubernetes Container Detail",
+              "url": "/d/camoproxy-kube-containers?${__url_time_range}&${__all_variables}"
+            }
+          ],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [
+            {
+              "alias": "/receive .*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(cluster) (\n  rate(\n    container_network_transmit_bytes_total:labeled{\n      deployment=\"camoproxy\",env=\"$environment\",environment=\"$environment\",type=\"camoproxy\"\n    }[$__rate_interval]\n  )\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "send {{ cluster }}",
+              "refId": "A"
+            },
+            {
+              "expr": "sum by(cluster) (\n  rate(\n    container_network_receive_bytes_total:labeled{\n      deployment=\"camoproxy\",env=\"$environment\",environment=\"$environment\",type=\"camoproxy\"\n    }[$__rate_interval]\n  )\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "receive {{ cluster }}",
+              "refId": "B"
+            }
+          ],
+          "thresholds": [
+
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "camoproxy Deployment: Network IO",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "Bps",
+              "label": "Network utilization",
+              "logBase": 1,
+              "max": null,
+              "min": null,
               "show": true
             },
             {
@@ -3797,7 +3927,7 @@
         "x": 0,
         "y": 500
       },
-      "id": 38,
+      "id": 39,
       "panels": [
         {
           "aliasColors": {
@@ -4585,7 +4715,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 43,
+      "id": 44,
       "panels": [
 
       ],
@@ -4614,7 +4744,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 44,
+      "id": 45,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -4712,7 +4842,7 @@
         "x": 12,
         "y": 1000
       },
-      "id": 45,
+      "id": 46,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -4824,7 +4954,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 46,
+      "id": 47,
       "panels": [
         {
           "colors": [
@@ -4845,7 +4975,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 47,
+          "id": 48,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -4958,7 +5088,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 48,
+          "id": 49,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -5069,7 +5199,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 49,
+          "id": 50,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -5174,7 +5304,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 50,
+      "id": 51,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -5268,5 +5398,5 @@
   "timezone": "utc",
   "title": "camoproxy: Overview",
   "uid": "camoproxy-main",
-  "version": 2215
+  "version": 2216
 }
