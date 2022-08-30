@@ -126,7 +126,7 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
-      "description": "The [Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)\nautomatically scales the number of Pods in a deployment based on metrics.\n\nThe Horizontal Pod Autoscaler has a configured upper maximum. When this\nlimit is reached, the HPA will not increase the number of pods and other\nresource saturation (eg, CPU, memory) may occur.\n Lower is better.",
+      "description": "Available space on active gitaly nodes\n\nActive nodes are Gitaly nodes that are currently receiving new repositories\n\nWe allow new Gitaly nodes to receive traffic until their disk is about 80%\nfull. After which we mark the weight of the node as 0 in the\n[Gitaly shard weights assigner](https://gitlab.com/gitlab-com/gl-infra/gitaly-shard-weights-assigner/-/blob/master/assigner.rb#L9).\n\nTo make sure we always have enough shards receiving new repositories, we want\nto have at least 10% of the total storage to be available for new projects.\nWhen this resource gets saturated, we could be creating to many projects on\na limited set of nodes, which could cause these nodes to be busier than usual.\n\nWhen this alert fires, consider adding new gitaly nodes when the\ngitaly_total_disk_space component is also close to saturation. Or\n[rebalance](https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/gitaly/storage-rebalancing.md)\nsome Gitaly nodes moving some projects off to empty nodes so they can also\nreceive new traffic.\n Lower is better.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -135,7 +135,7 @@
         "x": 0,
         "y": 0
       },
-      "id": 351198712,
+      "id": 3803311012,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -217,20 +217,20 @@
         }
       ],
       "spaceLength": 10,
-      "stableId": "saturation-kube_horizontalpodautoscaler_desired_replicas",
+      "stableId": "saturation-gitaly_active_node_available_space",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, horizontalpodautoscaler, shard) (\n  clamp_min(\n    clamp_max(\n      kube_horizontalpodautoscaler_status_desired_replicas:labeled{env=\"$environment\",stage=\"$stage\",type=\"$type\", shard!~\"database-throttled|elasticsearch|gitaly-throttled|imports|urgent-authorized-projects|urgent-other\"}\n      /\n      kube_horizontalpodautoscaler_spec_max_replicas:labeled{env=\"$environment\",stage=\"$stage\",type=\"$type\", shard!~\"database-throttled|elasticsearch|gitaly-throttled|imports|urgent-authorized-projects|urgent-other\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard) (\n  clamp_min(\n    clamp_max(\n      1 - (\n        sum by (env, type) (\n          node_filesystem_avail_bytes{env=\"$environment\",stage=\"$stage\",type=\"$type\", device=\"/dev/sdb\",shard=~\"default|praefect\"}\n          and\n          (instance:node_filesystem_avail:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", device=\"/dev/sdb\",shard=~\"default|praefect\"} > 0.2)\n        )\n        /\n        sum by (env, type)(\n          node_filesystem_size_bytes{env=\"$environment\",stage=\"$stage\",type=\"$type\", device=\"/dev/sdb\",shard=~\"default|praefect\"}\n        )\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "{{ horizontalpodautoscaler }} {{ shard }}",
+          "legendFormat": "{{ shard }}",
           "refId": "A"
         },
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"kube_horizontalpodautoscaler_desired_replicas\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"gitaly_active_node_available_space\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -238,7 +238,7 @@
           "refId": "B"
         },
         {
-          "expr": "gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"kube_horizontalpodautoscaler_desired_replicas\"}\n",
+          "expr": "gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"gitaly_active_node_available_space\"}\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -246,7 +246,7 @@
           "refId": "C"
         },
         {
-          "expr": "gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"kube_horizontalpodautoscaler_desired_replicas\"}\n",
+          "expr": "gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"gitaly_active_node_available_space\"}\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -254,7 +254,7 @@
           "refId": "D"
         },
         {
-          "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"kube_horizontalpodautoscaler_desired_replicas\"}) by (component)\n",
+          "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"gitaly_active_node_available_space\"}) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -262,7 +262,7 @@
           "refId": "E"
         },
         {
-          "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"kube_horizontalpodautoscaler_desired_replicas\"}) by (component)\n",
+          "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"gitaly_active_node_available_space\"}) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -275,7 +275,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "kube_horizontalpodautoscaler_desired_replicas component saturation: Horizontal Pod Autoscaler Desired Replicas",
+      "title": "gitaly_active_node_available_space component saturation: Gitaly Active Node Available Space",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -311,7 +311,7 @@
       ]
     },
     {
-      "content": "## Horizontal Pod Autoscaler Desired Replicas\n\nThe [Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)\nautomatically scales the number of Pods in a deployment based on metrics.\n\nThe Horizontal Pod Autoscaler has a configured upper maximum. When this\nlimit is reached, the HPA will not increase the number of pods and other\nresource saturation (eg, CPU, memory) may occur.\n\n\n## What to do from here here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=kube_horizontalpodautoscaler_desired_replicas)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+kube_horizontalpodautoscaler_desired_replicas&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
+      "content": "## Gitaly Active Node Available Space\n\nAvailable space on active gitaly nodes\n\nActive nodes are Gitaly nodes that are currently receiving new repositories\n\nWe allow new Gitaly nodes to receive traffic until their disk is about 80%\nfull. After which we mark the weight of the node as 0 in the\n[Gitaly shard weights assigner](https://gitlab.com/gitlab-com/gl-infra/gitaly-shard-weights-assigner/-/blob/master/assigner.rb#L9).\n\nTo make sure we always have enough shards receiving new repositories, we want\nto have at least 10% of the total storage to be available for new projects.\nWhen this resource gets saturated, we could be creating to many projects on\na limited set of nodes, which could cause these nodes to be busier than usual.\n\nWhen this alert fires, consider adding new gitaly nodes when the\ngitaly_total_disk_space component is also close to saturation. Or\n[rebalance](https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/gitaly/storage-rebalancing.md)\nsome Gitaly nodes moving some projects off to empty nodes so they can also\nreceive new traffic.\n\n\n## What to do from here here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=gitaly_active_node_available_space)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+gitaly_active_node_available_space&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
       "datasource": null,
       "gridPos": {
         "h": 14,
@@ -466,8 +466,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "web",
-          "value": "web"
+          "text": "gitaly",
+          "value": "gitaly"
         },
         "datasource": "$PROMETHEUS_DS",
         "hide": 0,
@@ -546,7 +546,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "alerts: kube_horizontalpodautoscaler_desired_replicas: Saturation Detail",
-  "uid": "alerts-sat_kube_horizontalpodautoscaler",
-  "version": 813
+  "title": "alerts: gitaly_active_node_available_space: Saturation Detail",
+  "uid": "alerts-sat_gitaly_active_available_space",
+  "version": 1
 }

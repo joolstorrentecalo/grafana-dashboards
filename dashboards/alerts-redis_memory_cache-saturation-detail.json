@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2920979691 at Tue Aug 23 11:05:48 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2953356310 at Tue Aug 30 12:19:45 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -126,7 +126,7 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
-      "description": "Redis memory utilization per node.\n\nAs Redis memory saturates node memory, the likelyhood of OOM kills, possibly to the Redis process,\nbecome more likely.\n\nFor caches, consider lowering the `maxmemory` setting in Redis. For non-caching Redis instances,\nthis has been caused in the past by credential stuffing, leading to large numbers of web sessions.\n\nThis threshold is kept deliberately low, since Redis RDB snapshots could consume a significant amount of memory,\nespecially when the rate of change in Redis is high, leading to copy-on-write consuming more memory than when the\nrate-of-change is low.\n Lower is better.",
+      "description": "Redis maxmemory utilization per node\n\nOn the cache Redis we have maxmemory and an eviction policy as a\nsafety-valve, but do not want or expect to reach that limit under\nnormal circumstances; if we start evicting we will experience\nperformance problems , so we want to be alerted some time before\nthat happens.\n Lower is better.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -222,7 +222,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, fqdn) (\n  clamp_min(\n    clamp_max(\n      max by (environment, tier, type, stage, fqdn) (\n        label_replace(redis_memory_used_rss_bytes{env=\"$environment\",stage=\"$stage\",type=\"$type\"}, \"memtype\", \"rss\",\"\",\"\")\n        or\n        label_replace(redis_memory_used_bytes{env=\"$environment\",stage=\"$stage\",type=\"$type\"}, \"memtype\", \"used\",\"\",\"\")\n      )\n      /\n      avg by (environment, tier, type, stage, fqdn) (\n        node_memory_MemTotal_bytes{env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, fqdn) (\n  clamp_min(\n    clamp_max(\n      (\n        max by (environment, tier, type, stage, fqdn) (\n          redis_memory_used_bytes{env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n        )\n        /\n        avg by (environment, tier, type, stage, fqdn) (\n          redis_memory_max_bytes{env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n        )\n      ) and on (fqdn) redis_memory_max_bytes{env=\"$environment\",stage=\"$stage\",type=\"$type\"} != 0\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -275,7 +275,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "redis_memory_cache component saturation: Redis Memory Utilization per Node",
+      "title": "redis_memory_cache component saturation: Redis Memory Utilization of Max Memory",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -311,7 +311,7 @@
       ]
     },
     {
-      "content": "## Redis Memory Utilization per Node\n\nRedis memory utilization per node.\n\nAs Redis memory saturates node memory, the likelyhood of OOM kills, possibly to the Redis process,\nbecome more likely.\n\nFor caches, consider lowering the `maxmemory` setting in Redis. For non-caching Redis instances,\nthis has been caused in the past by credential stuffing, leading to large numbers of web sessions.\n\nThis threshold is kept deliberately low, since Redis RDB snapshots could consume a significant amount of memory,\nespecially when the rate of change in Redis is high, leading to copy-on-write consuming more memory than when the\nrate-of-change is low.\n\n\n## What to do from here here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=redis_memory_cache)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+redis_memory_cache&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
+      "content": "## Redis Memory Utilization of Max Memory\n\nRedis maxmemory utilization per node\n\nOn the cache Redis we have maxmemory and an eviction policy as a\nsafety-valve, but do not want or expect to reach that limit under\nnormal circumstances; if we start evicting we will experience\nperformance problems , so we want to be alerted some time before\nthat happens.\n\n\n## What to do from here here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=redis_memory_cache)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+redis_memory_cache&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
       "datasource": null,
       "gridPos": {
         "h": 14,
@@ -548,5 +548,5 @@
   "timezone": "utc",
   "title": "alerts: redis_memory_cache: Saturation Detail",
   "uid": "alerts-sat_redis_memory_cache",
-  "version": 154
+  "version": 155
 }
