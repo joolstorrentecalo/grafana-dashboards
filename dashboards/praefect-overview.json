@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2978759803 at Mon Sep  5 07:13:05 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2980213236 at Mon Sep  5 11:52:41 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -3376,7 +3376,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    rate(grpc_server_handling_seconds_bucket{env=\"$environment\",environment=\"$environment\",grpc_type=\"unary\",job=\"praefect\",stage=\"$stage\"}[$__interval])\n  )\n)\n > 0",
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    rate(grpc_server_handling_seconds_bucket{env=\"$environment\",environment=\"$environment\",grpc_method!~\"VoteTransaction\",grpc_type=\"unary\",job=\"praefect\",stage=\"$stage\"}[$__interval])\n    or\n    rate(grpc_server_handling_seconds_bucket{env=\"$environment\",environment=\"$environment\",grpc_method=~\"VoteTransaction\",grpc_type=\"unary\",job=\"praefect\",stage=\"$stage\"}[$__interval])\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
@@ -3595,7 +3595,7 @@
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
-            "w": 6,
+            "w": 8,
             "x": 0,
             "y": 10
           },
@@ -3624,7 +3624,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.950000,\n  sum by (fqdn,le) (\n    rate(grpc_server_handling_seconds_bucket{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",grpc_type=\"unary\",job=\"praefect\",stage=\"$stage\"}[$__interval])\n  )\n)\n > 0",
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (fqdn,le) (\n    rate(grpc_server_handling_seconds_bucket{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",grpc_method!~\"VoteTransaction\",grpc_type=\"unary\",job=\"praefect\",stage=\"$stage\"}[$__interval])\n    or\n    rate(grpc_server_handling_seconds_bucket{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",grpc_method=~\"VoteTransaction\",grpc_type=\"unary\",job=\"praefect\",stage=\"$stage\"}[$__interval])\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
@@ -3686,97 +3686,16 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "Attributes apdex downscoring",
-          "fill": 4,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 6,
-            "x": 6,
-            "y": 10
-          },
-          "id": 34,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "alias": "/.*/",
-              "transform": "negative-Y"
-            }
-          ],
-          "spaceLength": 10,
-          "stack": true,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "clamp_min(clamp_max((\n  (\n    sum by (fqdn) (\n  rate(grpc_server_handling_seconds_bucket{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",grpc_type=\"unary\",job=\"praefect\",le=\"+Inf\",stage=\"$stage\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (fqdn) (\n    rate(grpc_server_handling_seconds_bucket{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",grpc_type=\"unary\",job=\"praefect\",le=\"0.5\",stage=\"$stage\"}[$__interval])\n  )\n  +\n  sum by (fqdn) (\n    rate(grpc_server_handling_seconds_bucket{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",grpc_type=\"unary\",job=\"praefect\",le=\"1\",stage=\"$stage\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(fqdn) group_left()\n  (\n    sum by () (\n  rate(grpc_server_handling_seconds_bucket{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",grpc_type=\"unary\",job=\"praefect\",le=\"+Inf\",stage=\"$stage\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 3,
-              "legendFormat": "{{fqdn}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Apdex attribution for proxy Latency - per fqdn",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "percentunit",
-              "label": "Percent",
-              "logBase": 1,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
-        },
-        {
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 2,
           "description": "",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
-            "w": 6,
-            "x": 12,
+            "w": 8,
+            "x": 8,
             "y": 10
           },
-          "id": 35,
+          "id": 34,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3848,11 +3767,11 @@
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
-            "w": 6,
-            "x": 18,
+            "w": 8,
+            "x": 16,
             "y": 10
           },
-          "id": 36,
+          "id": 35,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3931,7 +3850,7 @@
         "x": 0,
         "y": 120
       },
-      "id": 37,
+      "id": 36,
       "panels": [
         {
           "bars": false,
@@ -3948,7 +3867,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 38,
+          "id": 37,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4043,7 +3962,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 39,
+          "id": 38,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4119,7 +4038,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 40,
+          "id": 39,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4214,7 +4133,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 41,
+          "id": 40,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4295,7 +4214,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 42,
+          "id": 41,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4371,7 +4290,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 43,
+          "id": 42,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4466,7 +4385,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 44,
+          "id": 43,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4547,7 +4466,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 45,
+          "id": 44,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4626,7 +4545,7 @@
         "x": 0,
         "y": 300
       },
-      "id": 46,
+      "id": 45,
       "panels": [
         {
           "aliasColors": {
@@ -4645,7 +4564,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 47,
+          "id": 46,
           "legend": {
             "alignAsTable": false,
             "avg": false,
@@ -4743,7 +4662,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 48,
+          "id": 47,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4839,7 +4758,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 49,
+          "id": 48,
           "legend": {
             "alignAsTable": false,
             "avg": false,
@@ -4948,7 +4867,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 50,
+          "id": 49,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5044,7 +4963,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 51,
+          "id": 50,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5142,7 +5061,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 52,
+          "id": 51,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5240,7 +5159,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 53,
+          "id": 52,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5338,7 +5257,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 54,
+          "id": 53,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5436,7 +5355,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 55,
+          "id": 54,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5534,7 +5453,7 @@
             "x": 12,
             "y": 40
           },
-          "id": 56,
+          "id": 55,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5632,7 +5551,7 @@
             "x": 0,
             "y": 50
           },
-          "id": 57,
+          "id": 56,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5747,7 +5666,7 @@
             "x": 12,
             "y": 50
           },
-          "id": 58,
+          "id": 57,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5862,7 +5781,7 @@
             "x": 0,
             "y": 60
           },
-          "id": 59,
+          "id": 58,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5977,7 +5896,7 @@
             "x": 12,
             "y": 60
           },
-          "id": 60,
+          "id": 59,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6093,7 +6012,7 @@
         "x": 0,
         "y": 500
       },
-      "id": 61,
+      "id": 60,
       "panels": [
         {
           "aliasColors": {
@@ -8801,7 +8720,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 76,
+      "id": 75,
       "panels": [
 
       ],
@@ -8830,7 +8749,7 @@
         "x": 0,
         "y": 1001
       },
-      "id": 77,
+      "id": 76,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -8928,7 +8847,7 @@
         "x": 0,
         "y": 1011
       },
-      "id": 78,
+      "id": 77,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9050,7 +8969,7 @@
         "x": 0,
         "y": 1021
       },
-      "id": 79,
+      "id": 78,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9172,7 +9091,7 @@
         "x": 0,
         "y": 1031
       },
-      "id": 80,
+      "id": 79,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9270,7 +9189,7 @@
         "x": 0,
         "y": 1041
       },
-      "id": 81,
+      "id": 80,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9358,7 +9277,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 82,
+      "id": 81,
       "panels": [
         {
           "colors": [
@@ -9379,7 +9298,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 83,
+          "id": 82,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -9492,7 +9411,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 84,
+          "id": 83,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -9603,7 +9522,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 85,
+          "id": 84,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -9708,7 +9627,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 86,
+      "id": 85,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -9831,5 +9750,5 @@
   "timezone": "utc",
   "title": "praefect: Overview",
   "uid": "praefect-main",
-  "version": 2838
+  "version": 2843
 }

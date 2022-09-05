@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2978759803 at Mon Sep  5 07:10:19 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/2980213236 at Mon Sep  5 11:50:13 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -5099,7 +5099,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    rate(grpc_server_handling_seconds_bucket{environment=\"$environment\",feature_category=~\"gitaly|\",grpc_type=\"unary\",job=\"praefect\",stage=\"$stage\"}[$__interval])\n  )\n)\n > 0",
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    rate(grpc_server_handling_seconds_bucket{environment=\"$environment\",feature_category=~\"gitaly|\",grpc_method!~\"VoteTransaction\",grpc_type=\"unary\",job=\"praefect\",stage=\"$stage\"}[$__interval])\n    or\n    rate(grpc_server_handling_seconds_bucket{environment=\"$environment\",feature_category=~\"gitaly|\",grpc_method=~\"VoteTransaction\",grpc_type=\"unary\",job=\"praefect\",stage=\"$stage\"}[$__interval])\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
@@ -5318,7 +5318,7 @@
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
-            "w": 6,
+            "w": 8,
             "x": 0,
             "y": 10
           },
@@ -5347,7 +5347,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.950000,\n  sum by (fqdn,le) (\n    rate(grpc_server_handling_seconds_bucket{environment=\"$environment\",feature_category=~\"gitaly|\",fqdn!=\"\",grpc_type=\"unary\",job=\"praefect\",stage=\"$stage\"}[$__interval])\n  )\n)\n > 0",
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (fqdn,le) (\n    rate(grpc_server_handling_seconds_bucket{environment=\"$environment\",feature_category=~\"gitaly|\",fqdn!=\"\",grpc_method!~\"VoteTransaction\",grpc_type=\"unary\",job=\"praefect\",stage=\"$stage\"}[$__interval])\n    or\n    rate(grpc_server_handling_seconds_bucket{environment=\"$environment\",feature_category=~\"gitaly|\",fqdn!=\"\",grpc_method=~\"VoteTransaction\",grpc_type=\"unary\",job=\"praefect\",stage=\"$stage\"}[$__interval])\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
@@ -5409,97 +5409,16 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "Attributes apdex downscoring",
-          "fill": 4,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 6,
-            "x": 6,
-            "y": 10
-          },
-          "id": 72,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "alias": "/.*/",
-              "transform": "negative-Y"
-            }
-          ],
-          "spaceLength": 10,
-          "stack": true,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "clamp_min(clamp_max((\n  (\n    sum by (fqdn) (\n  rate(grpc_server_handling_seconds_bucket{environment=\"$environment\",feature_category=~\"gitaly|\",fqdn!=\"\",grpc_type=\"unary\",job=\"praefect\",le=\"+Inf\",stage=\"$stage\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (fqdn) (\n    rate(grpc_server_handling_seconds_bucket{environment=\"$environment\",feature_category=~\"gitaly|\",fqdn!=\"\",grpc_type=\"unary\",job=\"praefect\",le=\"0.5\",stage=\"$stage\"}[$__interval])\n  )\n  +\n  sum by (fqdn) (\n    rate(grpc_server_handling_seconds_bucket{environment=\"$environment\",feature_category=~\"gitaly|\",fqdn!=\"\",grpc_type=\"unary\",job=\"praefect\",le=\"1\",stage=\"$stage\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(fqdn) group_left()\n  (\n    sum by () (\n  rate(grpc_server_handling_seconds_bucket{environment=\"$environment\",feature_category=~\"gitaly|\",fqdn!=\"\",grpc_type=\"unary\",job=\"praefect\",le=\"+Inf\",stage=\"$stage\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 3,
-              "legendFormat": "{{fqdn}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Apdex attribution for proxy Latency - per fqdn",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "percentunit",
-              "label": "Percent",
-              "logBase": 1,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
-        },
-        {
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 2,
           "description": "",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
-            "w": 6,
-            "x": 12,
+            "w": 8,
+            "x": 8,
             "y": 10
           },
-          "id": 73,
+          "id": 72,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5571,11 +5490,11 @@
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
-            "w": 6,
-            "x": 18,
+            "w": 8,
+            "x": 16,
             "y": 10
           },
-          "id": 74,
+          "id": 73,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5654,7 +5573,7 @@
         "x": 0,
         "y": 1240
       },
-      "id": 75,
+      "id": 74,
       "panels": [
         {
           "bars": false,
@@ -5671,7 +5590,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 76,
+          "id": 75,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5747,7 +5666,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 77,
+          "id": 76,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5823,7 +5742,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 78,
+          "id": 77,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5899,7 +5818,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 79,
+          "id": 78,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5975,7 +5894,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 80,
+          "id": 79,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6051,7 +5970,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 81,
+          "id": 80,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6127,7 +6046,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 82,
+          "id": 81,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6203,7 +6122,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 83,
+          "id": 82,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6282,7 +6201,7 @@
         "x": 0,
         "y": 1250
       },
-      "id": 84,
+      "id": 83,
       "panels": [
         {
           "bars": false,
@@ -6299,7 +6218,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 85,
+          "id": 84,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6375,7 +6294,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 86,
+          "id": 85,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6456,7 +6375,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 87,
+          "id": 86,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6532,7 +6451,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 88,
+          "id": 87,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6613,7 +6532,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 89,
+          "id": 88,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6689,7 +6608,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 90,
+          "id": 89,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6770,7 +6689,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 91,
+          "id": 90,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6849,7 +6768,7 @@
         "x": 0,
         "y": 1260
       },
-      "id": 92,
+      "id": 91,
       "panels": [
         {
           "bars": false,
@@ -6866,7 +6785,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 93,
+          "id": 92,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6961,7 +6880,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 94,
+          "id": 93,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7037,7 +6956,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 95,
+          "id": 94,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7132,7 +7051,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 96,
+          "id": 95,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7213,7 +7132,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 97,
+          "id": 96,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7289,7 +7208,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 98,
+          "id": 97,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7384,7 +7303,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 99,
+          "id": 98,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7465,7 +7384,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 100,
+          "id": 99,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7651,5 +7570,5 @@
   "timezone": "utc",
   "title": "stage-groups: Gitaly: group error budget detail",
   "uid": "stage-groups-detail-gitaly",
-  "version": 588
+  "version": 593
 }
