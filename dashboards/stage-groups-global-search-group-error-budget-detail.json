@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3036449951 at Thu Sep 15 20:50:00 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3040217681 at Fri Sep 16 13:31:47 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -2005,6 +2005,236 @@
             "dataLinks": [
               {
                 "targetBlank": true,
+                "title": "global_search SLI Apdex SLO Analysis",
+                "url": "/d/alerts-service_component_stage_groups_slo_apdex?${__url_time_range}&${__all_variables}&var-component=global_search&var-stage=$stage"
+              }
+            ]
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "6h Degradation SLO (5% of monthly error budget)",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "1h Outage SLO (2% of monthly error budget)",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            },
+            {
+              "alias": "SLO",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "sli-global_search-apdex",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "min_over_time(gitlab:component:stage_group:execution:apdex:ratio_5m{component=\"global_search\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"global_search\"}[$__interval])\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{ type }} apdex",
+              "refId": "A"
+            },
+            {
+              "expr": "(1 - 6 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"global_search\",monitor=\"global\"})\n))\n",
+              "format": "time_series",
+              "interval": "5m",
+              "intervalFactor": 3,
+              "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+              "refId": "B"
+            },
+            {
+              "expr": "(1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"global_search\",monitor=\"global\"})\n))\n",
+              "format": "time_series",
+              "interval": "5m",
+              "intervalFactor": 3,
+              "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+              "refId": "C"
+            }
+          ],
+          "title": "global_search SLI Apdex",
+          "tooltip": {
+            "shared": true,
+            "sort": 1,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Apdex %",
+              "logBase": 1,
+              "max": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 8,
+            "y": 20
+          },
+          "id": 29,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stableId": "sli-global_search-ops-rate",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "avg_over_time(gitlab:component:stage_group:execution:ops:rate_5m{component=\"global_search\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"global_search\"}[$__interval])\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{ type }} RPS",
+              "refId": "A"
+            }
+          ],
+          "title": "global_search SLI RPS - Requests per Second",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Operations per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "content": "### Description\n\nThe number of Global Search search requests meeting their duration target based on the 99.95th percentile of\nthe search with the same parameters.\n\n",
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 16,
+            "y": 20
+          },
+          "id": 30,
+          "mode": "markdown",
+          "title": "Details",
+          "type": "text"
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 30
+          },
+          "id": 31,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": [
+              {
+                "targetBlank": true,
                 "title": "graphql_queries SLI Apdex SLO Analysis",
                 "url": "/d/alerts-service_component_stage_groups_slo_apdex?${__url_time_range}&${__all_variables}&var-component=graphql_queries&var-stage=$stage"
               }
@@ -2123,9 +2353,9 @@
             "h": 10,
             "w": 8,
             "x": 8,
-            "y": 20
+            "y": 30
           },
-          "id": 29,
+          "id": 32,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2193,9 +2423,9 @@
             "h": 10,
             "w": 8,
             "x": 16,
-            "y": 20
+            "y": 30
           },
-          "id": 30,
+          "id": 33,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -2213,9 +2443,9 @@
             "h": 10,
             "w": 8,
             "x": 0,
-            "y": 30
+            "y": 40
           },
-          "id": 31,
+          "id": 34,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2341,9 +2571,9 @@
             "h": 10,
             "w": 8,
             "x": 8,
-            "y": 30
+            "y": 40
           },
-          "id": 32,
+          "id": 35,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2411,9 +2641,9 @@
             "h": 10,
             "w": 8,
             "x": 16,
-            "y": 30
+            "y": 40
           },
-          "id": 33,
+          "id": 36,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -2431,9 +2661,9 @@
             "h": 10,
             "w": 8,
             "x": 0,
-            "y": 40
+            "y": 50
           },
-          "id": 34,
+          "id": 37,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2571,9 +2801,9 @@
             "h": 10,
             "w": 8,
             "x": 8,
-            "y": 40
+            "y": 50
           },
-          "id": 35,
+          "id": 38,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2641,9 +2871,9 @@
             "h": 10,
             "w": 8,
             "x": 16,
-            "y": 40
+            "y": 50
           },
-          "id": 36,
+          "id": 39,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -2666,7 +2896,7 @@
         "x": 0,
         "y": 1200
       },
-      "id": 37,
+      "id": 40,
       "panels": [
         {
           "bars": false,
@@ -2683,7 +2913,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 38,
+          "id": 41,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2759,7 +2989,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 39,
+          "id": 42,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2838,7 +3068,7 @@
         "x": 0,
         "y": 1210
       },
-      "id": 40,
+      "id": 43,
       "panels": [
         {
           "bars": false,
@@ -2855,7 +3085,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 41,
+          "id": 44,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2931,7 +3161,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 42,
+          "id": 45,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3010,7 +3240,7 @@
         "x": 0,
         "y": 1220
       },
-      "id": 43,
+      "id": 46,
       "panels": [
         {
           "bars": false,
@@ -3027,7 +3257,731 @@
             "x": 0,
             "y": 0
           },
-          "id": 44,
+          "id": 47,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by () (\n  rate(gitlab_sli_global_search_apdex_total{environment=\"$environment\",feature_category=~\"global_search|\",job=\"gitlab-rails\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "overall",
+              "refId": "A"
+            }
+          ],
+          "title": "global_search RPS - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 10
+          },
+          "id": 48,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (endpoint_id) (\n      rate(gitlab_sli_global_search_apdex_total{endpoint_id!=\"\",environment=\"$environment\",feature_category=~\"global_search|\",job=\"gitlab-rails\",stage=\"$stage\"}[$__interval])\n    )\n    -\n    sum by (endpoint_id) (\n      rate(gitlab_sli_global_search_apdex_success_total{endpoint_id!=\"\",environment=\"$environment\",feature_category=~\"global_search|\",job=\"gitlab-rails\",stage=\"$stage\"}[$__interval])\n    )\n  )\n  / ignoring (endpoint_id) group_left()\n  (\n    sum by () (\n      rate(gitlab_sli_global_search_apdex_total{endpoint_id!=\"\",environment=\"$environment\",feature_category=~\"global_search|\",job=\"gitlab-rails\",stage=\"$stage\"}[$__interval])\n    )\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{endpoint_id}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for global_search Latency - per endpoint_id",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 10
+          },
+          "id": 49,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (endpoint_id) (\n  rate(gitlab_sli_global_search_apdex_total{endpoint_id!=\"\",environment=\"$environment\",feature_category=~\"global_search|\",job=\"gitlab-rails\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{endpoint_id}}",
+              "refId": "A"
+            }
+          ],
+          "title": "global_search RPS - per endpoint_id",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 20
+          },
+          "id": 50,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (search_level) (\n      rate(gitlab_sli_global_search_apdex_total{environment=\"$environment\",feature_category=~\"global_search|\",job=\"gitlab-rails\",search_level!=\"\",stage=\"$stage\"}[$__interval])\n    )\n    -\n    sum by (search_level) (\n      rate(gitlab_sli_global_search_apdex_success_total{environment=\"$environment\",feature_category=~\"global_search|\",job=\"gitlab-rails\",search_level!=\"\",stage=\"$stage\"}[$__interval])\n    )\n  )\n  / ignoring (search_level) group_left()\n  (\n    sum by () (\n      rate(gitlab_sli_global_search_apdex_total{environment=\"$environment\",feature_category=~\"global_search|\",job=\"gitlab-rails\",search_level!=\"\",stage=\"$stage\"}[$__interval])\n    )\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{search_level}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for global_search Latency - per search_level",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 20
+          },
+          "id": 51,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (search_level) (\n  rate(gitlab_sli_global_search_apdex_total{environment=\"$environment\",feature_category=~\"global_search|\",job=\"gitlab-rails\",search_level!=\"\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{search_level}}",
+              "refId": "A"
+            }
+          ],
+          "title": "global_search RPS - per search_level",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 30
+          },
+          "id": 52,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (search_scope) (\n      rate(gitlab_sli_global_search_apdex_total{environment=\"$environment\",feature_category=~\"global_search|\",job=\"gitlab-rails\",search_scope!=\"\",stage=\"$stage\"}[$__interval])\n    )\n    -\n    sum by (search_scope) (\n      rate(gitlab_sli_global_search_apdex_success_total{environment=\"$environment\",feature_category=~\"global_search|\",job=\"gitlab-rails\",search_scope!=\"\",stage=\"$stage\"}[$__interval])\n    )\n  )\n  / ignoring (search_scope) group_left()\n  (\n    sum by () (\n      rate(gitlab_sli_global_search_apdex_total{environment=\"$environment\",feature_category=~\"global_search|\",job=\"gitlab-rails\",search_scope!=\"\",stage=\"$stage\"}[$__interval])\n    )\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{search_scope}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for global_search Latency - per search_scope",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 30
+          },
+          "id": 53,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (search_scope) (\n  rate(gitlab_sli_global_search_apdex_total{environment=\"$environment\",feature_category=~\"global_search|\",job=\"gitlab-rails\",search_scope!=\"\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{search_scope}}",
+              "refId": "A"
+            }
+          ],
+          "title": "global_search RPS - per search_scope",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 40
+          },
+          "id": 54,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (search_type) (\n      rate(gitlab_sli_global_search_apdex_total{environment=\"$environment\",feature_category=~\"global_search|\",job=\"gitlab-rails\",search_type!=\"\",stage=\"$stage\"}[$__interval])\n    )\n    -\n    sum by (search_type) (\n      rate(gitlab_sli_global_search_apdex_success_total{environment=\"$environment\",feature_category=~\"global_search|\",job=\"gitlab-rails\",search_type!=\"\",stage=\"$stage\"}[$__interval])\n    )\n  )\n  / ignoring (search_type) group_left()\n  (\n    sum by () (\n      rate(gitlab_sli_global_search_apdex_total{environment=\"$environment\",feature_category=~\"global_search|\",job=\"gitlab-rails\",search_type!=\"\",stage=\"$stage\"}[$__interval])\n    )\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{search_type}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for global_search Latency - per search_type",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 40
+          },
+          "id": 55,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (search_type) (\n  rate(gitlab_sli_global_search_apdex_total{environment=\"$environment\",feature_category=~\"global_search|\",job=\"gitlab-rails\",search_type!=\"\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{search_type}}",
+              "refId": "A"
+            }
+          ],
+          "title": "global_search RPS - per search_type",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "🔬 SLI Detail: global_search",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "collapse": true,
+      "collapsed": true,
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 1230
+      },
+      "id": 56,
+      "panels": [
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 0
+          },
+          "id": 57,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3103,7 +4057,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 45,
+          "id": 58,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3184,7 +4138,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 46,
+          "id": 59,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3260,7 +4214,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 47,
+          "id": 60,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3341,7 +4295,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 48,
+          "id": 61,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3417,7 +4371,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 49,
+          "id": 62,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3498,7 +4452,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 50,
+          "id": 63,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3575,9 +4529,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 1230
+        "y": 1240
       },
-      "id": 51,
+      "id": 64,
       "panels": [
         {
           "bars": false,
@@ -3594,7 +4548,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 52,
+          "id": 65,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3670,7 +4624,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 53,
+          "id": 66,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3746,7 +4700,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 54,
+          "id": 67,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3822,7 +4776,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 55,
+          "id": 68,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3898,7 +4852,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 56,
+          "id": 69,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3974,7 +4928,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 57,
+          "id": 70,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4050,7 +5004,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 58,
+          "id": 71,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4126,7 +5080,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 59,
+          "id": 72,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4203,9 +5157,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 1240
+        "y": 1250
       },
-      "id": 60,
+      "id": 73,
       "panels": [
         {
           "bars": false,
@@ -4222,7 +5176,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 61,
+          "id": 74,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4298,7 +5252,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 62,
+          "id": 75,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4379,7 +5333,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 63,
+          "id": 76,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4455,7 +5409,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 64,
+          "id": 77,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4536,7 +5490,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 65,
+          "id": 78,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4612,7 +5566,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 66,
+          "id": 79,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4693,7 +5647,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 67,
+          "id": 80,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4879,5 +5833,5 @@
   "timezone": "utc",
   "title": "stage-groups: Global Search: group error budget detail",
   "uid": "stage-groups-detail-global_search",
-  "version": 578
+  "version": 580
 }
