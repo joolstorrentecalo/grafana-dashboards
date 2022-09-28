@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3090939287 at Tue Sep 27 12:47:39 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3093417503 at Tue Sep 27 20:14:04 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -2371,15 +2371,15 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (fqdn) (\n  rate(redis_commands_processed_total{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",type=\"redis-sessions\"}[$__interval]) and on (instance) redis_instance_info{role=\"master\"}\n)\n > 0",
+              "expr": "sum by (instance) (\n  rate(redis_commands_processed_total{env=\"$environment\",environment=\"$environment\",instance!=\"\",type=\"redis-sessions\"}[$__interval]) and on (instance) redis_instance_info{role=\"master\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
-              "legendFormat": "{{fqdn}}",
+              "legendFormat": "{{instance}}",
               "refId": "A"
             }
           ],
-          "title": "primary_server RPS - per fqdn",
+          "title": "primary_server RPS - per instance",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -3140,15 +3140,15 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (fqdn) (\n  rate(redis_commands_processed_total{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",type=\"redis-sessions\"}[$__interval]) and on (instance) redis_instance_info{role=\"slave\"}\n)\n > 0",
+              "expr": "sum by (instance) (\n  rate(redis_commands_processed_total{env=\"$environment\",environment=\"$environment\",instance!=\"\",type=\"redis-sessions\"}[$__interval]) and on (instance) redis_instance_info{role=\"slave\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 2,
-              "legendFormat": "{{fqdn}}",
+              "legendFormat": "{{instance}}",
               "refId": "A"
             }
           ],
-          "title": "secondary_servers RPS - per fqdn",
+          "title": "secondary_servers RPS - per instance",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -8912,11 +8912,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(avg_over_time(redis_connected_clients{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])) by (fqdn)\n",
+          "expr": "sum(avg_over_time(redis_connected_clients{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])) by (instance, pod)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ pod }} {{ instance }}",
           "refId": "A"
         }
       ],
@@ -9010,11 +9010,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(avg_over_time(redis_blocked_clients{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])) by (fqdn)\n",
+          "expr": "sum(avg_over_time(redis_blocked_clients{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])) by (instance, pod)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ pod }} {{ instance }}",
           "refId": "A"
         }
       ],
@@ -9108,11 +9108,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(redis_connections_received_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])) by (fqdn)\n",
+          "expr": "sum(rate(redis_connections_received_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])) by (instance, pod)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ pod }} {{ instance }}",
           "refId": "A"
         }
       ],
@@ -9227,11 +9227,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(redis_commands_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval]) and on (fqdn) redis_instance_info{role=\"master\"} ) by (fqdn)\n",
+          "expr": "sum(rate(redis_commands_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval]) and on (pod, fqdn) redis_instance_info{role=\"master\"} ) by (instance, pod)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ pod }} {{ instance }}",
           "refId": "A"
         }
       ],
@@ -9325,11 +9325,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(redis_commands_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval]) and on (fqdn) redis_instance_info{role=\"slave\"} ) by (fqdn)\n",
+          "expr": "sum(rate(redis_commands_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval]) and on (pod, fqdn) redis_instance_info{role=\"slave\"} ) by (instance, pod)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ pod }} {{ instance }}",
           "refId": "A"
         }
       ],
@@ -9423,11 +9423,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(clamp_max(max(\n  max_over_time(instance:redis_cpu_usage:rate1m{environment=\"$environment\", type=\"redis-sessions\", fqdn=~\"redis-sessions-\\\\d\\\\d.*\"}[$__interval])\n    and on (fqdn) redis_instance_info{role=\"master\"}\n) by (fqdn)\n,1),0)\n",
+          "expr": "clamp_min(clamp_max(max(\n  max_over_time(instance:redis_cpu_usage:rate1m{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n    and on (pod, fqdn) redis_instance_info{role=\"master\"}\n) by (instance, pod)\n,1),0)\n",
           "format": "time_series",
           "interval": "30s",
           "intervalFactor": 1,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ pod }} {{ instance }}",
           "refId": "A"
         }
       ],
@@ -9519,11 +9519,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(clamp_max(max(\n  max_over_time(instance:redis_cpu_usage:rate1m{environment=\"$environment\", type=\"redis-sessions\", fqdn=~\"redis-sessions-\\\\d\\\\d.*\"}[$__interval])\n    and on (fqdn) redis_instance_info{role=\"slave\"}\n) by (fqdn)\n,1),0)\n",
+          "expr": "clamp_min(clamp_max(max(\n  max_over_time(instance:redis_cpu_usage:rate1m{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n    and on (pod, fqdn) redis_instance_info{role=\"slave\"}\n) by (instance, pod)\n,1),0)\n",
           "format": "time_series",
           "interval": "30s",
           "intervalFactor": 1,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ pod }} {{ instance }}",
           "refId": "A"
         }
       ],
@@ -9615,11 +9615,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(redis_net_output_bytes_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n and on (fqdn) redis_instance_info{role=\"master\"}\n) by (fqdn)\n",
+          "expr": "sum(rate(redis_net_output_bytes_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n and on (pod, fqdn) redis_instance_info{role=\"master\"}\n) by (instance, pod)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ pod }} {{ instance }}",
           "refId": "A"
         }
       ],
@@ -9713,11 +9713,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(redis_net_output_bytes_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n and on (fqdn) redis_instance_info{role=\"slave\"}\n) by (fqdn)\n",
+          "expr": "sum(rate(redis_net_output_bytes_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n and on (pod, fqdn) redis_instance_info{role=\"slave\"}\n) by (instance, pod)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ pod }} {{ instance }}",
           "refId": "A"
         }
       ],
@@ -9811,11 +9811,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(redis_net_input_bytes_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n  and on (fqdn) redis_instance_info{role=\"master\"}\n) by (fqdn)\n",
+          "expr": "sum(rate(redis_net_input_bytes_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n  and on (pod, fqdn) redis_instance_info{role=\"master\"}\n) by (instance, pod)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ pod }} {{ instance }}",
           "refId": "A"
         }
       ],
@@ -9909,11 +9909,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(redis_net_input_bytes_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n  and on (fqdn) redis_instance_info{role=\"slave\"}\n) by (fqdn)\n",
+          "expr": "sum(rate(redis_net_input_bytes_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n  and on (pod, fqdn) redis_instance_info{role=\"slave\"}\n) by (instance, pod)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ pod }} {{ instance }}",
           "refId": "A"
         }
       ],
@@ -10007,11 +10007,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(changes(redis_slowlog_last_id{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n  and on (fqdn) redis_instance_info{role=\"master\"}\n) by (fqdn)\n",
+          "expr": "sum(changes(redis_slowlog_last_id{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n  and on (pod, fqdn) redis_instance_info{role=\"master\"}\n) by (instance, pod)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 10,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ pod }} {{ instance }}",
           "refId": "A"
         }
       ],
@@ -10105,11 +10105,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(changes(redis_slowlog_last_id{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n  and on (fqdn) redis_instance_info{role=\"slave\"}\n) by (fqdn)\n",
+          "expr": "sum(changes(redis_slowlog_last_id{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n  and on (pod, fqdn) redis_instance_info{role=\"slave\"}\n) by (instance, pod)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 10,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ pod }} {{ instance }}",
           "refId": "A"
         }
       ],
@@ -10203,7 +10203,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(redis_commands_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n  and on (fqdn) redis_instance_info{role=\"master\"}\n) by (cmd)\n",
+          "expr": "sum(rate(redis_commands_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n  and on (pod, fqdn) redis_instance_info{role=\"master\"}\n) by (cmd)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
@@ -10301,7 +10301,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(redis_commands_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n  and on (fqdn) redis_instance_info{role=\"slave\"}\n) by (cmd)\n",
+          "expr": "sum(rate(redis_commands_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n  and on (pod, fqdn) redis_instance_info{role=\"slave\"}\n) by (cmd)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
@@ -10399,7 +10399,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(redis_commands_duration_seconds_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n  and on (fqdn) redis_instance_info{role=\"master\"}\n) by (cmd)\n/\nsum(rate(redis_commands_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])) by (cmd)\n",
+          "expr": "sum(rate(redis_commands_duration_seconds_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n  and on (pod, fqdn) redis_instance_info{role=\"master\"}\n) by (cmd)\n/\nsum(rate(redis_commands_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])) by (cmd)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
@@ -10497,7 +10497,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(redis_commands_duration_seconds_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n  and on (fqdn) redis_instance_info{role=\"slave\"}\n) by (cmd)\n/\nsum(rate(redis_commands_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])) by (cmd)\n",
+          "expr": "sum(rate(redis_commands_duration_seconds_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n  and on (pod, fqdn) redis_instance_info{role=\"slave\"}\n) by (cmd)\n/\nsum(rate(redis_commands_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])) by (cmd)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
@@ -10595,7 +10595,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(redis_commands_duration_seconds_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n  and on (fqdn) redis_instance_info{role=\"master\"}\n) by (cmd)\n",
+          "expr": "sum(rate(redis_commands_duration_seconds_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n  and on (pod, fqdn) redis_instance_info{role=\"master\"}\n) by (cmd)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
@@ -10693,7 +10693,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(redis_commands_duration_seconds_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n  and on (fqdn) redis_instance_info{role=\"slave\"}\n) by (cmd)\n",
+          "expr": "sum(rate(redis_commands_duration_seconds_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])\n  and on (pod, fqdn) redis_instance_info{role=\"slave\"}\n) by (cmd)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
@@ -10835,11 +10835,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(clamp_max(max(\n  label_replace(redis_memory_used_rss_bytes{environment=\"$environment\", type=\"redis-sessions\"}, \"memtype\", \"rss\",\"\",\"\")\n  or\n  label_replace(redis_memory_used_bytes{environment=\"$environment\", type=\"redis-sessions\"}, \"memtype\", \"used\",\"\",\"\")\n) by (type, stage, environment, fqdn)\n/ on(fqdn) group_left\nnode_memory_MemTotal_bytes{environment=\"$environment\", type=\"redis-sessions\"}\n,1),0)\n",
+          "expr": "clamp_min(clamp_max(max(\n  label_replace(redis_memory_used_rss_bytes{environment=\"$environment\", type=\"redis-sessions\"}, \"memtype\", \"rss\",\"\",\"\")\n  or\n  label_replace(redis_memory_used_bytes{environment=\"$environment\", type=\"redis-sessions\"}, \"memtype\", \"used\",\"\",\"\")\n) by (type, stage, environment, instance)\n/ on(instance) group_left\nnode_memory_MemTotal_bytes{environment=\"$environment\", type=\"redis-sessions\"}\n,1),0)\n",
           "format": "time_series",
           "interval": "30s",
           "intervalFactor": 1,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ pod }} {{ instance }}",
           "refId": "A"
         },
         {
@@ -10951,7 +10951,7 @@
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ pod }} {{ instance }}",
           "refId": "A"
         }
       ],
@@ -11045,11 +11045,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(redis_memory_used_bytes{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])) by (fqdn)\n",
+          "expr": "sum(rate(redis_memory_used_bytes{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])) by (instance, pod)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ pod }} {{ instance }}",
           "refId": "A"
         }
       ],
@@ -11147,7 +11147,7 @@
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ pod }} {{ instance }}",
           "refId": "A"
         }
       ],
@@ -11245,7 +11245,7 @@
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ pod }} {{ instance }}",
           "refId": "A"
         }
       ],
@@ -11339,11 +11339,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(redis_expired_keys_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])) by (fqdn)\n",
+          "expr": "sum(rate(redis_expired_keys_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])) by (instance, pod)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ pod }} {{ instance }}",
           "refId": "A"
         }
       ],
@@ -11437,11 +11437,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(redis_db_keys{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])) by (fqdn)\n",
+          "expr": "sum(rate(redis_db_keys{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])) by (instance, pod)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ pod }} {{ instance }}",
           "refId": "A"
         }
       ],
@@ -11556,11 +11556,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(avg_over_time(redis_connected_slaves{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])) by (fqdn)\n",
+          "expr": "sum(avg_over_time(redis_connected_slaves{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])) by (instance, pod)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ pod }} {{ instance }}",
           "refId": "A"
         }
       ],
@@ -11654,7 +11654,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "redis_master_repl_offset{environment=\"$environment\", type=\"redis-sessions\"}\n- on(fqdn) group_right\nredis_connected_slave_offset_bytes{environment=\"$environment\", type=\"redis-sessions\"}\n",
+          "expr": "redis_master_repl_offset{environment=\"$environment\", type=\"redis-sessions\"}\n- on(instance) group_right\nredis_connected_slave_offset_bytes{environment=\"$environment\", type=\"redis-sessions\"}\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
@@ -11752,11 +11752,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(increase(redis_slave_resync_total{environment=\"$environment\", type=\"redis-sessions\", fqdn=~\"redis-sessions-\\\\\\\\d\\\\\\\\d.*\"}[$__interval])) by (fqdn)\n",
+          "expr": "sum(increase(redis_slave_resync_total{environment=\"$environment\", type=\"redis-sessions\"}[$__interval])) by (instance, pod)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ pod }} {{ instance }}",
           "refId": "A"
         }
       ],
@@ -12761,5 +12761,5 @@
   "timezone": "utc",
   "title": "redis-sessions: Overview",
   "uid": "redis-sessions-main",
-  "version": 813
+  "version": 815
 }
