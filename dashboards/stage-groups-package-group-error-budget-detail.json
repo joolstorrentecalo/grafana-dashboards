@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3099482560 at Wed Sep 28 17:53:31 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3103203061 at Thu Sep 29 10:46:39 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -4321,6 +4321,364 @@
           "mode": "markdown",
           "title": "Details",
           "type": "text"
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 0,
+            "y": 100
+          },
+          "id": 56,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": [
+              {
+                "targetBlank": true,
+                "title": "sidekiq_execution SLI Apdex SLO Analysis",
+                "url": "/d/alerts-service_component_stage_groups_slo_apdex?${__url_time_range}&${__all_variables}&var-component=sidekiq_execution&var-stage=$stage"
+              }
+            ]
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "6h Degradation SLO (5% of monthly error budget)",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "1h Outage SLO (2% of monthly error budget)",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            },
+            {
+              "alias": "SLO",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "sli-sidekiq_execution-apdex",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "min_over_time(gitlab:component:stage_group:execution:apdex:ratio_5m{component=\"sidekiq_execution\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"package\"}[$__interval])\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{ type }} apdex",
+              "refId": "A"
+            },
+            {
+              "expr": "(1 - 6 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"sidekiq_execution\",monitor=\"global\"})\n))\n",
+              "format": "time_series",
+              "interval": "5m",
+              "intervalFactor": 3,
+              "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+              "refId": "B"
+            },
+            {
+              "expr": "(1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"sidekiq_execution\",monitor=\"global\"})\n))\n",
+              "format": "time_series",
+              "interval": "5m",
+              "intervalFactor": 3,
+              "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+              "refId": "C"
+            }
+          ],
+          "title": "sidekiq_execution SLI Apdex",
+          "tooltip": {
+            "shared": true,
+            "sort": 1,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Apdex %",
+              "logBase": 1,
+              "max": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 6,
+            "y": 100
+          },
+          "id": 57,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": [
+              {
+                "targetBlank": true,
+                "title": "sidekiq_execution SLI Error-Rate SLO Analysis",
+                "url": "/d/alerts-service_component_stage_groups_slo_error?${__url_time_range}&${__all_variables}&var-component=sidekiq_execution&var-stage=$stage"
+              }
+            ]
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "6h Degradation SLO (5% of monthly error budget)",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "1h Outage SLO (2% of monthly error budget)",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "sli-sidekiq_execution-error-rate",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_max(\n  max_over_time(gitlab:component:stage_group:execution:error:ratio_5m{component=\"sidekiq_execution\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"package\"}[$__interval])\n,\n  1\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{ type }} error ratio",
+              "refId": "A"
+            },
+            {
+              "expr": "(6 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"sidekiq_execution\",monitor=\"global\"})\n)\n",
+              "format": "time_series",
+              "interval": "5m",
+              "intervalFactor": 3,
+              "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+              "refId": "B"
+            },
+            {
+              "expr": "(14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"sidekiq_execution\",monitor=\"global\"})\n)\n",
+              "format": "time_series",
+              "interval": "5m",
+              "intervalFactor": 3,
+              "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+              "refId": "C"
+            }
+          ],
+          "title": "sidekiq_execution SLI Error Ratio",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Error %",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 12,
+            "y": 100
+          },
+          "id": 58,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stableId": "sli-sidekiq_execution-ops-rate",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "avg_over_time(gitlab:component:stage_group:execution:ops:rate_5m{component=\"sidekiq_execution\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"package\"}[$__interval])\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{ type }} RPS",
+              "refId": "A"
+            }
+          ],
+          "title": "sidekiq_execution SLI RPS - Requests per Second",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Operations per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "content": "### Description\n\nThe number of CustomersDot jobs meeting their duration target for their execution.\nBy default, a Sidekiq job should take no more than 5 seconds. But\nthis can be adjusted by endpoint.\n\n",
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 18,
+            "y": 100
+          },
+          "id": 59,
+          "mode": "markdown",
+          "title": "Details",
+          "type": "text"
         }
       ],
       "repeat": null,
@@ -4340,7 +4698,7 @@
         "x": 0,
         "y": 1200
       },
-      "id": 56,
+      "id": 60,
       "panels": [
         {
           "bars": false,
@@ -4357,7 +4715,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 57,
+          "id": 61,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4453,7 +4811,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 58,
+          "id": 62,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4529,7 +4887,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 59,
+          "id": 63,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4625,7 +4983,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 60,
+          "id": 64,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4706,7 +5064,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 61,
+          "id": 65,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4785,7 +5143,7 @@
         "x": 0,
         "y": 1210
       },
-      "id": 62,
+      "id": 66,
       "panels": [
         {
           "bars": false,
@@ -4802,7 +5160,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 63,
+          "id": 67,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4898,7 +5256,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 64,
+          "id": 68,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4974,7 +5332,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 65,
+          "id": 69,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5050,7 +5408,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 66,
+          "id": 70,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5146,7 +5504,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 67,
+          "id": 71,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5227,7 +5585,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 68,
+          "id": 72,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5303,7 +5661,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 69,
+          "id": 73,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5382,7 +5740,7 @@
         "x": 0,
         "y": 1220
       },
-      "id": 70,
+      "id": 74,
       "panels": [
         {
           "bars": false,
@@ -5399,7 +5757,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 71,
+          "id": 75,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5475,7 +5833,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 72,
+          "id": 76,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5556,7 +5914,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 73,
+          "id": 77,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5632,7 +5990,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 74,
+          "id": 78,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5713,7 +6071,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 75,
+          "id": 79,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5789,7 +6147,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 76,
+          "id": 80,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5870,7 +6228,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 77,
+          "id": 81,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5949,7 +6307,7 @@
         "x": 0,
         "y": 1230
       },
-      "id": 78,
+      "id": 82,
       "panels": [
         {
           "bars": false,
@@ -5966,7 +6324,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 79,
+          "id": 83,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6042,7 +6400,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 80,
+          "id": 84,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6118,7 +6476,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 81,
+          "id": 85,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6194,7 +6552,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 82,
+          "id": 86,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6270,7 +6628,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 83,
+          "id": 87,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6346,7 +6704,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 84,
+          "id": 88,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6422,7 +6780,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 85,
+          "id": 89,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6498,7 +6856,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 86,
+          "id": 90,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6577,7 +6935,7 @@
         "x": 0,
         "y": 1240
       },
-      "id": 87,
+      "id": 91,
       "panels": [
         {
           "bars": false,
@@ -6594,7 +6952,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 88,
+          "id": 92,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6670,7 +7028,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 89,
+          "id": 93,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6751,7 +7109,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 90,
+          "id": 94,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6827,7 +7185,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 91,
+          "id": 95,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6908,7 +7266,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 92,
+          "id": 96,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6984,7 +7342,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 93,
+          "id": 97,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7065,7 +7423,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 94,
+          "id": 98,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7144,7 +7502,7 @@
         "x": 0,
         "y": 1250
       },
-      "id": 95,
+      "id": 99,
       "panels": [
         {
           "bars": false,
@@ -7161,7 +7519,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 96,
+          "id": 100,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7256,7 +7614,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 97,
+          "id": 101,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7332,7 +7690,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 98,
+          "id": 102,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7427,7 +7785,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 99,
+          "id": 103,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7508,7 +7866,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 100,
+          "id": 104,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7584,7 +7942,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 101,
+          "id": 105,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7679,7 +8037,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 102,
+          "id": 106,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7760,7 +8118,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 103,
+          "id": 107,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7839,7 +8197,7 @@
         "x": 0,
         "y": 1260
       },
-      "id": 104,
+      "id": 108,
       "panels": [
         {
           "bars": false,
@@ -7856,7 +8214,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 105,
+          "id": 109,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7952,7 +8310,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 106,
+          "id": 110,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8028,7 +8386,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 107,
+          "id": 111,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8104,7 +8462,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 108,
+          "id": 112,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8200,7 +8558,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 109,
+          "id": 113,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8281,7 +8639,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 110,
+          "id": 114,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8357,7 +8715,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 111,
+          "id": 115,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8433,7 +8791,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 112,
+          "id": 116,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8529,7 +8887,7 @@
             "x": 6,
             "y": 20
           },
-          "id": 113,
+          "id": 117,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8610,7 +8968,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 114,
+          "id": 118,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8686,7 +9044,7 @@
             "x": 18,
             "y": 20
           },
-          "id": 115,
+          "id": 119,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8762,7 +9120,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 116,
+          "id": 120,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8858,7 +9216,7 @@
             "x": 6,
             "y": 30
           },
-          "id": 117,
+          "id": 121,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8939,7 +9297,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 118,
+          "id": 122,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9015,7 +9373,7 @@
             "x": 18,
             "y": 30
           },
-          "id": 119,
+          "id": 123,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9094,7 +9452,7 @@
         "x": 0,
         "y": 1270
       },
-      "id": 120,
+      "id": 124,
       "panels": [
         {
           "bars": false,
@@ -9111,7 +9469,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 121,
+          "id": 125,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9207,7 +9565,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 122,
+          "id": 126,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9283,7 +9641,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 123,
+          "id": 127,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9379,7 +9737,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 124,
+          "id": 128,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9460,7 +9818,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 125,
+          "id": 129,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9536,7 +9894,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 126,
+          "id": 130,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9632,7 +9990,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 127,
+          "id": 131,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9713,7 +10071,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 128,
+          "id": 132,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9792,7 +10150,7 @@
         "x": 0,
         "y": 1280
       },
-      "id": 129,
+      "id": 133,
       "panels": [
         {
           "bars": false,
@@ -9809,7 +10167,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 130,
+          "id": 134,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9905,7 +10263,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 131,
+          "id": 135,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9981,7 +10339,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 132,
+          "id": 136,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10077,7 +10435,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 133,
+          "id": 137,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10158,7 +10516,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 134,
+          "id": 138,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10234,7 +10592,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 135,
+          "id": 139,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10330,7 +10688,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 136,
+          "id": 140,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10411,7 +10769,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 137,
+          "id": 141,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10478,6 +10836,644 @@
       "repeatRowId": null,
       "showTitle": true,
       "title": "🔬 SLI Detail: server_route_manifest_writes",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "collapse": true,
+      "collapsed": true,
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 1290
+      },
+      "id": 142,
+      "panels": [
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 0
+          },
+          "id": 143,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by () (\n  rate(gitlab_sli_sidekiq_jobs_error_total{environment=\"$environment\",feature_category=~\"container_registry|package_registry|helm_chart_registry|dependency_proxy|dependency_firewall|\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "overall",
+              "refId": "A"
+            }
+          ],
+          "title": "sidekiq_execution Errors - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 0
+          },
+          "id": 144,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by () (\n  rate(gitlab_sli_sidekiq_jobs_total{environment=\"$environment\",feature_category=~\"container_registry|package_registry|helm_chart_registry|dependency_proxy|dependency_firewall|\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "overall",
+              "refId": "A"
+            }
+          ],
+          "title": "sidekiq_execution RPS - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 10
+          },
+          "id": 145,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (endpoint_id) (\n      rate(gitlab_sli_sidekiq_jobs_apdex_total{endpoint_id!=\"\",environment=\"$environment\",feature_category=~\"container_registry|package_registry|helm_chart_registry|dependency_proxy|dependency_firewall|\",stage=\"$stage\"}[$__interval])\n    )\n    -\n    sum by (endpoint_id) (\n      rate(gitlab_sli_sidekiq_jobs_apdex_success_total{endpoint_id!=\"\",environment=\"$environment\",feature_category=~\"container_registry|package_registry|helm_chart_registry|dependency_proxy|dependency_firewall|\",stage=\"$stage\"}[$__interval])\n    )\n  )\n  / ignoring (endpoint_id) group_left()\n  (\n    sum by () (\n      rate(gitlab_sli_sidekiq_jobs_apdex_total{endpoint_id!=\"\",environment=\"$environment\",feature_category=~\"container_registry|package_registry|helm_chart_registry|dependency_proxy|dependency_firewall|\",stage=\"$stage\"}[$__interval])\n    )\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{endpoint_id}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for sidekiq_execution Latency - per endpoint_id",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 8,
+            "y": 10
+          },
+          "id": 146,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (endpoint_id) (\n  rate(gitlab_sli_sidekiq_jobs_error_total{endpoint_id!=\"\",environment=\"$environment\",feature_category=~\"container_registry|package_registry|helm_chart_registry|dependency_proxy|dependency_firewall|\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{endpoint_id}}",
+              "refId": "A"
+            }
+          ],
+          "title": "sidekiq_execution Errors - per endpoint_id",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 16,
+            "y": 10
+          },
+          "id": 147,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (endpoint_id) (\n  rate(gitlab_sli_sidekiq_jobs_total{endpoint_id!=\"\",environment=\"$environment\",feature_category=~\"container_registry|package_registry|helm_chart_registry|dependency_proxy|dependency_firewall|\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{endpoint_id}}",
+              "refId": "A"
+            }
+          ],
+          "title": "sidekiq_execution RPS - per endpoint_id",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 20
+          },
+          "id": 148,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (feature_category) (\n      rate(gitlab_sli_sidekiq_jobs_apdex_total{environment=\"$environment\",feature_category=~\"container_registry|package_registry|helm_chart_registry|dependency_proxy|dependency_firewall|\",stage=\"$stage\"}[$__interval])\n    )\n    -\n    sum by (feature_category) (\n      rate(gitlab_sli_sidekiq_jobs_apdex_success_total{environment=\"$environment\",feature_category=~\"container_registry|package_registry|helm_chart_registry|dependency_proxy|dependency_firewall|\",stage=\"$stage\"}[$__interval])\n    )\n  )\n  / ignoring (feature_category) group_left()\n  (\n    sum by () (\n      rate(gitlab_sli_sidekiq_jobs_apdex_total{environment=\"$environment\",feature_category=~\"container_registry|package_registry|helm_chart_registry|dependency_proxy|dependency_firewall|\",stage=\"$stage\"}[$__interval])\n    )\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{feature_category}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for sidekiq_execution Latency - per feature_category",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 8,
+            "y": 20
+          },
+          "id": 149,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (feature_category) (\n  rate(gitlab_sli_sidekiq_jobs_error_total{environment=\"$environment\",feature_category=~\"container_registry|package_registry|helm_chart_registry|dependency_proxy|dependency_firewall|\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{feature_category}}",
+              "refId": "A"
+            }
+          ],
+          "title": "sidekiq_execution Errors - per feature_category",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 16,
+            "y": 20
+          },
+          "id": 150,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (feature_category) (\n  rate(gitlab_sli_sidekiq_jobs_total{environment=\"$environment\",feature_category=~\"container_registry|package_registry|helm_chart_registry|dependency_proxy|dependency_firewall|\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{feature_category}}",
+              "refId": "A"
+            }
+          ],
+          "title": "sidekiq_execution RPS - per feature_category",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "🔬 SLI Detail: sidekiq_execution",
       "titleSize": "h6",
       "type": "row"
     }
@@ -10597,5 +11593,5 @@
   "timezone": "utc",
   "title": "stage-groups: Package: group error budget detail",
   "uid": "stage-groups-detail-package",
-  "version": 608
+  "version": 611
 }
