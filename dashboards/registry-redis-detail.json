@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3125743183 at Tue Oct  4 15:54:27 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3125743183 at Tue Oct  4 16:01:11 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -62,23 +62,375 @@
   ],
   "panels": [
     {
+      "collapse": false,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "panels": [
+
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "Overview",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "datasource": null,
+      "description": "The per-second rate of all Redis operations performed on the application side.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "links": [
+
+          ],
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4.8,
+        "x": 0,
+        "y": 1
+      },
+      "id": 3,
+      "links": [
+
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "sum (\n  rate(registry_redis_single_commands_count{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"}[$__interval])\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "RPS",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "description": "The p90 latency of all Redis operations performed on the application side.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 2,
+          "links": [
+
+          ],
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+
+            ]
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4.8,
+        "x": 4.8,
+        "y": 1
+      },
+      "id": 4,
+      "links": [
+
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "histogram_quantile(\n  0.900000,\n  sum by (le) (\n    rate(registry_redis_single_commands_bucket{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"}[$__interval])\n  )\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Latency",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "description": "The total number of established connections both in use and idle.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "links": [
+
+          ],
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4.8,
+        "x": 9.6,
+        "y": 1
+      },
+      "id": 5,
+      "links": [
+
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "sum(\n  max_over_time(\n    registry_redis_pool_stats_total_conns{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"}[$__interval]\n  )\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Open Connections",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "links": [
+
+          ],
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#73BF69",
+                "value": 0.3
+              },
+              {
+                "color": "#CCCC00",
+                "value": 0.5
+              },
+              {
+                "color": "#CC6600",
+                "value": 0.8
+              }
+            ]
+          },
+          "unit": "percentunit"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4.8,
+        "x": 14.399999999999999,
+        "y": 1
+      },
+      "id": 6,
+      "links": [
+
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "(\n  sum (registry_redis_pool_stats_total_conns{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"})\n  -\n  sum (registry_redis_pool_stats_idle_conns{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"})\n)\n/\nsum (registry_redis_pool_stats_max_conns{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"})\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Connection Pool Saturation",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "description": "The percentage of time a free connection was found in the pool.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "links": [
+
+          ],
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+
+            ]
+          },
+          "unit": "percentunit"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4.8,
+        "x": 19.2,
+        "y": 1
+      },
+      "id": 7,
+      "links": [
+
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "sum (registry_redis_pool_stats_hits{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"})\n/\n(\n  sum (registry_redis_pool_stats_hits{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"})\n  +\n  sum (registry_redis_pool_stats_misses{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"})\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Connection Pool Hit Ratio",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "collapse": false,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 1000
+      },
+      "id": 8,
+      "panels": [
+
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "Single Commands",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
       "aliasColors": {
       },
       "bars": false,
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 1,
-      "description": "",
+      "decimals": 0,
+      "description": "The per-second rate of all single command operations performed on the application side.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 10,
-        "w": 12,
+        "h": 13,
+        "w": 6,
         "x": 0,
-        "y": 0
+        "y": 1001
       },
-      "id": 3168042924,
+      "id": 9,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -87,7 +439,7 @@
         "max": true,
         "min": true,
         "rightSide": false,
-        "show": true,
+        "show": false,
         "sideWidth": null,
         "total": false,
         "values": true
@@ -98,15 +450,6 @@
 
       ],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": [
-          {
-            "targetBlank": true,
-            "title": "ElasticSearch: Rails logs",
-            "url": "https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.status,json.method,json.meta.caller_id,json.meta.feature_category,json.path,json.request_urgency,json.duration_s,json.target_duration_s),filters:!((meta:(key:json.subcomponent,negate:!t,params:graphql_json,type:phrase),query:(match:(json.subcomponent:(query:graphql_json,type:phrase)))),(meta:(key:json.type.keyword,params:api,type:phrase),query:(match:(json.type.keyword:(query:api,type:phrase)))),(meta:(key:json.controller.keyword,params:'$controller',type:phrase),query:(match:(json.controller.keyword:(query:'$controller',type:phrase))))),index:'7092c4e2-4eb5-46f2-8305-a7da2edad090',query:(language:kuery,query:'json.action.keyword:${action:lucene}'))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}'))"
-          }
-        ]
-      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -116,16 +459,15 @@
 
       ],
       "spaceLength": 10,
-      "stableId": "request-rate",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (controller, action) (avg_over_time(controller_action:gitlab_transaction_duration_seconds_count:rate1m{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval]))",
+          "expr": "sum (\n  rate(registry_redis_single_commands_count{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"}[$__interval])\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "{{ action }}",
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -134,7 +476,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Request Rate",
+      "title": "RPS (Aggregate)",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -153,7 +495,7 @@
       "yaxes": [
         {
           "format": "ops",
-          "label": "Requests per Second",
+          "label": "",
           "logBase": 1,
           "max": null,
           "min": 0,
@@ -175,18 +517,116 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "",
+      "datasource": null,
+      "description": "The per-second rate of each single command operation performed on the application side.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 0
+        "h": 13,
+        "w": 6,
+        "x": 6,
+        "y": 1001
       },
-      "id": 2021894936,
+      "id": 10,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by (command) (\n  rate(registry_redis_single_commands_count{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"}[$__interval])\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "{{ command }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "RPS (Per Command)",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "ops",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "ops",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "The p90 latency of all single command operations performed on the application side.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 13,
+        "w": 6,
+        "x": 12,
+        "y": 1001
+      },
+      "id": 11,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -195,7 +635,7 @@
         "max": true,
         "min": true,
         "rightSide": false,
-        "show": true,
+        "show": false,
         "sideWidth": null,
         "total": false,
         "values": true
@@ -206,15 +646,6 @@
 
       ],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": [
-          {
-            "targetBlank": true,
-            "title": "ElasticSearch: Rails logs",
-            "url": "https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.status,json.method,json.meta.caller_id,json.meta.feature_category,json.path,json.request_urgency,json.duration_s,json.target_duration_s),filters:!((meta:(key:json.subcomponent,negate:!t,params:graphql_json,type:phrase),query:(match:(json.subcomponent:(query:graphql_json,type:phrase)))),(meta:(key:json.type.keyword,params:api,type:phrase),query:(match:(json.type.keyword:(query:api,type:phrase)))),(meta:(key:json.controller.keyword,params:'$controller',type:phrase),query:(match:(json.controller.keyword:(query:'$controller',type:phrase))))),index:'7092c4e2-4eb5-46f2-8305-a7da2edad090',query:(language:kuery,query:'json.action.keyword:${action:lucene}'))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}'))"
-          }
-        ]
-      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -224,33 +655,16 @@
 
       ],
       "spaceLength": 10,
-      "stableId": "latency",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "avg by (controller, action) (avg_over_time(controller_action:gitlab_transaction_duration_seconds:p99{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval]))",
+          "expr": "histogram_quantile(\n  0.900000,\n  sum by (le) (\n    rate(registry_redis_single_commands_bucket{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"}[$__interval])\n  )\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "{{ action }} - p99",
+          "legendFormat": "",
           "refId": "A"
-        },
-        {
-          "expr": "avg by (controller, action) (avg_over_time(controller_action:gitlab_transaction_duration_seconds:p95{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval]))",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ action }} - p95",
-          "refId": "B"
-        },
-        {
-          "expr": "sum by (controller, action) (avg_over_time(controller_action:gitlab_transaction_duration_seconds_sum:rate1m{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval]))\n/\nsum by (controller, action) (avg_over_time(controller_action:gitlab_transaction_duration_seconds_count:rate1m{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval]))\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ action }} - mean",
-          "refId": "C"
         }
       ],
       "thresholds": [
@@ -258,7 +672,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Latency",
+      "title": "Latency (Aggregate)",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -294,15 +708,113 @@
       ]
     },
     {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "The p90 latency of each single command operation performed on the application side.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 13,
+        "w": 6,
+        "x": 18,
+        "y": 1001
+      },
+      "id": 12,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [
+
+      ],
+      "nullPointMode": "connected",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(\n  0.900000,\n  sum by (le, command) (\n    rate(registry_redis_single_commands_bucket{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"}[$__interval])\n  )\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "{{ command }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Latency (Per Query)",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "s",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "s",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ]
+    },
+    {
       "collapse": false,
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 201
+        "y": 2000
       },
-      "id": 4,
+      "id": 13,
       "panels": [
 
       ],
@@ -310,7 +822,7 @@
       "repeatIteration": null,
       "repeatRowId": null,
       "showTitle": true,
-      "title": "SQL",
+      "title": "Connection Pool",
       "titleSize": "h6",
       "type": "row"
     },
@@ -321,17 +833,17 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 1,
-      "description": "",
+      "decimals": 0,
+      "description": "The number of times a free connection was found in the pool.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
         "w": 6,
         "x": 0,
-        "y": 202
+        "y": 2001
       },
-      "id": 1266521010,
+      "id": 14,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -340,7 +852,7 @@
         "max": true,
         "min": true,
         "rightSide": false,
-        "show": true,
+        "show": false,
         "sideWidth": null,
         "total": false,
         "values": true
@@ -360,33 +872,16 @@
 
       ],
       "spaceLength": 10,
-      "stableId": "total-sql-queries-rate",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (action) (\n  rate(\n    gitlab_transaction_db_count_total{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval]\n  )\n)\n",
+          "expr": "sum(max_over_time(registry_redis_pool_stats_hits{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"}[$__interval]))",
           "format": "time_series",
           "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "Total - {{ action }}",
+          "intervalFactor": 5,
+          "legendFormat": "",
           "refId": "A"
-        },
-        {
-          "expr": "sum by (action) (\n  rate(\n    gitlab_transaction_db_primary_count_total{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "Primary - {{ action }}",
-          "refId": "B"
-        },
-        {
-          "expr": "sum by (action) (\n  rate(\n    gitlab_transaction_db_replica_count_total{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "Replica - {{ action }}",
-          "refId": "C"
         }
       ],
       "thresholds": [
@@ -394,7 +889,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Total SQL Queries Rate",
+      "title": "Hits",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -412,8 +907,8 @@
       },
       "yaxes": [
         {
-          "format": "ops",
-          "label": "",
+          "format": "short",
+          "label": "Count",
           "logBase": 1,
           "max": null,
           "min": 0,
@@ -436,672 +931,15 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 1,
-      "description": "",
+      "decimals": 0,
+      "description": "The number of times a free connection was not found in the pool.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
         "w": 6,
         "x": 6,
-        "y": 202
-      },
-      "id": 2155933118,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stableId": "sql-requests-per-controller-request",
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by (action) (\n  rate(gitlab_sql_duration_seconds_count{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval])\n)\n/\nsum by (action) (\n  avg_over_time(\n    controller_action:gitlab_transaction_duration_seconds_count:rate1m{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ action }}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "SQL Requests per Controller Request",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 10,
-        "w": 6,
-        "x": 12,
-        "y": 202
-      },
-      "id": 1618528745,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stableId": "sql-latency-per-controller-request",
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by (controller, action) (avg_over_time(controller_action:gitlab_sql_duration_seconds_sum:rate1m{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval]))\n/\nsum by (controller, action) (avg_over_time(controller_action:gitlab_transaction_duration_seconds_count:rate1m{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval]))\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ action }}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "SQL Latency per Controller Request",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "s",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 10,
-        "w": 6,
-        "x": 18,
-        "y": 202
-      },
-      "id": 3735068459,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stableId": "sql-latency-per-sql-request",
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by (action) (\n  rate(gitlab_sql_duration_seconds_sum{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval])\n)\n/\nsum by (action) (\n  rate(gitlab_sql_duration_seconds_count{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval])\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ action }}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "SQL Latency per SQL Request",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "s",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "collapse": false,
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 301
-      },
-      "id": 9,
-      "panels": [
-
-      ],
-      "repeat": null,
-      "repeatIteration": null,
-      "repeatRowId": null,
-      "showTitle": true,
-      "title": "SQL Transaction",
-      "titleSize": "h6",
-      "type": "row"
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 1,
-      "description": "",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 0,
-        "y": 302
-      },
-      "id": 3519794113,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stableId": "sql-transaction-per-controller-request",
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by (action) (\n  rate(gitlab_database_transaction_seconds_count{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval])\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ action }}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "SQL Transactions per Controller Request",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 302
-      },
-      "id": 4153233807,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stableId": "avg-duration-per-sql-transaction",
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum(rate(gitlab_database_transaction_seconds_sum{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval])) by (action)\n/\nsum(rate(gitlab_database_transaction_seconds_count{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval])) by (action)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ action }}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Average Duration per SQL Transaction",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "s",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "collapse": false,
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 401
-      },
-      "id": 12,
-      "panels": [
-
-      ],
-      "repeat": null,
-      "repeatIteration": null,
-      "repeatRowId": null,
-      "showTitle": true,
-      "title": "Cache",
-      "titleSize": "h6",
-      "type": "row"
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 1,
-      "description": "",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 402
-      },
-      "id": 162987554,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stableId": "cache-operations",
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by (action, operation) (\n  rate(gitlab_cache_operations_total{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval])\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ action }} - {{ operation }}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Cache Operations",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "collapse": false,
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 501
-      },
-      "id": 14,
-      "panels": [
-
-      ],
-      "repeat": null,
-      "repeatIteration": null,
-      "repeatRowId": null,
-      "showTitle": true,
-      "title": "Elasticsearch",
-      "titleSize": "h6",
-      "type": "row"
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 502
+        "y": 2001
       },
       "id": 15,
       "legend": {
@@ -1112,7 +950,7 @@
         "max": true,
         "min": true,
         "rightSide": false,
-        "show": true,
+        "show": false,
         "sideWidth": null,
         "total": false,
         "values": true
@@ -1136,36 +974,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.5, sum by (controller, action, le) (\n  rate(http_elasticsearch_requests_duration_seconds_bucket{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval])\n))\n",
+          "expr": "sum(max_over_time(registry_redis_pool_stats_misses{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"}[$__interval]))",
           "format": "time_series",
           "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ action }} p50",
+          "intervalFactor": 5,
+          "legendFormat": "",
           "refId": "A"
-        },
-        {
-          "expr": "histogram_quantile(0.9, sum by (controller, action, le) (\n  rate(http_elasticsearch_requests_duration_seconds_bucket{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval])\n))\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ action }} p90",
-          "refId": "B"
-        },
-        {
-          "expr": "histogram_quantile(0.95, sum by (controller, action, le) (\n  rate(http_elasticsearch_requests_duration_seconds_bucket{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval])\n))\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ action }} p95",
-          "refId": "C"
-        },
-        {
-          "expr": "histogram_quantile(0.99, sum by (controller, action, le) (\n  rate(http_elasticsearch_requests_duration_seconds_bucket{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval])\n))\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ action }} p99",
-          "refId": "D"
         }
       ],
       "thresholds": [
@@ -1173,7 +987,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Elasticsearch Time",
+      "title": "Misses",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1190,129 +1004,9 @@
         ]
       },
       "yaxes": [
-        {
-          "format": "s",
-          "label": "Duration",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
         {
           "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "collapse": false,
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 601
-      },
-      "id": 16,
-      "panels": [
-
-      ],
-      "repeat": null,
-      "repeatIteration": null,
-      "repeatRowId": null,
-      "showTitle": true,
-      "title": "External HTTP",
-      "titleSize": "h6",
-      "type": "row"
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 1,
-      "description": "",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 10,
-        "w": 8,
-        "x": 0,
-        "y": 602
-      },
-      "id": 3239630680,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stableId": "external-http",
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by (controller, action, code) (\nrate(gitlab_external_http_total{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[$__interval])\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ action }} - {{ code }}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "External HTTP calls",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "ops",
-          "label": "",
+          "label": "Count",
           "logBase": 1,
           "max": null,
           "min": 0,
@@ -1336,16 +1030,16 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 0,
-      "description": "",
+      "description": "The total number of established connections both in use and idle.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
-        "w": 8,
-        "x": 8,
-        "y": 602
+        "w": 6,
+        "x": 12,
+        "y": 2001
       },
-      "id": 3995046926,
+      "id": 16,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1354,7 +1048,7 @@
         "max": true,
         "min": true,
         "rightSide": false,
-        "show": true,
+        "show": false,
         "sideWidth": null,
         "total": false,
         "values": true
@@ -1374,33 +1068,16 @@
 
       ],
       "spaceLength": 10,
-      "stableId": "external-http-latency",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(\n  0.5,\n  sum(\n    rate(\n      gitlab_external_http_duration_seconds_bucket{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[5m]\n    )\n  ) by (action, le)\n)\n",
+          "expr": "sum(max_over_time(registry_redis_pool_stats_total_conns{app=\"registry\", environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\"}[$__interval]))",
           "format": "time_series",
           "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ action }} - p50",
+          "intervalFactor": 5,
+          "legendFormat": "",
           "refId": "A"
-        },
-        {
-          "expr": "histogram_quantile(\n  0.9,\n  sum(\n    rate(\n      gitlab_external_http_duration_seconds_bucket{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[5m]\n    )\n  ) by (action, le)\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ action }} - p90",
-          "refId": "B"
-        },
-        {
-          "expr": "histogram_quantile(\n  0.99,\n  sum(\n    rate(\n      gitlab_external_http_duration_seconds_bucket{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"api\"}[5m]\n    )\n  ) by (action, le)\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ action }} - p99",
-          "refId": "C"
         }
       ],
       "thresholds": [
@@ -1408,7 +1085,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "External HTTP Latency per call",
+      "title": "Open",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1426,8 +1103,8 @@
       },
       "yaxes": [
         {
-          "format": "s",
-          "label": "",
+          "format": "short",
+          "label": "Connections",
           "logBase": 1,
           "max": null,
           "min": 0,
@@ -1444,32 +1121,492 @@
       ]
     },
     {
-      "content": "The metrics displayed in this row indicate all the network requests made inside a Rails process via the HTTP protocol. The requests may be triggered by Gitlab::HTTP utility inside the application code base or by any 3rd-party gems. We don't differentiate the destinations. So, the metrics include both internal/external dependencies.\n* [📖 Kibana: External HTTP logs](https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.status,json.method,json.meta.caller_id,json.meta.feature_category,json.path,json.request_urgency,json.duration_s,json.target_duration_s),filters:!((meta:(key:json.subcomponent,negate:!t,params:graphql_json,type:phrase),query:(match:(json.subcomponent:(query:graphql_json,type:phrase)))),(meta:(key:json.type,params:api,type:phrase),query:(match:(json.type:(query:api,type:phrase)))),(meta:(key:exists,type:json.external_http_count,value:exists),query:(exists:(field:json.external_http_count)))),index:'7092c4e2-4eb5-46f2-8305-a7da2edad090')&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n",
-      "datasource": null,
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "The total number of connections currently in use.",
+      "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
         "h": 10,
-        "w": 8,
-        "x": 16,
-        "y": 602
+        "w": 6,
+        "x": 18,
+        "y": 2001
       },
-      "id": 19,
-      "mode": "markdown",
-      "title": "Extra links",
-      "type": "text"
+      "id": 17,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": false,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(max_over_time(registry_redis_pool_stats_total_conns{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"}[$__interval]))\n-\nsum(max_over_time(registry_redis_pool_stats_idle_conns{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"}[$__interval]))\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 5,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "In Use",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Connections",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
     },
     {
-      "content": "Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards)\n",
-      "datasource": null,
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "The number of idle connections in the pool.",
+      "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
-        "h": 2,
-        "w": 24,
+        "h": 10,
+        "w": 6,
         "x": 0,
-        "y": 110000
+        "y": 2011
+      },
+      "id": 18,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": false,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(max_over_time(registry_redis_pool_stats_idle_conns{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"}[$__interval]))",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 5,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Idle",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Connections",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "The number of stale connections removed from the pool.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 6,
+        "y": 2011
+      },
+      "id": 19,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": false,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(max_over_time(registry_redis_pool_stats_stale_conns{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"}[$__interval]))",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 5,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Stale",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Connections",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "The number of times a wait timeout occurred.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 12,
+        "y": 2011
       },
       "id": 20,
-      "mode": "markdown",
-      "title": "Source",
-      "type": "text"
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": false,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(max_over_time(registry_redis_pool_stats_timeouts{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"}[$__interval]))",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 5,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Timeouts",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Count",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "Saturation. Lower is better.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 18,
+        "y": 2011
+      },
+      "id": 21,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": false,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "clamp_min(clamp_max((\n  sum (registry_redis_pool_stats_total_conns{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"})\n  -\n  sum (registry_redis_pool_stats_idle_conns{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"})\n)\n/\nsum (registry_redis_pool_stats_max_conns{environment=\"$environment\", cluster=~\"$cluster\", stage=\"$stage\", exported_instance=~\"$instance\"})\n,1),0)\n",
+          "format": "time_series",
+          "interval": "30s",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "thresholds": null,
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Saturation",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "Utilization",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
     }
   ],
   "refresh": "",
@@ -1480,9 +1617,12 @@
   "style": "light",
   "tags": [
     "managed",
-    "api",
-    "type:api",
-    "detail"
+    "registry",
+    "container registry",
+    "docker",
+    "registry",
+    "redis",
+    "cache"
   ],
   "templating": {
     "list": [
@@ -1530,22 +1670,31 @@
         "useTags": false
       },
       {
+        "allValue": null,
         "current": {
-          "text": "api",
-          "value": "api"
+          "text": "gprd-gitlab-gke ",
+          "value": "gprd-gitlab-gke "
         },
+        "datasource": "$PROMETHEUS_DS",
+        "hide": 0,
+        "includeAll": false,
         "label": null,
-        "name": "type",
+        "multi": false,
+        "name": "cluster",
         "options": [
-          {
-            "selected": true,
-            "text": "api",
-            "value": "api"
-          }
+
         ],
-        "query": "api",
-        "skipUrlSync": true,
-        "type": "constant"
+        "query": "label_values(kube_pod_container_info{environment=\"$environment\"}, cluster)",
+        "refresh": 1,
+        "regex": "",
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [
+
+        ],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       },
       {
         "allValue": null,
@@ -1579,19 +1728,19 @@
       {
         "allValue": null,
         "current": {
-          "text": "Grape",
-          "value": "Grape"
+          "text": "gitlab",
+          "value": "gitlab"
         },
         "datasource": "$PROMETHEUS_DS",
         "hide": 0,
         "includeAll": false,
         "label": null,
         "multi": false,
-        "name": "controller",
+        "name": "namespace",
         "options": [
 
         ],
-        "query": "label_values(controller_action:gitlab_transaction_duration_seconds_count:rate1m{environment=\"$environment\", type=\"$type\"}, controller)",
+        "query": "label_values(kube_pod_container_info{environment=\"$environment\"}, namespace)",
         "refresh": 1,
         "regex": "",
         "sort": 1,
@@ -1606,22 +1755,72 @@
       {
         "allValue": null,
         "current": {
-          "text": "GET /api/projects",
-          "value": "GET /api/projects"
+          "text": "gitlab-registry",
+          "value": "gitlab-registry"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "Deployment",
+        "options": [
+          {
+            "text": "gitlab-registry",
+            "value": "gitlab-registry"
+          },
+          {
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "gitlab-registry,",
+        "refresh": 0,
+        "type": "custom"
+      },
+      {
+        "allValue": ".*",
+        "current": {
         },
         "datasource": "$PROMETHEUS_DS",
         "hide": 0,
         "includeAll": true,
         "label": null,
         "multi": true,
-        "name": "action",
+        "name": "cluster",
         "options": [
 
         ],
-        "query": "label_values(controller_action:gitlab_transaction_duration_seconds_count:rate1m{environment=\"$environment\", type=\"$type\", controller=\"$controller\"}, action)",
+        "query": "label_values(registry_redis_pool_stats_total_conns{environment=\"$environment\"}, cluster)",
         "refresh": 1,
         "regex": "",
-        "sort": 1,
+        "sort": true,
+        "tagValuesQuery": "",
+        "tags": [
+
+        ],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "cache",
+          "value": "cache"
+        },
+        "datasource": "$PROMETHEUS_DS",
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "instance",
+        "options": [
+
+        ],
+        "query": "label_values(registry_redis_pool_stats_total_conns{environment=\"$environment\"}, instance)",
+        "refresh": 1,
+        "regex": "",
+        "sort": true,
         "tagValuesQuery": "",
         "tags": [
 
@@ -1657,7 +1856,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "api: Rails Controller",
-  "uid": "api-rails-controller",
-  "version": 2041
+  "title": "registry: Redis Detail",
+  "uid": "registry-redis",
+  "version": 1
 }
