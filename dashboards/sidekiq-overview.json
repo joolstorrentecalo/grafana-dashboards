@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3165926433 at Thu Oct 13 05:26:36 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3169389000 at Thu Oct 13 15:34:54 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -1635,9 +1635,511 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 7,
-        "w": 6,
+        "w": 8,
         "x": 0,
         "y": 31
+      },
+      "id": 4092777115,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": [
+          {
+            "targetBlank": true,
+            "title": "global_search_indexing SLI Apdex SLO Analysis",
+            "url": "/d/alerts-component_slo_apdex?${__url_time_range}&${__all_variables}&var-component=global_search_indexing&var-type=sidekiq&var-stage=$stage"
+          }
+        ]
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "6h Degradation SLO (5% of monthly error budget)",
+          "color": "#FF4500",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "connected",
+          "spaceLength": 10,
+          "zindex": -2
+        },
+        {
+          "alias": "1h Outage SLO (2% of monthly error budget)",
+          "color": "#F2495C",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 4,
+          "nullPointMode": "connected",
+          "spaceLength": 4,
+          "zindex": -2
+        },
+        {
+          "alias": "SLO",
+          "color": "#FF4500",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 4,
+          "nullPointMode": "connected",
+          "spaceLength": 4,
+          "zindex": -2
+        },
+        {
+          "alias": "global_search_indexing apdex",
+          "color": "#E7D551",
+          "zindex": 3
+        },
+        {
+          "alias": "global_search_indexing apdex avg",
+          "color": "#5794F2",
+          "dashLength": 1,
+          "fillBelowTo": "global_search_indexing apdex",
+          "linewidth": 1,
+          "spaceLength": 1,
+          "zindex": -3
+        },
+        {
+          "alias": "last week",
+          "color": "#dddddd80",
+          "dashLength": 4,
+          "dashes": true,
+          "fill": 0,
+          "legend": true,
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "spaceLength": 2,
+          "zindex": -3
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "sli-global_search_indexing-apdex",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "min_over_time(gitlab_component_apdex:ratio_5m{component=\"global_search_indexing\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "global_search_indexing apdex",
+          "refId": "A"
+        },
+        {
+          "expr": "(1 - 6 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"global_search_indexing\",monitor=\"global\",type=\"sidekiq\"})\n))\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 3,
+          "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+          "refId": "B"
+        },
+        {
+          "expr": "(1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"global_search_indexing\",monitor=\"global\",type=\"sidekiq\"})\n))\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 3,
+          "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+          "refId": "C"
+        },
+        {
+          "expr": "avg_over_time(gitlab_component_apdex:ratio_5m{component=\"global_search_indexing\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "global_search_indexing apdex avg",
+          "refId": "D"
+        },
+        {
+          "expr": "clamp_min(\n  gitlab_component_apdex:ratio_5m{component=\"global_search_indexing\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"} offset 1w\n,\n  scalar(min((1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"global_search_indexing\",monitor=\"global\",type=\"sidekiq\"})\n))\n))\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "last week",
+          "refId": "E"
+        }
+      ],
+      "title": "global_search_indexing SLI Apdex",
+      "tooltip": {
+        "shared": true,
+        "sort": 1,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "Apdex %",
+          "logBase": 1,
+          "max": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "displayName": "Status",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "0": {
+                  "color": "black",
+                  "index": 0,
+                  "text": "Healthy"
+                },
+                "1": {
+                  "color": "orange",
+                  "index": 1,
+                  "text": "Warning 🔥"
+                },
+                "10": {
+                  "color": "orange",
+                  "index": 10,
+                  "text": "Warning 🔥🥵"
+                },
+                "11": {
+                  "color": "red",
+                  "index": 11,
+                  "text": "Degraded 🔥🥵"
+                },
+                "12": {
+                  "color": "red",
+                  "index": 12,
+                  "text": "Degraded 🥵"
+                },
+                "13": {
+                  "color": "red",
+                  "index": 13,
+                  "text": "Degraded 🔥🥵"
+                },
+                "14": {
+                  "color": "red",
+                  "index": 14,
+                  "text": "Degraded 🔥🥵"
+                },
+                "15": {
+                  "color": "red",
+                  "index": 15,
+                  "text": "Degraded 🔥🥵"
+                },
+                "2": {
+                  "color": "orange",
+                  "index": 2,
+                  "text": "Warning 🔥"
+                },
+                "3": {
+                  "color": "red",
+                  "index": 3,
+                  "text": "Degraded 🔥"
+                },
+                "4": {
+                  "color": "orange",
+                  "index": 4,
+                  "text": "Warning 🥵"
+                },
+                "5": {
+                  "color": "orange",
+                  "index": 5,
+                  "text": "Warning 🔥🥵"
+                },
+                "6": {
+                  "color": "orange",
+                  "index": 6,
+                  "text": "Warning 🔥🥵"
+                },
+                "7": {
+                  "color": "red",
+                  "index": 7,
+                  "text": "Degraded 🔥🥵"
+                },
+                "8": {
+                  "color": "orange",
+                  "index": 8,
+                  "text": "Warning 🥵"
+                },
+                "9": {
+                  "color": "orange",
+                  "index": 9,
+                  "text": "Warning 🔥🥵"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "black",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "orange",
+                "value": 2
+              },
+              {
+                "color": "red",
+                "value": 3
+              },
+              {
+                "color": "orange",
+                "value": 4
+              },
+              {
+                "color": "orange",
+                "value": 5
+              },
+              {
+                "color": "orange",
+                "value": 6
+              },
+              {
+                "color": "red",
+                "value": 7
+              },
+              {
+                "color": "orange",
+                "value": 8
+              },
+              {
+                "color": "orange",
+                "value": 9
+              },
+              {
+                "color": "orange",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 11
+              },
+              {
+                "color": "red",
+                "value": 12
+              },
+              {
+                "color": "red",
+                "value": 13
+              },
+              {
+                "color": "red",
+                "value": 14
+              },
+              {
+                "color": "red",
+                "value": 15
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 8,
+        "x": 0,
+        "y": 38
+      },
+      "id": 15,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"global_search_indexing\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"global_search_indexing\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"global_search_indexing\",monitor=\"global\",type=\"sidekiq\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"global_search_indexing\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"global_search_indexing\",monitor=\"global\",type=\"sidekiq\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"global_search_indexing\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"global_search_indexing\",monitor=\"global\",type=\"sidekiq\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"global_search_indexing\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"global_search_indexing\",monitor=\"global\",type=\"sidekiq\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "global_search_indexing SLI | Latency/Apdex",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
+      "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 31
+      },
+      "id": 2184528438,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "global_search_indexing RPS",
+          "color": "#E7D551",
+          "zindex": 3
+        },
+        {
+          "alias": "last week",
+          "color": "#dddddd80",
+          "dashLength": 4,
+          "dashes": true,
+          "fill": 0,
+          "legend": true,
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "spaceLength": 2,
+          "zindex": -3
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "sli-global_search_indexing-ops-rate",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "avg_over_time(gitlab_component_ops:rate_5m{component=\"global_search_indexing\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "global_search_indexing RPS",
+          "refId": "A"
+        },
+        {
+          "expr": "gitlab_component_ops:rate_5m{component=\"global_search_indexing\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"} offset 1w\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "last week",
+          "refId": "B"
+        }
+      ],
+      "title": "global_search_indexing SLI RPS - Requests per Second",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Operations per Second",
+          "logBase": 1,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "content": "### Description\n\nThe number of Global Search indexing calls meeting their duration target based on the 99.95th percentile of\nindexing. This indicates the duration between when an item was changed and when it became available in Elasticsearch.\n\nThe target duration can be found here:\nhttps://gitlab.com/gitlab-org/gitlab/-/blob/master/ee/lib/gitlab/metrics/global_search_indexing_slis.rb#L14-L15\n\n",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 31
+      },
+      "id": 17,
+      "mode": "markdown",
+      "title": "Details",
+      "type": "text"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
+      "description": "Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 41
       },
       "id": 4125397901,
       "legend": {
@@ -1975,9 +2477,9 @@
         "h": 1,
         "w": 6,
         "x": 0,
-        "y": 38
+        "y": 48
       },
-      "id": 15,
+      "id": 19,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -2021,7 +2523,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 31
+        "y": 41
       },
       "id": 532783926,
       "legend": {
@@ -2348,9 +2850,9 @@
         "h": 1,
         "w": 6,
         "x": 6,
-        "y": 38
+        "y": 48
       },
-      "id": 17,
+      "id": 21,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -2394,7 +2896,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 31
+        "y": 41
       },
       "id": 2518816313,
       "legend": {
@@ -2492,9 +2994,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 31
+        "y": 41
       },
-      "id": 19,
+      "id": 23,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -2512,7 +3014,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 41
+        "y": 51
       },
       "id": 564185305,
       "legend": {
@@ -2850,9 +3352,9 @@
         "h": 1,
         "w": 6,
         "x": 0,
-        "y": 48
+        "y": 58
       },
-      "id": 21,
+      "id": 25,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -2896,7 +3398,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 41
+        "y": 51
       },
       "id": 1659464052,
       "legend": {
@@ -3223,9 +3725,9 @@
         "h": 1,
         "w": 6,
         "x": 6,
-        "y": 48
+        "y": 58
       },
-      "id": 23,
+      "id": 27,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -3269,7 +3771,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 41
+        "y": 51
       },
       "id": 1809701101,
       "legend": {
@@ -3367,9 +3869,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 41
+        "y": 51
       },
-      "id": 25,
+      "id": 29,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -3387,7 +3889,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 51
+        "y": 61
       },
       "id": 2299339214,
       "legend": {
@@ -3725,9 +4227,9 @@
         "h": 1,
         "w": 6,
         "x": 0,
-        "y": 58
+        "y": 68
       },
-      "id": 27,
+      "id": 31,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -3771,7 +4273,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 51
+        "y": 61
       },
       "id": 389908901,
       "legend": {
@@ -4098,9 +4600,9 @@
         "h": 1,
         "w": 6,
         "x": 6,
-        "y": 58
+        "y": 68
       },
-      "id": 29,
+      "id": 33,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -4144,7 +4646,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 51
+        "y": 61
       },
       "id": 4128797988,
       "legend": {
@@ -4242,9 +4744,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 51
+        "y": 61
       },
-      "id": 31,
+      "id": 35,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -4262,7 +4764,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 61
+        "y": 71
       },
       "id": 1517683275,
       "legend": {
@@ -4600,9 +5102,9 @@
         "h": 1,
         "w": 6,
         "x": 0,
-        "y": 68
+        "y": 78
       },
-      "id": 33,
+      "id": 37,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -4646,7 +5148,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 61
+        "y": 71
       },
       "id": 4031214920,
       "legend": {
@@ -4973,9 +5475,9 @@
         "h": 1,
         "w": 6,
         "x": 6,
-        "y": 68
+        "y": 78
       },
-      "id": 35,
+      "id": 39,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -5019,7 +5521,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 61
+        "y": 71
       },
       "id": 1809050900,
       "legend": {
@@ -5117,9 +5619,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 61
+        "y": 71
       },
-      "id": 37,
+      "id": 41,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -5137,7 +5639,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 71
+        "y": 81
       },
       "id": 3422932483,
       "legend": {
@@ -5475,9 +5977,9 @@
         "h": 1,
         "w": 6,
         "x": 0,
-        "y": 78
+        "y": 88
       },
-      "id": 39,
+      "id": 43,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -5521,7 +6023,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 71
+        "y": 81
       },
       "id": 1270469885,
       "legend": {
@@ -5848,9 +6350,9 @@
         "h": 1,
         "w": 6,
         "x": 6,
-        "y": 78
+        "y": 88
       },
-      "id": 41,
+      "id": 45,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -5894,7 +6396,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 71
+        "y": 81
       },
       "id": 1158317670,
       "legend": {
@@ -5992,9 +6494,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 71
+        "y": 81
       },
-      "id": 43,
+      "id": 47,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -6012,7 +6514,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 81
+        "y": 91
       },
       "id": 1949742512,
       "legend": {
@@ -6350,9 +6852,9 @@
         "h": 1,
         "w": 6,
         "x": 0,
-        "y": 88
+        "y": 98
       },
-      "id": 45,
+      "id": 49,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -6396,7 +6898,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 81
+        "y": 91
       },
       "id": 230682702,
       "legend": {
@@ -6723,9 +7225,9 @@
         "h": 1,
         "w": 6,
         "x": 6,
-        "y": 88
+        "y": 98
       },
-      "id": 47,
+      "id": 51,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -6769,7 +7271,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 81
+        "y": 91
       },
       "id": 3240333014,
       "legend": {
@@ -6867,9 +7369,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 81
+        "y": 91
       },
-      "id": 49,
+      "id": 53,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -6887,7 +7389,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 91
+        "y": 101
       },
       "id": 546338609,
       "legend": {
@@ -7225,9 +7727,9 @@
         "h": 1,
         "w": 6,
         "x": 0,
-        "y": 98
+        "y": 108
       },
-      "id": 51,
+      "id": 55,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -7271,7 +7773,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 91
+        "y": 101
       },
       "id": 2190820353,
       "legend": {
@@ -7598,9 +8100,9 @@
         "h": 1,
         "w": 6,
         "x": 6,
-        "y": 98
+        "y": 108
       },
-      "id": 53,
+      "id": 57,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -7644,7 +8146,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 91
+        "y": 101
       },
       "id": 1943089289,
       "legend": {
@@ -7742,9 +8244,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 91
+        "y": 101
       },
-      "id": 55,
+      "id": 59,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -7762,7 +8264,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 101
+        "y": 111
       },
       "id": 838516108,
       "legend": {
@@ -8100,9 +8602,9 @@
         "h": 1,
         "w": 6,
         "x": 0,
-        "y": 108
+        "y": 118
       },
-      "id": 57,
+      "id": 61,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -8146,7 +8648,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 101
+        "y": 111
       },
       "id": 2307979617,
       "legend": {
@@ -8473,9 +8975,9 @@
         "h": 1,
         "w": 6,
         "x": 6,
-        "y": 108
+        "y": 118
       },
-      "id": 59,
+      "id": 63,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -8519,7 +9021,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 101
+        "y": 111
       },
       "id": 2071383037,
       "legend": {
@@ -8617,9 +9119,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 101
+        "y": 111
       },
-      "id": 61,
+      "id": 65,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -8637,7 +9139,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 111
+        "y": 121
       },
       "id": 3650911195,
       "legend": {
@@ -8975,9 +9477,9 @@
         "h": 1,
         "w": 6,
         "x": 0,
-        "y": 118
+        "y": 128
       },
-      "id": 63,
+      "id": 67,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -9021,7 +9523,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 111
+        "y": 121
       },
       "id": 3367299711,
       "legend": {
@@ -9348,9 +9850,9 @@
         "h": 1,
         "w": 6,
         "x": 6,
-        "y": 118
+        "y": 128
       },
-      "id": 65,
+      "id": 69,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -9394,7 +9896,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 111
+        "y": 121
       },
       "id": 291926784,
       "legend": {
@@ -9492,9 +9994,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 111
+        "y": 121
       },
-      "id": 67,
+      "id": 71,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -9512,7 +10014,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 121
+        "y": 131
       },
       "id": 627077500,
       "legend": {
@@ -9850,9 +10352,9 @@
         "h": 1,
         "w": 6,
         "x": 0,
-        "y": 128
+        "y": 138
       },
-      "id": 69,
+      "id": 73,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -9896,7 +10398,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 121
+        "y": 131
       },
       "id": 953665318,
       "legend": {
@@ -10223,9 +10725,9 @@
         "h": 1,
         "w": 6,
         "x": 6,
-        "y": 128
+        "y": 138
       },
-      "id": 71,
+      "id": 75,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -10269,7 +10771,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 121
+        "y": 131
       },
       "id": 659062113,
       "legend": {
@@ -10367,9 +10869,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 121
+        "y": 131
       },
-      "id": 73,
+      "id": 77,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -10387,7 +10889,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 131
+        "y": 141
       },
       "id": 203761782,
       "legend": {
@@ -10725,9 +11227,9 @@
         "h": 1,
         "w": 6,
         "x": 0,
-        "y": 138
+        "y": 148
       },
-      "id": 75,
+      "id": 79,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -10771,7 +11273,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 131
+        "y": 141
       },
       "id": 2399846707,
       "legend": {
@@ -11098,9 +11600,9 @@
         "h": 1,
         "w": 6,
         "x": 6,
-        "y": 138
+        "y": 148
       },
-      "id": 77,
+      "id": 81,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -11144,7 +11646,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 131
+        "y": 141
       },
       "id": 907052725,
       "legend": {
@@ -11242,9 +11744,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 131
+        "y": 141
       },
-      "id": 79,
+      "id": 83,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -11258,7 +11760,7 @@
         "x": 0,
         "y": 100
       },
-      "id": 80,
+      "id": 84,
       "panels": [
         {
           "bars": false,
@@ -11275,7 +11777,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 81,
+          "id": 85,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11351,7 +11853,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 82,
+          "id": 86,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11427,7 +11929,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 83,
+          "id": 87,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11503,7 +12005,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 84,
+          "id": 88,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11582,7 +12084,260 @@
         "x": 0,
         "y": 110
       },
-      "id": 85,
+      "id": 89,
+      "panels": [
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 0
+          },
+          "id": 90,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by () (\n  rate(gitlab_sli_global_search_indexing_apdex_total{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"sidekiq\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "overall",
+              "refId": "A"
+            }
+          ],
+          "title": "global_search_indexing RPS - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 10
+          },
+          "id": 91,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (document_type) (\n      rate(gitlab_sli_global_search_indexing_apdex_total{document_type!=\"\",env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"sidekiq\"}[$__interval])\n    )\n    -\n    sum by (document_type) (\n      rate(gitlab_sli_global_search_indexing_apdex_success_total{document_type!=\"\",env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"sidekiq\"}[$__interval])\n    )\n  )\n  / ignoring (document_type) group_left()\n  (\n    sum by () (\n      rate(gitlab_sli_global_search_indexing_apdex_total{document_type!=\"\",env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"sidekiq\"}[$__interval])\n    )\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{document_type}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for global_search_indexing Latency - per document_type",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 10
+          },
+          "id": 92,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (document_type) (\n  rate(gitlab_sli_global_search_indexing_apdex_total{document_type!=\"\",env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"sidekiq\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{document_type}}",
+              "refId": "A"
+            }
+          ],
+          "title": "global_search_indexing RPS - per document_type",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "🔬 SLI Detail: global_search_indexing",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "collapse": true,
+      "collapsed": true,
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 120
+      },
+      "id": 93,
       "panels": [
         {
           "bars": false,
@@ -11599,7 +12354,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 86,
+          "id": 94,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11694,7 +12449,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 87,
+          "id": 95,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11770,7 +12525,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 88,
+          "id": 96,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11846,7 +12601,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 89,
+          "id": 97,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11941,7 +12696,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 90,
+          "id": 98,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12017,7 +12772,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 91,
+          "id": 99,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12093,7 +12848,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 92,
+          "id": 100,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12188,7 +12943,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 93,
+          "id": 101,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12264,7 +13019,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 94,
+          "id": 102,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12340,7 +13095,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 95,
+          "id": 103,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12435,7 +13190,7 @@
             "x": 8,
             "y": 30
           },
-          "id": 96,
+          "id": 104,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12511,7 +13266,7 @@
             "x": 16,
             "y": 30
           },
-          "id": 97,
+          "id": 105,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12587,7 +13342,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 98,
+          "id": 106,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12682,7 +13437,7 @@
             "x": 8,
             "y": 40
           },
-          "id": 99,
+          "id": 107,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12758,7 +13513,7 @@
             "x": 16,
             "y": 40
           },
-          "id": 100,
+          "id": 108,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12835,9 +13590,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 120
+        "y": 130
       },
-      "id": 101,
+      "id": 109,
       "panels": [
         {
           "bars": false,
@@ -12854,7 +13609,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 102,
+          "id": 110,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12949,7 +13704,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 103,
+          "id": 111,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13025,7 +13780,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 104,
+          "id": 112,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13101,7 +13856,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 105,
+          "id": 113,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13196,7 +13951,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 106,
+          "id": 114,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13272,7 +14027,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 107,
+          "id": 115,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13348,7 +14103,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 108,
+          "id": 116,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13443,7 +14198,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 109,
+          "id": 117,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13519,7 +14274,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 110,
+          "id": 118,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13595,7 +14350,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 111,
+          "id": 119,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13690,7 +14445,7 @@
             "x": 8,
             "y": 30
           },
-          "id": 112,
+          "id": 120,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13766,7 +14521,7 @@
             "x": 16,
             "y": 30
           },
-          "id": 113,
+          "id": 121,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13842,7 +14597,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 114,
+          "id": 122,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13937,7 +14692,7 @@
             "x": 8,
             "y": 40
           },
-          "id": 115,
+          "id": 123,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14013,7 +14768,7 @@
             "x": 16,
             "y": 40
           },
-          "id": 116,
+          "id": 124,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14090,9 +14845,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 130
+        "y": 140
       },
-      "id": 117,
+      "id": 125,
       "panels": [
         {
           "bars": false,
@@ -14109,7 +14864,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 118,
+          "id": 126,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14204,7 +14959,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 119,
+          "id": 127,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14280,7 +15035,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 120,
+          "id": 128,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14356,7 +15111,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 121,
+          "id": 129,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14451,7 +15206,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 122,
+          "id": 130,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14527,7 +15282,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 123,
+          "id": 131,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14603,7 +15358,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 124,
+          "id": 132,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14698,7 +15453,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 125,
+          "id": 133,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14774,7 +15529,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 126,
+          "id": 134,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14850,7 +15605,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 127,
+          "id": 135,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14945,7 +15700,7 @@
             "x": 8,
             "y": 30
           },
-          "id": 128,
+          "id": 136,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15021,7 +15776,7 @@
             "x": 16,
             "y": 30
           },
-          "id": 129,
+          "id": 137,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15097,7 +15852,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 130,
+          "id": 138,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15192,7 +15947,7 @@
             "x": 8,
             "y": 40
           },
-          "id": 131,
+          "id": 139,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15268,7 +16023,7 @@
             "x": 16,
             "y": 40
           },
-          "id": 132,
+          "id": 140,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15345,9 +16100,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 140
+        "y": 150
       },
-      "id": 133,
+      "id": 141,
       "panels": [
         {
           "bars": false,
@@ -15364,7 +16119,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 134,
+          "id": 142,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15459,7 +16214,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 135,
+          "id": 143,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15535,7 +16290,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 136,
+          "id": 144,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15611,7 +16366,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 137,
+          "id": 145,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15706,7 +16461,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 138,
+          "id": 146,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15782,7 +16537,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 139,
+          "id": 147,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15858,7 +16613,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 140,
+          "id": 148,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15953,7 +16708,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 141,
+          "id": 149,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16029,7 +16784,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 142,
+          "id": 150,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16105,7 +16860,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 143,
+          "id": 151,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16200,7 +16955,7 @@
             "x": 8,
             "y": 30
           },
-          "id": 144,
+          "id": 152,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16276,7 +17031,7 @@
             "x": 16,
             "y": 30
           },
-          "id": 145,
+          "id": 153,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16352,7 +17107,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 146,
+          "id": 154,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16447,7 +17202,7 @@
             "x": 8,
             "y": 40
           },
-          "id": 147,
+          "id": 155,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16523,7 +17278,7 @@
             "x": 16,
             "y": 40
           },
-          "id": 148,
+          "id": 156,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16600,9 +17355,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 150
+        "y": 160
       },
-      "id": 149,
+      "id": 157,
       "panels": [
         {
           "bars": false,
@@ -16619,7 +17374,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 150,
+          "id": 158,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16714,7 +17469,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 151,
+          "id": 159,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16790,7 +17545,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 152,
+          "id": 160,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16866,7 +17621,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 153,
+          "id": 161,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16961,7 +17716,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 154,
+          "id": 162,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17037,7 +17792,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 155,
+          "id": 163,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17113,7 +17868,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 156,
+          "id": 164,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17208,7 +17963,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 157,
+          "id": 165,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17284,7 +18039,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 158,
+          "id": 166,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17360,7 +18115,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 159,
+          "id": 167,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17455,7 +18210,7 @@
             "x": 8,
             "y": 30
           },
-          "id": 160,
+          "id": 168,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17531,7 +18286,7 @@
             "x": 16,
             "y": 30
           },
-          "id": 161,
+          "id": 169,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17607,7 +18362,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 162,
+          "id": 170,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17702,7 +18457,7 @@
             "x": 8,
             "y": 40
           },
-          "id": 163,
+          "id": 171,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17778,7 +18533,7 @@
             "x": 16,
             "y": 40
           },
-          "id": 164,
+          "id": 172,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17855,9 +18610,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 160
+        "y": 170
       },
-      "id": 165,
+      "id": 173,
       "panels": [
         {
           "bars": false,
@@ -17874,7 +18629,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 166,
+          "id": 174,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17969,7 +18724,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 167,
+          "id": 175,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -18045,7 +18800,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 168,
+          "id": 176,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -18121,7 +18876,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 169,
+          "id": 177,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -18216,7 +18971,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 170,
+          "id": 178,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -18292,7 +19047,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 171,
+          "id": 179,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -18368,7 +19123,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 172,
+          "id": 180,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -18463,7 +19218,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 173,
+          "id": 181,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -18539,7 +19294,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 174,
+          "id": 182,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -18615,7 +19370,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 175,
+          "id": 183,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -18710,7 +19465,7 @@
             "x": 8,
             "y": 30
           },
-          "id": 176,
+          "id": 184,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -18786,7 +19541,7 @@
             "x": 16,
             "y": 30
           },
-          "id": 177,
+          "id": 185,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -18862,7 +19617,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 178,
+          "id": 186,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -18957,7 +19712,7 @@
             "x": 8,
             "y": 40
           },
-          "id": 179,
+          "id": 187,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -19033,7 +19788,7 @@
             "x": 16,
             "y": 40
           },
-          "id": 180,
+          "id": 188,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -19110,9 +19865,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 170
+        "y": 180
       },
-      "id": 181,
+      "id": 189,
       "panels": [
         {
           "bars": false,
@@ -19129,7 +19884,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 182,
+          "id": 190,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -19224,7 +19979,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 183,
+          "id": 191,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -19300,7 +20055,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 184,
+          "id": 192,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -19376,7 +20131,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 185,
+          "id": 193,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -19471,7 +20226,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 186,
+          "id": 194,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -19547,7 +20302,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 187,
+          "id": 195,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -19623,7 +20378,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 188,
+          "id": 196,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -19718,7 +20473,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 189,
+          "id": 197,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -19794,7 +20549,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 190,
+          "id": 198,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -19870,7 +20625,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 191,
+          "id": 199,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -19965,7 +20720,7 @@
             "x": 8,
             "y": 30
           },
-          "id": 192,
+          "id": 200,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -20041,7 +20796,7 @@
             "x": 16,
             "y": 30
           },
-          "id": 193,
+          "id": 201,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -20117,7 +20872,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 194,
+          "id": 202,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -20212,7 +20967,7 @@
             "x": 8,
             "y": 40
           },
-          "id": 195,
+          "id": 203,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -20288,7 +21043,7 @@
             "x": 16,
             "y": 40
           },
-          "id": 196,
+          "id": 204,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -20365,9 +21120,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 180
+        "y": 190
       },
-      "id": 197,
+      "id": 205,
       "panels": [
         {
           "bars": false,
@@ -20384,7 +21139,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 198,
+          "id": 206,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -20479,7 +21234,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 199,
+          "id": 207,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -20555,7 +21310,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 200,
+          "id": 208,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -20631,7 +21386,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 201,
+          "id": 209,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -20726,7 +21481,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 202,
+          "id": 210,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -20802,7 +21557,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 203,
+          "id": 211,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -20878,7 +21633,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 204,
+          "id": 212,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -20973,7 +21728,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 205,
+          "id": 213,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -21049,7 +21804,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 206,
+          "id": 214,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -21125,7 +21880,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 207,
+          "id": 215,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -21220,7 +21975,7 @@
             "x": 8,
             "y": 30
           },
-          "id": 208,
+          "id": 216,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -21296,7 +22051,7 @@
             "x": 16,
             "y": 30
           },
-          "id": 209,
+          "id": 217,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -21372,7 +22127,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 210,
+          "id": 218,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -21467,7 +22222,7 @@
             "x": 8,
             "y": 40
           },
-          "id": 211,
+          "id": 219,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -21543,7 +22298,7 @@
             "x": 16,
             "y": 40
           },
-          "id": 212,
+          "id": 220,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -21620,9 +22375,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 190
+        "y": 200
       },
-      "id": 213,
+      "id": 221,
       "panels": [
         {
           "bars": false,
@@ -21639,7 +22394,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 214,
+          "id": 222,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -21734,7 +22489,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 215,
+          "id": 223,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -21810,7 +22565,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 216,
+          "id": 224,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -21886,7 +22641,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 217,
+          "id": 225,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -21981,7 +22736,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 218,
+          "id": 226,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -22057,7 +22812,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 219,
+          "id": 227,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -22133,7 +22888,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 220,
+          "id": 228,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -22228,7 +22983,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 221,
+          "id": 229,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -22304,7 +23059,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 222,
+          "id": 230,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -22380,7 +23135,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 223,
+          "id": 231,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -22475,7 +23230,7 @@
             "x": 8,
             "y": 30
           },
-          "id": 224,
+          "id": 232,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -22551,7 +23306,7 @@
             "x": 16,
             "y": 30
           },
-          "id": 225,
+          "id": 233,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -22627,7 +23382,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 226,
+          "id": 234,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -22722,7 +23477,7 @@
             "x": 8,
             "y": 40
           },
-          "id": 227,
+          "id": 235,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -22798,7 +23553,7 @@
             "x": 16,
             "y": 40
           },
-          "id": 228,
+          "id": 236,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -22875,9 +23630,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 200
+        "y": 210
       },
-      "id": 229,
+      "id": 237,
       "panels": [
         {
           "bars": false,
@@ -22894,7 +23649,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 230,
+          "id": 238,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -22989,7 +23744,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 231,
+          "id": 239,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -23065,7 +23820,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 232,
+          "id": 240,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -23141,7 +23896,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 233,
+          "id": 241,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -23236,7 +23991,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 234,
+          "id": 242,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -23312,7 +24067,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 235,
+          "id": 243,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -23388,7 +24143,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 236,
+          "id": 244,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -23483,7 +24238,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 237,
+          "id": 245,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -23559,7 +24314,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 238,
+          "id": 246,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -23635,7 +24390,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 239,
+          "id": 247,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -23730,7 +24485,7 @@
             "x": 8,
             "y": 30
           },
-          "id": 240,
+          "id": 248,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -23806,7 +24561,7 @@
             "x": 16,
             "y": 30
           },
-          "id": 241,
+          "id": 249,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -23882,7 +24637,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 242,
+          "id": 250,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -23977,7 +24732,7 @@
             "x": 8,
             "y": 40
           },
-          "id": 243,
+          "id": 251,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -24053,7 +24808,7 @@
             "x": 16,
             "y": 40
           },
-          "id": 244,
+          "id": 252,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -24130,9 +24885,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 210
+        "y": 220
       },
-      "id": 245,
+      "id": 253,
       "panels": [
         {
           "bars": false,
@@ -24149,7 +24904,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 246,
+          "id": 254,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -24244,7 +24999,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 247,
+          "id": 255,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -24320,7 +25075,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 248,
+          "id": 256,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -24396,7 +25151,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 249,
+          "id": 257,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -24491,7 +25246,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 250,
+          "id": 258,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -24567,7 +25322,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 251,
+          "id": 259,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -24643,7 +25398,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 252,
+          "id": 260,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -24738,7 +25493,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 253,
+          "id": 261,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -24814,7 +25569,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 254,
+          "id": 262,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -24890,7 +25645,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 255,
+          "id": 263,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -24985,7 +25740,7 @@
             "x": 8,
             "y": 30
           },
-          "id": 256,
+          "id": 264,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -25061,7 +25816,7 @@
             "x": 16,
             "y": 30
           },
-          "id": 257,
+          "id": 265,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -25137,7 +25892,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 258,
+          "id": 266,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -25232,7 +25987,7 @@
             "x": 8,
             "y": 40
           },
-          "id": 259,
+          "id": 267,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -25308,7 +26063,7 @@
             "x": 16,
             "y": 40
           },
-          "id": 260,
+          "id": 268,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -25387,7 +26142,7 @@
         "x": 0,
         "y": 400
       },
-      "id": 261,
+      "id": 269,
       "panels": [
         {
           "aliasColors": {
@@ -25406,7 +26161,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 262,
+          "id": 270,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -25511,7 +26266,7 @@
             "x": 8,
             "y": 1
           },
-          "id": 263,
+          "id": 271,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -25616,7 +26371,7 @@
             "x": 16,
             "y": 1
           },
-          "id": 264,
+          "id": 272,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -25732,7 +26487,7 @@
             "x": 0,
             "y": 9
           },
-          "id": 265,
+          "id": 273,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -25837,7 +26592,7 @@
             "x": 8,
             "y": 9
           },
-          "id": 266,
+          "id": 274,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -25942,7 +26697,7 @@
             "x": 16,
             "y": 9
           },
-          "id": 267,
+          "id": 275,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -26058,7 +26813,7 @@
             "x": 0,
             "y": 17
           },
-          "id": 268,
+          "id": 276,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -26163,7 +26918,7 @@
             "x": 8,
             "y": 17
           },
-          "id": 269,
+          "id": 277,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -26268,7 +27023,7 @@
             "x": 16,
             "y": 17
           },
-          "id": 270,
+          "id": 278,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -26384,7 +27139,7 @@
             "x": 0,
             "y": 25
           },
-          "id": 271,
+          "id": 279,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -26489,7 +27244,7 @@
             "x": 8,
             "y": 25
           },
-          "id": 272,
+          "id": 280,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -26594,7 +27349,7 @@
             "x": 16,
             "y": 25
           },
-          "id": 273,
+          "id": 281,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -26710,7 +27465,7 @@
             "x": 0,
             "y": 33
           },
-          "id": 274,
+          "id": 282,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -26815,7 +27570,7 @@
             "x": 8,
             "y": 33
           },
-          "id": 275,
+          "id": 283,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -26920,7 +27675,7 @@
             "x": 16,
             "y": 33
           },
-          "id": 276,
+          "id": 284,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -27036,7 +27791,7 @@
             "x": 0,
             "y": 41
           },
-          "id": 277,
+          "id": 285,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -27141,7 +27896,7 @@
             "x": 8,
             "y": 41
           },
-          "id": 278,
+          "id": 286,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -27246,7 +28001,7 @@
             "x": 16,
             "y": 41
           },
-          "id": 279,
+          "id": 287,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -27362,7 +28117,7 @@
             "x": 0,
             "y": 49
           },
-          "id": 280,
+          "id": 288,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -27467,7 +28222,7 @@
             "x": 8,
             "y": 49
           },
-          "id": 281,
+          "id": 289,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -27572,7 +28327,7 @@
             "x": 16,
             "y": 49
           },
-          "id": 282,
+          "id": 290,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -27688,7 +28443,7 @@
             "x": 0,
             "y": 57
           },
-          "id": 283,
+          "id": 291,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -27793,7 +28548,7 @@
             "x": 8,
             "y": 57
           },
-          "id": 284,
+          "id": 292,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -27898,7 +28653,7 @@
             "x": 16,
             "y": 57
           },
-          "id": 285,
+          "id": 293,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -28014,7 +28769,7 @@
             "x": 0,
             "y": 65
           },
-          "id": 286,
+          "id": 294,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -28119,7 +28874,7 @@
             "x": 8,
             "y": 65
           },
-          "id": 287,
+          "id": 295,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -28224,7 +28979,7 @@
             "x": 16,
             "y": 65
           },
-          "id": 288,
+          "id": 296,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -28340,7 +29095,7 @@
             "x": 0,
             "y": 73
           },
-          "id": 289,
+          "id": 297,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -28445,7 +29200,7 @@
             "x": 8,
             "y": 73
           },
-          "id": 290,
+          "id": 298,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -28550,7 +29305,7 @@
             "x": 16,
             "y": 73
           },
-          "id": 291,
+          "id": 299,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -28666,7 +29421,7 @@
             "x": 0,
             "y": 81
           },
-          "id": 292,
+          "id": 300,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -28771,7 +29526,7 @@
             "x": 8,
             "y": 81
           },
-          "id": 293,
+          "id": 301,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -28876,7 +29631,7 @@
             "x": 16,
             "y": 81
           },
-          "id": 294,
+          "id": 302,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -28992,7 +29747,7 @@
             "x": 0,
             "y": 89
           },
-          "id": 295,
+          "id": 303,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -29090,7 +29845,7 @@
             "x": 12,
             "y": 89
           },
-          "id": 296,
+          "id": 304,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -29189,7 +29944,7 @@
         "x": 0,
         "y": 500
       },
-      "id": 297,
+      "id": 305,
       "panels": [
         {
           "aliasColors": {
@@ -31129,7 +31884,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 308,
+      "id": 316,
       "panels": [
 
       ],
@@ -31158,7 +31913,7 @@
         "x": 0,
         "y": 1001
       },
-      "id": 309,
+      "id": 317,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -31256,7 +32011,7 @@
         "x": 12,
         "y": 1001
       },
-      "id": 310,
+      "id": 318,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -31354,7 +32109,7 @@
         "x": 0,
         "y": 1011
       },
-      "id": 311,
+      "id": 319,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -31452,7 +32207,7 @@
         "x": 12,
         "y": 1011
       },
-      "id": 312,
+      "id": 320,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -31542,7 +32297,7 @@
         "x": 0,
         "y": 1500
       },
-      "id": 313,
+      "id": 321,
       "panels": [
         {
           "aliasColors": {
@@ -31561,7 +32316,7 @@
             "x": 0,
             "y": 1501
           },
-          "id": 314,
+          "id": 322,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -31675,7 +32430,7 @@
             "x": 12,
             "y": 1501
           },
-          "id": 315,
+          "id": 323,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -31789,7 +32544,7 @@
             "x": 0,
             "y": 1511
           },
-          "id": 316,
+          "id": 324,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -31904,7 +32659,7 @@
         "x": 0,
         "y": 2000
       },
-      "id": 317,
+      "id": 325,
       "panels": [
 
       ],
@@ -31933,7 +32688,7 @@
         "x": 0,
         "y": 2001
       },
-      "id": 318,
+      "id": 326,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -32031,7 +32786,7 @@
         "x": 12,
         "y": 2001
       },
-      "id": 319,
+      "id": 327,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -32129,7 +32884,7 @@
         "x": 0,
         "y": 2011
       },
-      "id": 320,
+      "id": 328,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -32227,7 +32982,7 @@
         "x": 12,
         "y": 2011
       },
-      "id": 321,
+      "id": 329,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -32317,7 +33072,7 @@
         "x": 0,
         "y": 2500
       },
-      "id": 322,
+      "id": 330,
       "panels": [
 
       ],
@@ -32346,7 +33101,7 @@
         "x": 0,
         "y": 2501
       },
-      "id": 323,
+      "id": 331,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -32444,7 +33199,7 @@
         "x": 12,
         "y": 2501
       },
-      "id": 324,
+      "id": 332,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -32550,7 +33305,7 @@
         "x": 0,
         "y": 2511
       },
-      "id": 325,
+      "id": 333,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -32648,7 +33403,7 @@
         "x": 12,
         "y": 2511
       },
-      "id": 326,
+      "id": 334,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -32754,7 +33509,7 @@
         "x": 0,
         "y": 2521
       },
-      "id": 327,
+      "id": 335,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -32852,7 +33607,7 @@
         "x": 12,
         "y": 2521
       },
-      "id": 328,
+      "id": 336,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -32950,7 +33705,7 @@
         "x": 0,
         "y": 2531
       },
-      "id": 329,
+      "id": 337,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -33056,7 +33811,7 @@
         "x": 12,
         "y": 2531
       },
-      "id": 330,
+      "id": 338,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -33162,7 +33917,7 @@
         "x": 0,
         "y": 2541
       },
-      "id": 331,
+      "id": 339,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -33260,7 +34015,7 @@
         "x": 0,
         "y": 3000
       },
-      "id": 332,
+      "id": 340,
       "panels": [
 
       ],
@@ -33289,7 +34044,7 @@
         "x": 0,
         "y": 3001
       },
-      "id": 333,
+      "id": 341,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -33393,7 +34148,7 @@
         "x": 12,
         "y": 3001
       },
-      "id": 334,
+      "id": 342,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -33497,7 +34252,7 @@
         "x": 0,
         "y": 3011
       },
-      "id": 335,
+      "id": 343,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -33601,7 +34356,7 @@
         "x": 12,
         "y": 3011
       },
-      "id": 336,
+      "id": 344,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -33697,7 +34452,7 @@
         "x": 0,
         "y": 5000
       },
-      "id": 337,
+      "id": 345,
       "panels": [
         {
           "aliasColors": {
@@ -33716,7 +34471,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 338,
+          "id": 346,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -33828,7 +34583,7 @@
             "x": 12,
             "y": 1
           },
-          "id": 339,
+          "id": 347,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -33940,7 +34695,7 @@
             "x": 0,
             "y": 11
           },
-          "id": 340,
+          "id": 348,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -34052,7 +34807,7 @@
             "x": 12,
             "y": 11
           },
-          "id": 341,
+          "id": 349,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -34164,7 +34919,7 @@
             "x": 0,
             "y": 21
           },
-          "id": 342,
+          "id": 350,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -34276,7 +35031,7 @@
             "x": 12,
             "y": 21
           },
-          "id": 343,
+          "id": 351,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -34388,7 +35143,7 @@
             "x": 0,
             "y": 31
           },
-          "id": 344,
+          "id": 352,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -34499,7 +35254,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 345,
+      "id": 353,
       "panels": [
         {
           "colors": [
@@ -34520,7 +35275,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 346,
+          "id": 354,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -34633,7 +35388,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 347,
+          "id": 355,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -34744,7 +35499,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 348,
+          "id": 356,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -34849,7 +35604,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 349,
+      "id": 357,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -34972,5 +35727,5 @@
   "timezone": "utc",
   "title": "sidekiq: Overview",
   "uid": "sidekiq-main",
-  "version": 3448
+  "version": 3452
 }
