@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3189748980 at Tue Oct 18 13:22:24 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3189748980 at Tue Oct 18 13:28:41 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -62,109 +62,25 @@
   ],
   "panels": [
     {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "fill": 0,
-      "fillGradient": 0,
+      "collapse": false,
+      "collapsed": false,
       "gridPos": {
-        "h": 10,
-        "w": 12,
+        "h": 1,
+        "w": 24,
         "x": 0,
-        "y": 0
+        "y": 1000
       },
       "id": 2,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
+      "panels": [
 
       ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
       "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "min by (device) (node_filesystem_size_bytes{device=~\"/dev/.+\", env=\"$environment\", type=\"$type\", mountpoint!=\"/\", mountpoint!=\"/var/log\"})\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "Limit ({{device}})",
-          "refId": "A"
-        },
-        {
-          "expr": "node_filesystem_size_bytes{device=~\"/dev/.+\", env=\"$environment\", type=\"$type\", mountpoint!=\"/\", mountpoint!=\"/var/log\"}\n-\nnode_filesystem_free_bytes{device=~\"/dev/.+\", env=\"$environment\", type=\"$type\", mountpoint!=\"/\", mountpoint!=\"/var/log\"}\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{instance}} {{device}}",
-          "refId": "B"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Filesystem Utilization",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "bytes",
-          "label": "Size",
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "GCS Bucket",
+      "titleSize": "h6",
+      "type": "row"
     },
     {
       "aliasColors": {
@@ -173,14 +89,15 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
+      "decimals": 0,
+      "description": "Total size of objects per bucket. Values are measured once per day.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 0
+        "w": 24,
+        "x": 0,
+        "y": 1001
       },
       "id": 3,
       "legend": {
@@ -197,7 +114,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -215,20 +132,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (device) (node_filesystem_size_bytes{device=~\"/dev/.+\", env=\"$environment\", type=\"$type\", mountpoint!=\"/\", mountpoint!=\"/var/log\"})\n",
+          "expr": "stackdriver_gcs_bucket_storage_googleapis_com_storage_total_bytes{bucket_name=~\"gitlab-.*-artifacts\", environment=\"$environment\"}",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "Limit ({{device}})",
+          "legendFormat": "{{ bucket_name }}",
           "refId": "A"
-        },
-        {
-          "expr": "sum by (device)\n(\n  node_filesystem_size_bytes{device=~\"/dev/.+\", env=\"$environment\", type=\"$type\", mountpoint!=\"/\", mountpoint!=\"/var/log\"}\n  -\n  node_filesystem_free_bytes{device=~\"/dev/.+\", env=\"$environment\", type=\"$type\", mountpoint!=\"/\", mountpoint!=\"/var/log\"}\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "All Instances ({{device}})",
-          "refId": "B"
         }
       ],
       "thresholds": [
@@ -236,10 +145,10 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Total Filesystem Utilization",
+      "title": "Total Size",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -255,10 +164,10 @@
       "yaxes": [
         {
           "format": "bytes",
-          "label": "Size",
+          "label": "",
           "logBase": 1,
           "max": null,
-          "min": null,
+          "min": 0,
           "show": true
         },
         {
@@ -272,133 +181,42 @@
       ]
     },
     {
+      "collapse": false,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 2000
+      },
+      "id": 4,
+      "panels": [
+
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "Cloud CDN Requests",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
       "aliasColors": {
       },
       "bars": false,
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
+      "decimals": 0,
+      "description": "HTTP Requests",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 10
-      },
-      "id": 4,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "min\n(\n  node_filesystem_size_bytes{device=\"tank/reservation\", env=\"$environment\", type=\"$type\"}\n  + ignoring (device, mountpoint)\n  (\n    node_filesystem_size_bytes{device=\"tank/dataset\", env=\"$environment\", type=\"$type\"}\n    -\n    node_filesystem_free_bytes{device=\"tank/dataset\", env=\"$environment\", type=\"$type\"}\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "Absolute Limit",
-          "refId": "A"
-        },
-        {
-          "expr": "min (node_filesystem_size_bytes{device=\"tank/dataset\", env=\"$environment\", type=\"$type\"})\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "Limit excluding reservation",
-          "refId": "B"
-        },
-        {
-          "expr": "node_filesystem_size_bytes{device=\"tank/dataset\", env=\"$environment\", type=\"$type\"}\n-\nnode_filesystem_free_bytes{device=\"tank/dataset\", env=\"$environment\", type=\"$type\"}\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{instance}}",
-          "refId": "C"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Filesystem Utilization (ZFS)",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "bytes",
-          "label": "Size",
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 10
+        "y": 2001
       },
       "id": 5,
       "legend": {
@@ -415,7 +233,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -433,28 +251,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum\n(\n  node_filesystem_size_bytes{device=\"tank/reservation\", env=\"$environment\", type=\"$type\"}\n  + ignoring (device, mountpoint)\n  (\n    node_filesystem_size_bytes{device=\"tank/dataset\", env=\"$environment\", type=\"$type\"}\n    -\n    node_filesystem_free_bytes{device=\"tank/dataset\", env=\"$environment\", type=\"$type\"}\n  )\n)\n",
+          "expr": "sum(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{cache_result=\"HIT\", environment=\"$environment\", forwarding_rule_name=~\".*artifacts-cdn.*\"}) by (response_code) / sum(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{environment=\"$environment\", forwarding_rule_name=~\".*artifacts-cdn.*\"}) by (response_code)",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "Absolute Limit",
+          "legendFormat": "{{ response_code }}",
           "refId": "A"
-        },
-        {
-          "expr": "sum (node_filesystem_size_bytes{device=\"tank/dataset\", env=\"$environment\", type=\"$type\"})\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "Limit excluding reservation",
-          "refId": "B"
-        },
-        {
-          "expr": "sum\n(\n  node_filesystem_size_bytes{device=\"tank/dataset\", env=\"$environment\", type=\"$type\"}\n  -\n  node_filesystem_free_bytes{device=\"tank/dataset\", env=\"$environment\", type=\"$type\"}\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "All Instances",
-          "refId": "C"
         }
       ],
       "thresholds": [
@@ -462,10 +264,108 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Total Filesystem Utilization (ZFS)",
+      "title": "Percentage of HTTP Requests CACHE HIT by response",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "HTTP Requests",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 2001
+      },
+      "id": 6,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_backend_request_bytes_count{cache_result=\"HIT\", environment=\"$environment\", forwarding_rule_name=~\".*artifacts-cdn.*\"}) by (response_code)",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 2,
+          "legendFormat": "{{ response_code }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "HTTP Requests CACHE HIT (bytes)",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -481,10 +381,10 @@
       "yaxes": [
         {
           "format": "bytes",
-          "label": "Size",
+          "label": "",
           "logBase": 1,
           "max": null,
-          "min": null,
+          "min": 0,
           "show": true
         },
         {
@@ -504,111 +404,15 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
+      "decimals": 0,
+      "description": "HTTP Requests",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 20
-      },
-      "id": 6,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": false,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "node_zfs_arc_hits{env=\"$environment\", type=\"$type\"}\n/\n(node_zfs_arc_hits{env=\"$environment\", type=\"$type\"} + node_zfs_arc_misses{env=\"$environment\", type=\"$type\"})\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{instance}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "ZFS ARC Hit Rate",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "percentunit",
-          "label": "ZFS ARC Hit Rate",
-          "logBase": 1,
-          "max": 1,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 20
+        "y": 2011
       },
       "id": 7,
       "legend": {
@@ -619,13 +423,13 @@
         "max": true,
         "min": true,
         "rightSide": false,
-        "show": false,
+        "show": true,
         "sideWidth": null,
         "total": false,
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -643,11 +447,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(node_zfs_arc_demand_data_hits{env=\"$environment\", type=\"$type\"} + node_zfs_arc_demand_metadata_hits{env=\"$environment\", type=\"$type\"})\n/\n(\n  node_zfs_arc_demand_data_hits{env=\"$environment\", type=\"$type\"} + node_zfs_arc_demand_metadata_hits{env=\"$environment\", type=\"$type\"}\n  + node_zfs_arc_demand_data_misses{env=\"$environment\", type=\"$type\"} + node_zfs_arc_demand_metadata_misses{env=\"$environment\", type=\"$type\"}\n)\n",
+          "expr": "sum(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{cache_result=\"MISS\", environment=\"$environment\", forwarding_rule_name=~\".*artifacts-cdn.*\"}) by (response_code) / sum(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{environment=\"$environment\", forwarding_rule_name=~\".*artifacts-cdn.*\"}) by (response_code)",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "{{instance}}",
+          "legendFormat": "{{ response_code }}",
           "refId": "A"
         }
       ],
@@ -656,10 +460,10 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "ZFS ARC Demand Hit Rate",
+      "title": "Percentage of HTTP Requests CACHE MISS by response",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -675,10 +479,521 @@
       "yaxes": [
         {
           "format": "percentunit",
-          "label": "ZFS ARC Demand Hit Rate",
+          "label": "",
           "logBase": 1,
           "max": 1,
-          "min": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "HTTP Requests",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 2011
+      },
+      "id": 8,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_backend_request_bytes_count{cache_result=\"MISS\", environment=\"$environment\", forwarding_rule_name=~\".*artifacts-cdn.*\"}) by (response_code)",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 2,
+          "legendFormat": "{{ response_code }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "HTTP Requests CACHE MISS (bytes)",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "bytes",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "collapse": false,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 3000
+      },
+      "id": 9,
+      "panels": [
+
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "Cloud CDN Latencies",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "60th Percentile Latency CACHE MISS",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 3001
+      },
+      "id": 10,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.6,rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_backend_latencies_bucket{cache_result=\"HIT\", environment=\"$environment\", forwarding_rule_name=~\".*artifacts-cdn.*\"}[10m]))",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 2,
+          "legendFormat": "{{ response_code }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "60th Percentile Latency CACHE HIT",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "ms",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "90th Percentile Latency CACHE MISS",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 3001
+      },
+      "id": 11,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.9,rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_backend_latencies_bucket{cache_result=\"HIT\", environment=\"$environment\", forwarding_rule_name=~\".*artifacts-cdn.*\"}[10m]))",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 2,
+          "legendFormat": "{{ response_code }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "90th Percentile Latency CACHE HIT",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "ms",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "60th Percentile Latency CACHE MISS",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 3011
+      },
+      "id": 12,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.6,rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_backend_latencies_bucket{cache_result=\"MISS\", environment=\"$environment\", forwarding_rule_name=~\".*artifacts-cdn.*\"}[10m]))",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 2,
+          "legendFormat": "{{ response_code }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "60th Percentile Latency CACHE MISS",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "ms",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "90th Percentile Latency CACHE MISS",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 3011
+      },
+      "id": 13,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.9,rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_backend_latencies_bucket{cache_result=\"MISS\", environment=\"$environment\", forwarding_rule_name=~\".*artifacts-cdn.*\"}[10m]))",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 2,
+          "legendFormat": "{{ response_code }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "90th Percentile Latency CACHE MISS",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "ms",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
           "show": true
         },
         {
@@ -700,8 +1015,9 @@
   "style": "light",
   "tags": [
     "managed",
-    "general",
-    "general"
+    "google-cloud-storage",
+    "google-cloud-storage",
+    "type:google-cloud-storage"
   ],
   "templating": {
     "list": [
@@ -747,33 +1063,6 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      },
-      {
-        "allValue": null,
-        "current": {
-          "text": "web",
-          "value": "web"
-        },
-        "datasource": "$PROMETHEUS_DS",
-        "hide": 0,
-        "includeAll": false,
-        "label": null,
-        "multi": false,
-        "name": "type",
-        "options": [
-
-        ],
-        "query": "label_values(gitlab_service_ops:rate{environment=\"$environment\"}, type)",
-        "refresh": 1,
-        "regex": "",
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tags": [
-
-        ],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
       }
     ]
   },
@@ -802,7 +1091,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "general: Filesystems",
-  "uid": "general-fs",
-  "version": 3373
+  "title": "google-cloud-storage: Artifact CDN Detail",
+  "uid": "google-cloud-storage-artifacts-cdn",
+  "version": 2
 }
