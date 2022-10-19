@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3189748980 at Tue Oct 18 13:28:10 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3194280445 at Wed Oct 19 07:46:00 UTC 2022",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -1597,6 +1597,224 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
+      "description": "Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 1041
+      },
+      "id": 3572060850,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": [
+          {
+            "targetBlank": true,
+            "title": "registry_cdn SLI Error-Rate SLO Analysis",
+            "url": "/d/alerts-regional_component_slo_error?${__url_time_range}&${__all_variables}&var-component=registry_cdn&var-type=registry&var-stage=$stage"
+          }
+        ]
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "6h Degradation SLO (5% of monthly error budget)",
+          "color": "#FF4500",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "connected",
+          "spaceLength": 10,
+          "zindex": -2
+        },
+        {
+          "alias": "1h Outage SLO (2% of monthly error budget)",
+          "color": "#F2495C",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 4,
+          "nullPointMode": "connected",
+          "spaceLength": 4,
+          "zindex": -2
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "sli-registry_cdn-error-rate",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "clamp_max(\n  max_over_time(gitlab_regional_sli_errors:ratio_5m{component=\"registry_cdn\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"registry\"}[$__interval])\n,\n  1\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "{{ region }} error ratio",
+          "refId": "A"
+        },
+        {
+          "expr": "(6 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"registry_cdn\",monitor=\"global\",type=\"registry\"})\n)\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 3,
+          "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+          "refId": "B"
+        },
+        {
+          "expr": "(14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"registry_cdn\",monitor=\"global\",type=\"registry\"})\n)\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 3,
+          "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+          "refId": "C"
+        }
+      ],
+      "title": "registry_cdn SLI Error Ratio",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "Error %",
+          "logBase": 1,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
+      "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 1041
+      },
+      "id": 2908753047,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "spaceLength": 10,
+      "stableId": "sli-registry_cdn-ops-rate",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "avg_over_time(gitlab_regional_sli_ops:rate_5m{component=\"registry_cdn\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"registry\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "{{ region }} RPS",
+          "refId": "A"
+        }
+      ],
+      "title": "registry_cdn SLI RPS - Requests per Second",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Operations per Second",
+          "logBase": 1,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "content": "### Observability Tools\n\n* [Google Load Balancer](https://console.cloud.google.com/net-services/loadbalancing/details/http/gprd-registry-cdn?project=gitlab-production)\n* [Stackdriver Logs: Loadbalancer Access Logs](https://console.cloud.google.com/logs/query;query=resource%2Elabels%2Eurl%5Fmap%5Fname%3D%22gprd%2Dregistry%2Dcdn%22%0Aresource%2Etype%3D%22http%5Fload%5Fbalancer%22;timeRange=PT30M?project=gitlab-production)\n* [Stackdriver Logs: Loadbalancer Access 5xx Logs](https://console.cloud.google.com/logs/query;query=httpRequest%2Estatus%3E%3D500%0Aresource%2Elabels%2Eurl%5Fmap%5Fname%3D%22gprd%2Dregistry%2Dcdn%22%0Aresource%2Etype%3D%22http%5Fload%5Fbalancer%22;timeRange=PT30M?project=gitlab-production)\n\n",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 1041
+      },
+      "id": 22,
+      "mode": "markdown",
+      "title": "Details",
+      "type": "text"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
       "description": "Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
       "fill": 0,
       "fillGradient": 0,
@@ -1604,7 +1822,7 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 1041
+        "y": 1051
       },
       "id": 2863319079,
       "legend": {
@@ -1744,7 +1962,7 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 1041
+        "y": 1051
       },
       "id": 1631973137,
       "legend": {
@@ -1872,7 +2090,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 1041
+        "y": 1051
       },
       "id": 2414183688,
       "legend": {
@@ -1942,9 +2160,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 1041
+        "y": 1051
       },
-      "id": 23,
+      "id": 26,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -1962,7 +2180,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 1051
+        "y": 1061
       },
       "id": 2850495079,
       "legend": {
@@ -2102,7 +2320,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 1051
+        "y": 1061
       },
       "id": 3999566506,
       "legend": {
@@ -2172,9 +2390,9 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 1051
+        "y": 1061
       },
-      "id": 26,
+      "id": 29,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -2192,7 +2410,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 1061
+        "y": 1071
       },
       "id": 1201783796,
       "legend": {
@@ -2332,7 +2550,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 1061
+        "y": 1071
       },
       "id": 1199706222,
       "legend": {
@@ -2402,9 +2620,9 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 1061
+        "y": 1071
       },
-      "id": 29,
+      "id": 32,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -2418,7 +2636,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 30,
+      "id": 33,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -2539,5 +2757,5 @@
   "timezone": "utc",
   "title": "registry: Regional Detail",
   "uid": "registry-regional",
-  "version": 1707
+  "version": 1709
 }
