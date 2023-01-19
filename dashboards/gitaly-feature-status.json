@@ -122,8 +122,8 @@
               "options": {
                 "mode": "exclude",
                 "names": [
-                  "tx_atomic_repository_creation: true",
-                  "tx_atomic_repository_creation: false"
+                  "use_commit_graph_generation_data: false",
+                  "use_commit_graph_generation_data: true"
                 ],
                 "prefix": "All except:",
                 "readOnly": true
@@ -1002,7 +1002,30 @@
           "unit": "s"
         },
         "overrides": [
-
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "commit-graph"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
         ]
       },
       "gridPos": {
@@ -1033,7 +1056,7 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "sum by(gcmd, subcmd) (\n  rate(\n    gitaly_command_cpu_seconds_total{env=\"$environment\",environment=\"$environment\",type=\"gitaly\", grpc_method=\"$method\"}[$__interval]\n  )\n)",
+          "expr": "sum by(gcmd, subcmd) (\n  rate(\n    gitaly_command_cpu_seconds_total{env=\"$environment\",environment=\"$environment\",type=\"gitaly\", grpc_method=\"$method\"}[$__rate_interval]\n  )\n)",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -1794,7 +1817,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1916,12 +1940,12 @@
         "name": "environment",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "gprd",
             "value": "gprd"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "gstg",
             "value": "gstg"
           }
@@ -2015,6 +2039,6 @@
   "timezone": "utc",
   "title": "Gitaly Feature Status",
   "uid": "000000199",
-  "version": 29,
+  "version": 30,
   "weekStart": ""
 }

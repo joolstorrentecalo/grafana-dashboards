@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3271110524 at Thu Nov  3 17:34:59 UTC 2022",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3625375122 at Wed Jan 18 21:33:29 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -68,7 +68,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 500
+        "y": 600
       },
       "id": 2,
       "mode": "markdown",
@@ -709,7 +709,7 @@
       "type": "stat"
     },
     {
-      "content": "- [Pipeline Authoring's handbook page](https://about.gitlab.com/handbook/product/categories/#pipeline-authoring-group)\n* [Grafana: Pipeline Authoring's group dashboard](/d/stage-groups-pipeline_authoring?)\n\n",
+      "content": "- [Pipeline Authoring's handbook page](https://about.gitlab.com/handbook/product/categories/#pipeline-authoring-group)\n* [Grafana: Pipeline Authoring's group dashboard](/d/stage-groups-pipeline_authoring?)\n\n* [Grafana: Pipeline Authoring's error budget detail dashboard](/d/stage-groups-detail-pipeline_authoring?)\n\n",
       "gridPos": {
         "h": 7,
         "w": 6,
@@ -1355,7 +1355,7 @@
       "type": "stat"
     },
     {
-      "content": "- [Pipeline Execution's handbook page](https://about.gitlab.com/handbook/product/categories/#pipeline-execution-group)\n* [Grafana: Pipeline Execution's group dashboard](/d/stage-groups-pipeline_execution?)\n\n",
+      "content": "- [Pipeline Execution's handbook page](https://about.gitlab.com/handbook/product/categories/#pipeline-execution-group)\n* [Grafana: Pipeline Execution's group dashboard](/d/stage-groups-pipeline_execution?)\n\n* [Grafana: Pipeline Execution's error budget detail dashboard](/d/stage-groups-detail-pipeline_execution?)\n\n",
       "gridPos": {
         "h": 7,
         "w": 6,
@@ -2001,7 +2001,7 @@
       "type": "stat"
     },
     {
-      "content": "- [Pipeline Insights's handbook page](https://about.gitlab.com/handbook/product/categories/#pipeline-insights-group)\n* [Grafana: Pipeline Insights's group dashboard](/d/stage-groups-pipeline_insights?)\n\n",
+      "content": "- [Pipeline Insights's handbook page](https://about.gitlab.com/handbook/product/categories/#pipeline-insights-group)\n* [Grafana: Pipeline Insights's group dashboard](/d/stage-groups-pipeline_insights?)\n\n* [Grafana: Pipeline Insights's error budget detail dashboard](/d/stage-groups-detail-pipeline_insights?)\n\n",
       "gridPos": {
         "h": 7,
         "w": 6,
@@ -2647,7 +2647,7 @@
       "type": "stat"
     },
     {
-      "content": "- [Runner's handbook page](https://about.gitlab.com/handbook/product/categories/#runner-group)\n* [Grafana: Runner's group dashboard](/d/stage-groups-runner?)\n\n",
+      "content": "- [Runner's handbook page](https://about.gitlab.com/handbook/product/categories/#runner-group)\n* [Grafana: Runner's group dashboard](/d/stage-groups-runner?)\n\n* [Grafana: Runner's error budget detail dashboard](/d/stage-groups-detail-runner?)\n\n",
       "gridPos": {
         "h": 7,
         "w": 6,
@@ -2655,6 +2655,652 @@
         "y": 400
       },
       "id": 46,
+      "mode": "markdown",
+      "title": "Extra links",
+      "type": "text"
+    },
+    {
+      "collapse": false,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 500
+      },
+      "id": 47,
+      "panels": [
+
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "Runner SaaS's Error Budgets (From ${__from:date:YYYY-MM-DD HHːmm} to ${__to:date:YYYY-MM-DD HHːmm})",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 2,
+          "displayName": "",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 0.9995
+              }
+            ]
+          },
+          "unit": "percentunit"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 500
+      },
+      "id": 48,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "%",
+          "refId": "A"
+        }
+      ],
+      "title": "Availability",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": "2",
+          "displayName": "",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "from": 0,
+                "result": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "🥵 Unhealthy"
+                },
+                "to": 0.9995
+              },
+              "type": "range"
+            },
+            {
+              "id": 1,
+              "options": {
+                "from": 0.9995,
+                "result": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "🥳 Healthy"
+                },
+                "to": 1
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 0.9995
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 1.5,
+        "w": 6,
+        "x": 0,
+        "y": 504
+      },
+      "id": 49,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": "2",
+          "displayName": "Target:",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "gray"
+              }
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "gridPos": {
+        "h": 1.5,
+        "w": 6,
+        "x": 0,
+        "y": 505.5
+      },
+      "id": 50,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "0.9995 * 100.0",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": -315360000
+              },
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 500
+      },
+      "id": 51,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "# The number of seconds allowed to be spent in $__range\n(1 - 0.9995) * $__range_s\n-\n(\n  (\n     1 - clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n\n  ) * $__range_s\n)\n\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Budget remaining",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": "2",
+          "displayName": "",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "from": 0,
+                "result": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "🥵 Unhealthy"
+                },
+                "to": 0.9995
+              },
+              "type": "range"
+            },
+            {
+              "id": 1,
+              "options": {
+                "from": 0.9995,
+                "result": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "🥳 Healthy"
+                },
+                "to": 1
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 0.9995
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 1.5,
+        "w": 6,
+        "x": 6,
+        "y": 504
+      },
+      "id": 52,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "Budget:",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "gray"
+              }
+            ]
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": {
+        "h": 1.5,
+        "w": 6,
+        "x": 6,
+        "y": 505.5
+      },
+      "id": 53,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "# The number of seconds allowed to be spent in $__range\n(1 - 0.9995) * $__range_s\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "",
+          "thresholds": {
+            "mode": "absolute"
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 500
+      },
+      "id": 54,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "(\n  (\n     1 - clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n\n  ) * $__range_s\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        },
+        {
+          "expr": "# The number of seconds allowed to be spent in $__range\n(1 - 0.9995) * $__range_s\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "budget",
+          "refId": "B"
+        }
+      ],
+      "title": "Budget spent",
+      "transformations": [
+        {
+          "id": "configFromData",
+          "options": {
+            "configRefId": "B",
+            "mappings": [
+              {
+                "fieldName": "budget",
+                "handlerKey": "threshold1"
+              }
+            ]
+          }
+        }
+      ],
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": "2",
+          "displayName": "",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "from": 0,
+                "result": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "🥵 Unhealthy"
+                },
+                "to": 0.9995
+              },
+              "type": "range"
+            },
+            {
+              "id": 1,
+              "options": {
+                "from": 0.9995,
+                "result": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "🥳 Healthy"
+                },
+                "to": 1
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 0.9995
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 1.5,
+        "w": 6,
+        "x": 12,
+        "y": 504
+      },
+      "id": 55,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner_saas\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "Budget:",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "gray"
+              }
+            ]
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": {
+        "h": 1.5,
+        "w": 6,
+        "x": 12,
+        "y": 505.5
+      },
+      "id": 56,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "# The number of seconds allowed to be spent in $__range\n(1 - 0.9995) * $__range_s\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "content": "- [Runner SaaS's handbook page](https://about.gitlab.com/handbook/product/categories/#runner-saas-group)\n* [Grafana: Runner SaaS's group dashboard](/d/stage-groups-runner_saas?)\n\n* [Grafana: Runner SaaS's error budget detail dashboard](/d/stage-groups-detail-runner_saas?)\n\n",
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 500
+      },
+      "id": 57,
       "mode": "markdown",
       "title": "Extra links",
       "type": "text"
@@ -2668,7 +3314,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 47,
+      "id": 58,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -2788,5 +3434,5 @@
   "timezone": "utc",
   "title": "product: Error Budgets - verify",
   "uid": "product-verify_error_budget",
-  "version": 1364
+  "version": 1552
 }

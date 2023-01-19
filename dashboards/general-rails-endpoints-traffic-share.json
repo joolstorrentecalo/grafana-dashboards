@@ -1,0 +1,1258 @@
+{
+  "__inputs": [
+
+  ],
+  "__requires": [
+
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": false,
+        "hide": false,
+        "iconColor": "#96D98D",
+        "name": "deploy",
+        "showIn": 0,
+        "tags": [
+          "deploy",
+          "$environment"
+        ],
+        "type": "tags"
+      },
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": false,
+        "hide": false,
+        "iconColor": "#FFEE52",
+        "name": "canary-deploy",
+        "showIn": 0,
+        "tags": [
+          "deploy",
+          "${environment}-cny"
+        ],
+        "type": "tags"
+      },
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": false,
+        "hide": false,
+        "iconColor": "#CA95E5",
+        "name": "feature-flags",
+        "showIn": 0,
+        "tags": [
+          "feature-flag",
+          "${environment}"
+        ],
+        "type": "tags"
+      }
+    ]
+  },
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3625375122 at Wed Jan 18 21:33:50 UTC 2023",
+  "editable": false,
+  "gnetId": null,
+  "graphTooltip": 1,
+  "hideControls": false,
+  "id": null,
+  "links": [
+
+  ],
+  "panels": [
+    {
+      "collapse": false,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "panels": [
+
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "Traffic by urgency (over the last 6h)",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue"
+              }
+            ]
+          },
+          "unit": "percentunit"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "(\n  sum by (request_urgency) (\n    sum by (request_urgency, feature_category)(\n      sum_over_time(application_sli_aggregation:rails_request:apdex:weight:score_1h{endpoint_id!=\"unknown\",environment=\"$environment\",monitor=\"global\",request_urgency=\"high\",stage=\"$stage\"}[6h]) > 0\n    ) * on (feature_category) group by (stage_group,product_stage,feature_category) (gitlab:feature_category:stage_group:mapping{monitor=\"global\",product_stage=~\"$product_stage\",stage_group=~\"$stage_group\"})\n  )\n  / ignoring(request_urgency) group_left() sum(\n    sum by (feature_category)(\n      sum_over_time(application_sli_aggregation:rails_request:apdex:weight:score_1h{endpoint_id!=\"unknown\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[6h]) > 0\n    ) * on (feature_category) group by (stage_group,product_stage,feature_category) (gitlab:feature_category:stage_group:mapping{monitor=\"global\",product_stage=~\"$product_stage\",stage_group=~\"$stage_group\"})\n  )\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "{{ urgency }}",
+          "refId": "A"
+        }
+      ],
+      "title": "high urgency requests",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "high urgency endpoints",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue"
+              }
+            ]
+          },
+          "unit": ""
+        }
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 6,
+        "x": 0,
+        "y": 4
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "count(\n  count by (endpoint_id, feature_category) (\n    count_over_time(application_sli_aggregation:rails_request:apdex:weight:score_1h{endpoint_id!=\"unknown\",environment=\"$environment\",monitor=\"global\",request_urgency=\"high\",stage=\"$stage\"}[6h]) > 0\n  ) * on (feature_category) group_left() group by (stage_group,product_stage,feature_category) (gitlab:feature_category:stage_group:mapping{monitor=\"global\",product_stage=~\"$product_stage\",stage_group=~\"$stage_group\"})\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue"
+              }
+            ]
+          },
+          "unit": "percentunit"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 0
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "(\n  sum by (request_urgency) (\n    sum by (request_urgency, feature_category)(\n      sum_over_time(application_sli_aggregation:rails_request:apdex:weight:score_1h{endpoint_id!=\"unknown\",environment=\"$environment\",monitor=\"global\",request_urgency=\"medium\",stage=\"$stage\"}[6h]) > 0\n    ) * on (feature_category) group by (stage_group,product_stage,feature_category) (gitlab:feature_category:stage_group:mapping{monitor=\"global\",product_stage=~\"$product_stage\",stage_group=~\"$stage_group\"})\n  )\n  / ignoring(request_urgency) group_left() sum(\n    sum by (feature_category)(\n      sum_over_time(application_sli_aggregation:rails_request:apdex:weight:score_1h{endpoint_id!=\"unknown\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[6h]) > 0\n    ) * on (feature_category) group by (stage_group,product_stage,feature_category) (gitlab:feature_category:stage_group:mapping{monitor=\"global\",product_stage=~\"$product_stage\",stage_group=~\"$stage_group\"})\n  )\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "{{ urgency }}",
+          "refId": "A"
+        }
+      ],
+      "title": "medium urgency requests",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "medium urgency endpoints",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue"
+              }
+            ]
+          },
+          "unit": ""
+        }
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 6,
+        "x": 6,
+        "y": 4
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "count(\n  count by (endpoint_id, feature_category) (\n    count_over_time(application_sli_aggregation:rails_request:apdex:weight:score_1h{endpoint_id!=\"unknown\",environment=\"$environment\",monitor=\"global\",request_urgency=\"medium\",stage=\"$stage\"}[6h]) > 0\n  ) * on (feature_category) group_left() group by (stage_group,product_stage,feature_category) (gitlab:feature_category:stage_group:mapping{monitor=\"global\",product_stage=~\"$product_stage\",stage_group=~\"$stage_group\"})\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue"
+              }
+            ]
+          },
+          "unit": "percentunit"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 0
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "(\n  sum by (request_urgency) (\n    sum by (request_urgency, feature_category)(\n      sum_over_time(application_sli_aggregation:rails_request:apdex:weight:score_1h{endpoint_id!=\"unknown\",environment=\"$environment\",monitor=\"global\",request_urgency=\"default\",stage=\"$stage\"}[6h]) > 0\n    ) * on (feature_category) group by (stage_group,product_stage,feature_category) (gitlab:feature_category:stage_group:mapping{monitor=\"global\",product_stage=~\"$product_stage\",stage_group=~\"$stage_group\"})\n  )\n  / ignoring(request_urgency) group_left() sum(\n    sum by (feature_category)(\n      sum_over_time(application_sli_aggregation:rails_request:apdex:weight:score_1h{endpoint_id!=\"unknown\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[6h]) > 0\n    ) * on (feature_category) group by (stage_group,product_stage,feature_category) (gitlab:feature_category:stage_group:mapping{monitor=\"global\",product_stage=~\"$product_stage\",stage_group=~\"$stage_group\"})\n  )\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "{{ urgency }}",
+          "refId": "A"
+        }
+      ],
+      "title": "default urgency requests",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "default urgency endpoints",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue"
+              }
+            ]
+          },
+          "unit": ""
+        }
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 6,
+        "x": 12,
+        "y": 4
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "count(\n  count by (endpoint_id, feature_category) (\n    count_over_time(application_sli_aggregation:rails_request:apdex:weight:score_1h{endpoint_id!=\"unknown\",environment=\"$environment\",monitor=\"global\",request_urgency=\"default\",stage=\"$stage\"}[6h]) > 0\n  ) * on (feature_category) group_left() group by (stage_group,product_stage,feature_category) (gitlab:feature_category:stage_group:mapping{monitor=\"global\",product_stage=~\"$product_stage\",stage_group=~\"$stage_group\"})\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue"
+              }
+            ]
+          },
+          "unit": "percentunit"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 0
+      },
+      "id": 9,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "(\n  sum by (request_urgency) (\n    sum by (request_urgency, feature_category)(\n      sum_over_time(application_sli_aggregation:rails_request:apdex:weight:score_1h{endpoint_id!=\"unknown\",environment=\"$environment\",monitor=\"global\",request_urgency=\"low\",stage=\"$stage\"}[6h]) > 0\n    ) * on (feature_category) group by (stage_group,product_stage,feature_category) (gitlab:feature_category:stage_group:mapping{monitor=\"global\",product_stage=~\"$product_stage\",stage_group=~\"$stage_group\"})\n  )\n  / ignoring(request_urgency) group_left() sum(\n    sum by (feature_category)(\n      sum_over_time(application_sli_aggregation:rails_request:apdex:weight:score_1h{endpoint_id!=\"unknown\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[6h]) > 0\n    ) * on (feature_category) group by (stage_group,product_stage,feature_category) (gitlab:feature_category:stage_group:mapping{monitor=\"global\",product_stage=~\"$product_stage\",stage_group=~\"$stage_group\"})\n  )\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "{{ urgency }}",
+          "refId": "A"
+        }
+      ],
+      "title": "low urgency requests",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "low urgency endpoints",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue"
+              }
+            ]
+          },
+          "unit": ""
+        }
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 6,
+        "x": 18,
+        "y": 4
+      },
+      "id": 10,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "count(\n  count by (endpoint_id, feature_category) (\n    count_over_time(application_sli_aggregation:rails_request:apdex:weight:score_1h{endpoint_id!=\"unknown\",environment=\"$environment\",monitor=\"global\",request_urgency=\"low\",stage=\"$stage\"}[6h]) > 0\n  ) * on (feature_category) group_left() group by (stage_group,product_stage,feature_category) (gitlab:feature_category:stage_group:mapping{monitor=\"global\",product_stage=~\"$product_stage\",stage_group=~\"$stage_group\"})\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "collapse": true,
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 100
+      },
+      "id": 11,
+      "panels": [
+        {
+          "columns": [
+
+          ],
+          "datasource": "$PROMETHEUS_DS",
+          "description": "",
+          "fieldConfig": {
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Stage"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 80
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Group"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 130
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Rate"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 80
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 0,
+            "y": 101
+          },
+          "id": 12,
+          "links": [
+
+          ],
+          "styles": null,
+          "targets": [
+            {
+              "expr": "sort_desc(\n  sum by (feature_category, endpoint_id)(\n    sum_over_time(application_sli_aggregation:rails_request:apdex:weight:score_1h{endpoint_id!=\"unknown\",environment=\"$environment\",monitor=\"global\",request_urgency=\"high\",stage=\"$stage\"}[6h])\n  ) * on (feature_category) group_left(stage_group, product_stage) group by (stage_group,product_stage,feature_category) (gitlab:feature_category:stage_group:mapping{monitor=\"global\",product_stage=~\"$product_stage\",stage_group=~\"$stage_group\"})\n)\n",
+              "format": "table",
+              "instant": true,
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "high urgency endpoints ordered by request rate",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "feature_category": true,
+                  "product_stage": true
+                },
+                "indexByName": {
+                  "Value": 3,
+                  "endpoint_id": 2,
+                  "stage_group": 1
+                },
+                "renameByName": {
+                  "Value": "Rate",
+                  "stage_group": "Group"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "columns": [
+
+          ],
+          "datasource": "$PROMETHEUS_DS",
+          "description": "",
+          "fieldConfig": {
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Stage"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 80
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Group"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 130
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Rate"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 80
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 6,
+            "y": 101
+          },
+          "id": 13,
+          "links": [
+
+          ],
+          "styles": null,
+          "targets": [
+            {
+              "expr": "sort_desc(\n  sum by (feature_category, endpoint_id)(\n    sum_over_time(application_sli_aggregation:rails_request:apdex:weight:score_1h{endpoint_id!=\"unknown\",environment=\"$environment\",monitor=\"global\",request_urgency=\"medium\",stage=\"$stage\"}[6h])\n  ) * on (feature_category) group_left(stage_group, product_stage) group by (stage_group,product_stage,feature_category) (gitlab:feature_category:stage_group:mapping{monitor=\"global\",product_stage=~\"$product_stage\",stage_group=~\"$stage_group\"})\n)\n",
+              "format": "table",
+              "instant": true,
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "medium urgency endpoints ordered by request rate",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "feature_category": true,
+                  "product_stage": true
+                },
+                "indexByName": {
+                  "Value": 3,
+                  "endpoint_id": 2,
+                  "stage_group": 1
+                },
+                "renameByName": {
+                  "Value": "Rate",
+                  "stage_group": "Group"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "columns": [
+
+          ],
+          "datasource": "$PROMETHEUS_DS",
+          "description": "",
+          "fieldConfig": {
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Stage"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 80
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Group"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 130
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Rate"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 80
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 12,
+            "y": 101
+          },
+          "id": 14,
+          "links": [
+
+          ],
+          "styles": null,
+          "targets": [
+            {
+              "expr": "sort_desc(\n  sum by (feature_category, endpoint_id)(\n    sum_over_time(application_sli_aggregation:rails_request:apdex:weight:score_1h{endpoint_id!=\"unknown\",environment=\"$environment\",monitor=\"global\",request_urgency=\"default\",stage=\"$stage\"}[6h])\n  ) * on (feature_category) group_left(stage_group, product_stage) group by (stage_group,product_stage,feature_category) (gitlab:feature_category:stage_group:mapping{monitor=\"global\",product_stage=~\"$product_stage\",stage_group=~\"$stage_group\"})\n)\n",
+              "format": "table",
+              "instant": true,
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "default urgency endpoints ordered by request rate",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "feature_category": true,
+                  "product_stage": true
+                },
+                "indexByName": {
+                  "Value": 3,
+                  "endpoint_id": 2,
+                  "stage_group": 1
+                },
+                "renameByName": {
+                  "Value": "Rate",
+                  "stage_group": "Group"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "columns": [
+
+          ],
+          "datasource": "$PROMETHEUS_DS",
+          "description": "",
+          "fieldConfig": {
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Stage"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 80
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Group"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 130
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Rate"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 80
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 18,
+            "y": 101
+          },
+          "id": 15,
+          "links": [
+
+          ],
+          "styles": null,
+          "targets": [
+            {
+              "expr": "sort_desc(\n  sum by (feature_category, endpoint_id)(\n    sum_over_time(application_sli_aggregation:rails_request:apdex:weight:score_1h{endpoint_id!=\"unknown\",environment=\"$environment\",monitor=\"global\",request_urgency=\"low\",stage=\"$stage\"}[6h])\n  ) * on (feature_category) group_left(stage_group, product_stage) group by (stage_group,product_stage,feature_category) (gitlab:feature_category:stage_group:mapping{monitor=\"global\",product_stage=~\"$product_stage\",stage_group=~\"$stage_group\"})\n)\n",
+              "format": "table",
+              "instant": true,
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "low urgency endpoints ordered by request rate",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "feature_category": true,
+                  "product_stage": true
+                },
+                "indexByName": {
+                  "Value": 3,
+                  "endpoint_id": 2,
+                  "stage_group": 1
+                },
+                "renameByName": {
+                  "Value": "Rate",
+                  "stage_group": "Group"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "Endpoints by urgency (over the last 6h)",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "collapse": true,
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 400
+      },
+      "id": 16,
+      "panels": [
+        {
+          "columns": [
+
+          ],
+          "datasource": "$PROMETHEUS_DS",
+          "description": "",
+          "fieldConfig": {
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Urgency"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "default": {
+                            "text": "🟠 default"
+                          },
+                          "high": {
+                            "text": "🟢 high"
+                          },
+                          "low": {
+                            "text": "🔴 low"
+                          },
+                          "medium": {
+                            "text": "🟡 medium"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 160
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Group"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 360
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Traffic %"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 80
+                  },
+                  {
+                    "decimals": 3,
+                    "id": "unit",
+                    "value": "percentunit"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 401
+          },
+          "id": 17,
+          "links": [
+
+          ],
+          "styles": null,
+          "targets": [
+            {
+              "expr": "sort_desc(\n  sum by(endpoint_id, request_urgency, feature_category, env) (\n    sum_over_time(application_sli_aggregation:rails_request:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__range]) > 0\n  )\n  / ignoring(endpoint_id, feature_category, request_urgency) group_left\n  sum by(env) (\n    sum_over_time(application_sli_aggregation:rails_request:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__range]) > 0\n  )\n) * on(feature_category) group_left(stage_group)\nsum by(feature_category, stage_group) (\n  gitlab:feature_category:stage_group:mapping{monitor=\"global\"}\n)\n",
+              "format": "table",
+              "instant": true,
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Endpoints by traffic %",
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "Value",
+                "renamePattern": "Traffic %"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "request_urgency",
+                "renamePattern": "Urgency"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "stage_group",
+                "renamePattern": "Group"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "env": true,
+                  "feature_category": true
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "Endpoints by traffic %",
+      "titleSize": "h6",
+      "type": "row"
+    }
+  ],
+  "refresh": "",
+  "rows": [
+
+  ],
+  "schemaVersion": 16,
+  "style": "light",
+  "tags": [
+    "managed",
+    "general"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "Global",
+          "value": "Global"
+        },
+        "hide": 0,
+        "label": null,
+        "name": "PROMETHEUS_DS",
+        "options": [
+
+        ],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "type": "datasource"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "gprd",
+          "value": "gprd"
+        },
+        "datasource": "$PROMETHEUS_DS",
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "environment",
+        "options": [
+
+        ],
+        "query": "label_values(gitlab_service_ops:rate, environment)",
+        "refresh": 1,
+        "regex": "",
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [
+
+        ],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "gprd",
+          "value": "gprd"
+        },
+        "datasource": "$PROMETHEUS_DS",
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "environment",
+        "options": [
+
+        ],
+        "query": "label_values(gitlab_service_ops:rate, environment)",
+        "refresh": 1,
+        "regex": "",
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [
+
+        ],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "main",
+          "value": "main"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "stage",
+        "options": [
+          {
+            "text": "main",
+            "value": "main"
+          },
+          {
+            "text": "cny",
+            "value": "cny"
+          },
+          {
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "main,cny,",
+        "refresh": 0,
+        "type": "custom"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+        },
+        "datasource": "$PROMETHEUS_DS",
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "product_stage",
+        "options": [
+
+        ],
+        "query": "label_values(gitlab:feature_category:stage_group:mapping{monitor=\"global\"}, product_stage)",
+        "refresh": 1,
+        "regex": "",
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [
+
+        ],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": ".*",
+        "current": {
+        },
+        "datasource": "$PROMETHEUS_DS",
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "stage_group",
+        "options": [
+
+        ],
+        "query": "label_values(gitlab:feature_category:stage_group:mapping{monitor=\"global\", product_stage=~\"$product_stage\"}, stage_group)",
+        "refresh": 1,
+        "regex": "",
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [
+
+        ],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-7d/m",
+    "to": "now/m"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "1m",
+      "5m",
+      "10m",
+      "15m",
+      "30m"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "utc",
+  "title": "general: Rails Endpoints Traffic Share",
+  "uid": "general-rails-endpoints-traffic-share",
+  "version": 6
+}
