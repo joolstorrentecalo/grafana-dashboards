@@ -10,7 +10,7 @@
 
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3727512517 at Tue Feb  7 11:57:34 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3736834594 at Wed Feb  8 15:43:28 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -118,7 +118,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "clamp_max(\n  clamp_min(\n    sum by () (\n      sum_over_time(gitlab:availability:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"api|git|registry|web\"}[$__range])\n    )\n    /\n    sum by () (\n      sum_over_time(gitlab:availability:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"api|git|registry|web\"}[$__range])\n    ),\n    0\n  ),\n  1\n)\n",
+          "expr": "clamp_max(\n  clamp_min(\n    sum by () (\n      sum_over_time(gitlab:availability:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"api|git|internal-api|registry|web\"}[$__range])\n    )\n    /\n    sum by () (\n      sum_over_time(gitlab:availability:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"api|git|internal-api|registry|web\"}[$__range])\n    ),\n    0\n  ),\n  1\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -185,7 +185,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "(\n  1 - (\n    clamp_max(\n      clamp_min(\n        sum by () (\n          sum_over_time(gitlab:availability:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"api|git|registry|web\"}[$__range])\n        )\n        /\n        sum by () (\n          sum_over_time(gitlab:availability:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"api|git|registry|web\"}[$__range])\n        ),\n        0\n      ),\n      1\n    )\n  )\n) * $__range_ms\n",
+          "expr": "(\n  1 - (\n    clamp_max(\n      clamp_min(\n        sum by () (\n          sum_over_time(gitlab:availability:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"api|git|internal-api|registry|web\"}[$__range])\n        )\n        /\n        sum by () (\n          sum_over_time(gitlab:availability:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"api|git|internal-api|registry|web\"}[$__range])\n        ),\n        0\n      ),\n      1\n    )\n  )\n) * $__range_ms\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -261,7 +261,7 @@
       "id": 5,
       "targets": [
         {
-          "expr": "sum by () (\n  sum_over_time(gitlab:availability:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"api|git|registry|web\"}[1d])\n)\n/\nsum by () (\n  sum_over_time(gitlab:availability:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"api|git|registry|web\"}[1d])\n)\n",
+          "expr": "sum by () (\n  sum_over_time(gitlab:availability:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"api|git|internal-api|registry|web\"}[1d])\n)\n/\nsum by () (\n  sum_over_time(gitlab:availability:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"api|git|internal-api|registry|web\"}[1d])\n)\n",
           "format": "time_series",
           "instant": false,
           "interval": "1d",
@@ -322,7 +322,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(clamp_max(clamp_max(\n  clamp_min(\n    sum by () (\n      sum_over_time(gitlab:availability:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"api|git|registry|web\"}[$__interval])\n    )\n    /\n    sum by () (\n      sum_over_time(gitlab:availability:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"api|git|registry|web\"}[$__interval])\n    ),\n    0\n  ),\n  1\n)\n,1),0)\n",
+          "expr": "clamp_min(clamp_max(clamp_max(\n  clamp_min(\n    sum by () (\n      sum_over_time(gitlab:availability:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"api|git|internal-api|registry|web\"}[$__interval])\n    )\n    /\n    sum by () (\n      sum_over_time(gitlab:availability:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"api|git|internal-api|registry|web\"}[$__interval])\n    ),\n    0\n  ),\n  1\n)\n,1),0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1706,6 +1706,335 @@
           "show": false
         }
       ]
+    },
+    {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "Availability",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 2,
+          "links": [
+
+          ],
+          "mappings": [
+
+          ],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "light-red",
+                "value": 0.95
+              },
+              {
+                "color": "orange",
+                "value": 0.99
+              },
+              {
+                "color": "light-orange",
+                "value": 0.995
+              },
+              {
+                "color": "yellow",
+                "value": 0.9994
+              },
+              {
+                "color": "light-yellow",
+                "value": 0.9995
+              },
+              {
+                "color": "green",
+                "value": 0.9998
+              }
+            ]
+          },
+          "unit": "percentunit"
+        }
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 0,
+        "y": 35
+      },
+      "id": 24,
+      "links": [
+
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "clamp_max(\n  clamp_min(\n    sum by () (\n      sum_over_time(gitlab:availability:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"internal-api\"}[$__range])\n    )\n    /\n    sum by () (\n      sum_over_time(gitlab:availability:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"internal-api\"}[$__range])\n    ),\n    0\n  ),\n  1\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "internal-api availability",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "Availability",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "displayName": "Budget Spent",
+          "links": [
+
+          ],
+          "mappings": [
+
+          ],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ms"
+        }
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 4,
+        "y": 35
+      },
+      "id": 25,
+      "links": [
+
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "(\n  1 - (\n    clamp_max(\n      clamp_min(\n        sum by () (\n          sum_over_time(gitlab:availability:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"internal-api\"}[$__range])\n        )\n        /\n        sum by () (\n          sum_over_time(gitlab:availability:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"internal-api\"}[$__range])\n        ),\n        0\n      ),\n      1\n    )\n  )\n) * $__range_ms\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "config": {
+        "animationDuration": 0,
+        "cellPadding": "3",
+        "cellRadius": "2",
+        "cellSize": "11",
+        "colLimit": null,
+        "displayLegend": false,
+        "domain": "month",
+        "domainGutter": 2,
+        "hoverDecimals": 2,
+        "hoverUnitFormat": "percentunit",
+        "itemName": [
+          "percentunit",
+          "percentunit"
+        ],
+        "label": {
+          "position": "bottom",
+          "rotate": "null",
+          "width": 60
+        },
+        "legendColors": {
+          "base": "transparent",
+          "empty": "#444444",
+          "max": "#73BF69",
+          "min": "#F2495C"
+        },
+        "legendStr": "0.999500",
+        "legendTitleFormat": {
+          "inner": {
+          },
+          "lower": {
+          },
+          "upper": {
+          }
+        },
+        "rowLimit": null,
+        "subDomain": "day",
+        "subDomainTitleFormat": {
+          "empty": "{date}",
+          "filled": "{date}"
+        },
+        "verticalOrientation": false
+      },
+      "datasource": "$PROMETHEUS_DS",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 8,
+        "y": 35
+      },
+      "id": 26,
+      "targets": [
+        {
+          "expr": "sum by () (\n  sum_over_time(gitlab:availability:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"internal-api\"}[1d])\n)\n/\nsum by () (\n  sum_over_time(gitlab:availability:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"internal-api\"}[1d])\n)\n",
+          "format": "time_series",
+          "instant": false,
+          "interval": "1d",
+          "intervalFactor": 1,
+          "legendFormat": ""
+        }
+      ],
+      "title": "Calendar",
+      "type": "neocat-cal-heatmap-panel"
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
+      "description": "Availability over time, higher is better.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 12,
+        "y": 35
+      },
+      "id": 27,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": false,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 3,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "clamp_min(clamp_max(clamp_max(\n  clamp_min(\n    sum by () (\n      sum_over_time(gitlab:availability:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"internal-api\"}[$__interval])\n    )\n    /\n    sum by () (\n      sum_over_time(gitlab:availability:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"main\",type=~\"internal-api\"}[$__interval])\n    ),\n    0\n  ),\n  1\n)\n,1),0)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "internal-api SLA",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "internal-api SLA over time period",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "SLA",
+          "logBase": 1,
+          "max": 1,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
     }
   ],
   "refresh": "",
@@ -1795,5 +2124,5 @@
   "timezone": "utc",
   "title": "general: Occurence SLAs",
   "uid": "general-occurence-slas",
-  "version": 128
+  "version": 131
 }
