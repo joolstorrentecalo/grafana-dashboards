@@ -10,7 +10,7 @@
 
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3816918163 at Wed Feb 22 16:56:30 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3823122789 at Thu Feb 23 13:29:21 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -2015,6 +2015,279 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "Availability",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 2,
+          "displayName": "GitLab Internal API",
+          "links": [
+
+          ],
+          "mappings": [
+
+          ],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0.019999999999997797
+              },
+              {
+                "color": "light-yellow",
+                "value": 0.04999999999999449
+              },
+              {
+                "color": "yellow",
+                "value": 0.060000000000004494
+              },
+              {
+                "color": "light-orange",
+                "value": 0.5000000000000004
+              },
+              {
+                "color": "orange",
+                "value": 1.0000000000000009
+              },
+              {
+                "color": "light-red",
+                "value": 5.000000000000004
+              },
+              {
+                "color": "red",
+                "value": 100
+              }
+            ]
+          },
+          "unit": ""
+        }
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 0,
+        "y": 2131
+      },
+      "id": 25,
+      "links": [
+        {
+          "title": "internal-api service: Overview Dashboard",
+          "url": "/d/internal-api-main/internal-api-overview?orgId=1&${__url_time_range}"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "(1 - avg(\n  clamp_max(\n    avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"$stage\",type=\"internal-api\"}[$__range]),\n    1\n  )\n)\n) * ($__range_ms / (86400000 * 30.5)) * 100 * 100\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "GitLab Internal API: Availability Basis Points Spent",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "Weight",
+          "links": [
+
+          ],
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "black",
+                "value": null
+              }
+            ]
+          },
+          "unit": ""
+        }
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 2,
+        "x": 6,
+        "y": 2131
+      },
+      "id": 26,
+      "links": [
+
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "0",
+          "format": "time_series",
+          "instant": false,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "Overall Weight",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
+      "description": "Rolling average SLO adherence for primary services. Higher is better.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 5,
+        "w": 16,
+        "x": 8,
+        "y": 2131
+      },
+      "id": 27,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": false,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": [
+          {
+            "title": "internal-api service: Overview Dashboard",
+            "url": "/d/internal-api-main/internal-api-overview?orgId=1&${__url_time_range}"
+          }
+        ]
+      },
+      "percentage": false,
+      "pointradius": 3,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "clamp_min(clamp_max(avg(\n  clamp_max(\n    avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"$stage\",type=\"internal-api\"}[$__interval]),\n    1\n  )\n)\n,1),0)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "{{ type }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "custom",
+          "fill": true,
+          "fillColor": "rgba(242, 73, 92, 0.5)",
+          "line": false,
+          "op": "lt",
+          "value": 0.9995,
+          "yaxis": "left"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "GitLab Internal API: Availability ",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "SLA",
+          "logBase": 1,
+          "max": 1,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
       "content": "Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards)\n",
       "datasource": null,
       "gridPos": {
@@ -2023,7 +2296,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 25,
+      "id": 28,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -2172,5 +2445,5 @@
   "timezone": "utc",
   "title": "general: Incident Budget Explorer",
   "uid": "general-incident-budget-explorer",
-  "version": 2551
+  "version": 2552
 }
