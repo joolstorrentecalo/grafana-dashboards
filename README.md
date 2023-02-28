@@ -72,24 +72,6 @@ that are not present in the remote Grafana instance.
 To import dashboards into a Grafana instance simply run `bundle exec rake
 import`. This will _overwrite_ any existing dashboards with the same title.
 
-### Converting GitLab.com dashboards to Import format
-
-Attempting to import JSON files in `dashboards/` via the Grafana Web
-interface will result in a blank dashboard unless the files are
-converted to the right format. This conversion can also be done via
-`jq`. For example:
-
-```sh
-jq .dashboard dashboards/gitaly-fleet-overview.json > import/import-gitaly-fleet-overview.json
-```
-
-This repository also contains a Rake task that can convert all these
-files and save them in `import/`:
-
-```
-bundle exec rake convert
-```
-
 ## InfluxDB Requirements
 
 Some dashboards may depend on certain [continuous queries][continuous-queries]

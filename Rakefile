@@ -77,20 +77,3 @@ task :import do
     end
   end
 end
-
-desc 'Converts all GitLab.com local dashboards ot Grafana Web import format'
-task :convert do
-  Dir[File.join(DASHBOARDS, '*.json')].each do |file|
-    basename = File.basename(file)
-    data = JSON.parse(File.read(file))
-    output_filename = File.join(IMPORT_DIR, "import-#{basename}")
-    output = File.open(output_filename, 'w')
-
-    if data['dashboard']
-      puts "Writing #{output_filename}"
-      output.write(JSON.dump(data['dashboard']))
-    else
-      raise "Dashboard file #{basename} is missing the dashboard key"
-    end
-  end
-end
