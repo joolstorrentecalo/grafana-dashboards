@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3868774428 at Fri Mar  3 07:34:58 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3869021782 at Fri Mar  3 08:26:55 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -4450,7 +4450,7 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "This measures the total bloat in Postgres Btree indexes, as a percentage of total index size.\n\nThe larger this measure, the more pages will unnecessarily be retrieved during index scans.\n Lower is better.",
+          "description": "This estimates the total bloat in Postgres Btree indexes, as a percentage of total index size.\n\nIMPORTANT: bloat estimates are rough and depending on table/index structure, can be off for individual indexes,\nin some cases significantly (10-50%).\n\nThe larger this measure, the more pages will unnecessarily be retrieved during index scans.\n Lower is better.",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -4548,7 +4548,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, fqdn) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, tier, type, stage, fqdn) (avg_over_time(gitlab_database_bloat_btree_bloat_size{job=\"gitlab-monitor-database-bloat\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"postgres-archive\"}[58m]))\n      /\n      sum by (environment, tier, type, stage, fqdn) (avg_over_time(gitlab_database_bloat_btree_real_size{job=\"gitlab-monitor-database-bloat\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"postgres-archive\"}[58m]))\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, fqdn) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, tier, type, stage, fqdn) (last_over_time(gitlab_database_bloat_btree_bloat_size{job=\"gitlab-monitor-database-bloat\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"postgres-archive\"}[1h]))\n      /\n      sum by (environment, tier, type, stage, fqdn) (last_over_time(gitlab_database_bloat_btree_real_size{job=\"gitlab-monitor-database-bloat\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"postgres-archive\"}[1h]))\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -5901,5 +5901,5 @@
   "timezone": "utc",
   "title": "postgres-archive: Overview",
   "uid": "postgres-archive-main",
-  "version": 1898
+  "version": 1900
 }
