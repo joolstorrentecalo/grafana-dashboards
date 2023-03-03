@@ -35,6 +35,31 @@ You can install these in several ways:
 1. Using the [Grafana Create / Update dashboard API](http://docs.grafana.org/http_api/dashboard/#create-update-dashboard)
 1. Converting the files into the right format and importing them via the Grafana Web interface.
 
+Alternatively, we recommend reviewing the [GitLab Infrastructure Monitoring Mixins](#gitlab-infrastructure-monitoring-mixins---customizable-dashboards-and-rules) (see below).
+
+### GitLab Infrastructure Monitoring Mixins - Customizable Dashboards and Rules
+
+The GitLab.com Infrastructure team maintains Prometheus recording rules, alerts, and dashboards for GitLab.com in a Jsonnet format within the [GitLab Infrastructure Runbooks Project](https://gitlab.com/gitlab-com/runbooks/). This source code generates the JSON dashboards available in this project.
+
+In addition to the dashboards for GitLab.com, we also maintain a set of Prometheus recording rules, alerts, and dashboards that are **better suited for single-tenant and self-managed installations**. These provide several advantages over using GitLab.com dashboards directly.
+
+The Reference Architecture Mixins provide recording rules and alerts for a GitLab environment, using the same Service Level Monitoring approach that we use on GitLab.com. These mixins are well-tested with large reference architecture installations on **[GitLab Dedicated](https://docs.gitlab.com/ee/subscriptions/gitlab_dedicated/)**.
+
+#### Links
+
+* **GitLab Infrastructure Monitoring Mixins** <https://gitlab.com/gitlab-com/runbooks/-/tree/master/reference-architectures/get-hybrid>
+* **Generated Grafana Dashboards and Prometheus Configuration**: <https://gitlab.com/gitlab-com/runbooks/-/tree/master/reference-architectures/get-hybrid/src>
+
+![Reference Architecture Triage Dashboard](./img/grafana-triage.png)
+
+Here are the benefits of using the GitLab Infrastructure Monitoring Mixins over using the GitLab.com json dashboards directly:
+
+1. They follow the [Jsonnet mixin](https://monitoring.mixins.dev/) approach, **allowing customizations for other environments to be easily made** before the dashboards are generated. These customizations will flow through to alerts and dashboards. Instructions on how to customize the dashboards and rules can be found here: <https://gitlab.com/gitlab-com/runbooks/-/tree/master/reference-architectures>. 
+1. The mixins **use the same Service Level Monitoring and Alerting** that we use on GitLab.com. 
+1. The mixins **use the same underlying alerting configuration as GitLab.com**, so they're kept up-to-date by GitLab's Infrastructure team with regular improvements and tweaks to cover more features.
+
+Please note that these dashboards are not officially supported, but you're welcome to use them and provide feedback.
+
 ## Bulk Importing/Exporting GitLab.com Dashboards
 
 To make it easier to import/export dashboards this repository contains a
