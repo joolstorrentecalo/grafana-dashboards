@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3884475618 at Mon Mar  6 22:29:20 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3889109982 at Tue Mar  7 14:43:45 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -5237,13 +5237,397 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
+      "description": "Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 81
+      },
+      "id": 2667244350,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": [
+          {
+            "targetBlank": true,
+            "title": "rule_evaluation SLI Apdex SLO Analysis",
+            "url": "/d/alerts-component_slo_apdex?${__url_time_range}&${__all_variables}&var-component=rule_evaluation&var-type=monitoring&var-stage=$stage"
+          }
+        ]
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "6h Degradation SLO (5% of monthly error budget)",
+          "color": "#FF4500",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "connected",
+          "spaceLength": 10,
+          "zindex": -2
+        },
+        {
+          "alias": "1h Outage SLO (2% of monthly error budget)",
+          "color": "#F2495C",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 4,
+          "nullPointMode": "connected",
+          "spaceLength": 4,
+          "zindex": -2
+        },
+        {
+          "alias": "SLO",
+          "color": "#FF4500",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 4,
+          "nullPointMode": "connected",
+          "spaceLength": 4,
+          "zindex": -2
+        },
+        {
+          "alias": "rule_evaluation apdex",
+          "color": "#E7D551",
+          "zindex": 3
+        },
+        {
+          "alias": "rule_evaluation apdex avg",
+          "color": "#5794F2",
+          "dashLength": 1,
+          "fillBelowTo": "rule_evaluation apdex",
+          "linewidth": 1,
+          "spaceLength": 1,
+          "zindex": -3
+        },
+        {
+          "alias": "last week",
+          "color": "#dddddd80",
+          "dashLength": 4,
+          "dashes": true,
+          "fill": 0,
+          "legend": true,
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "spaceLength": 2,
+          "zindex": -3
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "sli-rule_evaluation-apdex",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "min_over_time(gitlab_component_apdex:ratio_5m{component=\"rule_evaluation\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"monitoring\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "rule_evaluation apdex",
+          "refId": "A"
+        },
+        {
+          "expr": "(1 - 6 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"monitoring\"})\n))\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 3,
+          "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+          "refId": "B"
+        },
+        {
+          "expr": "(1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"monitoring\"})\n))\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 3,
+          "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+          "refId": "C"
+        },
+        {
+          "expr": "avg_over_time(gitlab_component_apdex:ratio_5m{component=\"rule_evaluation\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"monitoring\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "rule_evaluation apdex avg",
+          "refId": "D"
+        },
+        {
+          "expr": "clamp_min(\n  gitlab_component_apdex:ratio_5m{component=\"rule_evaluation\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"monitoring\"} offset 1w\n,\n  scalar(min((1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"monitoring\"})\n))\n))\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "last week",
+          "refId": "E"
+        }
+      ],
+      "title": "rule_evaluation SLI Apdex",
+      "tooltip": {
+        "shared": true,
+        "sort": 1,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "Apdex %",
+          "logBase": 1,
+          "max": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "displayName": "Status",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "0": {
+                  "color": "black",
+                  "index": 0,
+                  "text": "Healthy"
+                },
+                "1": {
+                  "color": "orange",
+                  "index": 1,
+                  "text": "Warning 🔥"
+                },
+                "10": {
+                  "color": "orange",
+                  "index": 10,
+                  "text": "Warning 🔥🥵"
+                },
+                "11": {
+                  "color": "red",
+                  "index": 11,
+                  "text": "Degraded 🔥🥵"
+                },
+                "12": {
+                  "color": "red",
+                  "index": 12,
+                  "text": "Degraded 🥵"
+                },
+                "13": {
+                  "color": "red",
+                  "index": 13,
+                  "text": "Degraded 🔥🥵"
+                },
+                "14": {
+                  "color": "red",
+                  "index": 14,
+                  "text": "Degraded 🔥🥵"
+                },
+                "15": {
+                  "color": "red",
+                  "index": 15,
+                  "text": "Degraded 🔥🥵"
+                },
+                "2": {
+                  "color": "orange",
+                  "index": 2,
+                  "text": "Warning 🔥"
+                },
+                "3": {
+                  "color": "red",
+                  "index": 3,
+                  "text": "Degraded 🔥"
+                },
+                "4": {
+                  "color": "orange",
+                  "index": 4,
+                  "text": "Warning 🥵"
+                },
+                "5": {
+                  "color": "orange",
+                  "index": 5,
+                  "text": "Warning 🔥🥵"
+                },
+                "6": {
+                  "color": "orange",
+                  "index": 6,
+                  "text": "Warning 🔥🥵"
+                },
+                "7": {
+                  "color": "red",
+                  "index": 7,
+                  "text": "Degraded 🔥🥵"
+                },
+                "8": {
+                  "color": "orange",
+                  "index": 8,
+                  "text": "Warning 🥵"
+                },
+                "9": {
+                  "color": "orange",
+                  "index": 9,
+                  "text": "Warning 🔥🥵"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "black",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "orange",
+                "value": 2
+              },
+              {
+                "color": "red",
+                "value": 3
+              },
+              {
+                "color": "orange",
+                "value": 4
+              },
+              {
+                "color": "orange",
+                "value": 5
+              },
+              {
+                "color": "orange",
+                "value": 6
+              },
+              {
+                "color": "red",
+                "value": 7
+              },
+              {
+                "color": "orange",
+                "value": 8
+              },
+              {
+                "color": "orange",
+                "value": 9
+              },
+              {
+                "color": "orange",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 11
+              },
+              {
+                "color": "red",
+                "value": 12
+              },
+              {
+                "color": "red",
+                "value": 13
+              },
+              {
+                "color": "red",
+                "value": 14
+              },
+              {
+                "color": "red",
+                "value": 15
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 6,
+        "x": 0,
+        "y": 88
+      },
+      "id": 41,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"rule_evaluation\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"monitoring\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"rule_evaluation\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"monitoring\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"monitoring\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"rule_evaluation\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"monitoring\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"monitoring\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"rule_evaluation\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"monitoring\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"monitoring\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"rule_evaluation\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"monitoring\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"monitoring\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "rule_evaluation SLI | Latency/Apdex",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
       "description": "Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 7,
-        "w": 8,
-        "x": 0,
+        "w": 6,
+        "x": 6,
         "y": 81
       },
       "id": 3727131931,
@@ -5569,11 +5953,11 @@
       },
       "gridPos": {
         "h": 1,
-        "w": 8,
-        "x": 0,
+        "w": 6,
+        "x": 6,
         "y": 88
       },
-      "id": 41,
+      "id": 43,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -5615,8 +5999,8 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 8,
+        "w": 6,
+        "x": 12,
         "y": 81
       },
       "id": 2621394178,
@@ -5710,14 +6094,14 @@
       ]
     },
     {
-      "content": "### Description\n\nThis SLI monitors Prometheus recording rule evaluations. Recording rule evalution failures are considered to be\nservice failures.\n\n",
+      "content": "### Description\n\nThis SLI monitors Prometheus recording rule evaluations. Recording rule evalution failures are considered to be\nservice failures.\n\nPrometheus rule groups are evaluating recording rules in a group in sequence at an interval.\nIf the recording of all rules in a groups exceeds the interval for the group, we could be\nmissing data points in the group.\n\nIf a group fails often, we should split it up or improve query performance.\n\nTo see which rules are often not meeting their target. Look at the SLI-details. The `rule_group` label will contain\ninformation about the slow group.\n\n",
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 16,
+        "w": 6,
+        "x": 18,
         "y": 81
       },
-      "id": 43,
+      "id": 45,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -5731,7 +6115,7 @@
         "x": 0,
         "y": 100
       },
-      "id": 44,
+      "id": 46,
       "panels": [
         {
           "bars": false,
@@ -5748,7 +6132,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 45,
+          "id": 47,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5843,7 +6227,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 46,
+          "id": 48,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5919,7 +6303,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 47,
+          "id": 49,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5995,7 +6379,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 48,
+          "id": 50,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6090,7 +6474,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 49,
+          "id": 51,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6171,7 +6555,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 50,
+          "id": 52,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6247,7 +6631,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 51,
+          "id": 53,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6326,7 +6710,7 @@
         "x": 0,
         "y": 110
       },
-      "id": 52,
+      "id": 54,
       "panels": [
         {
           "bars": false,
@@ -6343,7 +6727,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 53,
+          "id": 55,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6419,7 +6803,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 54,
+          "id": 56,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6495,7 +6879,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 55,
+          "id": 57,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6571,7 +6955,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 56,
+          "id": 58,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6647,7 +7031,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 57,
+          "id": 59,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6723,7 +7107,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 58,
+          "id": 60,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6802,7 +7186,7 @@
         "x": 0,
         "y": 120
       },
-      "id": 59,
+      "id": 61,
       "panels": [
         {
           "bars": false,
@@ -6819,7 +7203,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 60,
+          "id": 62,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6895,7 +7279,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 61,
+          "id": 63,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6971,7 +7355,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 62,
+          "id": 64,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7047,7 +7431,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 63,
+          "id": 65,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7123,7 +7507,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 64,
+          "id": 66,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7199,7 +7583,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 65,
+          "id": 67,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7278,7 +7662,7 @@
         "x": 0,
         "y": 130
       },
-      "id": 66,
+      "id": 68,
       "panels": [
         {
           "bars": false,
@@ -7295,7 +7679,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 67,
+          "id": 69,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7390,7 +7774,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 68,
+          "id": 70,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7466,7 +7850,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 69,
+          "id": 71,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7542,7 +7926,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 70,
+          "id": 72,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7637,7 +8021,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 71,
+          "id": 73,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7718,7 +8102,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 72,
+          "id": 74,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7794,7 +8178,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 73,
+          "id": 75,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7873,7 +8257,7 @@
         "x": 0,
         "y": 140
       },
-      "id": 74,
+      "id": 76,
       "panels": [
         {
           "bars": false,
@@ -7890,7 +8274,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 75,
+          "id": 77,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7986,7 +8370,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 76,
+          "id": 78,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8062,7 +8446,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 77,
+          "id": 79,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8138,7 +8522,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 78,
+          "id": 80,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8234,7 +8618,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 79,
+          "id": 81,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8315,7 +8699,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 80,
+          "id": 82,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8391,7 +8775,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 81,
+          "id": 83,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8467,7 +8851,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 82,
+          "id": 84,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8563,7 +8947,7 @@
             "x": 6,
             "y": 20
           },
-          "id": 83,
+          "id": 85,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8644,7 +9028,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 84,
+          "id": 86,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8720,7 +9104,7 @@
             "x": 18,
             "y": 20
           },
-          "id": 85,
+          "id": 87,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8796,7 +9180,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 86,
+          "id": 88,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8892,7 +9276,7 @@
             "x": 6,
             "y": 30
           },
-          "id": 87,
+          "id": 89,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8973,7 +9357,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 88,
+          "id": 90,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9049,7 +9433,7 @@
             "x": 18,
             "y": 30
           },
-          "id": 89,
+          "id": 91,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9128,7 +9512,7 @@
         "x": 0,
         "y": 150
       },
-      "id": 90,
+      "id": 92,
       "panels": [
         {
           "bars": false,
@@ -9145,7 +9529,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 91,
+          "id": 93,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9221,7 +9605,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 92,
+          "id": 94,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9297,7 +9681,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 93,
+          "id": 95,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9373,7 +9757,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 94,
+          "id": 96,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9449,7 +9833,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 95,
+          "id": 97,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9525,7 +9909,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 96,
+          "id": 98,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9601,7 +9985,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 97,
+          "id": 99,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9677,7 +10061,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 98,
+          "id": 100,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9756,7 +10140,7 @@
         "x": 0,
         "y": 160
       },
-      "id": 99,
+      "id": 101,
       "panels": [
         {
           "bars": false,
@@ -9773,7 +10157,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 100,
+          "id": 102,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9849,7 +10233,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 101,
+          "id": 103,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9916,16 +10300,97 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 10
+          },
+          "id": 104,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (fqdn) (\n      rate(prometheus_rule_group_iterations_total{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",job!~\"^thanos.*\",stage=\"$stage\",type=\"monitoring\"}[$__interval])\n    )\n    -\n    sum by (fqdn) (\n      rate(prometheus_rule_group_iterations_total{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",job!~\"^thanos.*\",stage=\"$stage\",type=\"monitoring\"}[$__interval])\n    ) - (\n      sum by (fqdn) (\n        rate(prometheus_rule_group_iterations_missed_total{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",job!~\"^thanos.*\",stage=\"$stage\",type=\"monitoring\"}[$__interval])\n      ) or\n      0 * sum by (fqdn) (\n        rate(prometheus_rule_group_iterations_total{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",job!~\"^thanos.*\",stage=\"$stage\",type=\"monitoring\"}[$__interval])\n      )\n    )\n  )\n  / ignoring (fqdn) group_left()\n  (\n    sum by () (\n      rate(prometheus_rule_group_iterations_total{env=\"$environment\",environment=\"$environment\",fqdn!=\"\",job!~\"^thanos.*\",stage=\"$stage\",type=\"monitoring\"}[$__interval])\n    )\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{fqdn}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for rule_evaluation Latency - per fqdn",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
           "description": "",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
-            "w": 12,
-            "x": 0,
+            "w": 8,
+            "x": 8,
             "y": 10
           },
-          "id": 102,
+          "id": 105,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9997,11 +10462,11 @@
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
-            "w": 12,
-            "x": 12,
+            "w": 8,
+            "x": 16,
             "y": 10
           },
-          "id": 103,
+          "id": 106,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10068,16 +10533,97 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 20
+          },
+          "id": 107,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (pod) (\n      rate(prometheus_rule_group_iterations_total{env=\"$environment\",environment=\"$environment\",job!~\"^thanos.*\",pod!=\"\",stage=\"$stage\",type=\"monitoring\"}[$__interval])\n    )\n    -\n    sum by (pod) (\n      rate(prometheus_rule_group_iterations_total{env=\"$environment\",environment=\"$environment\",job!~\"^thanos.*\",pod!=\"\",stage=\"$stage\",type=\"monitoring\"}[$__interval])\n    ) - (\n      sum by (pod) (\n        rate(prometheus_rule_group_iterations_missed_total{env=\"$environment\",environment=\"$environment\",job!~\"^thanos.*\",pod!=\"\",stage=\"$stage\",type=\"monitoring\"}[$__interval])\n      ) or\n      0 * sum by (pod) (\n        rate(prometheus_rule_group_iterations_total{env=\"$environment\",environment=\"$environment\",job!~\"^thanos.*\",pod!=\"\",stage=\"$stage\",type=\"monitoring\"}[$__interval])\n      )\n    )\n  )\n  / ignoring (pod) group_left()\n  (\n    sum by () (\n      rate(prometheus_rule_group_iterations_total{env=\"$environment\",environment=\"$environment\",job!~\"^thanos.*\",pod!=\"\",stage=\"$stage\",type=\"monitoring\"}[$__interval])\n    )\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{pod}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for rule_evaluation Latency - per pod",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
           "description": "",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
-            "w": 12,
-            "x": 0,
+            "w": 8,
+            "x": 8,
             "y": 20
           },
-          "id": 104,
+          "id": 108,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10149,11 +10695,11 @@
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
-            "w": 12,
-            "x": 12,
+            "w": 8,
+            "x": 16,
             "y": 20
           },
-          "id": 105,
+          "id": 109,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10213,6 +10759,239 @@
               "show": false
             }
           ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 30
+          },
+          "id": 110,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (rule_group) (\n      rate(prometheus_rule_group_iterations_total{env=\"$environment\",environment=\"$environment\",job!~\"^thanos.*\",rule_group!=\"\",stage=\"$stage\",type=\"monitoring\"}[$__interval])\n    )\n    -\n    sum by (rule_group) (\n      rate(prometheus_rule_group_iterations_total{env=\"$environment\",environment=\"$environment\",job!~\"^thanos.*\",rule_group!=\"\",stage=\"$stage\",type=\"monitoring\"}[$__interval])\n    ) - (\n      sum by (rule_group) (\n        rate(prometheus_rule_group_iterations_missed_total{env=\"$environment\",environment=\"$environment\",job!~\"^thanos.*\",rule_group!=\"\",stage=\"$stage\",type=\"monitoring\"}[$__interval])\n      ) or\n      0 * sum by (rule_group) (\n        rate(prometheus_rule_group_iterations_total{env=\"$environment\",environment=\"$environment\",job!~\"^thanos.*\",rule_group!=\"\",stage=\"$stage\",type=\"monitoring\"}[$__interval])\n      )\n    )\n  )\n  / ignoring (rule_group) group_left()\n  (\n    sum by () (\n      rate(prometheus_rule_group_iterations_total{env=\"$environment\",environment=\"$environment\",job!~\"^thanos.*\",rule_group!=\"\",stage=\"$stage\",type=\"monitoring\"}[$__interval])\n    )\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{rule_group}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for rule_evaluation Latency - per rule_group",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 8,
+            "y": 30
+          },
+          "id": 111,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (rule_group) (\n  rate(prometheus_rule_evaluation_failures_total{env=\"$environment\",environment=\"$environment\",job!~\"^thanos.*\",rule_group!=\"\",stage=\"$stage\",type=\"monitoring\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{rule_group}}",
+              "refId": "A"
+            }
+          ],
+          "title": "rule_evaluation Errors - per rule_group",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 16,
+            "y": 30
+          },
+          "id": 112,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (rule_group) (\n  rate(prometheus_rule_evaluations_total{env=\"$environment\",environment=\"$environment\",job!~\"^thanos.*\",rule_group!=\"\",stage=\"$stage\",type=\"monitoring\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{rule_group}}",
+              "refId": "A"
+            }
+          ],
+          "title": "rule_evaluation RPS - per rule_group",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
         }
       ],
       "repeat": null,
@@ -10232,7 +11011,7 @@
         "x": 0,
         "y": 300
       },
-      "id": 106,
+      "id": 113,
       "panels": [
         {
           "aliasColors": {
@@ -10251,7 +11030,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 107,
+          "id": 114,
           "legend": {
             "alignAsTable": false,
             "avg": false,
@@ -10349,7 +11128,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 108,
+          "id": 115,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10445,7 +11224,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 109,
+          "id": 116,
           "legend": {
             "alignAsTable": false,
             "avg": false,
@@ -10554,7 +11333,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 110,
+          "id": 117,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10650,7 +11429,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 111,
+          "id": 118,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10748,7 +11527,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 112,
+          "id": 119,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10846,7 +11625,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 113,
+          "id": 120,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10944,7 +11723,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 114,
+          "id": 121,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11042,7 +11821,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 115,
+          "id": 122,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11140,7 +11919,7 @@
             "x": 12,
             "y": 40
           },
-          "id": 116,
+          "id": 123,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11238,7 +12017,7 @@
             "x": 0,
             "y": 50
           },
-          "id": 117,
+          "id": 124,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11353,7 +12132,7 @@
             "x": 12,
             "y": 50
           },
-          "id": 118,
+          "id": 125,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11468,7 +12247,7 @@
             "x": 0,
             "y": 60
           },
-          "id": 119,
+          "id": 126,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11583,7 +12362,7 @@
             "x": 12,
             "y": 60
           },
-          "id": 120,
+          "id": 127,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11699,7 +12478,7 @@
         "x": 0,
         "y": 400
       },
-      "id": 121,
+      "id": 128,
       "panels": [
         {
           "aliasColors": {
@@ -11718,7 +12497,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 122,
+          "id": 129,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11823,7 +12602,7 @@
             "x": 8,
             "y": 1
           },
-          "id": 123,
+          "id": 130,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11928,7 +12707,7 @@
             "x": 16,
             "y": 1
           },
-          "id": 124,
+          "id": 131,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -12044,7 +12823,7 @@
             "x": 0,
             "y": 9
           },
-          "id": 125,
+          "id": 132,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12149,7 +12928,7 @@
             "x": 8,
             "y": 9
           },
-          "id": 126,
+          "id": 133,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12254,7 +13033,7 @@
             "x": 16,
             "y": 9
           },
-          "id": 127,
+          "id": 134,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -12371,7 +13150,7 @@
         "x": 0,
         "y": 500
       },
-      "id": 128,
+      "id": 135,
       "panels": [
         {
           "aliasColors": {
@@ -12479,7 +13258,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, database_id) (\n  clamp_min(\n    clamp_max(\n      avg_over_time(stackdriver_cloudsql_database_cloudsql_googleapis_com_database_cpu_utilization{env=\"$environment\",environment=\"$environment\"}[5m])\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, shard, database_id) (\n  clamp_min(\n    clamp_max(\n      avg_over_time(stackdriver_cloudsql_database_cloudsql_googleapis_com_database_cpu_utilization{env=\"$environment\",environment=\"$environment\"}[5m])\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -12673,7 +13452,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, database_id) (\n  clamp_min(\n    clamp_max(\n      avg_over_time(stackdriver_cloudsql_database_cloudsql_googleapis_com_database_disk_utilization{env=\"$environment\",environment=\"$environment\"}[5m])\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, shard, database_id) (\n  clamp_min(\n    clamp_max(\n      avg_over_time(stackdriver_cloudsql_database_cloudsql_googleapis_com_database_disk_utilization{env=\"$environment\",environment=\"$environment\"}[5m])\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -12867,7 +13646,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, database_id) (\n  clamp_min(\n    clamp_max(\n      avg_over_time(stackdriver_cloudsql_database_cloudsql_googleapis_com_database_memory_utilization{env=\"$environment\",environment=\"$environment\"}[5m])\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, shard, database_id) (\n  clamp_min(\n    clamp_max(\n      avg_over_time(stackdriver_cloudsql_database_cloudsql_googleapis_com_database_memory_utilization{env=\"$environment\",environment=\"$environment\"}[5m])\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -13061,7 +13840,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage) (\n  clamp_min(\n    clamp_max(\n      1 - avg by (environment, tier, type, stage) (\n        rate(node_cpu_seconds_total{mode=\"idle\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}[5m])\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard) (\n  clamp_min(\n    clamp_max(\n      1 - avg by (environment, tier, type, stage, shard) (\n        rate(node_cpu_seconds_total{mode=\"idle\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}[5m])\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -13255,7 +14034,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, fqdn, device) (\n  clamp_min(\n    clamp_max(\n      1 - (\n        node_filesystem_files_free{fstype=~\"(ext.|xfs)\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n        /\n        node_filesystem_files{fstype=~\"(ext.|xfs)\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn, device) (\n  clamp_min(\n    clamp_max(\n      1 - (\n        node_filesystem_files_free{fstype=~\"(ext.|xfs)\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n        /\n        node_filesystem_files{fstype=~\"(ext.|xfs)\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -13449,7 +14228,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, fqdn, device) (\n  clamp_min(\n    clamp_max(\n      (\n        1 - node_filesystem_avail_bytes{fstype=~\"ext.|xfs\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"} / node_filesystem_size_bytes{fstype=~\"ext.|xfs\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn, device) (\n  clamp_min(\n    clamp_max(\n      (\n        1 - node_filesystem_avail_bytes{fstype=~\"ext.|xfs\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"} / node_filesystem_size_bytes{fstype=~\"ext.|xfs\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -13643,7 +14422,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, metric, quotaregion) (\n  clamp_min(\n    clamp_max(\n      (\n        gcp_quota_usage{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      /\n        gcp_quota_limit{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      ) > 0\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, metric, quotaregion) (\n  clamp_min(\n    clamp_max(\n      (\n        gcp_quota_usage{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      /\n        gcp_quota_limit{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      ) > 0\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -13837,7 +14616,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(env, environment, tier, type, stage, fqdn) (\n  clamp_min(\n    clamp_max(\n      sum by (env, environment, tier, type, stage, fqdn) (\n        go_memstats_alloc_bytes{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      )\n      /\n      sum by (env, environment, tier, type, stage, fqdn) (\n        node_memory_MemTotal_bytes{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(env, environment, tier, type, stage, shard, fqdn) (\n  clamp_min(\n    clamp_max(\n      sum by (env, environment, tier, type, stage, shard, fqdn) (\n        go_memstats_alloc_bytes{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      )\n      /\n      sum by (env, environment, tier, type, stage, shard, fqdn) (\n        node_memory_MemTotal_bytes{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -14031,7 +14810,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, pod, container) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, tier, type, stage, pod, container) (\n        rate(container_cpu_usage_seconds_total:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}[5m])\n      )\n      /\n      sum by(environment, tier, type, stage, pod, container) (\n        container_spec_cpu_quota:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n        /\n        container_spec_cpu_period:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, pod, container) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, tier, type, stage, shard, pod, container) (\n        rate(container_cpu_usage_seconds_total:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}[5m])\n      )\n      /\n      sum by(environment, tier, type, stage, shard, pod, container) (\n        container_spec_cpu_quota:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n        /\n        container_spec_cpu_period:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -14225,7 +15004,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage) (\n  clamp_min(\n    clamp_max(\n      container_memory_working_set_bytes:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      /\n      (container_spec_memory_limit_bytes:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"} > 0)\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard) (\n  clamp_min(\n    clamp_max(\n      container_memory_working_set_bytes:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      /\n      (container_spec_memory_limit_bytes:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"} > 0)\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -14419,7 +15198,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(env, environment, tier, type, stage, cluster, pod) (\n  clamp_min(\n    clamp_max(\n      go_memstats_alloc_bytes{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      / on(env, environment, tier, type, stage, cluster, pod) group_left()\n      topk by(env, environment, tier, type, stage, cluster, pod) (1,\n        container_spec_memory_limit_bytes:labeled{container=~\"gitlab-pages|gitlab-workhorse|kas|registry|thanos-store\",env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(env, environment, tier, type, stage, shard, cluster, pod) (\n  clamp_min(\n    clamp_max(\n      go_memstats_alloc_bytes{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      / on(env, environment, tier, type, stage, shard, cluster, pod) group_left()\n      topk by(env, environment, tier, type, stage, shard, cluster, pod) (1,\n        container_spec_memory_limit_bytes:labeled{container=~\"gitlab-pages|gitlab-workhorse|kas|registry|thanos-store\",env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -14613,7 +15392,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, horizontalpodautoscaler, shard) (\n  clamp_min(\n    clamp_max(\n      kube_horizontalpodautoscaler_status_desired_replicas:labeled{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\", shard!~\"database-throttled|elasticsearch|gitaly-throttled|imports|urgent-authorized-projects|urgent-other\", namespace!~\"pubsubbeat\"}\n      /\n      kube_horizontalpodautoscaler_spec_max_replicas:labeled{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\", shard!~\"database-throttled|elasticsearch|gitaly-throttled|imports|urgent-authorized-projects|urgent-other\", namespace!~\"pubsubbeat\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, horizontalpodautoscaler, shard) (\n  clamp_min(\n    clamp_max(\n      kube_horizontalpodautoscaler_status_desired_replicas:labeled{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\", shard!~\"database-throttled|elasticsearch|gitaly-throttled|imports|urgent-authorized-projects|urgent-other\", namespace!~\"pubsubbeat\"}\n      /\n      kube_horizontalpodautoscaler_spec_max_replicas:labeled{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\", shard!~\"database-throttled|elasticsearch|gitaly-throttled|imports|urgent-authorized-projects|urgent-other\", namespace!~\"pubsubbeat\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -14807,7 +15586,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, fqdn) (\n  clamp_min(\n    clamp_max(\n      instance:node_memory_utilization:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"} or instance:node_memory_utilisation:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn) (\n  clamp_min(\n    clamp_max(\n      instance:node_memory_utilization:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"} or instance:node_memory_utilisation:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -15001,7 +15780,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, fqdn, instance) (\n  clamp_min(\n    clamp_max(\n      max_over_time(node_nf_conntrack_entries{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}[1m])\n      /\n      node_nf_conntrack_entries_limit{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn, instance) (\n  clamp_min(\n    clamp_max(\n      max_over_time(node_nf_conntrack_entries{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}[1m])\n      /\n      node_nf_conntrack_entries_limit{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -15195,7 +15974,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, fqdn, shard) (\n  clamp_min(\n    clamp_max(\n      avg without (cpu) (rate(node_schedstat_waiting_seconds_total{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}[1h]))\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn, shard) (\n  clamp_min(\n    clamp_max(\n      avg without (cpu) (rate(node_schedstat_waiting_seconds_total{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}[1h]))\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -15389,7 +16168,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, job, instance) (\n  clamp_min(\n    clamp_max(\n      (\n        process_open_fds{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n        /\n        process_max_fds{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      )\n      or\n      (\n        ruby_file_descriptors{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n        /\n        ruby_process_max_fds{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, job, instance) (\n  clamp_min(\n    clamp_max(\n      (\n        process_open_fds{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n        /\n        process_max_fds{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      )\n      or\n      (\n        ruby_file_descriptors{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n        /\n        ruby_process_max_fds{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -15583,7 +16362,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard) (\n  clamp_min(\n    clamp_max(\n      1 - avg by (environment, tier, type, stage, shard) (\n        rate(node_cpu_seconds_total{mode=\"idle\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}[5m])\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, shard) (\n  clamp_min(\n    clamp_max(\n      1 - avg by (environment, tier, type, stage, shard, shard) (\n        rate(node_cpu_seconds_total{mode=\"idle\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}[5m])\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -15777,7 +16556,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, fqdn) (\n  clamp_min(\n    clamp_max(\n      avg without(cpu, mode) (1 - rate(node_cpu_seconds_total{mode=\"idle\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}[5m]))\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn) (\n  clamp_min(\n    clamp_max(\n      avg without(cpu, mode) (1 - rate(node_cpu_seconds_total{mode=\"idle\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"monitoring\"}[5m]))\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -15883,7 +16662,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 147,
+      "id": 154,
       "panels": [
         {
           "aliasColors": {
@@ -15902,7 +16681,7 @@
             "x": 0,
             "y": 1000
           },
-          "id": 148,
+          "id": 155,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16000,7 +16779,7 @@
             "x": 6,
             "y": 1000
           },
-          "id": 149,
+          "id": 156,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16098,7 +16877,7 @@
             "x": 12,
             "y": 1000
           },
-          "id": 150,
+          "id": 157,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16196,7 +16975,7 @@
             "x": 18,
             "y": 1000
           },
-          "id": 151,
+          "id": 158,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16295,7 +17074,7 @@
         "x": 0,
         "y": 2000
       },
-      "id": 152,
+      "id": 159,
       "panels": [
         {
           "aliasColors": {
@@ -16314,7 +17093,7 @@
             "x": 0,
             "y": 1000
           },
-          "id": 153,
+          "id": 160,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16445,7 +17224,7 @@
             "x": 8,
             "y": 1000
           },
-          "id": 154,
+          "id": 161,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16543,7 +17322,7 @@
             "x": 16,
             "y": 1000
           },
-          "id": 155,
+          "id": 162,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16657,7 +17436,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 156,
+      "id": 163,
       "panels": [
         {
           "colors": [
@@ -16678,7 +17457,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 157,
+          "id": 164,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -16791,7 +17570,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 158,
+          "id": 165,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -16902,7 +17681,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 159,
+          "id": 166,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -17007,7 +17786,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 160,
+      "id": 167,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -17130,5 +17909,5 @@
   "timezone": "utc",
   "title": "monitoring: Overview",
   "uid": "monitoring-main",
-  "version": 3441
+  "version": 3444
 }

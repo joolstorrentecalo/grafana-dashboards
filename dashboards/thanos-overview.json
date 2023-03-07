@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3884475618 at Mon Mar  6 22:31:36 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3889109982 at Tue Mar  7 14:45:59 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -1139,13 +1139,397 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
+      "description": "Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 21
+      },
+      "id": 2667244350,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": [
+          {
+            "targetBlank": true,
+            "title": "rule_evaluation SLI Apdex SLO Analysis",
+            "url": "/d/alerts-component_slo_apdex?${__url_time_range}&${__all_variables}&var-component=rule_evaluation&var-type=thanos"
+          }
+        ]
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "6h Degradation SLO (5% of monthly error budget)",
+          "color": "#FF4500",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "connected",
+          "spaceLength": 10,
+          "zindex": -2
+        },
+        {
+          "alias": "1h Outage SLO (2% of monthly error budget)",
+          "color": "#F2495C",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 4,
+          "nullPointMode": "connected",
+          "spaceLength": 4,
+          "zindex": -2
+        },
+        {
+          "alias": "SLO",
+          "color": "#FF4500",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 4,
+          "nullPointMode": "connected",
+          "spaceLength": 4,
+          "zindex": -2
+        },
+        {
+          "alias": "rule_evaluation apdex",
+          "color": "#E7D551",
+          "zindex": 3
+        },
+        {
+          "alias": "rule_evaluation apdex avg",
+          "color": "#5794F2",
+          "dashLength": 1,
+          "fillBelowTo": "rule_evaluation apdex",
+          "linewidth": 1,
+          "spaceLength": 1,
+          "zindex": -3
+        },
+        {
+          "alias": "last week",
+          "color": "#dddddd80",
+          "dashLength": 4,
+          "dashes": true,
+          "fill": 0,
+          "legend": true,
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "spaceLength": 2,
+          "zindex": -3
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "sli-rule_evaluation-apdex",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "min_over_time(gitlab_component_apdex:ratio_5m{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "rule_evaluation apdex",
+          "refId": "A"
+        },
+        {
+          "expr": "(1 - 6 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})\n))\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 3,
+          "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+          "refId": "B"
+        },
+        {
+          "expr": "(1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})\n))\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 3,
+          "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+          "refId": "C"
+        },
+        {
+          "expr": "avg_over_time(gitlab_component_apdex:ratio_5m{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "rule_evaluation apdex avg",
+          "refId": "D"
+        },
+        {
+          "expr": "clamp_min(\n  gitlab_component_apdex:ratio_5m{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"} offset 1w\n,\n  scalar(min((1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})\n))\n))\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "last week",
+          "refId": "E"
+        }
+      ],
+      "title": "rule_evaluation SLI Apdex",
+      "tooltip": {
+        "shared": true,
+        "sort": 1,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "Apdex %",
+          "logBase": 1,
+          "max": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "displayName": "Status",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "0": {
+                  "color": "black",
+                  "index": 0,
+                  "text": "Healthy"
+                },
+                "1": {
+                  "color": "orange",
+                  "index": 1,
+                  "text": "Warning 🔥"
+                },
+                "10": {
+                  "color": "orange",
+                  "index": 10,
+                  "text": "Warning 🔥🥵"
+                },
+                "11": {
+                  "color": "red",
+                  "index": 11,
+                  "text": "Degraded 🔥🥵"
+                },
+                "12": {
+                  "color": "red",
+                  "index": 12,
+                  "text": "Degraded 🥵"
+                },
+                "13": {
+                  "color": "red",
+                  "index": 13,
+                  "text": "Degraded 🔥🥵"
+                },
+                "14": {
+                  "color": "red",
+                  "index": 14,
+                  "text": "Degraded 🔥🥵"
+                },
+                "15": {
+                  "color": "red",
+                  "index": 15,
+                  "text": "Degraded 🔥🥵"
+                },
+                "2": {
+                  "color": "orange",
+                  "index": 2,
+                  "text": "Warning 🔥"
+                },
+                "3": {
+                  "color": "red",
+                  "index": 3,
+                  "text": "Degraded 🔥"
+                },
+                "4": {
+                  "color": "orange",
+                  "index": 4,
+                  "text": "Warning 🥵"
+                },
+                "5": {
+                  "color": "orange",
+                  "index": 5,
+                  "text": "Warning 🔥🥵"
+                },
+                "6": {
+                  "color": "orange",
+                  "index": 6,
+                  "text": "Warning 🔥🥵"
+                },
+                "7": {
+                  "color": "red",
+                  "index": 7,
+                  "text": "Degraded 🔥🥵"
+                },
+                "8": {
+                  "color": "orange",
+                  "index": 8,
+                  "text": "Warning 🥵"
+                },
+                "9": {
+                  "color": "orange",
+                  "index": 9,
+                  "text": "Warning 🔥🥵"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "black",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "orange",
+                "value": 2
+              },
+              {
+                "color": "red",
+                "value": 3
+              },
+              {
+                "color": "orange",
+                "value": 4
+              },
+              {
+                "color": "orange",
+                "value": 5
+              },
+              {
+                "color": "orange",
+                "value": 6
+              },
+              {
+                "color": "red",
+                "value": 7
+              },
+              {
+                "color": "orange",
+                "value": 8
+              },
+              {
+                "color": "orange",
+                "value": 9
+              },
+              {
+                "color": "orange",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 11
+              },
+              {
+                "color": "red",
+                "value": 12
+              },
+              {
+                "color": "red",
+                "value": 13
+              },
+              {
+                "color": "red",
+                "value": 14
+              },
+              {
+                "color": "red",
+                "value": 15
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 6,
+        "x": 0,
+        "y": 28
+      },
+      "id": 11,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "rule_evaluation SLI | Latency/Apdex",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
       "description": "Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 7,
-        "w": 8,
-        "x": 0,
+        "w": 6,
+        "x": 6,
         "y": 21
       },
       "id": 3727131931,
@@ -1471,11 +1855,11 @@
       },
       "gridPos": {
         "h": 1,
-        "w": 8,
-        "x": 0,
+        "w": 6,
+        "x": 6,
         "y": 28
       },
-      "id": 11,
+      "id": 13,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -1517,8 +1901,8 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 8,
+        "w": 6,
+        "x": 12,
         "y": 21
       },
       "id": 2621394178,
@@ -1612,14 +1996,14 @@
       ]
     },
     {
-      "content": "### Description\n\nThis SLI monitors Prometheus recording rule evaluations. Recording rule evalution failures are considered to be\nservice failures.\n\n",
+      "content": "### Description\n\nThis SLI monitors Prometheus recording rule evaluations. Recording rule evalution failures are considered to be\nservice failures. Warnings are also considered failures.\n\nRule groups are evaluating recording rules in a group in sequence at an interval.\nIf the recording of all rules in a groups exceeds the interval for the group, we could be\nmissing data points in the group.\n\nIf a group is slow often, we should split it up or improve query performance\n\nTo see which rules are often not meeting their target. Look at the SLI-details. The `rule_group` label will contain\ninformation about the slow group.\n\n",
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 16,
+        "w": 6,
+        "x": 18,
         "y": 21
       },
-      "id": 13,
+      "id": 15,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -1966,7 +2350,7 @@
         "x": 0,
         "y": 38
       },
-      "id": 15,
+      "id": 17,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -2110,7 +2494,7 @@
         "x": 16,
         "y": 31
       },
-      "id": 17,
+      "id": 19,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -2468,7 +2852,7 @@
         "x": 0,
         "y": 48
       },
-      "id": 19,
+      "id": 21,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -2841,7 +3225,7 @@
         "x": 6,
         "y": 48
       },
-      "id": 21,
+      "id": 23,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -2985,7 +3369,7 @@
         "x": 18,
         "y": 41
       },
-      "id": 23,
+      "id": 25,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -3343,7 +3727,7 @@
         "x": 0,
         "y": 58
       },
-      "id": 25,
+      "id": 27,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -3716,7 +4100,7 @@
         "x": 6,
         "y": 58
       },
-      "id": 27,
+      "id": 29,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -3860,7 +4244,7 @@
         "x": 18,
         "y": 51
       },
-      "id": 29,
+      "id": 31,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -4218,7 +4602,7 @@
         "x": 0,
         "y": 68
       },
-      "id": 31,
+      "id": 33,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -4591,7 +4975,7 @@
         "x": 6,
         "y": 68
       },
-      "id": 33,
+      "id": 35,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -4735,7 +5119,7 @@
         "x": 18,
         "y": 61
       },
-      "id": 35,
+      "id": 37,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -5082,7 +5466,7 @@
         "x": 0,
         "y": 78
       },
-      "id": 37,
+      "id": 39,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -5226,7 +5610,7 @@
         "x": 16,
         "y": 71
       },
-      "id": 39,
+      "id": 41,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -5584,7 +5968,7 @@
         "x": 0,
         "y": 88
       },
-      "id": 41,
+      "id": 43,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -5957,7 +6341,7 @@
         "x": 6,
         "y": 88
       },
-      "id": 43,
+      "id": 45,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -6101,7 +6485,7 @@
         "x": 18,
         "y": 81
       },
-      "id": 45,
+      "id": 47,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -6115,7 +6499,7 @@
         "x": 0,
         "y": 100
       },
-      "id": 46,
+      "id": 48,
       "panels": [
         {
           "bars": false,
@@ -6132,7 +6516,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 47,
+          "id": 49,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6208,7 +6592,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 48,
+          "id": 50,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6275,16 +6659,97 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 10
+          },
+          "id": 51,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (fqdn) (\n      rate(prometheus_rule_group_iterations_total{fqdn!=\"\",job=\"thanos-ruler\",type=\"thanos\"}[$__interval])\n    )\n    -\n    sum by (fqdn) (\n      rate(prometheus_rule_group_iterations_total{fqdn!=\"\",job=\"thanos-ruler\",type=\"thanos\"}[$__interval])\n    ) - (\n      sum by (fqdn) (\n        rate(prometheus_rule_group_iterations_missed_total{fqdn!=\"\",job=\"thanos-ruler\",type=\"thanos\"}[$__interval])\n      ) or\n      0 * sum by (fqdn) (\n        rate(prometheus_rule_group_iterations_total{fqdn!=\"\",job=\"thanos-ruler\",type=\"thanos\"}[$__interval])\n      )\n    )\n  )\n  / ignoring (fqdn) group_left()\n  (\n    sum by () (\n      rate(prometheus_rule_group_iterations_total{fqdn!=\"\",job=\"thanos-ruler\",type=\"thanos\"}[$__interval])\n    )\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{fqdn}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for rule_evaluation Latency - per fqdn",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
           "description": "",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
-            "w": 12,
-            "x": 0,
+            "w": 8,
+            "x": 8,
             "y": 10
           },
-          "id": 49,
+          "id": 52,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6356,11 +6821,11 @@
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
-            "w": 12,
-            "x": 12,
+            "w": 8,
+            "x": 16,
             "y": 10
           },
-          "id": 50,
+          "id": 53,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6427,16 +6892,97 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 20
+          },
+          "id": 54,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (pod) (\n      rate(prometheus_rule_group_iterations_total{job=\"thanos-ruler\",pod!=\"\",type=\"thanos\"}[$__interval])\n    )\n    -\n    sum by (pod) (\n      rate(prometheus_rule_group_iterations_total{job=\"thanos-ruler\",pod!=\"\",type=\"thanos\"}[$__interval])\n    ) - (\n      sum by (pod) (\n        rate(prometheus_rule_group_iterations_missed_total{job=\"thanos-ruler\",pod!=\"\",type=\"thanos\"}[$__interval])\n      ) or\n      0 * sum by (pod) (\n        rate(prometheus_rule_group_iterations_total{job=\"thanos-ruler\",pod!=\"\",type=\"thanos\"}[$__interval])\n      )\n    )\n  )\n  / ignoring (pod) group_left()\n  (\n    sum by () (\n      rate(prometheus_rule_group_iterations_total{job=\"thanos-ruler\",pod!=\"\",type=\"thanos\"}[$__interval])\n    )\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{pod}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for rule_evaluation Latency - per pod",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
           "description": "",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
-            "w": 12,
-            "x": 0,
+            "w": 8,
+            "x": 8,
             "y": 20
           },
-          "id": 51,
+          "id": 55,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6508,11 +7054,11 @@
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
-            "w": 12,
-            "x": 12,
+            "w": 8,
+            "x": 16,
             "y": 20
           },
-          "id": 52,
+          "id": 56,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6572,6 +7118,239 @@
               "show": false
             }
           ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 30
+          },
+          "id": 57,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (rule_group) (\n      rate(prometheus_rule_group_iterations_total{job=\"thanos-ruler\",rule_group!=\"\",type=\"thanos\"}[$__interval])\n    )\n    -\n    sum by (rule_group) (\n      rate(prometheus_rule_group_iterations_total{job=\"thanos-ruler\",rule_group!=\"\",type=\"thanos\"}[$__interval])\n    ) - (\n      sum by (rule_group) (\n        rate(prometheus_rule_group_iterations_missed_total{job=\"thanos-ruler\",rule_group!=\"\",type=\"thanos\"}[$__interval])\n      ) or\n      0 * sum by (rule_group) (\n        rate(prometheus_rule_group_iterations_total{job=\"thanos-ruler\",rule_group!=\"\",type=\"thanos\"}[$__interval])\n      )\n    )\n  )\n  / ignoring (rule_group) group_left()\n  (\n    sum by () (\n      rate(prometheus_rule_group_iterations_total{job=\"thanos-ruler\",rule_group!=\"\",type=\"thanos\"}[$__interval])\n    )\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{rule_group}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for rule_evaluation Latency - per rule_group",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 8,
+            "y": 30
+          },
+          "id": 58,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (rule_group) (\n  label_replace(rate(prometheus_rule_evaluation_failures_total{job=\"thanos-ruler\",rule_group!=\"\",type=\"thanos\"}[$__interval]), \"_c\", \"0\", \"\", \"\")\n  or\n  label_replace(rate(thanos_rule_evaluation_with_warnings_total{rule_group!=\"\"}[$__interval]), \"_c\", \"1\", \"\", \"\")\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{rule_group}}",
+              "refId": "A"
+            }
+          ],
+          "title": "rule_evaluation Errors - per rule_group",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 16,
+            "y": 30
+          },
+          "id": 59,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (rule_group) (\n  rate(prometheus_rule_evaluations_total{job=\"thanos-ruler\",rule_group!=\"\",type=\"thanos\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{rule_group}}",
+              "refId": "A"
+            }
+          ],
+          "title": "rule_evaluation RPS - per rule_group",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
         }
       ],
       "repeat": null,
@@ -6591,7 +7370,7 @@
         "x": 0,
         "y": 110
       },
-      "id": 53,
+      "id": 60,
       "panels": [
         {
           "bars": false,
@@ -6608,7 +7387,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 54,
+          "id": 61,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6684,7 +7463,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 55,
+          "id": 62,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6760,7 +7539,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 56,
+          "id": 63,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6836,7 +7615,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 57,
+          "id": 64,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6915,7 +7694,7 @@
         "x": 0,
         "y": 120
       },
-      "id": 58,
+      "id": 65,
       "panels": [
         {
           "bars": false,
@@ -6932,7 +7711,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 59,
+          "id": 66,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7027,7 +7806,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 60,
+          "id": 67,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7103,7 +7882,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 61,
+          "id": 68,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7179,7 +7958,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 62,
+          "id": 69,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7274,7 +8053,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 63,
+          "id": 70,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7355,7 +8134,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 64,
+          "id": 71,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7431,7 +8210,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 65,
+          "id": 72,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7507,7 +8286,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 66,
+          "id": 73,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7602,7 +8381,7 @@
             "x": 6,
             "y": 20
           },
-          "id": 67,
+          "id": 74,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7683,7 +8462,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 68,
+          "id": 75,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7759,7 +8538,7 @@
             "x": 18,
             "y": 20
           },
-          "id": 69,
+          "id": 76,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7838,7 +8617,7 @@
         "x": 0,
         "y": 130
       },
-      "id": 70,
+      "id": 77,
       "panels": [
         {
           "bars": false,
@@ -7855,7 +8634,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 71,
+          "id": 78,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7950,7 +8729,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 72,
+          "id": 79,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8026,7 +8805,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 73,
+          "id": 80,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8102,7 +8881,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 74,
+          "id": 81,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8197,7 +8976,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 75,
+          "id": 82,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8278,7 +9057,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 76,
+          "id": 83,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8354,7 +9133,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 77,
+          "id": 84,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8433,7 +9212,7 @@
         "x": 0,
         "y": 140
       },
-      "id": 78,
+      "id": 85,
       "panels": [
         {
           "bars": false,
@@ -8450,7 +9229,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 79,
+          "id": 86,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8545,7 +9324,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 80,
+          "id": 87,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8621,7 +9400,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 81,
+          "id": 88,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8697,7 +9476,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 82,
+          "id": 89,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8792,7 +9571,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 83,
+          "id": 90,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8873,7 +9652,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 84,
+          "id": 91,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8949,7 +9728,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 85,
+          "id": 92,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9028,7 +9807,7 @@
         "x": 0,
         "y": 150
       },
-      "id": 86,
+      "id": 93,
       "panels": [
         {
           "bars": false,
@@ -9045,7 +9824,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 87,
+          "id": 94,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9121,7 +9900,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 88,
+          "id": 95,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9197,7 +9976,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 89,
+          "id": 96,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9273,7 +10052,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 90,
+          "id": 97,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9352,7 +10131,7 @@
         "x": 0,
         "y": 160
       },
-      "id": 91,
+      "id": 98,
       "panels": [
         {
           "bars": false,
@@ -9369,7 +10148,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 92,
+          "id": 99,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9465,7 +10244,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 93,
+          "id": 100,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9541,7 +10320,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 94,
+          "id": 101,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9617,7 +10396,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 95,
+          "id": 102,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9713,7 +10492,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 96,
+          "id": 103,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9794,7 +10573,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 97,
+          "id": 104,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9870,7 +10649,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 98,
+          "id": 105,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9949,7 +10728,7 @@
         "x": 0,
         "y": 300
       },
-      "id": 99,
+      "id": 106,
       "panels": [
         {
           "aliasColors": {
@@ -9968,7 +10747,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 100,
+          "id": 107,
           "legend": {
             "alignAsTable": false,
             "avg": false,
@@ -10066,7 +10845,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 101,
+          "id": 108,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10162,7 +10941,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 102,
+          "id": 109,
           "legend": {
             "alignAsTable": false,
             "avg": false,
@@ -10271,7 +11050,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 103,
+          "id": 110,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10367,7 +11146,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 104,
+          "id": 111,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10465,7 +11244,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 105,
+          "id": 112,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10563,7 +11342,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 106,
+          "id": 113,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10661,7 +11440,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 107,
+          "id": 114,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10759,7 +11538,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 108,
+          "id": 115,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10857,7 +11636,7 @@
             "x": 12,
             "y": 40
           },
-          "id": 109,
+          "id": 116,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10955,7 +11734,7 @@
             "x": 0,
             "y": 50
           },
-          "id": 110,
+          "id": 117,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11070,7 +11849,7 @@
             "x": 12,
             "y": 50
           },
-          "id": 111,
+          "id": 118,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11185,7 +11964,7 @@
             "x": 0,
             "y": 60
           },
-          "id": 112,
+          "id": 119,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11300,7 +12079,7 @@
             "x": 12,
             "y": 60
           },
-          "id": 113,
+          "id": 120,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11416,7 +12195,7 @@
         "x": 0,
         "y": 400
       },
-      "id": 114,
+      "id": 121,
       "panels": [
         {
           "aliasColors": {
@@ -11435,7 +12214,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 115,
+          "id": 122,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11540,7 +12319,7 @@
             "x": 8,
             "y": 1
           },
-          "id": 116,
+          "id": 123,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11645,7 +12424,7 @@
             "x": 16,
             "y": 1
           },
-          "id": 117,
+          "id": 124,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -11761,7 +12540,7 @@
             "x": 0,
             "y": 9
           },
-          "id": 118,
+          "id": 125,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11866,7 +12645,7 @@
             "x": 8,
             "y": 9
           },
-          "id": 119,
+          "id": 126,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11971,7 +12750,7 @@
             "x": 16,
             "y": 9
           },
-          "id": 120,
+          "id": 127,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -12087,7 +12866,7 @@
             "x": 0,
             "y": 17
           },
-          "id": 121,
+          "id": 128,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12192,7 +12971,7 @@
             "x": 8,
             "y": 17
           },
-          "id": 122,
+          "id": 129,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12297,7 +13076,7 @@
             "x": 16,
             "y": 17
           },
-          "id": 123,
+          "id": 130,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -12413,7 +13192,7 @@
             "x": 0,
             "y": 25
           },
-          "id": 124,
+          "id": 131,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12518,7 +13297,7 @@
             "x": 8,
             "y": 25
           },
-          "id": 125,
+          "id": 132,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12623,7 +13402,7 @@
             "x": 16,
             "y": 25
           },
-          "id": 126,
+          "id": 133,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -12739,7 +13518,7 @@
             "x": 0,
             "y": 33
           },
-          "id": 127,
+          "id": 134,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12844,7 +13623,7 @@
             "x": 8,
             "y": 33
           },
-          "id": 128,
+          "id": 135,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12949,7 +13728,7 @@
             "x": 16,
             "y": 33
           },
-          "id": 129,
+          "id": 136,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -13065,7 +13844,7 @@
             "x": 0,
             "y": 41
           },
-          "id": 130,
+          "id": 137,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13170,7 +13949,7 @@
             "x": 8,
             "y": 41
           },
-          "id": 131,
+          "id": 138,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13275,7 +14054,7 @@
             "x": 16,
             "y": 41
           },
-          "id": 132,
+          "id": 139,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -13391,7 +14170,7 @@
             "x": 0,
             "y": 49
           },
-          "id": 133,
+          "id": 140,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13496,7 +14275,7 @@
             "x": 8,
             "y": 49
           },
-          "id": 134,
+          "id": 141,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13601,7 +14380,7 @@
             "x": 16,
             "y": 49
           },
-          "id": 135,
+          "id": 142,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -13718,7 +14497,7 @@
         "x": 0,
         "y": 500
       },
-      "id": 136,
+      "id": 143,
       "panels": [
         {
           "aliasColors": {
@@ -13826,7 +14605,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage) (\n  clamp_min(\n    clamp_max(\n      1 - avg by (environment, tier, type, stage) (\n        rate(node_cpu_seconds_total{mode=\"idle\", type=\"thanos\"}[5m])\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard) (\n  clamp_min(\n    clamp_max(\n      1 - avg by (environment, tier, type, stage, shard) (\n        rate(node_cpu_seconds_total{mode=\"idle\", type=\"thanos\"}[5m])\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -14020,7 +14799,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, fqdn, device) (\n  clamp_min(\n    clamp_max(\n      1 - (\n        node_filesystem_files_free{fstype=~\"(ext.|xfs)\", type=\"thanos\"}\n        /\n        node_filesystem_files{fstype=~\"(ext.|xfs)\", type=\"thanos\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn, device) (\n  clamp_min(\n    clamp_max(\n      1 - (\n        node_filesystem_files_free{fstype=~\"(ext.|xfs)\", type=\"thanos\"}\n        /\n        node_filesystem_files{fstype=~\"(ext.|xfs)\", type=\"thanos\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -14214,7 +14993,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, fqdn, device) (\n  clamp_min(\n    clamp_max(\n      (\n        1 - node_filesystem_avail_bytes{fstype=~\"ext.|xfs\", type=\"thanos\"} / node_filesystem_size_bytes{fstype=~\"ext.|xfs\", type=\"thanos\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn, device) (\n  clamp_min(\n    clamp_max(\n      (\n        1 - node_filesystem_avail_bytes{fstype=~\"ext.|xfs\", type=\"thanos\"} / node_filesystem_size_bytes{fstype=~\"ext.|xfs\", type=\"thanos\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -14408,7 +15187,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(env, environment, tier, type, stage, fqdn) (\n  clamp_min(\n    clamp_max(\n      sum by (env, environment, tier, type, stage, fqdn) (\n        go_memstats_alloc_bytes{type=\"thanos\"}\n      )\n      /\n      sum by (env, environment, tier, type, stage, fqdn) (\n        node_memory_MemTotal_bytes{type=\"thanos\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(env, environment, tier, type, stage, shard, fqdn) (\n  clamp_min(\n    clamp_max(\n      sum by (env, environment, tier, type, stage, shard, fqdn) (\n        go_memstats_alloc_bytes{type=\"thanos\"}\n      )\n      /\n      sum by (env, environment, tier, type, stage, shard, fqdn) (\n        node_memory_MemTotal_bytes{type=\"thanos\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -14602,7 +15381,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, pod, container) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, tier, type, stage, pod, container) (\n        rate(container_cpu_usage_seconds_total:labeled{container!=\"\", container!=\"POD\", type=\"thanos\"}[5m])\n      )\n      /\n      sum by(environment, tier, type, stage, pod, container) (\n        container_spec_cpu_quota:labeled{container!=\"\", container!=\"POD\", type=\"thanos\"}\n        /\n        container_spec_cpu_period:labeled{container!=\"\", container!=\"POD\", type=\"thanos\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, pod, container) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, tier, type, stage, shard, pod, container) (\n        rate(container_cpu_usage_seconds_total:labeled{container!=\"\", container!=\"POD\", type=\"thanos\"}[5m])\n      )\n      /\n      sum by(environment, tier, type, stage, shard, pod, container) (\n        container_spec_cpu_quota:labeled{container!=\"\", container!=\"POD\", type=\"thanos\"}\n        /\n        container_spec_cpu_period:labeled{container!=\"\", container!=\"POD\", type=\"thanos\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -14796,7 +15575,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage) (\n  clamp_min(\n    clamp_max(\n      container_memory_working_set_bytes:labeled{container!=\"\", container!=\"POD\", type=\"thanos\"}\n      /\n      (container_spec_memory_limit_bytes:labeled{container!=\"\", container!=\"POD\", type=\"thanos\"} > 0)\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard) (\n  clamp_min(\n    clamp_max(\n      container_memory_working_set_bytes:labeled{container!=\"\", container!=\"POD\", type=\"thanos\"}\n      /\n      (container_spec_memory_limit_bytes:labeled{container!=\"\", container!=\"POD\", type=\"thanos\"} > 0)\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -14990,7 +15769,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(env, environment, tier, type, stage, cluster, pod) (\n  clamp_min(\n    clamp_max(\n      go_memstats_alloc_bytes{type=\"thanos\"}\n      / on(env, environment, tier, type, stage, cluster, pod) group_left()\n      topk by(env, environment, tier, type, stage, cluster, pod) (1,\n        container_spec_memory_limit_bytes:labeled{container=~\"gitlab-pages|gitlab-workhorse|kas|registry|thanos-store\",type=\"thanos\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(env, environment, tier, type, stage, shard, cluster, pod) (\n  clamp_min(\n    clamp_max(\n      go_memstats_alloc_bytes{type=\"thanos\"}\n      / on(env, environment, tier, type, stage, shard, cluster, pod) group_left()\n      topk by(env, environment, tier, type, stage, shard, cluster, pod) (1,\n        container_spec_memory_limit_bytes:labeled{container=~\"gitlab-pages|gitlab-workhorse|kas|registry|thanos-store\",type=\"thanos\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -15184,7 +15963,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, horizontalpodautoscaler, shard) (\n  clamp_min(\n    clamp_max(\n      kube_horizontalpodautoscaler_status_desired_replicas:labeled{type=\"thanos\", shard!~\"database-throttled|elasticsearch|gitaly-throttled|imports|urgent-authorized-projects|urgent-other\", namespace!~\"pubsubbeat\"}\n      /\n      kube_horizontalpodautoscaler_spec_max_replicas:labeled{type=\"thanos\", shard!~\"database-throttled|elasticsearch|gitaly-throttled|imports|urgent-authorized-projects|urgent-other\", namespace!~\"pubsubbeat\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, horizontalpodautoscaler, shard) (\n  clamp_min(\n    clamp_max(\n      kube_horizontalpodautoscaler_status_desired_replicas:labeled{type=\"thanos\", shard!~\"database-throttled|elasticsearch|gitaly-throttled|imports|urgent-authorized-projects|urgent-other\", namespace!~\"pubsubbeat\"}\n      /\n      kube_horizontalpodautoscaler_spec_max_replicas:labeled{type=\"thanos\", shard!~\"database-throttled|elasticsearch|gitaly-throttled|imports|urgent-authorized-projects|urgent-other\", namespace!~\"pubsubbeat\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -15378,7 +16157,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, fqdn) (\n  clamp_min(\n    clamp_max(\n      instance:node_memory_utilization:ratio{type=\"thanos\"} or instance:node_memory_utilisation:ratio{type=\"thanos\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn) (\n  clamp_min(\n    clamp_max(\n      instance:node_memory_utilization:ratio{type=\"thanos\"} or instance:node_memory_utilisation:ratio{type=\"thanos\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -15572,7 +16351,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, fqdn, instance) (\n  clamp_min(\n    clamp_max(\n      max_over_time(node_nf_conntrack_entries{type=\"thanos\"}[1m])\n      /\n      node_nf_conntrack_entries_limit{type=\"thanos\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn, instance) (\n  clamp_min(\n    clamp_max(\n      max_over_time(node_nf_conntrack_entries{type=\"thanos\"}[1m])\n      /\n      node_nf_conntrack_entries_limit{type=\"thanos\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -15766,7 +16545,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, fqdn, shard) (\n  clamp_min(\n    clamp_max(\n      avg without (cpu) (rate(node_schedstat_waiting_seconds_total{type=\"thanos\"}[1h]))\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn, shard) (\n  clamp_min(\n    clamp_max(\n      avg without (cpu) (rate(node_schedstat_waiting_seconds_total{type=\"thanos\"}[1h]))\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -15960,7 +16739,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, job, instance) (\n  clamp_min(\n    clamp_max(\n      (\n        process_open_fds{type=\"thanos\"}\n        /\n        process_max_fds{type=\"thanos\"}\n      )\n      or\n      (\n        ruby_file_descriptors{type=\"thanos\"}\n        /\n        ruby_process_max_fds{type=\"thanos\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, job, instance) (\n  clamp_min(\n    clamp_max(\n      (\n        process_open_fds{type=\"thanos\"}\n        /\n        process_max_fds{type=\"thanos\"}\n      )\n      or\n      (\n        ruby_file_descriptors{type=\"thanos\"}\n        /\n        ruby_process_max_fds{type=\"thanos\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -16154,7 +16933,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard) (\n  clamp_min(\n    clamp_max(\n      1 - avg by (environment, tier, type, stage, shard) (\n        rate(node_cpu_seconds_total{mode=\"idle\", type=\"thanos\"}[5m])\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, shard) (\n  clamp_min(\n    clamp_max(\n      1 - avg by (environment, tier, type, stage, shard, shard) (\n        rate(node_cpu_seconds_total{mode=\"idle\", type=\"thanos\"}[5m])\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -16348,7 +17127,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, fqdn) (\n  clamp_min(\n    clamp_max(\n      avg without(cpu, mode) (1 - rate(node_cpu_seconds_total{mode=\"idle\", type=\"thanos\"}[5m]))\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn) (\n  clamp_min(\n    clamp_max(\n      avg without(cpu, mode) (1 - rate(node_cpu_seconds_total{mode=\"idle\", type=\"thanos\"}[5m]))\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 3,
@@ -16452,7 +17231,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 151,
+      "id": 158,
       "panels": [
         {
           "colors": [
@@ -16473,7 +17252,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 152,
+          "id": 159,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -16586,7 +17365,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 153,
+          "id": 160,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -16697,7 +17476,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 154,
+          "id": 161,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -16802,7 +17581,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 155,
+      "id": 162,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -16869,5 +17648,5 @@
   "timezone": "utc",
   "title": "thanos: Overview",
   "uid": "thanos-main",
-  "version": 79
+  "version": 82
 }
