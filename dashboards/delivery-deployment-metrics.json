@@ -1,10 +1,4 @@
 {
-  "__inputs": [
-
-  ],
-  "__requires": [
-
-  ],
   "annotations": {
     "list": [
       {
@@ -51,8 +45,8 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3884475618 at Mon Mar  6 22:27:51 UTC 2023",
-  "editable": false,
+  "description": "Uploaded by vglafirov at Mon Mar  6 16:12:41 UTC 2023",
+  "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
   "hideControls": false,
@@ -64,36 +58,35 @@
     {
       "aliasColors": {
       },
-      "bars": false,
+      "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
+      "datasource": null,
       "decimals": 0,
-      "description": "",
-      "fill": 0,
+      "description": "Shows the time it took MR from the merge to production",
+      "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 15,
-        "w": 18,
+        "h": 12,
+        "w": 16,
         "x": 0,
-        "y": 0
+        "y": 1
       },
-      "id": 3031979919,
+      "id": 2,
       "legend": {
-        "alignAsTable": true,
+        "alignAsTable": false,
         "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
+        "current": false,
+        "max": false,
+        "min": false,
         "rightSide": false,
         "show": true,
         "sideWidth": null,
         "total": false,
-        "values": true
+        "values": false
       },
-      "lines": true,
-      "linewidth": 2,
+      "lines": false,
+      "linewidth": 1,
       "links": [
 
       ],
@@ -104,50 +97,18 @@
       "renderer": "flot",
       "repeat": null,
       "seriesOverrides": [
-        {
-          "alias": "Max Surge",
-          "color": "#FF9830",
-          "fill": 1,
-          "stack": false
-        },
-        {
-          "alias": "50% Alerting Threshold for Max Surge",
-          "color": "#FF9830",
-          "dashLength": 2,
-          "dashes": true,
-          "fill": 2,
-          "spaceLength": 1,
-          "stack": false
-        }
+
       ],
       "spaceLength": 10,
-      "stableId": "containers-waiting",
-      "stack": true,
+      "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (reason) (\n  kube_pod_container_status_waiting_reason:labeled{\n    env=\"$environment\",\n    stage=\"$stage\",\n    type=\"$type\",\n    cluster=\"$cluster\"\n  }\n)\n",
+          "expr": "delivery_deployment_merge_request_lead_time_seconds{deployment_id=\"$deployment\"}",
           "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{reason}}",
+          "intervalFactor": 2,
+          "legendFormat": "{{mr_id}}",
           "refId": "A"
-        },
-        {
-          "expr": "kube_deployment_spec_strategy_rollingupdate_max_surge:labeled{\n  env=\"$environment\",\n  stage=\"$stage\",\n  type=\"$type\",\n  cluster=\"$cluster\"\n}\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "Max Surge",
-          "refId": "B"
-        },
-        {
-          "expr": "kube_deployment_spec_strategy_rollingupdate_max_surge:labeled{\n  env=\"$environment\",\n  stage=\"$stage\",\n  type=\"$type\",\n  cluster=\"$cluster\"\n} * 0.5\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "50% Alerting Threshold for Max Surge",
-          "refId": "C"
         }
       ],
       "thresholds": [
@@ -155,10 +116,10 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Containers Waiting",
+      "title": "Merge requests lead time",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "type": "graph",
@@ -173,36 +134,24 @@
       },
       "yaxes": [
         {
-          "format": "short",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
+          "decimals": 0,
           "format": "short",
           "label": null,
           "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
         }
       ]
-    },
-    {
-      "content": "### Container Waiting Reasons\n\nThis shows reasons why containers are waiting to start. At a maximum, the `Max Surge` value\nwill limit the maximum number of containers that are waiting to start. The `KubeContainersWaitingInError`\nwhen the number of containers that are waiting to start for reasons other than `ContainerCreating` is\nat 50% of the `Max Surge` value.\n\nSee https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/kube/kubernetes.md#alerts for more details.\n",
-      "datasource": null,
-      "gridPos": {
-        "h": 15,
-        "w": 6,
-        "x": 18,
-        "y": 0
-      },
-      "id": 3,
-      "mode": "markdown",
-      "title": "Container Waiting Reasons",
-      "type": "text"
     },
     {
       "content": "Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards)\n",
@@ -213,7 +162,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 4,
+      "id": 3,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -227,9 +176,7 @@
   "style": "light",
   "tags": [
     "managed",
-    "alerts",
-    "alert-target",
-    "kube"
+    "delivery"
   ],
   "templating": {
     "list": [
@@ -279,33 +226,6 @@
       {
         "allValue": null,
         "current": {
-          "text": "web",
-          "value": "web"
-        },
-        "datasource": "$PROMETHEUS_DS",
-        "hide": 0,
-        "includeAll": false,
-        "label": null,
-        "multi": false,
-        "name": "type",
-        "options": [
-
-        ],
-        "query": "label_values(gitlab_service_ops:rate{environment=\"$environment\"}, type)",
-        "refresh": 1,
-        "regex": "",
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tags": [
-
-        ],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": null,
-        "current": {
           "text": "main",
           "value": "main"
         },
@@ -335,22 +255,20 @@
       {
         "allValue": null,
         "current": {
-          "text": "gprd-gitlab-gke ",
-          "value": "gprd-gitlab-gke "
         },
         "datasource": "$PROMETHEUS_DS",
         "hide": 0,
         "includeAll": false,
-        "label": null,
+        "label": "Deployment",
         "multi": false,
-        "name": "cluster",
+        "name": "deployment",
         "options": [
 
         ],
-        "query": "label_values(kube_pod_container_info{environment=\"$environment\"}, cluster)",
-        "refresh": 1,
+        "query": "label_values(deployment_id)",
+        "refresh": 2,
         "regex": "",
-        "sort": 1,
+        "sort": 0,
         "tagValuesQuery": "",
         "tags": [
 
@@ -362,8 +280,8 @@
     ]
   },
   "time": {
-    "from": "now-6h/m",
-    "to": "now/m"
+    "from": "now-1d",
+    "to": "now"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -386,7 +304,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "alerts: Containers Waiting",
-  "uid": "alerts-kube_containers_waiting",
-  "version": 1579
+  "title": "delivery: deployment-metrics",
+  "uid": "delivery-deployment_metrics",
+  "version": 1
 }
