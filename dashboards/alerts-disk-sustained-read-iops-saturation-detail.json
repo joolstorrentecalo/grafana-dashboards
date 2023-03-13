@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3918839713 at Sun Mar 12 23:42:24 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3918925111 at Mon Mar 13 00:15:43 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -126,7 +126,7 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
-      "description": "Disk sustained read throughput utilization per node.\n Lower is better.",
+      "description": "Disk sustained read IOPS utilization per node.\n Lower is better.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -135,7 +135,7 @@
         "x": 0,
         "y": 0
       },
-      "id": 3120931940,
+      "id": 3942129027,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -219,12 +219,12 @@
         }
       ],
       "spaceLength": 10,
-      "stableId": "saturation-disk_sustained_read_throughput",
+      "stableId": "saturation-disk_sustained_read_iops",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn, device) (\n  clamp_min(\n    clamp_max(\n      rate(node_disk_read_bytes_total{device!=\"sda\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}[20m])\n      /\n      node_disk_max_read_bytes_seconds{device!=\"sda\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn, device) (\n  clamp_min(\n    clamp_max(\n      rate(node_disk_reads_completed_total{device!=\"sda\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}[20m])\n      /\n      node_disk_max_read_iops{device!=\"sda\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -232,7 +232,7 @@
           "refId": "A"
         },
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"disk_sustained_read_throughput\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"disk_sustained_read_iops\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -240,7 +240,7 @@
           "refId": "B"
         },
         {
-          "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"disk_sustained_read_throughput\"}\n)\n",
+          "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"disk_sustained_read_iops\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -248,7 +248,7 @@
           "refId": "C"
         },
         {
-          "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"disk_sustained_read_throughput\"}\n)\n",
+          "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"disk_sustained_read_iops\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -256,7 +256,7 @@
           "refId": "D"
         },
         {
-          "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"disk_sustained_read_throughput\"}) by (component)\n",
+          "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"disk_sustained_read_iops\"}) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -264,7 +264,7 @@
           "refId": "E"
         },
         {
-          "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"disk_sustained_read_throughput\"}) by (component)\n",
+          "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"disk_sustained_read_iops\"}) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -277,7 +277,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "disk_sustained_read_throughput component saturation: Disk Sustained Read Throughput Utilization per Node",
+      "title": "disk_sustained_read_iops component saturation: Disk Sustained Read IOPS Utilization per Node",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -313,7 +313,7 @@
       ]
     },
     {
-      "content": "## Disk Sustained Read Throughput Utilization per Node\n\nDisk sustained read throughput utilization per node.\n\n\n## What to do from here here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=disk_sustained_read_throughput)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+disk_sustained_read_throughput&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
+      "content": "## Disk Sustained Read IOPS Utilization per Node\n\nDisk sustained read IOPS utilization per node.\n\n\n## What to do from here here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=disk_sustained_read_iops)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+disk_sustained_read_iops&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
       "datasource": null,
       "gridPos": {
         "h": 14,
@@ -548,7 +548,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "alerts: disk_sustained_read_throughput: Saturation Detail",
-  "uid": "alerts-sat_disk_sus_read_throughput",
-  "version": 3527
+  "title": "alerts: disk_sustained_read_iops: Saturation Detail",
+  "uid": "alerts-sat_disk_sus_read_iops",
+  "version": 3528
 }
