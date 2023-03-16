@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3942320628 at Wed Mar 15 18:55:02 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3945215549 at Thu Mar 16 07:20:22 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -1476,7 +1476,7 @@
       ]
     },
     {
-      "content": "In short: problems with autoscaling will reduce (even totally) the capacity of our Runners.\n\n**It's recommended to review the graphs after limiting the shard variable to only\nthe part of Runners that we want to analyse.** Otherwise the number of different lines\nmay be overwhelming. Please also remember that **different shards have different autosacling\nsettings**, where the `shared` one is the most outstanding at it creates a VM dedicated for\nevery job and removes it just after the job is finished.\n\nKnown problem indicators:\n- high number of VMs in `creating` state for a longer period,\n- unnatural shape of the `creating` state VMs line,\n- `idle` VMs value constantly near `0`,\n- VM operations going up-and-down in a sinewave-like shape,\n- VMs creation timing increased above the usual average,\n- exceeding GCP quotas.\n\nAutoscaling problems are usually caused by three possible reasons:\n- Exceeding GCP quotas (especially the API ones). For that go to the GCP console\n  to projects where autoscaled VMs are created for the shard (note that we're currently\n  spliting shards between multiple projects **so this needs to be checked in all of them**)\n  and check if we're not exceeding the API quotas. Especially the `read requests` and\n  `operation read requests`.\n- Bug in configuration of autoscaling. Wrong configuration may effect with Docker Machine not\n  being able to create the VM or VM being not accessible after it was created. Double check\n  if there were any changes made in Runner Manager's `config.toml` file, in the `[docker.machine]`\n  section.\n- Docker Machine bug. Very rare, as we've probably already caught all of them, but to be sure\n  check if there was no updates of used Docker Machine version just before the incideent happened.\n",
+      "content": "In short: problems with autoscaling will reduce (even totally) the capacity of our Runners.\n\n**It's recommended to review the graphs after limiting the shard variable to only\nthe part of Runners that we want to analyse.** Otherwise the number of different lines\nmay be overwhelming. Please also remember that **different shards have different autosacling\nsettings**, where the `shared` one is the most outstanding at it creates a VM dedicated for\nevery job and removes it just after the job is finished.\n\nKnown problem indicators:\n- high number of VMs in `creating` state for a longer period,\n- unnatural shape of the `creating` state VMs line,\n- `idle` VMs value constantly near `0`,\n- VM operations going up-and-down in a sinewave-like shape,\n- VMs creation timing increased above the usual average,\n- exceeding GCP quotas.\n\nAutoscaling problems are usually caused by three possible reasons:\n- Exceeding GCP quotas (especially the API ones). For that go to the GCP console\n  to projects where autoscaled VMs are created for the shard (note that we're currently\n  spliting shards between multiple projects **so this needs to be checked in all of them**)\n  and check if we're not exceeding the API quotas. Especially the `read requests` and\n  `operation read requests`.\n- Bug in configuration of autoscaling. Wrong configuration may effect with Docker Machine not\n  being able to create the VM or VM being not accessible after it was created. Double check\n  if there were any changes made in Runner Manager's `config.toml` file, in the `[docker.machine]`\n  section.\n- Docker Machine bug. Very rare, as we've probably already caught all of them, but to be sure\n  check if there was no updates of used Docker Machine version just before the incideent happened.\n\n**We're currently in the process of moving to a new autoscaling mechanism.** For now there are no\nknown guidelines as to how to work with it and what to review in case of troubles. We will be\nudpating this description after getting some more experience with using that new method.\n",
       "datasource": null,
       "gridPos": {
         "h": 7,
@@ -2008,6 +2008,925 @@
           "show": false
         }
       ]
+    },
+    {
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "links": [
+
+          ],
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 5000
+      },
+      "id": 19,
+      "links": [
+
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "sum by(shard) (fleeting_provisioner_max_instances{environment=~\"$environment\",stage=~\"$stage\",instance=~\"${runner_manager:pipe}\"})",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1d",
+          "intervalFactor": 1,
+          "legendFormat": "{{shard}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Fleeting max instances",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 6000
+      },
+      "id": 20,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by(shard) (\n    fleeting_taskscaler_tasks{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}\n)\n/\nsum by(shard) (\n          fleeting_provisioner_max_instances{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}\n          *\n          fleeting_taskscaler_max_tasks_per_instance{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "{{shard}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Taskscaler tasks saturation",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 6000
+      },
+      "id": 21,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by(shard) (\n    fleeting_provisioner_instances{state=~\"running|deleting\", environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}\n)\n/\nsum by(shard) (\n    fleeting_provisioner_max_instances{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "{{shard}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Fleeting instances saturation",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 4.8,
+        "x": 0,
+        "y": 7000
+      },
+      "id": 22,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by(shard, state) (\n  fleeting_provisioner_instances{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "{{shard}}: {{state}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Fleeting instances states",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 4.8,
+        "x": 4.8,
+        "y": 7000
+      },
+      "id": 23,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by(shard) (\n  increase(\n    fleeting_provisioner_missed_updates_total{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__interval]\n  )\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "{{shard}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Fleeting missed updates rate",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "cards": {
+        "cardPadding": 1,
+        "cardRound": 2
+      },
+      "color": {
+        "cardColor": "#96D98D",
+        "colorScale": "sqrt",
+        "exponent": 0.25,
+        "mode": "opacity"
+      },
+      "dataFormat": "tsbuckets",
+      "datasource": "$PROMETHEUS_DS",
+      "gridPos": {
+        "h": 8,
+        "w": 4.8,
+        "x": 9.6,
+        "y": 7000
+      },
+      "heatmap": {
+      },
+      "hideZeroBuckets": false,
+      "highlightCards": true,
+      "id": 24,
+      "legend": {
+        "show": false
+      },
+      "targets": [
+        {
+          "dsType": "influxdb",
+          "expr": "sum by (le) (\n  increase(fleeting_provisioner_instance_creation_time_seconds_bucket{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__interval])\n)\n",
+          "format": "heatmap",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "interval": "$__interval",
+          "intervalFactor": 2,
+          "legendFormat": "{{le}}",
+          "orderByTime": "ASC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+
+                ],
+                "type": "mean"
+              }
+            ]
+          ]
+        }
+      ],
+      "title": "Fleeting instance creation timing",
+      "tooltip": {
+        "show": true,
+        "showHistogram": true
+      },
+      "tooltipDecimals": 3,
+      "type": "heatmap",
+      "xAxis": {
+        "show": true
+      },
+      "xBucketNumber": null,
+      "xBucketSize": null,
+      "yAxis": {
+        "decimals": 2,
+        "format": "s",
+        "show": true,
+        "splitFactor": null
+      },
+      "yBucketBound": "auto"
+    },
+    {
+      "cards": {
+        "cardPadding": 1,
+        "cardRound": 2
+      },
+      "color": {
+        "cardColor": "#96D98D",
+        "colorScale": "sqrt",
+        "exponent": 0.25,
+        "mode": "opacity"
+      },
+      "dataFormat": "tsbuckets",
+      "datasource": "$PROMETHEUS_DS",
+      "gridPos": {
+        "h": 8,
+        "w": 4.8,
+        "x": 14.399999999999999,
+        "y": 7000
+      },
+      "heatmap": {
+      },
+      "hideZeroBuckets": false,
+      "highlightCards": true,
+      "id": 25,
+      "legend": {
+        "show": false
+      },
+      "targets": [
+        {
+          "dsType": "influxdb",
+          "expr": "sum by (le) (\n  increase(fleeting_provisioner_instance_is_running_time_seconds_bucket{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__interval])\n)\n",
+          "format": "heatmap",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "interval": "$__interval",
+          "intervalFactor": 2,
+          "legendFormat": "{{le}}",
+          "orderByTime": "ASC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+
+                ],
+                "type": "mean"
+              }
+            ]
+          ]
+        }
+      ],
+      "title": "Fleeting instance is_running timing",
+      "tooltip": {
+        "show": true,
+        "showHistogram": true
+      },
+      "tooltipDecimals": 3,
+      "type": "heatmap",
+      "xAxis": {
+        "show": true
+      },
+      "xBucketNumber": null,
+      "xBucketSize": null,
+      "yAxis": {
+        "decimals": 2,
+        "format": "s",
+        "show": true,
+        "splitFactor": null
+      },
+      "yBucketBound": "auto"
+    },
+    {
+      "cards": {
+        "cardPadding": 1,
+        "cardRound": 2
+      },
+      "color": {
+        "cardColor": "#96D98D",
+        "colorScale": "sqrt",
+        "exponent": 0.25,
+        "mode": "opacity"
+      },
+      "dataFormat": "tsbuckets",
+      "datasource": "$PROMETHEUS_DS",
+      "gridPos": {
+        "h": 8,
+        "w": 4.8,
+        "x": 19.2,
+        "y": 7000
+      },
+      "heatmap": {
+      },
+      "hideZeroBuckets": false,
+      "highlightCards": true,
+      "id": 26,
+      "legend": {
+        "show": false
+      },
+      "targets": [
+        {
+          "dsType": "influxdb",
+          "expr": "sum by (le) (\n  increase(fleeting_provisioner_instance_deletion_time_seconds_bucket{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__interval])\n)\n",
+          "format": "heatmap",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "interval": "$__interval",
+          "intervalFactor": 2,
+          "legendFormat": "{{le}}",
+          "orderByTime": "ASC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+
+                ],
+                "type": "mean"
+              }
+            ]
+          ]
+        }
+      ],
+      "title": "Fleeting instance deletion timing",
+      "tooltip": {
+        "show": true,
+        "showHistogram": true
+      },
+      "tooltipDecimals": 3,
+      "type": "heatmap",
+      "xAxis": {
+        "show": true
+      },
+      "xBucketNumber": null,
+      "xBucketSize": null,
+      "yAxis": {
+        "decimals": 2,
+        "format": "s",
+        "show": true,
+        "splitFactor": null
+      },
+      "yBucketBound": "auto"
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8000
+      },
+      "id": 27,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by(shard, operation) (\n  increase(\n    fleeting_taskscaler_task_operations_total{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__interval]\n  )\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "{{shard}}: {{operation}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Taskscaler operations rate",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8000
+      },
+      "id": 28,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by(shard, state) (\n    fleeting_taskscaler_tasks{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "{{shard}}: {{state}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Taskscaler tasks",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
     }
   ],
   "refresh": "",
@@ -2279,5 +3198,5 @@
   "timezone": "utc",
   "title": "ci-runners: Incident Support: autoscaling",
   "uid": "ci-runners-incident-autoscaling",
-  "version": 1995
+  "version": 1998
 }
