@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3918839713 at Sun Mar 12 23:44:33 UTC 2023",
+  "description": "Uploaded by bvl at Mon 20 Mar 2023 02:16:10 PM UTC",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -11112,335 +11112,6 @@
               "show": false
             }
           ]
-        },
-        {
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 2,
-          "description": "",
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 6,
-            "x": 0,
-            "y": 30
-          },
-          "id": 105,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 2,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "histogram_quantile(\n  0.900000,\n  sum by (le,migration_path) (\n    rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",migration_path!=\"\",route!~\"/v2/{name}/blobs/uploads/{uuid}|/v2/{name}/manifests/{reference}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n  )\n)\n > 0",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 2,
-              "legendFormat": "p90 {{migration_path}}",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [
-            {
-              "colorMode": "custom",
-              "fill": true,
-              "fillColor": "rgba(242, 73, 92, 0.5)",
-              "line": false,
-              "op": "gt",
-              "value": 25,
-              "yaxis": "left"
-            },
-            {
-              "colorMode": "custom",
-              "fill": true,
-              "fillColor": "rgba(242, 73, 92, 0.25)",
-              "line": false,
-              "op": "gt",
-              "value": 2.5,
-              "yaxis": "left"
-            }
-          ],
-          "title": "Estimated p90 registry_server Latency - per migration_path",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "s",
-              "label": "Duration",
-              "logBase": 10,
-              "min": 0.01,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
-        },
-        {
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 2,
-          "description": "Attributes apdex downscoring",
-          "fill": 4,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 6,
-            "x": 6,
-            "y": 30
-          },
-          "id": 106,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "alias": "/.*/",
-              "transform": "negative-Y"
-            }
-          ],
-          "spaceLength": 10,
-          "stack": true,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "clamp_min(clamp_max((\n  (\n    sum by (migration_path) (\n  rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"+Inf\",migration_path!=\"\",route!~\"/v2/{name}/blobs/uploads/{uuid}|/v2/{name}/manifests/{reference}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (migration_path) (\n    rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"2.5\",migration_path!=\"\",route!~\"/v2/{name}/blobs/uploads/{uuid}|/v2/{name}/manifests/{reference}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n  )\n  +\n  sum by (migration_path) (\n    rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"25\",migration_path!=\"\",route!~\"/v2/{name}/blobs/uploads/{uuid}|/v2/{name}/manifests/{reference}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(migration_path) group_left()\n  (\n    sum by () (\n  rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"+Inf\",migration_path!=\"\",route!~\"/v2/{name}/blobs/uploads/{uuid}|/v2/{name}/manifests/{reference}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 3,
-              "legendFormat": "{{migration_path}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Apdex attribution for registry_server Latency - per migration_path",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "percentunit",
-              "label": "Percent",
-              "logBase": 1,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
-        },
-        {
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 2,
-          "description": "",
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 6,
-            "x": 12,
-            "y": 30
-          },
-          "id": 107,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 2,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum by (migration_path) (\n  rate(registry_http_requests_total{code=~\"5..\",env=\"$environment\",environment=\"$environment\",migration_path!=\"\",stage=\"$stage\",type=\"registry\"}[$__interval])\n)\n > 0",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 2,
-              "legendFormat": "{{migration_path}}",
-              "refId": "A"
-            }
-          ],
-          "title": "registry_server Errors - per migration_path",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": "Errors",
-              "logBase": 1,
-              "min": 0,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
-        },
-        {
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 0,
-          "description": "",
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 6,
-            "x": 18,
-            "y": 30
-          },
-          "id": 108,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 2,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum by (migration_path) (\n  rate(registry_http_requests_total{env=\"$environment\",environment=\"$environment\",migration_path!=\"\",stage=\"$stage\",type=\"registry\"}[$__interval])\n)\n > 0",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 2,
-              "legendFormat": "{{migration_path}}",
-              "refId": "A"
-            }
-          ],
-          "title": "registry_server RPS - per migration_path",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": "Requests per Second",
-              "logBase": 1,
-              "min": 0,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
         }
       ],
       "repeat": null,
@@ -11460,7 +11131,7 @@
         "x": 0,
         "y": 150
       },
-      "id": 109,
+      "id": 105,
       "panels": [
         {
           "bars": false,
@@ -11477,7 +11148,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 110,
+          "id": 106,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11573,7 +11244,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 111,
+          "id": 107,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11649,7 +11320,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 112,
+          "id": 108,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11745,7 +11416,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 113,
+          "id": 109,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11826,7 +11497,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 114,
+          "id": 110,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11886,259 +11557,6 @@
               "show": false
             }
           ]
-        },
-        {
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 2,
-          "description": "",
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 8,
-            "x": 0,
-            "y": 20
-          },
-          "id": 115,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 2,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "histogram_quantile(\n  0.900000,\n  sum by (le,migration_path) (\n    rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",method=~\"delete\",migration_path!=\"\",route=\"/v2/{name}/blobs/uploads/{uuid}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n  )\n)\n > 0",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 2,
-              "legendFormat": "p90 {{migration_path}}",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [
-            {
-              "colorMode": "custom",
-              "fill": true,
-              "fillColor": "rgba(242, 73, 92, 0.5)",
-              "line": false,
-              "op": "gt",
-              "value": 5,
-              "yaxis": "left"
-            },
-            {
-              "colorMode": "custom",
-              "fill": true,
-              "fillColor": "rgba(242, 73, 92, 0.25)",
-              "line": false,
-              "op": "gt",
-              "value": 2.5,
-              "yaxis": "left"
-            }
-          ],
-          "title": "Estimated p90 server_route_blob_upload_uuid_deletes Latency - per migration_path",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "s",
-              "label": "Duration",
-              "logBase": 10,
-              "min": 0.01,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
-        },
-        {
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 2,
-          "description": "Attributes apdex downscoring",
-          "fill": 4,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 8,
-            "x": 8,
-            "y": 20
-          },
-          "id": 116,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "alias": "/.*/",
-              "transform": "negative-Y"
-            }
-          ],
-          "spaceLength": 10,
-          "stack": true,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "clamp_min(clamp_max((\n  (\n    sum by (migration_path) (\n  rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"+Inf\",method=~\"delete\",migration_path!=\"\",route=\"/v2/{name}/blobs/uploads/{uuid}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (migration_path) (\n    rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"2.5\",method=~\"delete\",migration_path!=\"\",route=\"/v2/{name}/blobs/uploads/{uuid}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n  )\n  +\n  sum by (migration_path) (\n    rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"5\",method=~\"delete\",migration_path!=\"\",route=\"/v2/{name}/blobs/uploads/{uuid}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(migration_path) group_left()\n  (\n    sum by () (\n  rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"+Inf\",method=~\"delete\",migration_path!=\"\",route=\"/v2/{name}/blobs/uploads/{uuid}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 3,
-              "legendFormat": "{{migration_path}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Apdex attribution for server_route_blob_upload_uuid_deletes Latency - per migration_path",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "percentunit",
-              "label": "Percent",
-              "logBase": 1,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
-        },
-        {
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 0,
-          "description": "",
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 8,
-            "x": 16,
-            "y": 20
-          },
-          "id": 117,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 2,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum by (migration_path) (\n  rate(registry_http_request_duration_seconds_count{env=\"$environment\",environment=\"$environment\",method=~\"delete\",migration_path!=\"\",route=\"/v2/{name}/blobs/uploads/{uuid}\",stage=\"$stage\"}[$__interval])\n)\n > 0",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 2,
-              "legendFormat": "{{migration_path}}",
-              "refId": "A"
-            }
-          ],
-          "title": "server_route_blob_upload_uuid_deletes RPS - per migration_path",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": "Requests per Second",
-              "logBase": 1,
-              "min": 0,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
         }
       ],
       "repeat": null,
@@ -12158,7 +11576,7 @@
         "x": 0,
         "y": 160
       },
-      "id": 118,
+      "id": 111,
       "panels": [
         {
           "bars": false,
@@ -12175,7 +11593,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 119,
+          "id": 112,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12271,7 +11689,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 120,
+          "id": 113,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12347,7 +11765,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 121,
+          "id": 114,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12443,7 +11861,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 122,
+          "id": 115,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12524,7 +11942,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 123,
+          "id": 116,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12584,259 +12002,6 @@
               "show": false
             }
           ]
-        },
-        {
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 2,
-          "description": "",
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 8,
-            "x": 0,
-            "y": 20
-          },
-          "id": 124,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 2,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "histogram_quantile(\n  0.900000,\n  sum by (le,migration_path) (\n    rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",method=~\"get|head\",migration_path!=\"\",route=\"/v2/{name}/blobs/uploads/{uuid}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n  )\n)\n > 0",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 2,
-              "legendFormat": "p90 {{migration_path}}",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [
-            {
-              "colorMode": "custom",
-              "fill": true,
-              "fillColor": "rgba(242, 73, 92, 0.5)",
-              "line": false,
-              "op": "gt",
-              "value": 2.5,
-              "yaxis": "left"
-            },
-            {
-              "colorMode": "custom",
-              "fill": true,
-              "fillColor": "rgba(242, 73, 92, 0.25)",
-              "line": false,
-              "op": "gt",
-              "value": 1,
-              "yaxis": "left"
-            }
-          ],
-          "title": "Estimated p90 server_route_blob_upload_uuid_reads Latency - per migration_path",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "s",
-              "label": "Duration",
-              "logBase": 10,
-              "min": 0.01,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
-        },
-        {
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 2,
-          "description": "Attributes apdex downscoring",
-          "fill": 4,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 8,
-            "x": 8,
-            "y": 20
-          },
-          "id": 125,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "alias": "/.*/",
-              "transform": "negative-Y"
-            }
-          ],
-          "spaceLength": 10,
-          "stack": true,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "clamp_min(clamp_max((\n  (\n    sum by (migration_path) (\n  rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"+Inf\",method=~\"get|head\",migration_path!=\"\",route=\"/v2/{name}/blobs/uploads/{uuid}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (migration_path) (\n    rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"1\",method=~\"get|head\",migration_path!=\"\",route=\"/v2/{name}/blobs/uploads/{uuid}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n  )\n  +\n  sum by (migration_path) (\n    rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"2.5\",method=~\"get|head\",migration_path!=\"\",route=\"/v2/{name}/blobs/uploads/{uuid}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(migration_path) group_left()\n  (\n    sum by () (\n  rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"+Inf\",method=~\"get|head\",migration_path!=\"\",route=\"/v2/{name}/blobs/uploads/{uuid}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 3,
-              "legendFormat": "{{migration_path}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Apdex attribution for server_route_blob_upload_uuid_reads Latency - per migration_path",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "percentunit",
-              "label": "Percent",
-              "logBase": 1,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
-        },
-        {
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 0,
-          "description": "",
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 8,
-            "x": 16,
-            "y": 20
-          },
-          "id": 126,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 2,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum by (migration_path) (\n  rate(registry_http_request_duration_seconds_count{env=\"$environment\",environment=\"$environment\",method=~\"get|head\",migration_path!=\"\",route=\"/v2/{name}/blobs/uploads/{uuid}\",stage=\"$stage\"}[$__interval])\n)\n > 0",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 2,
-              "legendFormat": "{{migration_path}}",
-              "refId": "A"
-            }
-          ],
-          "title": "server_route_blob_upload_uuid_reads RPS - per migration_path",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": "Requests per Second",
-              "logBase": 1,
-              "min": 0,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
         }
       ],
       "repeat": null,
@@ -12856,7 +12021,7 @@
         "x": 0,
         "y": 170
       },
-      "id": 127,
+      "id": 117,
       "panels": [
         {
           "bars": false,
@@ -12873,7 +12038,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 128,
+          "id": 118,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12969,7 +12134,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 129,
+          "id": 119,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13045,7 +12210,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 130,
+          "id": 120,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13141,7 +12306,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 131,
+          "id": 121,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13222,7 +12387,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 132,
+          "id": 122,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13282,259 +12447,6 @@
               "show": false
             }
           ]
-        },
-        {
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 2,
-          "description": "",
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 8,
-            "x": 0,
-            "y": 20
-          },
-          "id": 133,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 2,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "histogram_quantile(\n  0.900000,\n  sum by (le,migration_path) (\n    rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",method=~\"put|patch|post\",migration_path!=\"\",route=\"/v2/{name}/blobs/uploads/{uuid}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n  )\n)\n > 0",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 2,
-              "legendFormat": "p90 {{migration_path}}",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [
-            {
-              "colorMode": "custom",
-              "fill": true,
-              "fillColor": "rgba(242, 73, 92, 0.5)",
-              "line": false,
-              "op": "gt",
-              "value": 60,
-              "yaxis": "left"
-            },
-            {
-              "colorMode": "custom",
-              "fill": true,
-              "fillColor": "rgba(242, 73, 92, 0.25)",
-              "line": false,
-              "op": "gt",
-              "value": 25,
-              "yaxis": "left"
-            }
-          ],
-          "title": "Estimated p90 server_route_blob_upload_uuid_writes Latency - per migration_path",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "s",
-              "label": "Duration",
-              "logBase": 10,
-              "min": 0.01,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
-        },
-        {
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 2,
-          "description": "Attributes apdex downscoring",
-          "fill": 4,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 8,
-            "x": 8,
-            "y": 20
-          },
-          "id": 134,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "alias": "/.*/",
-              "transform": "negative-Y"
-            }
-          ],
-          "spaceLength": 10,
-          "stack": true,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "clamp_min(clamp_max((\n  (\n    sum by (migration_path) (\n  rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"+Inf\",method=~\"put|patch|post\",migration_path!=\"\",route=\"/v2/{name}/blobs/uploads/{uuid}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (migration_path) (\n    rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"25\",method=~\"put|patch|post\",migration_path!=\"\",route=\"/v2/{name}/blobs/uploads/{uuid}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n  )\n  +\n  sum by (migration_path) (\n    rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"60\",method=~\"put|patch|post\",migration_path!=\"\",route=\"/v2/{name}/blobs/uploads/{uuid}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(migration_path) group_left()\n  (\n    sum by () (\n  rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"+Inf\",method=~\"put|patch|post\",migration_path!=\"\",route=\"/v2/{name}/blobs/uploads/{uuid}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 3,
-              "legendFormat": "{{migration_path}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Apdex attribution for server_route_blob_upload_uuid_writes Latency - per migration_path",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "percentunit",
-              "label": "Percent",
-              "logBase": 1,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
-        },
-        {
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 0,
-          "description": "",
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 8,
-            "x": 16,
-            "y": 20
-          },
-          "id": 135,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 2,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum by (migration_path) (\n  rate(registry_http_request_duration_seconds_count{env=\"$environment\",environment=\"$environment\",method=~\"put|patch|post\",migration_path!=\"\",route=\"/v2/{name}/blobs/uploads/{uuid}\",stage=\"$stage\"}[$__interval])\n)\n > 0",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 2,
-              "legendFormat": "{{migration_path}}",
-              "refId": "A"
-            }
-          ],
-          "title": "server_route_blob_upload_uuid_writes RPS - per migration_path",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": "Requests per Second",
-              "logBase": 1,
-              "min": 0,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
         }
       ],
       "repeat": null,
@@ -13554,7 +12466,7 @@
         "x": 0,
         "y": 180
       },
-      "id": 136,
+      "id": 123,
       "panels": [
         {
           "bars": false,
@@ -13571,7 +12483,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 137,
+          "id": 124,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13667,7 +12579,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 138,
+          "id": 125,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13743,7 +12655,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 139,
+          "id": 126,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13839,7 +12751,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 140,
+          "id": 127,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13920,7 +12832,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 141,
+          "id": 128,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13980,259 +12892,6 @@
               "show": false
             }
           ]
-        },
-        {
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 2,
-          "description": "",
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 8,
-            "x": 0,
-            "y": 20
-          },
-          "id": 142,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 2,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "histogram_quantile(\n  0.900000,\n  sum by (le,migration_path) (\n    rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",method=~\"get|head\",migration_path!=\"\",route=\"/v2/{name}/manifests/{reference}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n  )\n)\n > 0",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 2,
-              "legendFormat": "p90 {{migration_path}}",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [
-            {
-              "colorMode": "custom",
-              "fill": true,
-              "fillColor": "rgba(242, 73, 92, 0.5)",
-              "line": false,
-              "op": "gt",
-              "value": 0.5,
-              "yaxis": "left"
-            },
-            {
-              "colorMode": "custom",
-              "fill": true,
-              "fillColor": "rgba(242, 73, 92, 0.25)",
-              "line": false,
-              "op": "gt",
-              "value": 0.25,
-              "yaxis": "left"
-            }
-          ],
-          "title": "Estimated p90 server_route_manifest_reads Latency - per migration_path",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "s",
-              "label": "Duration",
-              "logBase": 10,
-              "min": 0.01,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
-        },
-        {
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 2,
-          "description": "Attributes apdex downscoring",
-          "fill": 4,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 8,
-            "x": 8,
-            "y": 20
-          },
-          "id": 143,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "alias": "/.*/",
-              "transform": "negative-Y"
-            }
-          ],
-          "spaceLength": 10,
-          "stack": true,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "clamp_min(clamp_max((\n  (\n    sum by (migration_path) (\n  rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"+Inf\",method=~\"get|head\",migration_path!=\"\",route=\"/v2/{name}/manifests/{reference}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (migration_path) (\n    rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"0.25\",method=~\"get|head\",migration_path!=\"\",route=\"/v2/{name}/manifests/{reference}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n  )\n  +\n  sum by (migration_path) (\n    rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"0.5\",method=~\"get|head\",migration_path!=\"\",route=\"/v2/{name}/manifests/{reference}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(migration_path) group_left()\n  (\n    sum by () (\n  rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"+Inf\",method=~\"get|head\",migration_path!=\"\",route=\"/v2/{name}/manifests/{reference}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 3,
-              "legendFormat": "{{migration_path}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Apdex attribution for server_route_manifest_reads Latency - per migration_path",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "percentunit",
-              "label": "Percent",
-              "logBase": 1,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
-        },
-        {
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 0,
-          "description": "",
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 8,
-            "x": 16,
-            "y": 20
-          },
-          "id": 144,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 2,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum by (migration_path) (\n  rate(registry_http_request_duration_seconds_count{env=\"$environment\",environment=\"$environment\",method=~\"get|head\",migration_path!=\"\",route=\"/v2/{name}/manifests/{reference}\",stage=\"$stage\"}[$__interval])\n)\n > 0",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 2,
-              "legendFormat": "{{migration_path}}",
-              "refId": "A"
-            }
-          ],
-          "title": "server_route_manifest_reads RPS - per migration_path",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": "Requests per Second",
-              "logBase": 1,
-              "min": 0,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
         }
       ],
       "repeat": null,
@@ -14252,7 +12911,7 @@
         "x": 0,
         "y": 190
       },
-      "id": 145,
+      "id": 129,
       "panels": [
         {
           "bars": false,
@@ -14269,7 +12928,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 146,
+          "id": 130,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14365,7 +13024,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 147,
+          "id": 131,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14441,7 +13100,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 148,
+          "id": 132,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14537,7 +13196,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 149,
+          "id": 133,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14618,7 +13277,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 150,
+          "id": 134,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14678,259 +13337,6 @@
               "show": false
             }
           ]
-        },
-        {
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 2,
-          "description": "",
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 8,
-            "x": 0,
-            "y": 20
-          },
-          "id": 151,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 2,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "histogram_quantile(\n  0.900000,\n  sum by (le,migration_path) (\n    rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",method=~\"put|delete|post|patch\",migration_path!=\"\",route=\"/v2/{name}/manifests/{reference}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n  )\n)\n > 0",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 2,
-              "legendFormat": "p90 {{migration_path}}",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [
-            {
-              "colorMode": "custom",
-              "fill": true,
-              "fillColor": "rgba(242, 73, 92, 0.5)",
-              "line": false,
-              "op": "gt",
-              "value": 2.5,
-              "yaxis": "left"
-            },
-            {
-              "colorMode": "custom",
-              "fill": true,
-              "fillColor": "rgba(242, 73, 92, 0.25)",
-              "line": false,
-              "op": "gt",
-              "value": 1,
-              "yaxis": "left"
-            }
-          ],
-          "title": "Estimated p90 server_route_manifest_writes Latency - per migration_path",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "s",
-              "label": "Duration",
-              "logBase": 10,
-              "min": 0.01,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
-        },
-        {
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 2,
-          "description": "Attributes apdex downscoring",
-          "fill": 4,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 8,
-            "x": 8,
-            "y": 20
-          },
-          "id": 152,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "alias": "/.*/",
-              "transform": "negative-Y"
-            }
-          ],
-          "spaceLength": 10,
-          "stack": true,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "clamp_min(clamp_max((\n  (\n    sum by (migration_path) (\n  rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"+Inf\",method=~\"put|delete|post|patch\",migration_path!=\"\",route=\"/v2/{name}/manifests/{reference}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (migration_path) (\n    rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"1\",method=~\"put|delete|post|patch\",migration_path!=\"\",route=\"/v2/{name}/manifests/{reference}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n  )\n  +\n  sum by (migration_path) (\n    rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"2.5\",method=~\"put|delete|post|patch\",migration_path!=\"\",route=\"/v2/{name}/manifests/{reference}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(migration_path) group_left()\n  (\n    sum by () (\n  rate(registry_http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"+Inf\",method=~\"put|delete|post|patch\",migration_path!=\"\",route=\"/v2/{name}/manifests/{reference}\",stage=\"$stage\",type=\"registry\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 3,
-              "legendFormat": "{{migration_path}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Apdex attribution for server_route_manifest_writes Latency - per migration_path",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "percentunit",
-              "label": "Percent",
-              "logBase": 1,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
-        },
-        {
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 0,
-          "description": "",
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 8,
-            "x": 16,
-            "y": 20
-          },
-          "id": 153,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 2,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum by (migration_path) (\n  rate(registry_http_request_duration_seconds_count{env=\"$environment\",environment=\"$environment\",method=~\"put|delete|post|patch\",migration_path!=\"\",route=\"/v2/{name}/manifests/{reference}\",stage=\"$stage\"}[$__interval])\n)\n > 0",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 2,
-              "legendFormat": "{{migration_path}}",
-              "refId": "A"
-            }
-          ],
-          "title": "server_route_manifest_writes RPS - per migration_path",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": "Requests per Second",
-              "logBase": 1,
-              "min": 0,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
         }
       ],
       "repeat": null,
@@ -14950,7 +13356,7 @@
         "x": 0,
         "y": 300
       },
-      "id": 154,
+      "id": 135,
       "panels": [
         {
           "aliasColors": {
@@ -14969,7 +13375,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 155,
+          "id": 136,
           "legend": {
             "alignAsTable": false,
             "avg": false,
@@ -15067,7 +13473,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 156,
+          "id": 137,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15163,7 +13569,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 157,
+          "id": 138,
           "legend": {
             "alignAsTable": false,
             "avg": false,
@@ -15272,7 +13678,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 158,
+          "id": 139,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15368,7 +13774,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 159,
+          "id": 140,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15466,7 +13872,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 160,
+          "id": 141,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15564,7 +13970,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 161,
+          "id": 142,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15662,7 +14068,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 162,
+          "id": 143,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15760,7 +14166,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 163,
+          "id": 144,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15858,7 +14264,7 @@
             "x": 12,
             "y": 40
           },
-          "id": 164,
+          "id": 145,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15956,7 +14362,7 @@
             "x": 0,
             "y": 50
           },
-          "id": 165,
+          "id": 146,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16071,7 +14477,7 @@
             "x": 12,
             "y": 50
           },
-          "id": 166,
+          "id": 147,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16186,7 +14592,7 @@
             "x": 0,
             "y": 60
           },
-          "id": 167,
+          "id": 148,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16301,7 +14707,7 @@
             "x": 12,
             "y": 60
           },
-          "id": 168,
+          "id": 149,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16417,7 +14823,7 @@
         "x": 0,
         "y": 400
       },
-      "id": 169,
+      "id": 150,
       "panels": [
         {
           "aliasColors": {
@@ -16436,7 +14842,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 170,
+          "id": 151,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16541,7 +14947,7 @@
             "x": 8,
             "y": 1
           },
-          "id": 171,
+          "id": 152,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16646,7 +15052,7 @@
             "x": 16,
             "y": 1
           },
-          "id": 172,
+          "id": 153,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -16762,7 +15168,7 @@
             "x": 0,
             "y": 9
           },
-          "id": 173,
+          "id": 154,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16860,7 +15266,7 @@
             "x": 12,
             "y": 9
           },
-          "id": 174,
+          "id": 155,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16959,7 +15365,7 @@
         "x": 0,
         "y": 500
       },
-      "id": 175,
+      "id": 156,
       "panels": [
         {
           "aliasColors": {
@@ -20081,7 +18487,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 192,
+      "id": 173,
       "panels": [
         {
           "colors": [
@@ -20102,7 +18508,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 193,
+          "id": 174,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -20215,7 +18621,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 194,
+          "id": 175,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -20326,7 +18732,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 195,
+          "id": 176,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -20431,7 +18837,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 196,
+      "id": 177,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -20554,5 +18960,5 @@
   "timezone": "utc",
   "title": "registry: Overview",
   "uid": "registry-main",
-  "version": 3469
+  "version": 3475
 }
