@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3970614911 at Tue Mar 21 05:32:09 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3974308147 at Tue Mar 21 14:56:51 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -8099,7 +8099,7 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "Records the total memory utilization for containers for this service, as a percentage of\nthe memory limit as configured through Kubernetes.\n Lower is better.",
+          "description": "This uses the working set size from cAdvisor for the cgroup's memory usage. That may\nnot be a good measure as it includes filesystem cache pages that are not necessarily\nattributable to the application inside the cgroup, and are permitted to be evicted\ninstead of being OOM killed.\n Lower is better.",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -8293,13 +8293,207 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "Measures Go memory usage as a percentage of container memory limit\n Lower is better.",
+          "description": "Records the total anonymous (unevictable) memory utilization for containers for this\nservice, as a percentage of the memory limit as configured through Kubernetes.\n\nThis is computed using the container's resident set size (RSS), as opposed to\nkube_container_memory which uses the working set size. For our purposes, RSS is the\nbetter metric as cAdvisor's working set calculation includes pages from the\nfilesystem cache that can (and will) be evicted before the OOM killer kills the\ncgroup.\n\nA container's RSS (anonymous memory usage) is still not precisely what the OOM\nkiller will use, but it's a better approximation of what the container's workload is\nactually using. RSS metrics can, however, be dramatically inflated if a process in\nthe container uses MADV_FREE (lazy-free) memory. RSS will include the memory that is\navailable to be reclaimed without a page fault, but not currently in use.\n\nThe most common case of OOM kills is for anonymous memory demand to overwhelm the\ncontainer's memory limit. On swapless hosts, anonymous memory cannot be evicted from\nthe page cache, so when a container's memory usage is mostly anonymous pages, the\nonly remaining option to relieve memory pressure may be the OOM killer.\n\nAs container RSS approaches container memory limit, OOM kills become much more\nlikely. Consequently, this ratio is a good leading indicator of memory saturation\nand OOM risk.\n Lower is better.",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
             "w": 12,
             "x": 0,
+            "y": 10
+          },
+          "id": 2875690100,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "sideWidth": null,
+            "sort": "max",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [
+            {
+              "alias": "/^Soft SLO/",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^Hard SLO/",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            },
+            {
+              "alias": "/aggregated /",
+              "color": "#E7D551",
+              "linewidth": 2,
+              "zindex": 3
+            },
+            {
+              "alias": "/^95th quantile for week/",
+              "color": "#37872D",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 1,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^99th quantile for week/",
+              "color": "#56A64B",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "saturation-kube_container_rss",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard) (\n  clamp_min(\n    clamp_max(\n      container_memory_rss:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"web\"}\n      /\n      (container_spec_memory_limit_bytes:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"web\"} > 0)\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{ type }}",
+              "refId": "A"
+            },
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"web\", component=\"kube_container_rss\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "aggregated {{ component }}",
+              "refId": "B"
+            },
+            {
+              "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"web\", component=\"kube_container_rss\"}\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "95th quantile for week {{ component }}",
+              "refId": "C"
+            },
+            {
+              "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"web\", component=\"kube_container_rss\"}\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "99th quantile for week {{ component }}",
+              "refId": "D"
+            },
+            {
+              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"kube_container_rss\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "Soft SLO: {{ component }}",
+              "refId": "E"
+            },
+            {
+              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"kube_container_rss\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "Hard SLO: {{ component }}",
+              "refId": "F"
+            }
+          ],
+          "thresholds": [
+
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "kube_container_rss component saturation: Kube Container Memory Utilization (RSS)",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Saturation %",
+              "logBase": 1,
+              "max": 1,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Measures Go memory usage as a percentage of container memory limit\n Lower is better.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
             "y": 10
           },
           "id": 4163523952,
@@ -8493,8 +8687,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 10
+            "x": 0,
+            "y": 20
           },
           "id": 351198712,
           "legend": {
@@ -8687,7 +8881,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 20
           },
           "id": 1839360107,
@@ -8881,8 +9075,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 20
+            "x": 0,
+            "y": 30
           },
           "id": 1686893332,
           "legend": {
@@ -9075,7 +9269,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 30
           },
           "id": 1001792825,
@@ -9269,8 +9463,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 30
+            "x": 0,
+            "y": 40
           },
           "id": 391047339,
           "legend": {
@@ -9463,7 +9657,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 40
           },
           "id": 2359646072,
@@ -9657,8 +9851,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 40
+            "x": 0,
+            "y": 50
           },
           "id": 2677029523,
           "legend": {
@@ -9851,7 +10045,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 50
           },
           "id": 3379320113,
@@ -10049,7 +10243,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 92,
+      "id": 93,
       "panels": [
 
       ],
@@ -10078,7 +10272,7 @@
         "x": 0,
         "y": 1001
       },
-      "id": 93,
+      "id": 94,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10190,7 +10384,7 @@
         "x": 12,
         "y": 1001
       },
-      "id": 94,
+      "id": 95,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10302,7 +10496,7 @@
         "x": 0,
         "y": 1011
       },
-      "id": 95,
+      "id": 96,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10414,7 +10608,7 @@
         "x": 12,
         "y": 1011
       },
-      "id": 96,
+      "id": 97,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10526,7 +10720,7 @@
         "x": 0,
         "y": 1021
       },
-      "id": 97,
+      "id": 98,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10638,7 +10832,7 @@
         "x": 12,
         "y": 1021
       },
-      "id": 98,
+      "id": 99,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10750,7 +10944,7 @@
         "x": 0,
         "y": 1031
       },
-      "id": 99,
+      "id": 100,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10854,7 +11048,7 @@
         "x": 0,
         "y": 3000
       },
-      "id": 100,
+      "id": 101,
       "panels": [
 
       ],
@@ -10883,7 +11077,7 @@
         "x": 0,
         "y": 3001
       },
-      "id": 101,
+      "id": 102,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10995,7 +11189,7 @@
         "x": 12,
         "y": 3001
       },
-      "id": 102,
+      "id": 103,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11107,7 +11301,7 @@
         "x": 0,
         "y": 3011
       },
-      "id": 103,
+      "id": 104,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11219,7 +11413,7 @@
         "x": 12,
         "y": 3011
       },
-      "id": 104,
+      "id": 105,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11331,7 +11525,7 @@
         "x": 0,
         "y": 3021
       },
-      "id": 105,
+      "id": 106,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11443,7 +11637,7 @@
         "x": 12,
         "y": 3021
       },
-      "id": 106,
+      "id": 107,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11555,7 +11749,7 @@
         "x": 0,
         "y": 3031
       },
-      "id": 107,
+      "id": 108,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11659,7 +11853,7 @@
         "x": 0,
         "y": 4000
       },
-      "id": 108,
+      "id": 109,
       "panels": [
         {
           "aliasColors": {
@@ -11678,7 +11872,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 109,
+          "id": 110,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11776,7 +11970,7 @@
             "x": 12,
             "y": 1
           },
-          "id": 110,
+          "id": 111,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11874,7 +12068,7 @@
             "x": 0,
             "y": 11
           },
-          "id": 111,
+          "id": 112,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11972,7 +12166,7 @@
             "x": 12,
             "y": 11
           },
-          "id": 112,
+          "id": 113,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12070,7 +12264,7 @@
             "x": 0,
             "y": 21
           },
-          "id": 113,
+          "id": 114,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12169,7 +12363,7 @@
         "x": 0,
         "y": 5000
       },
-      "id": 114,
+      "id": 115,
       "panels": [
         {
           "aliasColors": {
@@ -12188,7 +12382,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 115,
+          "id": 116,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12286,7 +12480,7 @@
             "x": 12,
             "y": 1
           },
-          "id": 116,
+          "id": 117,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12384,7 +12578,7 @@
             "x": 0,
             "y": 11
           },
-          "id": 117,
+          "id": 118,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12482,7 +12676,7 @@
             "x": 12,
             "y": 11
           },
-          "id": 118,
+          "id": 119,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12580,7 +12774,7 @@
             "x": 0,
             "y": 21
           },
-          "id": 119,
+          "id": 120,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12677,7 +12871,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 120,
+      "id": 121,
       "panels": [
         {
           "colors": [
@@ -12698,7 +12892,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 121,
+          "id": 122,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -12811,7 +13005,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 122,
+          "id": 123,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -12922,7 +13116,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 123,
+          "id": 124,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -12985,7 +13179,7 @@
           "mode": "content",
           "nullPointMode": "connected",
           "options": {
-            "content": "graph TD\n  subgraph db\n  cloud-sql[\"cloud-sql (Level 1)\"]\n  patroni[\"patroni (Level 3)\"]\n  pgbouncer[\"pgbouncer (Level 1)\"]\n  redis-cache[\"redis-cache (Level 3)\"]\n  redis-cluster-ratelimiting[\"redis-cluster-ratelimiting (Level 2)\"]\n  redis-db-load-balancing[\"redis-db-load-balancing (Level 2)\"]\n  redis-ratelimiting[\"redis-ratelimiting (Level 2)\"]\n  redis-repository-cache[\"redis-repository-cache (Level 2)\"]\n  redis-sessions[\"redis-sessions (Level 2)\"]\n  redis-sidekiq[\"redis-sidekiq (Level 2)\"]\n  redis[\"redis (Level 2)\"]\nend\n\nsubgraph inf\n  search[\"search (Level 1)\"]\nend\n\nsubgraph stor\n  gitaly[\"gitaly (Level 3)\"]\n  google-cloud-storage[\"google-cloud-storage (Level 3)\"]\n  praefect[\"praefect (Level 3)\"]\nend\n\nsubgraph sv\n  consul[\"consul (Level 1)\"]\n  pvs[\"pvs (Level 3)\"]\n  web[\"web (Level 3)\"]\nend\n\n\n  gitaly[\"gitaly (Level 3)\"] --> gitaly\npgbouncer[\"pgbouncer (Level 1)\"] --> patroni\npraefect[\"praefect (Level 3)\"] --> cloud-sql\npraefect[\"praefect (Level 3)\"] --> gitaly\nweb[\"web (Level 3)\"] --> consul\nweb[\"web (Level 3)\"] --> gitaly\nweb[\"web (Level 3)\"] --> google-cloud-storage\nweb[\"web (Level 3)\"] --> patroni\nweb[\"web (Level 3)\"] --> pgbouncer\nweb[\"web (Level 3)\"] --> praefect\nweb[\"web (Level 3)\"] --> pvs\nweb[\"web (Level 3)\"] --> redis\nweb[\"web (Level 3)\"] --> redis-cache\nweb[\"web (Level 3)\"] --> redis-cluster-ratelimiting\nweb[\"web (Level 3)\"] --> redis-db-load-balancing\nweb[\"web (Level 3)\"] --> redis-ratelimiting\nweb[\"web (Level 3)\"] --> redis-repository-cache\nweb[\"web (Level 3)\"] --> redis-sessions\nweb[\"web (Level 3)\"] --> redis-sidekiq\nweb[\"web (Level 3)\"] --> search\n"
+            "content": "graph TD\n  subgraph db\n  cloud-sql[\"cloud-sql (Level 1)\"]\n  patroni[\"patroni (Level 2)\"]\n  pgbouncer[\"pgbouncer (Level 1)\"]\n  redis-cache[\"redis-cache (Level 3)\"]\n  redis-cluster-ratelimiting[\"redis-cluster-ratelimiting (Level 2)\"]\n  redis-db-load-balancing[\"redis-db-load-balancing (Level 2)\"]\n  redis-ratelimiting[\"redis-ratelimiting (Level 3)\"]\n  redis-repository-cache[\"redis-repository-cache (Level 2)\"]\n  redis-sessions[\"redis-sessions (Level 3)\"]\n  redis-sidekiq[\"redis-sidekiq (Level 3)\"]\n  redis[\"redis (Level 3)\"]\nend\n\nsubgraph inf\n  search[\"search (Level 1)\"]\nend\n\nsubgraph stor\n  gitaly[\"gitaly (Level 3)\"]\n  google-cloud-storage[\"google-cloud-storage (Level 2)\"]\n  praefect[\"praefect (Level 2)\"]\nend\n\nsubgraph sv\n  consul[\"consul (Level 1)\"]\n  pvs[\"pvs (Level 3)\"]\n  web[\"web (Level 2)\"]\nend\n\n\n  gitaly[\"gitaly (Level 3)\"] --> gitaly\npgbouncer[\"pgbouncer (Level 1)\"] --> patroni\npraefect[\"praefect (Level 2)\"] --> cloud-sql\npraefect[\"praefect (Level 2)\"] --> gitaly\nweb[\"web (Level 2)\"] --> consul\nweb[\"web (Level 2)\"] --> gitaly\nweb[\"web (Level 2)\"] --> google-cloud-storage\nweb[\"web (Level 2)\"] --> patroni\nweb[\"web (Level 2)\"] --> pgbouncer\nweb[\"web (Level 2)\"] --> praefect\nweb[\"web (Level 2)\"] --> pvs\nweb[\"web (Level 2)\"] --> redis\nweb[\"web (Level 2)\"] --> redis-cache\nweb[\"web (Level 2)\"] --> redis-cluster-ratelimiting\nweb[\"web (Level 2)\"] --> redis-db-load-balancing\nweb[\"web (Level 2)\"] --> redis-ratelimiting\nweb[\"web (Level 2)\"] --> redis-repository-cache\nweb[\"web (Level 2)\"] --> redis-sessions\nweb[\"web (Level 2)\"] --> redis-sidekiq\nweb[\"web (Level 2)\"] --> search\n"
           },
           "seriesOverrides": [
 
@@ -13027,7 +13221,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 124,
+      "id": 125,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -13150,5 +13344,5 @@
   "timezone": "utc",
   "title": "web: Overview",
   "uid": "web-main",
-  "version": 3932
+  "version": 3937
 }

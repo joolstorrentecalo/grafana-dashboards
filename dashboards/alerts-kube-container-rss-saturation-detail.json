@@ -126,7 +126,7 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
-      "description": "Workhorse can scale images on-the-fly as requested. Since the actual work will be\nperformed by dedicated processes, we currently define a hard cap for how many\nsuch requests are allowed to be in the system concurrently.\n\nIf this resource is fully saturated, Workhorse will start ignoring image scaling\nrequests and serve the original image instead, which will ensure continued operation,\nbut comes at the cost of additional client latency and GCS egress traffic.\n Lower is better.",
+      "description": "Records the total anonymous (unevictable) memory utilization for containers for this\nservice, as a percentage of the memory limit as configured through Kubernetes.\n\nThis is computed using the container's resident set size (RSS), as opposed to\nkube_container_memory which uses the working set size. For our purposes, RSS is the\nbetter metric as cAdvisor's working set calculation includes pages from the\nfilesystem cache that can (and will) be evicted before the OOM killer kills the\ncgroup.\n\nA container's RSS (anonymous memory usage) is still not precisely what the OOM\nkiller will use, but it's a better approximation of what the container's workload is\nactually using. RSS metrics can, however, be dramatically inflated if a process in\nthe container uses MADV_FREE (lazy-free) memory. RSS will include the memory that is\navailable to be reclaimed without a page fault, but not currently in use.\n\nThe most common case of OOM kills is for anonymous memory demand to overwhelm the\ncontainer's memory limit. On swapless hosts, anonymous memory cannot be evicted from\nthe page cache, so when a container's memory usage is mostly anonymous pages, the\nonly remaining option to relieve memory pressure may be the OOM killer.\n\nAs container RSS approaches container memory limit, OOM kills become much more\nlikely. Consequently, this ratio is a good leading indicator of memory saturation\nand OOM risk.\n Lower is better.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -135,7 +135,7 @@
         "x": 0,
         "y": 0
       },
-      "id": 3379320113,
+      "id": 2875690100,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -219,20 +219,20 @@
         }
       ],
       "spaceLength": 10,
-      "stableId": "saturation-workhorse_image_scaling",
+      "stableId": "saturation-kube_container_rss",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn) (\n  clamp_min(\n    clamp_max(\n      avg_over_time(gitlab_workhorse_image_resize_processes{env=\"$environment\",stage=\"$stage\",type=\"$type\"}[5m])\n        /\n      gitlab_workhorse_image_resize_max_processes{env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard) (\n  clamp_min(\n    clamp_max(\n      container_memory_rss:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n      /\n      (container_spec_memory_limit_bytes:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",stage=\"$stage\",type=\"$type\"} > 0)\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "{{ fqdn }}",
+          "legendFormat": "{{ type }}",
           "refId": "A"
         },
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"workhorse_image_scaling\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"kube_container_rss\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -240,7 +240,7 @@
           "refId": "B"
         },
         {
-          "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"workhorse_image_scaling\"}\n)\n",
+          "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"kube_container_rss\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -248,7 +248,7 @@
           "refId": "C"
         },
         {
-          "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"workhorse_image_scaling\"}\n)\n",
+          "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"kube_container_rss\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -256,7 +256,7 @@
           "refId": "D"
         },
         {
-          "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"workhorse_image_scaling\"}) by (component)\n",
+          "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"kube_container_rss\"}) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -264,7 +264,7 @@
           "refId": "E"
         },
         {
-          "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"workhorse_image_scaling\"}) by (component)\n",
+          "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"kube_container_rss\"}) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -277,7 +277,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "workhorse_image_scaling component saturation: Workhorse Image Scaler Exhaustion per Node",
+      "title": "kube_container_rss component saturation: Kube Container Memory Utilization (RSS)",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -313,7 +313,7 @@
       ]
     },
     {
-      "content": "## Workhorse Image Scaler Exhaustion per Node\n\nWorkhorse can scale images on-the-fly as requested. Since the actual work will be\nperformed by dedicated processes, we currently define a hard cap for how many\nsuch requests are allowed to be in the system concurrently.\n\nIf this resource is fully saturated, Workhorse will start ignoring image scaling\nrequests and serve the original image instead, which will ensure continued operation,\nbut comes at the cost of additional client latency and GCS egress traffic.\n\n\n## What to do from here here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=workhorse_image_scaling)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+workhorse_image_scaling&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
+      "content": "## Kube Container Memory Utilization (RSS)\n\nRecords the total anonymous (unevictable) memory utilization for containers for this\nservice, as a percentage of the memory limit as configured through Kubernetes.\n\nThis is computed using the container's resident set size (RSS), as opposed to\nkube_container_memory which uses the working set size. For our purposes, RSS is the\nbetter metric as cAdvisor's working set calculation includes pages from the\nfilesystem cache that can (and will) be evicted before the OOM killer kills the\ncgroup.\n\nA container's RSS (anonymous memory usage) is still not precisely what the OOM\nkiller will use, but it's a better approximation of what the container's workload is\nactually using. RSS metrics can, however, be dramatically inflated if a process in\nthe container uses MADV_FREE (lazy-free) memory. RSS will include the memory that is\navailable to be reclaimed without a page fault, but not currently in use.\n\nThe most common case of OOM kills is for anonymous memory demand to overwhelm the\ncontainer's memory limit. On swapless hosts, anonymous memory cannot be evicted from\nthe page cache, so when a container's memory usage is mostly anonymous pages, the\nonly remaining option to relieve memory pressure may be the OOM killer.\n\nAs container RSS approaches container memory limit, OOM kills become much more\nlikely. Consequently, this ratio is a good leading indicator of memory saturation\nand OOM risk.\n\n\n## What to do from here here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=kube_container_rss)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+kube_container_rss&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
       "datasource": null,
       "gridPos": {
         "h": 14,
@@ -468,8 +468,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "web",
-          "value": "web"
+          "text": "api",
+          "value": "api"
         },
         "datasource": "$PROMETHEUS_DS",
         "hide": 0,
@@ -548,7 +548,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "alerts: workhorse image scaling: Saturation Detail",
-  "uid": "alerts-sat_wh_image_scaling",
-  "version": 2381
+  "title": "alerts: kube container rss: Saturation Detail",
+  "uid": "alerts-sat_kube_container_rss",
+  "version": 4
 }

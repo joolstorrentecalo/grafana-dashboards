@@ -10,7 +10,7 @@
 
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3970614911 at Tue Mar 21 05:31:39 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3974308147 at Tue Mar 21 14:56:20 UTC 2023",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
@@ -187,6 +187,208 @@
       "type": "table"
     },
     {
+      "collapse": false,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 200
+      },
+      "id": 5,
+      "panels": [
+
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "Tagged Releases",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "columns": [
+
+      ],
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
+      "fieldConfig": {
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Release Type"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "auto_deploy,": {
+                        "text": "Auto Deploy (deprecated)"
+                      },
+                      "auto_deploy,no": {
+                        "text": "Auto Deploy"
+                      },
+                      "monthly,no": {
+                        "text": "Monthly"
+                      },
+                      "patch,critical": {
+                        "text": "Critical Security Patch"
+                      },
+                      "patch,no": {
+                        "text": "Regular Patch"
+                      },
+                      "patch,regular": {
+                        "text": "Regular Security Patch"
+                      },
+                      "rc,no": {
+                        "text": "RC"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value"
+            },
+            "properties": [
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 201
+      },
+      "id": 6,
+      "links": [
+
+      ],
+      "styles": null,
+      "targets": [
+        {
+          "expr": "sort_desc(sum(increase(delivery_packages_tagging_total[$__range])) by (pkg_type,security))",
+          "format": "table",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "🚀 Number of Tagged Releases by Type 🚀",
+      "transformations": [
+        {
+          "alias": "Release Type",
+          "binary": {
+            "left": "pkg_type",
+            "reducer": "sum",
+            "right": "security"
+          },
+          "id": "calculateField",
+          "mode": "reduceRow",
+          "options": {
+            "alias": "Release Type",
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "pkg_type",
+                "security"
+              ],
+              "reducer": "allValues"
+            },
+            "replaceFields": false
+          },
+          "reduce": {
+            "include": [
+              "pkg_type",
+              "security"
+            ],
+            "reducer": "allValues"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "pkg_type": true,
+              "security": true
+            },
+            "indexByName": {
+              "Release Type": 0,
+              "Time": 2,
+              "Value": 1,
+              "pkg_type": 3,
+              "security": 4
+            }
+          }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "regex",
+                  "options": {
+                    "value": "^auto_deploy,(?!$|no$).*"
+                  }
+                },
+                "fieldName": "Release Type"
+              },
+              {
+                "config": {
+                  "id": "regex",
+                  "options": {
+                    "value": "^monthly,(?!no$).*"
+                  }
+                },
+                "fieldName": "Release Type"
+              },
+              {
+                "config": {
+                  "id": "regex",
+                  "options": {
+                    "value": "^rc,(?!no$).*"
+                  }
+                },
+                "fieldName": "Release Type"
+              },
+              {
+                "config": {
+                  "id": "regex",
+                  "options": {
+                    "value": "^security,(?!$).*"
+                  }
+                },
+                "fieldName": "Release Type"
+              }
+            ],
+            "match": "any",
+            "type": "exclude"
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
       "content": "Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards)\n",
       "datasource": null,
       "gridPos": {
@@ -195,7 +397,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 5,
+      "id": 7,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -259,5 +461,5 @@
   "timezone": "utc",
   "title": "delivery: Release Management Toil",
   "uid": "delivery-release_management_toil",
-  "version": 137
+  "version": 142
 }
