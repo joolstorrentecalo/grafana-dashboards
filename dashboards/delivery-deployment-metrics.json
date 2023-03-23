@@ -1,27 +1,39 @@
 {
-  "__inputs": [
-
-  ],
-  "__requires": [
-
-  ],
   "annotations": {
     "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [
 
+          ],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3985148011 at Wed Mar 22 23:40:47 UTC 2023",
+  "description": "Uploaded by vglafirov at Fri Mar 17 13:04:17 UTC 2023",
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "hideControls": false,
   "id": null,
   "links": [
 
   ],
+  "liveNow": false,
   "panels": [
     {
-      "collapse": false,
       "collapsed": false,
       "gridPos": {
         "h": 1,
@@ -29,19 +41,20 @@
         "x": 0,
         "y": 0
       },
-      "id": 2,
+      "id": 9,
       "panels": [
 
       ],
-      "repeat": null,
-      "repeatIteration": null,
-      "repeatRowId": null,
-      "showTitle": true,
-      "title": "📊 Merge requests statistics",
-      "titleSize": "h6",
+      "repeat": "deploy_version",
+      "repeatDirection": "h",
+      "title": "Merge requests stats",
       "type": "row"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "description": "Time it take Merge Request from being merged to production",
       "fieldConfig": {
         "defaults": {
@@ -52,17 +65,15 @@
               "url": "https://gitlab.com/gitlab-org/gitlab/-/merge_requests/${__field.labels.mr_id}"
             }
           ],
-          "mode": "thresholds",
-          "reduceOptions": {
-            "calcs": [
-              "last"
-            ]
-          },
+          "mappings": [
+
+          ],
           "thresholds": {
+            "mode": "absolute",
             "steps": [
               {
                 "color": "#73BF69",
-                "value": 0
+                "value": null
               },
               {
                 "color": "#CCCC00",
@@ -80,92 +91,24 @@
           },
           "unit": "s"
         },
-        "values": false
+        "overrides": [
+
+        ]
       },
       "gridPos": {
-        "h": 10,
+        "h": 9,
         "w": 19,
         "x": 0,
         "y": 1
       },
-      "id": 3,
+      "id": 2,
       "links": [
 
       ],
       "options": {
         "displayMode": "basic",
-        "orientation": "vertical",
-        "showUnfilled": true
-      },
-      "pluginVersion": "9.3.6",
-      "targets": [
-        {
-          "expr": "last_over_time(delivery_deployment_merge_request_lead_time_seconds{target_env=\"$environment\", target_stage=\"$target_stage\", deploy_version=\"$deploy_version\"}[$__range])",
-          "format": "time_series",
-          "instant": true,
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{mr_id}}"
-        }
-      ],
-      "title": "Merge requests lead time",
-      "type": "bargauge"
-    },
-    {
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "decimals": 0,
-          "displayName": "",
-          "links": [
-
-          ],
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "blue",
-                "value": null
-              },
-              {
-                "color": "#73BF69",
-                "value": 0
-              },
-              {
-                "color": "#CCCC00",
-                "value": 39600
-              },
-              {
-                "color": "#CC6600",
-                "value": 43200
-              },
-              {
-                "color": "#CC3300",
-                "value": 46800
-              }
-            ]
-          },
-          "unit": "s"
-        }
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 5,
-        "x": 19,
-        "y": 1
-      },
-      "id": 4,
-      "links": [
-
-      ],
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
         "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
@@ -174,44 +117,144 @@
           "fields": "",
           "values": false
         },
-        "textMode": "value"
+        "showUnfilled": true
       },
-      "pluginVersion": "7",
+      "pluginVersion": "9.4.3",
       "targets": [
         {
-          "expr": "avg(delivery_deployment_merge_request_lead_time_seconds{target_env=\"$environment\", target_stage=\"$target_stage\", deploy_version=\"$deploy_version\"})",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "last_over_time(delivery_deployment_merge_request_lead_time_seconds{target_env=\"$environment\", target_stage=\"$target_stage\", deploy_version=\"$deploy_version\"}[$__range])",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
           "intervalFactor": 3,
+          "legendFormat": "{{mr_id}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Merge requests lead time",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 39600
+              },
+              {
+                "color": "orange",
+                "value": 43200
+              },
+              {
+                "color": "red",
+                "value": 46800
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 5,
+        "x": 19,
+        "y": 1
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "avg(delivery_deployment_merge_request_lead_time_seconds{target_env=\"$environment\", target_stage=\"$target_stage\", deploy_version=\"$deploy_version\"})",
           "legendFormat": "__auto",
+          "range": true,
           "refId": "A"
         }
       ],
       "title": "Average MR lead time",
-      "transparent": false,
       "type": "stat"
     },
     {
-      "content": "Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards)\n",
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "gridPos": {
         "h": 2,
         "w": 24,
         "x": 0,
-        "y": 110000
+        "y": 10
       },
-      "id": 5,
-      "mode": "markdown",
+      "id": 3,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards)\n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "9.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "Source",
       "type": "text"
     }
   ],
   "refresh": "",
-  "rows": [
-
-  ],
-  "schemaVersion": 16,
+  "revision": 1,
+  "schemaVersion": 38,
   "style": "light",
   "tags": [
     "managed",
@@ -225,7 +268,8 @@
           "value": "Global"
         },
         "hide": 0,
-        "label": null,
+        "includeAll": false,
+        "multi": false,
         "name": "PROMETHEUS_DS",
         "options": [
 
@@ -233,13 +277,17 @@
         "query": "prometheus",
         "refresh": 1,
         "regex": "",
+        "skipUrlSync": false,
         "type": "datasource"
       },
       {
-        "allValue": null,
         "current": {
         },
-        "datasource": "$PROMETHEUS_DS",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "$PROMETHEUS_DS"
+        },
+        "definition": "",
         "hide": 0,
         "includeAll": false,
         "label": "environment",
@@ -248,23 +296,27 @@
         "options": [
 
         ],
-        "query": "label_values(delivery_deployment_merge_request_lead_time_seconds, target_env)",
+        "query": {
+          "query": "label_values(delivery_deployment_merge_request_lead_time_seconds, target_env)",
+          "refId": "Global-environment-Variable-Query"
+        },
         "refresh": 2,
         "regex": "",
+        "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [
-
-        ],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
         },
-        "datasource": "$PROMETHEUS_DS",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "$PROMETHEUS_DS"
+        },
+        "definition": "",
         "hide": 0,
         "includeAll": false,
         "label": "stage",
@@ -273,23 +325,27 @@
         "options": [
 
         ],
-        "query": "label_values(delivery_deployment_merge_request_lead_time_seconds{target_env=\"$environment\"}, target_stage)",
+        "query": {
+          "query": "label_values(delivery_deployment_merge_request_lead_time_seconds{target_env=\"$environment\"}, target_stage)",
+          "refId": "Global-target_stage-Variable-Query"
+        },
         "refresh": 2,
         "regex": "",
+        "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [
-
-        ],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
         },
-        "datasource": "$PROMETHEUS_DS",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "$PROMETHEUS_DS"
+        },
+        "definition": "query_result(last_over_time(delivery_deployment_merge_request_lead_time_seconds{target_env=\"$environment\", target_stage=\"$target_stage\"}[$__range]))",
         "hide": 0,
         "includeAll": false,
         "label": "version",
@@ -298,14 +354,15 @@
         "options": [
 
         ],
-        "query": "label_values(delivery_deployment_merge_request_lead_time_seconds{target_env=\"$environment\", target_stage=\"$target_stage\"}, deploy_version)",
+        "query": {
+          "query": "query_result(last_over_time(delivery_deployment_merge_request_lead_time_seconds{target_env=\"$environment\", target_stage=\"$target_stage\"}[$__range]))",
+          "refId": "StandardVariableQuery"
+        },
         "refresh": 2,
-        "regex": "",
+        "regex": "/deploy_version=\\\"(?<text>\\d+\\.\\d+\\.\\d+-\\b[a-f0-9]{11}\\.\\b[a-f0-9]{11})/",
+        "skipUrlSync": false,
         "sort": 2,
         "tagValuesQuery": "",
-        "tags": [
-
-        ],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -338,6 +395,7 @@
   },
   "timezone": "utc",
   "title": "delivery: deployment-metrics",
-  "uid": "delivery-deployment_metrics",
-  "version": 100
+  "uid": "delivery-deployment_metrics-test",
+  "version": 13,
+  "weekStart": ""
 }

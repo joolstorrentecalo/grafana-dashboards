@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3985148011 at Wed Mar 22 23:43:36 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/3985562947 at Thu Mar 23 02:17:46 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -138,13 +138,397 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
+      "description": "Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 1
+      },
+      "id": 3456399817,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": [
+          {
+            "targetBlank": true,
+            "title": "patroni-ci Service Apdex SLO Analysis",
+            "url": "/d/alerts-service_slo_apdex?${__url_time_range}&${__all_variables}&var-type=patroni-ci"
+          }
+        ]
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "6h Degradation SLO (5% of monthly error budget)",
+          "color": "#FF4500",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "connected",
+          "spaceLength": 10,
+          "zindex": -2
+        },
+        {
+          "alias": "1h Outage SLO (2% of monthly error budget)",
+          "color": "#F2495C",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 4,
+          "nullPointMode": "connected",
+          "spaceLength": 4,
+          "zindex": -2
+        },
+        {
+          "alias": "SLO",
+          "color": "#FF4500",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 4,
+          "nullPointMode": "connected",
+          "spaceLength": 4,
+          "zindex": -2
+        },
+        {
+          "alias": "patroni-ci apdex",
+          "color": "#E7D551",
+          "zindex": 3
+        },
+        {
+          "alias": "patroni-ci apdex avg",
+          "color": "#5794F2",
+          "dashLength": 1,
+          "fillBelowTo": "patroni-ci apdex",
+          "linewidth": 1,
+          "spaceLength": 1,
+          "zindex": -3
+        },
+        {
+          "alias": "last week",
+          "color": "#dddddd80",
+          "dashLength": 4,
+          "dashes": true,
+          "fill": 0,
+          "legend": true,
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "spaceLength": 2,
+          "zindex": -3
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "service-patroni-ci-apdex",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "min_over_time(gitlab_service_apdex:ratio_5m{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "patroni-ci apdex",
+          "refId": "A"
+        },
+        {
+          "expr": "(1 - 6 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"patroni-ci\"})\n))\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 3,
+          "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+          "refId": "B"
+        },
+        {
+          "expr": "(1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"patroni-ci\"})\n))\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 3,
+          "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+          "refId": "C"
+        },
+        {
+          "expr": "avg_over_time(gitlab_service_apdex:ratio_5m{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "patroni-ci apdex avg",
+          "refId": "D"
+        },
+        {
+          "expr": "clamp_min(\n  gitlab_service_apdex:ratio_5m{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"} offset 1w\n,\n  scalar(min((1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"patroni-ci\"})\n))\n))\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "last week",
+          "refId": "E"
+        }
+      ],
+      "title": "patroni-ci Service Apdex",
+      "tooltip": {
+        "shared": true,
+        "sort": 1,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "",
+          "logBase": 1,
+          "max": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "displayName": "Status",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "0": {
+                  "color": "black",
+                  "index": 0,
+                  "text": "Healthy"
+                },
+                "1": {
+                  "color": "orange",
+                  "index": 1,
+                  "text": "Warning 🔥"
+                },
+                "10": {
+                  "color": "orange",
+                  "index": 10,
+                  "text": "Warning 🔥🥵"
+                },
+                "11": {
+                  "color": "red",
+                  "index": 11,
+                  "text": "Degraded 🔥🥵"
+                },
+                "12": {
+                  "color": "red",
+                  "index": 12,
+                  "text": "Degraded 🥵"
+                },
+                "13": {
+                  "color": "red",
+                  "index": 13,
+                  "text": "Degraded 🔥🥵"
+                },
+                "14": {
+                  "color": "red",
+                  "index": 14,
+                  "text": "Degraded 🔥🥵"
+                },
+                "15": {
+                  "color": "red",
+                  "index": 15,
+                  "text": "Degraded 🔥🥵"
+                },
+                "2": {
+                  "color": "orange",
+                  "index": 2,
+                  "text": "Warning 🔥"
+                },
+                "3": {
+                  "color": "red",
+                  "index": 3,
+                  "text": "Degraded 🔥"
+                },
+                "4": {
+                  "color": "orange",
+                  "index": 4,
+                  "text": "Warning 🥵"
+                },
+                "5": {
+                  "color": "orange",
+                  "index": 5,
+                  "text": "Warning 🔥🥵"
+                },
+                "6": {
+                  "color": "orange",
+                  "index": 6,
+                  "text": "Warning 🔥🥵"
+                },
+                "7": {
+                  "color": "red",
+                  "index": 7,
+                  "text": "Degraded 🔥🥵"
+                },
+                "8": {
+                  "color": "orange",
+                  "index": 8,
+                  "text": "Warning 🥵"
+                },
+                "9": {
+                  "color": "orange",
+                  "index": 9,
+                  "text": "Warning 🔥🥵"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "black",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "orange",
+                "value": 2
+              },
+              {
+                "color": "red",
+                "value": 3
+              },
+              {
+                "color": "orange",
+                "value": 4
+              },
+              {
+                "color": "orange",
+                "value": 5
+              },
+              {
+                "color": "orange",
+                "value": 6
+              },
+              {
+                "color": "red",
+                "value": 7
+              },
+              {
+                "color": "orange",
+                "value": 8
+              },
+              {
+                "color": "orange",
+                "value": 9
+              },
+              {
+                "color": "orange",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 11
+              },
+              {
+                "color": "red",
+                "value": 12
+              },
+              {
+                "color": "red",
+                "value": 13
+              },
+              {
+                "color": "red",
+                "value": 14
+              },
+              {
+                "color": "red",
+                "value": 15
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 6,
+        "x": 0,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_service_apdex:ratio_1h{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_service_apdex:ratio_5m{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"patroni-ci\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_service_apdex:ratio_1h{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"patroni-ci\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_service_apdex:ratio_30m{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"patroni-ci\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_service_apdex:ratio_6h{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"patroni-ci\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "patroni-ci Service | Latency/Apdex",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
       "description": "Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 7,
-        "w": 8,
-        "x": 0,
+        "w": 6,
+        "x": 6,
         "y": 1
       },
       "id": 3846056002,
@@ -470,11 +854,11 @@
       },
       "gridPos": {
         "h": 1,
-        "w": 8,
-        "x": 0,
+        "w": 6,
+        "x": 6,
         "y": 8
       },
-      "id": 4,
+      "id": 6,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -516,8 +900,8 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 8,
+        "w": 6,
+        "x": 12,
         "y": 1
       },
       "id": 568644028,
@@ -662,8 +1046,8 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 16,
+        "w": 6,
+        "x": 18,
         "y": 1
       },
       "id": 1217942947,
@@ -737,7 +1121,7 @@
         "x": 0,
         "y": 20
       },
-      "id": 7,
+      "id": 9,
       "panels": [
 
       ],
@@ -1091,7 +1475,7 @@
         "x": 0,
         "y": 28
       },
-      "id": 9,
+      "id": 11,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -1235,7 +1619,1011 @@
         "x": 16,
         "y": 21
       },
-      "id": 11,
+      "id": 13,
+      "mode": "markdown",
+      "title": "Details",
+      "type": "text"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
+      "description": "Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 31
+      },
+      "id": 2409561530,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": [
+          {
+            "targetBlank": true,
+            "title": "rails_primary_sql SLI Apdex SLO Analysis",
+            "url": "/d/alerts-component_slo_apdex?${__url_time_range}&${__all_variables}&var-component=rails_primary_sql&var-type=patroni-ci"
+          }
+        ]
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "6h Degradation SLO (5% of monthly error budget)",
+          "color": "#FF4500",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "connected",
+          "spaceLength": 10,
+          "zindex": -2
+        },
+        {
+          "alias": "1h Outage SLO (2% of monthly error budget)",
+          "color": "#F2495C",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 4,
+          "nullPointMode": "connected",
+          "spaceLength": 4,
+          "zindex": -2
+        },
+        {
+          "alias": "SLO",
+          "color": "#FF4500",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 4,
+          "nullPointMode": "connected",
+          "spaceLength": 4,
+          "zindex": -2
+        },
+        {
+          "alias": "rails_primary_sql apdex",
+          "color": "#E7D551",
+          "zindex": 3
+        },
+        {
+          "alias": "rails_primary_sql apdex avg",
+          "color": "#5794F2",
+          "dashLength": 1,
+          "fillBelowTo": "rails_primary_sql apdex",
+          "linewidth": 1,
+          "spaceLength": 1,
+          "zindex": -3
+        },
+        {
+          "alias": "last week",
+          "color": "#dddddd80",
+          "dashLength": 4,
+          "dashes": true,
+          "fill": 0,
+          "legend": true,
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "spaceLength": 2,
+          "zindex": -3
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "sli-rails_primary_sql-apdex",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "min_over_time(gitlab_component_apdex:ratio_5m{component=\"rails_primary_sql\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "rails_primary_sql apdex",
+          "refId": "A"
+        },
+        {
+          "expr": "(1 - 6 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"rails_primary_sql\",monitor=\"global\",type=\"patroni-ci\"})\n))\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 3,
+          "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+          "refId": "B"
+        },
+        {
+          "expr": "(1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"rails_primary_sql\",monitor=\"global\",type=\"patroni-ci\"})\n))\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 3,
+          "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+          "refId": "C"
+        },
+        {
+          "expr": "avg_over_time(gitlab_component_apdex:ratio_5m{component=\"rails_primary_sql\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "rails_primary_sql apdex avg",
+          "refId": "D"
+        },
+        {
+          "expr": "clamp_min(\n  gitlab_component_apdex:ratio_5m{component=\"rails_primary_sql\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"} offset 1w\n,\n  scalar(min((1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"rails_primary_sql\",monitor=\"global\",type=\"patroni-ci\"})\n))\n))\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "last week",
+          "refId": "E"
+        }
+      ],
+      "title": "rails_primary_sql SLI Apdex",
+      "tooltip": {
+        "shared": true,
+        "sort": 1,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "Apdex %",
+          "logBase": 1,
+          "max": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "displayName": "Status",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "0": {
+                  "color": "black",
+                  "index": 0,
+                  "text": "Healthy"
+                },
+                "1": {
+                  "color": "orange",
+                  "index": 1,
+                  "text": "Warning 🔥"
+                },
+                "10": {
+                  "color": "orange",
+                  "index": 10,
+                  "text": "Warning 🔥🥵"
+                },
+                "11": {
+                  "color": "red",
+                  "index": 11,
+                  "text": "Degraded 🔥🥵"
+                },
+                "12": {
+                  "color": "red",
+                  "index": 12,
+                  "text": "Degraded 🥵"
+                },
+                "13": {
+                  "color": "red",
+                  "index": 13,
+                  "text": "Degraded 🔥🥵"
+                },
+                "14": {
+                  "color": "red",
+                  "index": 14,
+                  "text": "Degraded 🔥🥵"
+                },
+                "15": {
+                  "color": "red",
+                  "index": 15,
+                  "text": "Degraded 🔥🥵"
+                },
+                "2": {
+                  "color": "orange",
+                  "index": 2,
+                  "text": "Warning 🔥"
+                },
+                "3": {
+                  "color": "red",
+                  "index": 3,
+                  "text": "Degraded 🔥"
+                },
+                "4": {
+                  "color": "orange",
+                  "index": 4,
+                  "text": "Warning 🥵"
+                },
+                "5": {
+                  "color": "orange",
+                  "index": 5,
+                  "text": "Warning 🔥🥵"
+                },
+                "6": {
+                  "color": "orange",
+                  "index": 6,
+                  "text": "Warning 🔥🥵"
+                },
+                "7": {
+                  "color": "red",
+                  "index": 7,
+                  "text": "Degraded 🔥🥵"
+                },
+                "8": {
+                  "color": "orange",
+                  "index": 8,
+                  "text": "Warning 🥵"
+                },
+                "9": {
+                  "color": "orange",
+                  "index": 9,
+                  "text": "Warning 🔥🥵"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "black",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "orange",
+                "value": 2
+              },
+              {
+                "color": "red",
+                "value": 3
+              },
+              {
+                "color": "orange",
+                "value": 4
+              },
+              {
+                "color": "orange",
+                "value": 5
+              },
+              {
+                "color": "orange",
+                "value": 6
+              },
+              {
+                "color": "red",
+                "value": 7
+              },
+              {
+                "color": "orange",
+                "value": 8
+              },
+              {
+                "color": "orange",
+                "value": 9
+              },
+              {
+                "color": "orange",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 11
+              },
+              {
+                "color": "red",
+                "value": 12
+              },
+              {
+                "color": "red",
+                "value": 13
+              },
+              {
+                "color": "red",
+                "value": 14
+              },
+              {
+                "color": "red",
+                "value": 15
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 8,
+        "x": 0,
+        "y": 38
+      },
+      "id": 15,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"rails_primary_sql\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"rails_primary_sql\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rails_primary_sql\",monitor=\"global\",type=\"patroni-ci\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"rails_primary_sql\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rails_primary_sql\",monitor=\"global\",type=\"patroni-ci\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"rails_primary_sql\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rails_primary_sql\",monitor=\"global\",type=\"patroni-ci\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"rails_primary_sql\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rails_primary_sql\",monitor=\"global\",type=\"patroni-ci\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "rails_primary_sql SLI | Latency/Apdex",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
+      "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 31
+      },
+      "id": 12068001,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "rails_primary_sql RPS",
+          "color": "#E7D551",
+          "zindex": 3
+        },
+        {
+          "alias": "last week",
+          "color": "#dddddd80",
+          "dashLength": 4,
+          "dashes": true,
+          "fill": 0,
+          "legend": true,
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "spaceLength": 2,
+          "zindex": -3
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "sli-rails_primary_sql-ops-rate",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "avg_over_time(gitlab_component_ops:rate_5m{component=\"rails_primary_sql\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "rails_primary_sql RPS",
+          "refId": "A"
+        },
+        {
+          "expr": "gitlab_component_ops:rate_5m{component=\"rails_primary_sql\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"} offset 1w\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "last week",
+          "refId": "B"
+        }
+      ],
+      "title": "rails_primary_sql SLI RPS - Requests per Second",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Operations per Second",
+          "logBase": 1,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "content": "### Description\n\nRepresents all SQL transactions issued through ActiveRecord from the Rails monolith (web, api, websockets, but not sidekiq) to the Postgres primary.\nDurations can be impacted by various conditions other than Patroni, including client pool saturation, pgbouncer saturation,\nRuby thread contention and network conditions.\n\n",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 31
+      },
+      "id": 17,
+      "mode": "markdown",
+      "title": "Details",
+      "type": "text"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
+      "description": "Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 41
+      },
+      "id": 4242138551,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": [
+          {
+            "targetBlank": true,
+            "title": "rails_replica_sql SLI Apdex SLO Analysis",
+            "url": "/d/alerts-component_slo_apdex?${__url_time_range}&${__all_variables}&var-component=rails_replica_sql&var-type=patroni-ci"
+          }
+        ]
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "6h Degradation SLO (5% of monthly error budget)",
+          "color": "#FF4500",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "connected",
+          "spaceLength": 10,
+          "zindex": -2
+        },
+        {
+          "alias": "1h Outage SLO (2% of monthly error budget)",
+          "color": "#F2495C",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 4,
+          "nullPointMode": "connected",
+          "spaceLength": 4,
+          "zindex": -2
+        },
+        {
+          "alias": "SLO",
+          "color": "#FF4500",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 4,
+          "nullPointMode": "connected",
+          "spaceLength": 4,
+          "zindex": -2
+        },
+        {
+          "alias": "rails_replica_sql apdex",
+          "color": "#E7D551",
+          "zindex": 3
+        },
+        {
+          "alias": "rails_replica_sql apdex avg",
+          "color": "#5794F2",
+          "dashLength": 1,
+          "fillBelowTo": "rails_replica_sql apdex",
+          "linewidth": 1,
+          "spaceLength": 1,
+          "zindex": -3
+        },
+        {
+          "alias": "last week",
+          "color": "#dddddd80",
+          "dashLength": 4,
+          "dashes": true,
+          "fill": 0,
+          "legend": true,
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "spaceLength": 2,
+          "zindex": -3
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "sli-rails_replica_sql-apdex",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "min_over_time(gitlab_component_apdex:ratio_5m{component=\"rails_replica_sql\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "rails_replica_sql apdex",
+          "refId": "A"
+        },
+        {
+          "expr": "(1 - 6 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"rails_replica_sql\",monitor=\"global\",type=\"patroni-ci\"})\n))\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 3,
+          "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+          "refId": "B"
+        },
+        {
+          "expr": "(1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"rails_replica_sql\",monitor=\"global\",type=\"patroni-ci\"})\n))\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 3,
+          "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+          "refId": "C"
+        },
+        {
+          "expr": "avg_over_time(gitlab_component_apdex:ratio_5m{component=\"rails_replica_sql\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "rails_replica_sql apdex avg",
+          "refId": "D"
+        },
+        {
+          "expr": "clamp_min(\n  gitlab_component_apdex:ratio_5m{component=\"rails_replica_sql\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"} offset 1w\n,\n  scalar(min((1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"rails_replica_sql\",monitor=\"global\",type=\"patroni-ci\"})\n))\n))\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "last week",
+          "refId": "E"
+        }
+      ],
+      "title": "rails_replica_sql SLI Apdex",
+      "tooltip": {
+        "shared": true,
+        "sort": 1,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "Apdex %",
+          "logBase": 1,
+          "max": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "displayName": "Status",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "0": {
+                  "color": "black",
+                  "index": 0,
+                  "text": "Healthy"
+                },
+                "1": {
+                  "color": "orange",
+                  "index": 1,
+                  "text": "Warning 🔥"
+                },
+                "10": {
+                  "color": "orange",
+                  "index": 10,
+                  "text": "Warning 🔥🥵"
+                },
+                "11": {
+                  "color": "red",
+                  "index": 11,
+                  "text": "Degraded 🔥🥵"
+                },
+                "12": {
+                  "color": "red",
+                  "index": 12,
+                  "text": "Degraded 🥵"
+                },
+                "13": {
+                  "color": "red",
+                  "index": 13,
+                  "text": "Degraded 🔥🥵"
+                },
+                "14": {
+                  "color": "red",
+                  "index": 14,
+                  "text": "Degraded 🔥🥵"
+                },
+                "15": {
+                  "color": "red",
+                  "index": 15,
+                  "text": "Degraded 🔥🥵"
+                },
+                "2": {
+                  "color": "orange",
+                  "index": 2,
+                  "text": "Warning 🔥"
+                },
+                "3": {
+                  "color": "red",
+                  "index": 3,
+                  "text": "Degraded 🔥"
+                },
+                "4": {
+                  "color": "orange",
+                  "index": 4,
+                  "text": "Warning 🥵"
+                },
+                "5": {
+                  "color": "orange",
+                  "index": 5,
+                  "text": "Warning 🔥🥵"
+                },
+                "6": {
+                  "color": "orange",
+                  "index": 6,
+                  "text": "Warning 🔥🥵"
+                },
+                "7": {
+                  "color": "red",
+                  "index": 7,
+                  "text": "Degraded 🔥🥵"
+                },
+                "8": {
+                  "color": "orange",
+                  "index": 8,
+                  "text": "Warning 🥵"
+                },
+                "9": {
+                  "color": "orange",
+                  "index": 9,
+                  "text": "Warning 🔥🥵"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "black",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "orange",
+                "value": 2
+              },
+              {
+                "color": "red",
+                "value": 3
+              },
+              {
+                "color": "orange",
+                "value": 4
+              },
+              {
+                "color": "orange",
+                "value": 5
+              },
+              {
+                "color": "orange",
+                "value": 6
+              },
+              {
+                "color": "red",
+                "value": 7
+              },
+              {
+                "color": "orange",
+                "value": 8
+              },
+              {
+                "color": "orange",
+                "value": 9
+              },
+              {
+                "color": "orange",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 11
+              },
+              {
+                "color": "red",
+                "value": 12
+              },
+              {
+                "color": "red",
+                "value": 13
+              },
+              {
+                "color": "red",
+                "value": 14
+              },
+              {
+                "color": "red",
+                "value": 15
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 8,
+        "x": 0,
+        "y": 48
+      },
+      "id": 19,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"rails_replica_sql\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"rails_replica_sql\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rails_replica_sql\",monitor=\"global\",type=\"patroni-ci\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"rails_replica_sql\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rails_replica_sql\",monitor=\"global\",type=\"patroni-ci\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"rails_replica_sql\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rails_replica_sql\",monitor=\"global\",type=\"patroni-ci\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"rails_replica_sql\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rails_replica_sql\",monitor=\"global\",type=\"patroni-ci\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "rails_replica_sql SLI | Latency/Apdex",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
+      "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 41
+      },
+      "id": 762276418,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "rails_replica_sql RPS",
+          "color": "#E7D551",
+          "zindex": 3
+        },
+        {
+          "alias": "last week",
+          "color": "#dddddd80",
+          "dashLength": 4,
+          "dashes": true,
+          "fill": 0,
+          "legend": true,
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "spaceLength": 2,
+          "zindex": -3
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "sli-rails_replica_sql-ops-rate",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "avg_over_time(gitlab_component_ops:rate_5m{component=\"rails_replica_sql\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "rails_replica_sql RPS",
+          "refId": "A"
+        },
+        {
+          "expr": "gitlab_component_ops:rate_5m{component=\"rails_replica_sql\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"patroni-ci\"} offset 1w\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "last week",
+          "refId": "B"
+        }
+      ],
+      "title": "rails_replica_sql SLI RPS - Requests per Second",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Operations per Second",
+          "logBase": 1,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "content": "### Description\n\nRepresents all SQL transactions issued through ActiveRecord from the Rails monolith (web, api, websockets, but not sidekiq) to Postgres replicas.\nDurations can be impacted by various conditions other than Patroni, including client pool saturation, pgbouncer saturation,\nRuby thread contention and network conditions.\n\n",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 41
+      },
+      "id": 21,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -1253,7 +2641,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 31
+        "y": 51
       },
       "id": 2278903563,
       "legend": {
@@ -1580,9 +2968,9 @@
         "h": 1,
         "w": 8,
         "x": 0,
-        "y": 38
+        "y": 58
       },
-      "id": 13,
+      "id": 23,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -1626,7 +3014,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 31
+        "y": 51
       },
       "id": 3407402624,
       "legend": {
@@ -1724,9 +3112,9 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 31
+        "y": 51
       },
-      "id": 15,
+      "id": 25,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -1744,7 +3132,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 41
+        "y": 61
       },
       "id": 438786388,
       "legend": {
@@ -2071,9 +3459,9 @@
         "h": 1,
         "w": 8,
         "x": 0,
-        "y": 48
+        "y": 68
       },
-      "id": 17,
+      "id": 27,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -2117,7 +3505,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 41
+        "y": 61
       },
       "id": 1864411224,
       "legend": {
@@ -2215,9 +3603,9 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 41
+        "y": 61
       },
-      "id": 19,
+      "id": 29,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -2231,7 +3619,7 @@
         "x": 0,
         "y": 100
       },
-      "id": 20,
+      "id": 30,
       "panels": [
         {
           "bars": false,
@@ -2248,7 +3636,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 21,
+          "id": 31,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2324,7 +3712,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 22,
+          "id": 32,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2400,7 +3788,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 23,
+          "id": 33,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2476,7 +3864,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 24,
+          "id": 34,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2552,7 +3940,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 25,
+          "id": 35,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2628,7 +4016,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 26,
+          "id": 36,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2707,7 +4095,7 @@
         "x": 0,
         "y": 110
       },
-      "id": 27,
+      "id": 37,
       "panels": [
         {
           "bars": false,
@@ -2724,7 +4112,897 @@
             "x": 0,
             "y": 0
           },
-          "id": 28,
+          "id": 38,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    sli_aggregations:gitlab_sql_primary_duration_seconds_bucket_rate5m{db_config_name=\"ci\",env=\"$environment\",environment=\"$environment\",type!=\"sidekiq\"}\n  )\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "p95 overall",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.5)",
+              "line": false,
+              "op": "gt",
+              "value": 0.1,
+              "yaxis": "left"
+            },
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.25)",
+              "line": false,
+              "op": "gt",
+              "value": 0.05,
+              "yaxis": "left"
+            }
+          ],
+          "title": "Estimated p95 rails_primary_sql Latency - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": "Duration",
+              "logBase": 10,
+              "min": 0.01,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 0
+          },
+          "id": 39,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by () (\n  sli_aggregations:gitlab_sql_primary_duration_seconds_bucket_rate5m{db_config_name=\"ci\",env=\"$environment\",environment=\"$environment\",le=\"+Inf\",type!=\"sidekiq\"}\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "overall",
+              "refId": "A"
+            }
+          ],
+          "title": "rails_primary_sql RPS - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 10
+          },
+          "id": 40,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (feature_category,le) (\n    sli_aggregations:gitlab_sql_primary_duration_seconds_bucket_rate5m{db_config_name=\"ci\",env=\"$environment\",environment=\"$environment\",feature_category!=\"\",type!=\"sidekiq\"}\n  )\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "p95 {{feature_category}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.5)",
+              "line": false,
+              "op": "gt",
+              "value": 0.1,
+              "yaxis": "left"
+            },
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.25)",
+              "line": false,
+              "op": "gt",
+              "value": 0.05,
+              "yaxis": "left"
+            }
+          ],
+          "title": "Estimated p95 rails_primary_sql Latency - per feature_category",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": "Duration",
+              "logBase": 10,
+              "min": 0.01,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 8,
+            "y": 10
+          },
+          "id": 41,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (feature_category) (\n  sli_aggregations:gitlab_sql_primary_duration_seconds_bucket_rate5m{db_config_name=\"ci\",env=\"$environment\",environment=\"$environment\",feature_category!=\"\",le=\"+Inf\",type!=\"sidekiq\"}\n)\n\n    -\n    (\n      (\n  sum by (feature_category) (\n    sli_aggregations:gitlab_sql_primary_duration_seconds_bucket_rate5m{db_config_name=\"ci\",env=\"$environment\",environment=\"$environment\",feature_category!=\"\",le=\"0.05\",type!=\"sidekiq\"}\n  )\n  +\n  sum by (feature_category) (\n    sli_aggregations:gitlab_sql_primary_duration_seconds_bucket_rate5m{db_config_name=\"ci\",env=\"$environment\",environment=\"$environment\",feature_category!=\"\",le=\"0.1\",type!=\"sidekiq\"}\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(feature_category) group_left()\n  (\n    sum by () (\n  sli_aggregations:gitlab_sql_primary_duration_seconds_bucket_rate5m{db_config_name=\"ci\",env=\"$environment\",environment=\"$environment\",feature_category!=\"\",le=\"+Inf\",type!=\"sidekiq\"}\n)\n\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{feature_category}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for rails_primary_sql Latency - per feature_category",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 16,
+            "y": 10
+          },
+          "id": 42,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (feature_category) (\n  sli_aggregations:gitlab_sql_primary_duration_seconds_bucket_rate5m{db_config_name=\"ci\",env=\"$environment\",environment=\"$environment\",feature_category!=\"\",le=\"+Inf\",type!=\"sidekiq\"}\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{feature_category}}",
+              "refId": "A"
+            }
+          ],
+          "title": "rails_primary_sql RPS - per feature_category",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "🔬 SLI Detail: rails_primary_sql",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "collapse": true,
+      "collapsed": true,
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 120
+      },
+      "id": 43,
+      "panels": [
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 0
+          },
+          "id": 44,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    sli_aggregations:gitlab_sql_replica_duration_seconds_bucket_rate5m{db_config_name=\"ci_replica\",env=\"$environment\",environment=\"$environment\",type!=\"sidekiq\"}\n  )\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "p95 overall",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.5)",
+              "line": false,
+              "op": "gt",
+              "value": 0.1,
+              "yaxis": "left"
+            },
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.25)",
+              "line": false,
+              "op": "gt",
+              "value": 0.05,
+              "yaxis": "left"
+            }
+          ],
+          "title": "Estimated p95 rails_replica_sql Latency - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": "Duration",
+              "logBase": 10,
+              "min": 0.01,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 0
+          },
+          "id": 45,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by () (\n  sli_aggregations:gitlab_sql_replica_duration_seconds_bucket_rate5m{db_config_name=\"ci_replica\",env=\"$environment\",environment=\"$environment\",le=\"+Inf\",type!=\"sidekiq\"}\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "overall",
+              "refId": "A"
+            }
+          ],
+          "title": "rails_replica_sql RPS - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 10
+          },
+          "id": 46,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (feature_category,le) (\n    sli_aggregations:gitlab_sql_replica_duration_seconds_bucket_rate5m{db_config_name=\"ci_replica\",env=\"$environment\",environment=\"$environment\",feature_category!=\"\",type!=\"sidekiq\"}\n  )\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "p95 {{feature_category}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.5)",
+              "line": false,
+              "op": "gt",
+              "value": 0.1,
+              "yaxis": "left"
+            },
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.25)",
+              "line": false,
+              "op": "gt",
+              "value": 0.05,
+              "yaxis": "left"
+            }
+          ],
+          "title": "Estimated p95 rails_replica_sql Latency - per feature_category",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": "Duration",
+              "logBase": 10,
+              "min": 0.01,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 8,
+            "y": 10
+          },
+          "id": 47,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (feature_category) (\n  sli_aggregations:gitlab_sql_replica_duration_seconds_bucket_rate5m{db_config_name=\"ci_replica\",env=\"$environment\",environment=\"$environment\",feature_category!=\"\",le=\"+Inf\",type!=\"sidekiq\"}\n)\n\n    -\n    (\n      (\n  sum by (feature_category) (\n    sli_aggregations:gitlab_sql_replica_duration_seconds_bucket_rate5m{db_config_name=\"ci_replica\",env=\"$environment\",environment=\"$environment\",feature_category!=\"\",le=\"0.05\",type!=\"sidekiq\"}\n  )\n  +\n  sum by (feature_category) (\n    sli_aggregations:gitlab_sql_replica_duration_seconds_bucket_rate5m{db_config_name=\"ci_replica\",env=\"$environment\",environment=\"$environment\",feature_category!=\"\",le=\"0.1\",type!=\"sidekiq\"}\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(feature_category) group_left()\n  (\n    sum by () (\n  sli_aggregations:gitlab_sql_replica_duration_seconds_bucket_rate5m{db_config_name=\"ci_replica\",env=\"$environment\",environment=\"$environment\",feature_category!=\"\",le=\"+Inf\",type!=\"sidekiq\"}\n)\n\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 3,
+              "legendFormat": "{{feature_category}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for rails_replica_sql Latency - per feature_category",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 16,
+            "y": 10
+          },
+          "id": 48,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (feature_category) (\n  sli_aggregations:gitlab_sql_replica_duration_seconds_bucket_rate5m{db_config_name=\"ci_replica\",env=\"$environment\",environment=\"$environment\",feature_category!=\"\",le=\"+Inf\",type!=\"sidekiq\"}\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 2,
+              "legendFormat": "{{feature_category}}",
+              "refId": "A"
+            }
+          ],
+          "title": "rails_replica_sql RPS - per feature_category",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "🔬 SLI Detail: rails_replica_sql",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "collapse": true,
+      "collapsed": true,
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 130
+      },
+      "id": 49,
+      "panels": [
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 0
+          },
+          "id": 50,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2800,7 +5078,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 29,
+          "id": 51,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2876,7 +5154,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 30,
+          "id": 52,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2952,7 +5230,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 31,
+          "id": 53,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3029,9 +5307,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 120
+        "y": 140
       },
-      "id": 32,
+      "id": 54,
       "panels": [
         {
           "bars": false,
@@ -3048,7 +5326,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 33,
+          "id": 55,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3124,7 +5402,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 34,
+          "id": 56,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3200,7 +5478,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 35,
+          "id": 57,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3276,7 +5554,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 36,
+          "id": 58,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3355,7 +5633,7 @@
         "x": 0,
         "y": 300
       },
-      "id": 37,
+      "id": 59,
       "panels": [
         {
           "aliasColors": {
@@ -3374,7 +5652,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 38,
+          "id": 60,
           "legend": {
             "alignAsTable": false,
             "avg": false,
@@ -3472,7 +5750,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 39,
+          "id": 61,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3568,7 +5846,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 40,
+          "id": 62,
           "legend": {
             "alignAsTable": false,
             "avg": false,
@@ -3677,7 +5955,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 41,
+          "id": 63,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3773,7 +6051,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 42,
+          "id": 64,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3871,7 +6149,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 43,
+          "id": 65,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3969,7 +6247,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 44,
+          "id": 66,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4067,7 +6345,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 45,
+          "id": 67,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4165,7 +6443,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 46,
+          "id": 68,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4263,7 +6541,7 @@
             "x": 12,
             "y": 40
           },
-          "id": 47,
+          "id": 69,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4361,7 +6639,7 @@
             "x": 0,
             "y": 50
           },
-          "id": 48,
+          "id": 70,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4476,7 +6754,7 @@
             "x": 12,
             "y": 50
           },
-          "id": 49,
+          "id": 71,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4591,7 +6869,7 @@
             "x": 0,
             "y": 60
           },
-          "id": 50,
+          "id": 72,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4706,7 +6984,7 @@
             "x": 12,
             "y": 60
           },
-          "id": 51,
+          "id": 73,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4822,7 +7100,7 @@
         "x": 0,
         "y": 500
       },
-      "id": 52,
+      "id": 74,
       "panels": [
         {
           "aliasColors": {
@@ -9886,7 +12164,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 79,
+      "id": 101,
       "panels": [
 
       ],
@@ -9915,7 +12193,7 @@
         "x": 0,
         "y": 1001
       },
-      "id": 80,
+      "id": 102,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10013,7 +12291,7 @@
         "x": 12,
         "y": 1001
       },
-      "id": 81,
+      "id": 103,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10111,7 +12389,7 @@
         "x": 0,
         "y": 1011
       },
-      "id": 82,
+      "id": 104,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10209,7 +12487,7 @@
         "x": 12,
         "y": 1011
       },
-      "id": 83,
+      "id": 105,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10299,7 +12577,7 @@
         "x": 0,
         "y": 2000
       },
-      "id": 84,
+      "id": 106,
       "panels": [
 
       ],
@@ -10328,7 +12606,7 @@
         "x": 0,
         "y": 2001
       },
-      "id": 85,
+      "id": 107,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10426,7 +12704,7 @@
         "x": 12,
         "y": 2001
       },
-      "id": 86,
+      "id": 108,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10522,7 +12800,7 @@
         "x": 0,
         "y": 2011
       },
-      "id": 87,
+      "id": 109,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10618,7 +12896,7 @@
         "x": 12,
         "y": 2011
       },
-      "id": 88,
+      "id": 110,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10716,7 +12994,7 @@
         "x": 0,
         "y": 2021
       },
-      "id": 89,
+      "id": 111,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10814,7 +13092,7 @@
         "x": 12,
         "y": 2021
       },
-      "id": 90,
+      "id": 112,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10912,7 +13190,7 @@
         "x": 0,
         "y": 2031
       },
-      "id": 91,
+      "id": 113,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11010,7 +13288,7 @@
         "x": 12,
         "y": 2031
       },
-      "id": 92,
+      "id": 114,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11108,7 +13386,7 @@
         "x": 0,
         "y": 2041
       },
-      "id": 93,
+      "id": 115,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11196,7 +13474,7 @@
         "x": 0,
         "y": 3000
       },
-      "id": 94,
+      "id": 116,
       "panels": [
 
       ],
@@ -11225,7 +13503,7 @@
         "x": 0,
         "y": 3001
       },
-      "id": 95,
+      "id": 117,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11323,7 +13601,7 @@
         "x": 12,
         "y": 3001
       },
-      "id": 96,
+      "id": 118,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11413,7 +13691,7 @@
         "x": 0,
         "y": 4000
       },
-      "id": 97,
+      "id": 119,
       "panels": [
         {
           "aliasColors": {
@@ -11432,7 +13710,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 98,
+          "id": 120,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11530,7 +13808,7 @@
             "x": 12,
             "y": 1
           },
-          "id": 99,
+          "id": 121,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11628,7 +13906,7 @@
             "x": 0,
             "y": 11
           },
-          "id": 100,
+          "id": 122,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11726,7 +14004,7 @@
             "x": 12,
             "y": 11
           },
-          "id": 101,
+          "id": 123,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11824,7 +14102,7 @@
             "x": 0,
             "y": 21
           },
-          "id": 102,
+          "id": 124,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11923,7 +14201,7 @@
         "x": 0,
         "y": 4010
       },
-      "id": 103,
+      "id": 125,
       "panels": [
         {
           "aliasColors": {
@@ -11942,7 +14220,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 104,
+          "id": 126,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12040,7 +14318,7 @@
             "x": 12,
             "y": 1
           },
-          "id": 105,
+          "id": 127,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12138,7 +14416,7 @@
             "x": 0,
             "y": 11
           },
-          "id": 106,
+          "id": 128,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12236,7 +14514,7 @@
             "x": 12,
             "y": 11
           },
-          "id": 107,
+          "id": 129,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12334,7 +14612,7 @@
             "x": 0,
             "y": 21
           },
-          "id": 108,
+          "id": 130,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12433,7 +14711,7 @@
         "x": 0,
         "y": 4020
       },
-      "id": 109,
+      "id": 131,
       "panels": [
         {
           "aliasColors": {
@@ -12452,7 +14730,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 110,
+          "id": 132,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12550,7 +14828,7 @@
             "x": 12,
             "y": 1
           },
-          "id": 111,
+          "id": 133,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12648,7 +14926,7 @@
             "x": 0,
             "y": 11
           },
-          "id": 112,
+          "id": 134,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12746,7 +15024,7 @@
             "x": 12,
             "y": 11
           },
-          "id": 113,
+          "id": 135,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12844,7 +15122,7 @@
             "x": 0,
             "y": 21
           },
-          "id": 114,
+          "id": 136,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12941,7 +15219,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 115,
+      "id": 137,
       "panels": [
         {
           "colors": [
@@ -12962,7 +15240,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 116,
+          "id": 138,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -13075,7 +15353,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 117,
+          "id": 139,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -13186,7 +15464,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 118,
+          "id": 140,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -13249,7 +15527,7 @@
           "mode": "content",
           "nullPointMode": "connected",
           "options": {
-            "content": "graph TD\n  subgraph db\n  patroni-ci[\"patroni-ci (Level 1)\"]\n  patroni[\"patroni (Level 2)\"]\nend\n\n\n  patroni-ci[\"patroni-ci (Level 1)\"] --> patroni\n"
+            "content": "graph TD\n  subgraph db\n  patroni-ci[\"patroni-ci (Level 2)\"]\n  patroni[\"patroni (Level 2)\"]\nend\n\n\n  patroni-ci[\"patroni-ci (Level 2)\"] --> patroni\n"
           },
           "seriesOverrides": [
 
@@ -13291,7 +15569,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 119,
+      "id": 141,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -13385,5 +15663,5 @@
   "timezone": "utc",
   "title": "patroni-ci: Overview",
   "uid": "patroni-ci-main",
-  "version": 1447
+  "version": 1448
 }
