@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4004687825 at Mon Mar 27 06:18:16 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4008095219 at Mon Mar 27 14:16:12 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -1233,7 +1233,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(shard) (\n  increase(gitlab_runner_jobs_total{environment=~\"$environment\",stage=~\"$stage\",instance=~\"${runner_manager:pipe}\"}[$__interval])\n)\n",
+          "expr": "sum by(shard) (\n  increase(gitlab_runner_jobs_total{environment=~\"$environment\",stage=~\"$stage\",instance=~\"${runner_manager:pipe}\"}[$__rate_interval])\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -1241,7 +1241,7 @@
           "refId": "A"
         },
         {
-          "expr": "avg (\n  increase(gitlab_runner_jobs_total{environment=~\"$environment\",stage=~\"$stage\",instance=~\"${runner_manager:pipe}\"}[$__interval])\n)\n",
+          "expr": "avg (\n  increase(gitlab_runner_jobs_total{environment=~\"$environment\",stage=~\"$stage\",instance=~\"${runner_manager:pipe}\"}[$__rate_interval])\n)\n",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 10,
@@ -1318,12 +1318,12 @@
       "targets": [
         {
           "dsType": "influxdb",
-          "expr": "sum by (le) (\n  rate(job_queue_duration_seconds_bucket{environment=~\"$environment\", stage=~\"$stage\", jobs_running_for_project=~\"$jobs_running_for_project\"}[$__interval])\n)\n",
+          "expr": "sum by (le) (\n  rate(job_queue_duration_seconds_bucket{environment=~\"$environment\", stage=~\"$stage\", jobs_running_for_project=~\"$jobs_running_for_project\"}[$__rate_interval])\n)\n",
           "format": "heatmap",
           "groupBy": [
             {
               "params": [
-                "$__interval"
+                "$__rate_interval"
               ],
               "type": "time"
             },
@@ -1334,7 +1334,7 @@
               "type": "fill"
             }
           ],
-          "interval": "$__interval",
+          "interval": "$__rate_interval",
           "intervalFactor": 1,
           "legendFormat": "{{le}}",
           "orderByTime": "ASC",
@@ -1427,7 +1427,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(\n  0.99,\n  sum by (le, runner_type) (\n    increase(gitlab_ci_queue_size_total_bucket{environment=~\"$environment\", stage=~\"$stage\"}[$__interval])\n  )\n)\n",
+          "expr": "histogram_quantile(\n  0.99,\n  sum by (le, runner_type) (\n    increase(gitlab_ci_queue_size_total_bucket{environment=~\"$environment\", stage=~\"$stage\"}[$__rate_interval])\n  )\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -1539,7 +1539,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(shard) (\n    fleeting_provisioner_instances{state=~\"running|deleting\", environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}\n)\n/\nsum by(shard) (\n    fleeting_provisioner_max_instances{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}\n)\n",
+          "expr": "sum by(shard) (\n  fleeting_provisioner_instances{state=~\"running|deleting\", environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}\n)\n/\nsum by(shard) (\n  fleeting_provisioner_max_instances{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -1637,7 +1637,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(shard) (\n    fleeting_taskscaler_tasks{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\", state!~\"idle|reserved\"}\n)\n/\nsum by(shard) (\n          fleeting_provisioner_max_instances{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}\n          *\n          fleeting_taskscaler_max_tasks_per_instance{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}\n)\n",
+          "expr": "sum by(shard) (\n  fleeting_taskscaler_tasks{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\", state!~\"idle|reserved\"}\n)\n/\nsum by(shard) (\n  fleeting_provisioner_max_instances{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}\n  *\n  fleeting_taskscaler_max_tasks_per_instance{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -1833,7 +1833,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(shard, operation) (\n  increase(\n    fleeting_provisioner_instance_operations_total{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__interval]\n  )\n)\n",
+          "expr": "sum by(shard, operation) (\n  rate(\n    fleeting_provisioner_instance_operations_total{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__rate_interval]\n  )\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -1931,7 +1931,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(shard) (\n  increase(\n    fleeting_provisioner_missed_updates_total{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__interval]\n  )\n)\n",
+          "expr": "sum by(shard) (\n  rate(\n    fleeting_provisioner_missed_updates_total{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__rate_interval]\n  )\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -2009,12 +2009,12 @@
       "targets": [
         {
           "dsType": "influxdb",
-          "expr": "sum by (le) (\n  increase(fleeting_provisioner_instance_creation_time_seconds_bucket{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__interval])\n)\n",
+          "expr": "sum by (le) (\n  rate(\n    fleeting_provisioner_instance_creation_time_seconds_bucket{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__rate_interval]\n  )\n)\n",
           "format": "heatmap",
           "groupBy": [
             {
               "params": [
-                "$__interval"
+                "$__rate_interval"
               ],
               "type": "time"
             },
@@ -2025,7 +2025,7 @@
               "type": "fill"
             }
           ],
-          "interval": "$__interval",
+          "interval": "$__rate_interval",
           "intervalFactor": 2,
           "legendFormat": "{{le}}",
           "orderByTime": "ASC",
@@ -2098,12 +2098,12 @@
       "targets": [
         {
           "dsType": "influxdb",
-          "expr": "sum by (le) (\n  increase(fleeting_provisioner_instance_is_running_time_seconds_bucket{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__interval])\n)\n",
+          "expr": "sum by (le) (\n  rate(\n    fleeting_provisioner_instance_is_running_time_seconds_bucket{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__rate_interval]\n  )\n)\n",
           "format": "heatmap",
           "groupBy": [
             {
               "params": [
-                "$__interval"
+                "$__rate_interval"
               ],
               "type": "time"
             },
@@ -2114,7 +2114,7 @@
               "type": "fill"
             }
           ],
-          "interval": "$__interval",
+          "interval": "$__rate_interval",
           "intervalFactor": 2,
           "legendFormat": "{{le}}",
           "orderByTime": "ASC",
@@ -2187,12 +2187,12 @@
       "targets": [
         {
           "dsType": "influxdb",
-          "expr": "sum by (le) (\n  increase(fleeting_provisioner_instance_deletion_time_seconds_bucket{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__interval])\n)\n",
+          "expr": "sum by (le) (\n  rate(\n    fleeting_provisioner_instance_deletion_time_seconds_bucket{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__rate_interval]\n  )\n)\n",
           "format": "heatmap",
           "groupBy": [
             {
               "params": [
-                "$__interval"
+                "$__rate_interval"
               ],
               "type": "time"
             },
@@ -2203,7 +2203,7 @@
               "type": "fill"
             }
           ],
-          "interval": "$__interval",
+          "interval": "$__rate_interval",
           "intervalFactor": 2,
           "legendFormat": "{{le}}",
           "orderByTime": "ASC",
@@ -2276,12 +2276,12 @@
       "targets": [
         {
           "dsType": "influxdb",
-          "expr": "sum by (le) (\n  increase(fleeting_provisioner_instance_life_duration_seconds_bucket{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__interval])\n)\n",
+          "expr": "sum by (le) (\n  rate(\n    fleeting_provisioner_instance_life_duration_seconds_bucket{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__rate_interval]\n  )\n)\n",
           "format": "heatmap",
           "groupBy": [
             {
               "params": [
-                "$__interval"
+                "$__rate_interval"
               ],
               "type": "time"
             },
@@ -2292,7 +2292,7 @@
               "type": "fill"
             }
           ],
-          "interval": "$__interval",
+          "interval": "$__rate_interval",
           "intervalFactor": 2,
           "legendFormat": "{{le}}",
           "orderByTime": "ASC",
@@ -2385,7 +2385,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(shard, state) (\n    fleeting_taskscaler_tasks{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}\n)\n",
+          "expr": "sum by(shard, state) (\n  fleeting_taskscaler_tasks{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -2483,7 +2483,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(shard, operation) (\n  increase(\n    fleeting_taskscaler_task_operations_total{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__interval]\n  )\n)\n",
+          "expr": "sum by(shard, operation) (\n  rate(\n    fleeting_taskscaler_task_operations_total{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__rate_interval]\n  )\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -2581,7 +2581,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(shard, operation) (\n  increase(\n    fleeting_taskscaler_scale_operations_total{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__interval]\n  )\n)\n",
+          "expr": "sum by(shard, operation) (\n  rate(\n    fleeting_taskscaler_scale_operations_total{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__rate_interval]\n  )\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
@@ -2659,12 +2659,12 @@
       "targets": [
         {
           "dsType": "influxdb",
-          "expr": "sum by (le) (\n  increase(fleeting_taskscaler_task_instance_readiness_time_seconds_bucket{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__interval])\n)\n",
+          "expr": "sum by (le) (\n  rate(\n    fleeting_taskscaler_task_instance_readiness_time_seconds_bucket{environment=~\"$environment\", stage=~\"$stage\", instance=~\"${runner_manager:pipe}\"}[$__rate_interval]\n  )\n)\n",
           "format": "heatmap",
           "groupBy": [
             {
               "params": [
-                "$__interval"
+                "$__rate_interval"
               ],
               "type": "time"
             },
@@ -2675,7 +2675,7 @@
               "type": "fill"
             }
           ],
-          "interval": "$__interval",
+          "interval": "$__rate_interval",
           "intervalFactor": 2,
           "legendFormat": "{{le}}",
           "orderByTime": "ASC",
@@ -2913,5 +2913,5 @@
   "timezone": "utc",
   "title": "ci-runners: Incident Support: autoscaling-new",
   "uid": "ci-runners-incident-autoscaling-new",
-  "version": 55
+  "version": 60
 }

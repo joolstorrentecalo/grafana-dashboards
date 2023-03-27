@@ -249,27 +249,118 @@
             "type": "prometheus",
             "uid": "PA258B30F88C30650"
           },
+          "editorMode": "code",
           "exemplar": true,
           "expr": "histogram_quantile(0.99, sum(rate(gitaly_housekeeping_tasks_latency_bucket{environment=\"$environment\"}[$__rate_interval])) by (le,housekeeping_task))",
           "hide": false,
           "interval": "",
-          "legendFormat": "P99: {{housekeeping_task}}",
+          "legendFormat": "__auto",
+          "range": true,
           "refId": "A"
+        }
+      ],
+      "title": "OptimizeRepository: Per-Optimization Latencies",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "The OptimizeRepository RPC is combining all the different maintenance tasks like repacking objects, repacking references or pruning objects into a single RPC. This metric keeps track of the accumulate time spent in each of the subtasks executed as part of OptimizeRepository to improve visibility into what the RPC does.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 1,
+            "scaleDistribution": {
+              "log": 2,
+              "type": "log"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
         },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 74,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "PA258B30F88C30650"
           },
-          "exemplar": true,
-          "expr": "histogram_quantile(0.95, sum(rate(gitaly_housekeeping_tasks_latency_bucket{environment=\"$environment\"}[$__rate_interval])) by (le,housekeeping_task))",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "P95: {{housekeeping_task}}",
-          "refId": "B"
+          "editorMode": "code",
+          "expr": "sum(increase(gitaly_housekeeping_tasks_latency_sum{environment=\"$environment\"}[$__rate_interval])) by (housekeeping_task)",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
         }
       ],
-      "title": "OptimizeRepository: Per-Optimization Latencies",
+      "title": "OptimizeRepository: Accumulate Per-Optimization Timings",
       "type": "timeseries"
     },
     {
@@ -334,7 +425,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 26
       },
       "id": 27,
       "options": {
@@ -373,7 +464,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 26
+        "y": 34
       },
       "id": 39,
       "panels": [
@@ -447,7 +538,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 27
+        "y": 35
       },
       "id": 43,
       "options": {
@@ -509,7 +600,7 @@
         "h": 6,
         "w": 12,
         "x": 0,
-        "y": 32
+        "y": 40
       },
       "id": 45,
       "options": {
@@ -595,7 +686,7 @@
         "h": 6,
         "w": 12,
         "x": 12,
-        "y": 32
+        "y": 40
       },
       "id": 50,
       "options": {
@@ -681,7 +772,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 68
+        "y": 76
       },
       "id": 62,
       "options": {
@@ -744,7 +835,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 76
+        "y": 84
       },
       "id": 31,
       "panels": [
@@ -809,7 +900,7 @@
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 35
+            "y": 43
           },
           "id": 4,
           "options": {
@@ -918,7 +1009,7 @@
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 35
+            "y": 43
           },
           "id": 6,
           "options": {
@@ -1139,6 +1230,10 @@
             "packfiles_full_repack"
           ]
         },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PA258B30F88C30650"
+        },
         "definition": "label_values(gitaly_housekeeping_time_since_last_optimization_seconds_bucket{env=\"$environment\"}, data_structure)",
         "description": "Data structures by the time they have been last optimized",
         "hide": 0,
@@ -1170,6 +1265,6 @@
   "timezone": "",
   "title": "Gitaly Housekeeping Statistics",
   "uid": "Z2xwZIP7k",
-  "version": 26,
+  "version": 28,
   "weekStart": ""
 }
