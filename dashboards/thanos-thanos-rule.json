@@ -33,17 +33,13 @@
   "liveNow": false,
   "panels": [
     {
-      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
         "y": 0
       },
-      "id": 27,
-      "panels": [
-
-      ],
+      "id": 26,
       "title": "Pod Info",
       "type": "row"
     },
@@ -175,7 +171,7 @@
         "x": 0,
         "y": 1
       },
-      "id": 29,
+      "id": 28,
       "interval": "1m",
       "links": [
 
@@ -201,7 +197,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum by (pod) (rate(container_cpu_usage_seconds_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", container!=\"\", pod!~\"thanos-query-frontend.+\", pod=~\"thanos-query.+\"}[$__interval]))",
+          "expr": "sum by (pod) (rate(container_cpu_usage_seconds_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", container!=\"\", pod=~\"$job.+\"}[$__interval]))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{container}}",
@@ -215,7 +211,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "max(\n    kube_pod_container_resource_requests{container=\"query\", job=\"kube-state-metrics\", environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$job.+\", resource=\"cpu\"}\n)\n",
+          "expr": "max(\n    kube_pod_container_resource_requests{container=\"ruler\", job=\"kube-state-metrics\", environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$job.+\", resource=\"cpu\"}\n)\n",
           "format": "time_series",
           "instant": false,
           "intervalFactor": 2,
@@ -230,7 +226,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "max(\n    kube_pod_container_resource_limits{container=\"query\", job=\"kube-state-metrics\", job=\"kube-state-metrics\", environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$job.+\", resource=\"cpu\"}\n)\n",
+          "expr": "max(\n    kube_pod_container_resource_limits{container=\"ruler\", job=\"kube-state-metrics\", job=\"kube-state-metrics\", environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$job.+\", resource=\"cpu\"}\n)\n",
           "format": "time_series",
           "instant": false,
           "intervalFactor": 2,
@@ -313,7 +309,7 @@
         "x": 8,
         "y": 1
       },
-      "id": 31,
+      "id": 30,
       "interval": "1m",
       "links": [
 
@@ -339,7 +335,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum(increase(container_cpu_cfs_throttled_periods_total{job=\"kubelet\", environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod!~\"thanos-query-frontend.+\", pod=~\"$job.+\", container!=\"\"}[$__rate_interval])) by (pod, container) /sum(increase(container_cpu_cfs_periods_total{job=\"kubelet\", environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod!~\"thanos-query-frontend.+\", pod=~\"$job.+\",}[$__rate_interval])) by (pod, container)",
+          "expr": "sum(increase(container_cpu_cfs_throttled_periods_total{job=\"kubelet\", environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$job.+\", container!=\"\"}[$__rate_interval])) by (pod, container) /sum(increase(container_cpu_cfs_periods_total{job=\"kubelet\", environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$job.+\",}[$__rate_interval])) by (pod, container)",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{ pod }}",
@@ -394,6 +390,7 @@
           "mappings": [
 
           ],
+          "noValue": "No HPA Detected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -436,7 +433,7 @@
         "x": 16,
         "y": 1
       },
-      "id": 35,
+      "id": 32,
       "options": {
         "legend": {
           "calcs": [
@@ -458,7 +455,7 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "kube_horizontalpodautoscaler_status_current_replicas{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", horizontalpodautoscaler=\"thanos-query\"}",
+          "expr": "kube_horizontalpodautoscaler_status_current_replicas{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", horizontalpodautoscaler=\"$job\"}",
           "legendFormat": "current",
           "range": true,
           "refId": "A"
@@ -469,7 +466,7 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "kube_horizontalpodautoscaler_spec_max_replicas{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", horizontalpodautoscaler=\"thanos-query\"}",
+          "expr": "kube_horizontalpodautoscaler_spec_max_replicas{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", horizontalpodautoscaler=\"$job\"}",
           "hide": false,
           "legendFormat": "max",
           "range": true,
@@ -628,7 +625,7 @@
         "x": 0,
         "y": 8
       },
-      "id": 33,
+      "id": 34,
       "interval": "1m",
       "links": [
 
@@ -654,7 +651,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{job=\"kubelet\", environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$job.+\", container=\"query\"}) by (pod)",
+          "expr": "sum(container_memory_working_set_bytes{job=\"kubelet\", environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$job.+\", container=\"ruler\"}) by (pod)",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{container}}",
@@ -667,7 +664,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "max(\n    kube_pod_container_resource_requests{job=\"kube-state-metrics\", environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$job.+\", container=\"query\", resource=\"memory\"}\n)\n",
+          "expr": "max(\n    kube_pod_container_resource_requests{job=\"kube-state-metrics\", environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$job.+\", container=\"ruler\", resource=\"memory\"}\n)\n",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "requests",
@@ -680,7 +677,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "max(\n    kube_pod_container_resource_limits{job=\"kube-state-metrics\", environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$job.+\", container=\"query\", resource=\"memory\"}\n)\n",
+          "expr": "max(\n    kube_pod_container_resource_limits{job=\"kube-state-metrics\", environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$job.+\", container=\"ruler\", resource=\"memory\"}\n)\n",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "limits",
@@ -759,7 +756,7 @@
         "x": 8,
         "y": 8
       },
-      "id": 37,
+      "id": 36,
       "options": {
         "legend": {
           "calcs": [
@@ -781,7 +778,7 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "sum by (pod) (rate(kube_pod_container_status_restarts_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", container=\"query\", pod=~\"$job.+\"}[1m]))",
+          "expr": "sum by (pod) (rate(kube_pod_container_status_restarts_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", container=\"ruler\", pod=~\"$job.+\"}[1m]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -992,7 +989,7 @@
           "refId": "A"
         }
       ],
-      "title": "Instant Query API",
+      "title": "Rule Group Evaluations",
       "type": "row"
     },
     {
@@ -1000,7 +997,6 @@
         "type": "prometheus",
         "uid": "$datasource"
       },
-      "description": "Shows rate of requests against /query for the given time.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1013,7 +1009,7 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 94,
+            "fillOpacity": 10,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -1021,7 +1017,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 0,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -1030,7 +1026,7 @@
             "spanNulls": false,
             "stacking": {
               "group": "A",
-              "mode": "normal"
+              "mode": "none"
             },
             "thresholdsStyle": {
               "mode": "off"
@@ -1056,81 +1052,7 @@
           "unit": "short"
         },
         "overrides": [
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/1../"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#EAB839",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/2../"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#37872D",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/3../"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#E0B400",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/4../"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#1F60C4",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/5../"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#C4162A",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
+
         ]
       },
       "gridPos": {
@@ -1164,16 +1086,16 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum by (job, handler, code) (rate(http_requests_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", handler=\"query\"}[$interval]))",
+          "expr": "sum by (job, strategy) (rate(prometheus_rule_evaluations_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}[$__rate_interval]))",
           "format": "time_series",
           "intervalFactor": 2,
-          "legendFormat": "{{job}} {{handler}} {{code}}",
+          "legendFormat": "{{ strategy }}",
           "range": true,
           "refId": "A",
           "step": 10
         }
       ],
-      "title": "Rate",
+      "title": "Rule Group Evaluations",
       "type": "timeseries"
     },
     {
@@ -1181,7 +1103,899 @@
         "type": "prometheus",
         "uid": "$datasource"
       },
-      "description": "Shows ratio of errors compared to the total number of handled requests against /query.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 16
+      },
+      "id": 2,
+      "links": [
+
+      ],
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
+          "expr": "sum by (job, strategy) (increase(prometheus_rule_group_iterations_missed_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}[$__rate_interval]))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "{{ strategy }}",
+          "range": true,
+          "refId": "A",
+          "step": 10
+        }
+      ],
+      "title": "Rule Group Evaluations Missed",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "$datasource"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 16,
+        "y": 16
+      },
+      "id": 3,
+      "links": [
+
+      ],
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
+          "expr": "(\n  sum by(job, rule_group) (prometheus_rule_group_last_duration_seconds{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"})\n  >\n  sum by(job, rule_group) (prometheus_rule_group_interval_seconds{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"})\n)\n",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "{{ rule_group }}",
+          "range": true,
+          "refId": "A",
+          "step": 10
+        }
+      ],
+      "title": "Rule Group Evlauations Too Slow",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 23
+      },
+      "id": 20,
+      "panels": [
+
+      ],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "refId": "A"
+        }
+      ],
+      "title": "Alert Sent",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "$datasource"
+      },
+      "description": "Shows rate of dropped alerts.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 24
+      },
+      "id": 4,
+      "links": [
+
+      ],
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
+          "expr": "sum by (job, alertmanager) (rate(thanos_alert_sender_alerts_dropped_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}[$__rate_interval]))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "{{alertmanager}}",
+          "range": true,
+          "refId": "A",
+          "step": 10
+        }
+      ],
+      "title": "Dropped Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "$datasource"
+      },
+      "description": "Shows rate of alerts that successfully sent to alert manager.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 24
+      },
+      "id": 5,
+      "links": [
+
+      ],
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
+          "expr": "sum by (job, alertmanager) (rate(thanos_alert_sender_alerts_sent_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}[$__rate_interval]))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "{{alertmanager}}",
+          "range": true,
+          "refId": "A",
+          "step": 10
+        }
+      ],
+      "title": "Sent Rate",
+      "type": "timeseries"
+    },
+    {
+      "aliasColors": {
+        "error": "#E24D42"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "$datasource"
+      },
+      "description": "Shows ratio of errors compared to the total number of sent alerts.",
+      "fill": 10,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 12,
+        "y": 24
+      },
+      "hiddenSeries": false,
+      "id": 6,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 0,
+      "links": [
+
+      ],
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "9.4.3",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
+          "expr": "sum by (job) (rate(thanos_alert_sender_errors_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}[$interval])) / sum by (job) (rate(thanos_alert_sender_alerts_sent_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}[$interval]))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "error",
+          "range": true,
+          "refId": "A",
+          "step": 10
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeRegions": [
+
+      ],
+      "title": "Sent Errors",
+      "tooltip": {
+        "shared": false,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "logBase": 1,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "$datasource"
+      },
+      "description": "Shows how long has it taken to send alerts to alert manager.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "p99"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#FA6400",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 10
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 10
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "p90"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#E0B400",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 10
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 10
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "p50"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#37872D",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 100
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 24
+      },
+      "id": 7,
+      "links": [
+
+      ],
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.50, sum by (job, le) (rate(thanos_alert_sender_latency_seconds_bucket{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}[$interval]))) * 1",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "p50 {{job}}",
+          "logBase": 10,
+          "range": true,
+          "refId": "A",
+          "step": 10
+        },
+        {
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.90, sum by (job, le) (rate(thanos_alert_sender_latency_seconds_bucket{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}[$interval]))) * 1",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "p90 {{job}}",
+          "logBase": 10,
+          "range": true,
+          "refId": "B",
+          "step": 10
+        },
+        {
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.99, sum by (job, le) (rate(thanos_alert_sender_latency_seconds_bucket{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}[$interval]))) * 1",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "p99 {{job}}",
+          "logBase": 10,
+          "range": true,
+          "refId": "C",
+          "step": 10
+        }
+      ],
+      "title": "Sent Duration",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 31
+      },
+      "id": 21,
+      "panels": [
+
+      ],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "refId": "A"
+        }
+      ],
+      "title": "Alert Queue",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "$datasource"
+      },
+      "description": "Shows rate of queued alerts.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 32
+      },
+      "id": 8,
+      "links": [
+
+      ],
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
+          "expr": "sum by (job) (rate(thanos_alert_queue_alerts_dropped_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}[$__rate_interval]))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "{{job}}",
+          "range": true,
+          "refId": "A",
+          "step": 10
+        }
+      ],
+      "title": "Push Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "$datasource"
+      },
+      "description": "Shows ratio of dropped alerts compared to the total number of queued alerts.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1256,1338 +2070,8 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 8,
-        "x": 8,
-        "y": 16
-      },
-      "id": 2,
-      "links": [
-
-      ],
-      "options": {
-        "legend": {
-          "calcs": [
-
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.4.3",
-      "targets": [
-        {
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "expr": "sum by (job) (rate(http_requests_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=\"$job\", handler=\"query\",code=~\"5..\"}[$interval])) / sum by (job) (rate(http_requests_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=\"$job\", handler=\"query\"}[$interval]))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "error",
-          "range": true,
-          "refId": "A",
-          "step": 10
-        }
-      ],
-      "title": "Errors",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
-      },
-      "description": "Shows how long has it taken to handle requests in quantiles.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [
-
-          ],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "p99"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#FA6400",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 10
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 10
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "p90"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#E0B400",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 10
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 10
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "p50"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#37872D",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 100
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 16,
-        "y": 16
-      },
-      "id": 3,
-      "links": [
-
-      ],
-      "options": {
-        "legend": {
-          "calcs": [
-
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.4.3",
-      "targets": [
-        {
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "expr": "histogram_quantile(0.50, sum by (job, le) (rate(http_request_duration_seconds_bucket{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", handler=\"query\"}[$interval]))) * 1",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "p50 {{job}}",
-          "logBase": 10,
-          "range": true,
-          "refId": "A",
-          "step": 10
-        },
-        {
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "expr": "histogram_quantile(0.90, sum by (job, le) (rate(http_request_duration_seconds_bucket{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", handler=\"query\"}[$interval]))) * 1",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "p90 {{job}}",
-          "logBase": 10,
-          "range": true,
-          "refId": "B",
-          "step": 10
-        },
-        {
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "expr": "histogram_quantile(0.99, sum by (job, le) (rate(http_request_duration_seconds_bucket{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", handler=\"query\"}[$interval]))) * 1",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "p99 {{job}}",
-          "logBase": 10,
-          "range": true,
-          "refId": "C",
-          "step": 10
-        }
-      ],
-      "title": "Duration",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PA258B30F88C30650"
-      },
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 23
-      },
-      "id": 20,
-      "panels": [
-
-      ],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PA258B30F88C30650"
-          },
-          "refId": "A"
-        }
-      ],
-      "title": "Range Query API",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
-      },
-      "description": "Shows rate of requests against /query_range for the given time range.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 100,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 0,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [
-
-          ],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/1../"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#EAB839",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/2../"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#37872D",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/3../"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#E0B400",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/4../"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#1F60C4",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/5../"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#C4162A",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 0,
-        "y": 24
-      },
-      "id": 4,
-      "links": [
-
-      ],
-      "options": {
-        "legend": {
-          "calcs": [
-
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.4.3",
-      "targets": [
-        {
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "expr": "sum by (job, handler, code) (rate(http_requests_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\",job=~\"$job\", handler=\"query_range\"}[$interval]))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "{{job}} {{handler}} {{code}}",
-          "range": true,
-          "refId": "A",
-          "step": 10
-        }
-      ],
-      "title": "Rate",
-      "type": "timeseries"
-    },
-    {
-      "aliasColors": {
-        "error": "#E24D42"
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
-      },
-      "description": "Shows ratio of errors compared to the total number of handled requests against /query_range.",
-      "fill": 10,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 8,
-        "y": 24
-      },
-      "hiddenSeries": false,
-      "id": 5,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 0,
-      "links": [
-
-      ],
-      "nullPointMode": "null as zero",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "9.4.3",
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": true,
-      "steppedLine": false,
-      "targets": [
-        {
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "expr": "sum by (job) (rate(http_requests_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", handler=\"query_range\",code=~\"5..\"}[$interval])) / sum by (job) (rate(http_requests_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", handler=\"query_range\"}[$interval]))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A",
-          "step": 10
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeRegions": [
-
-      ],
-      "title": "Errors",
-      "tooltip": {
-        "shared": false,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "mode": "time",
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "percentunit",
-          "logBase": 1,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "logBase": 1,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false
-      }
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
-      },
-      "description": "Shows how long has it taken to handle requests in quantiles.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [
-
-          ],
-          "min": 0,
-          "noValue": "-",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 16,
-        "y": 24
-      },
-      "id": 6,
-      "links": [
-
-      ],
-      "options": {
-        "legend": {
-          "calcs": [
-
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.4.3",
-      "targets": [
-        {
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "expr": "histogram_quantile(0.50, sum by (job, le) (rate(http_request_duration_seconds_bucket{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", handler=\"query_range\"}[$interval]))) * 1",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "p50 {{job}}",
-          "logBase": 10,
-          "range": true,
-          "refId": "A",
-          "step": 10
-        },
-        {
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "expr": "histogram_quantile(0.90, sum by (job, le) (rate(http_request_duration_seconds_bucket{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", handler=\"query_range\"}[$interval]))) * 1",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "p90 {{job}}",
-          "logBase": 10,
-          "range": true,
-          "refId": "B",
-          "step": 10
-        },
-        {
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "expr": "histogram_quantile(0.99, sum by (job, le) (rate(http_request_duration_seconds_bucket{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", handler=\"query_range\"}[$interval]))) * 1",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "p99 {{job}}",
-          "logBase": 10,
-          "range": true,
-          "refId": "C",
-          "step": 10
-        }
-      ],
-      "title": "Duration",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PA258B30F88C30650"
-      },
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 31
-      },
-      "id": 21,
-      "panels": [
-
-      ],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PA258B30F88C30650"
-          },
-          "refId": "A"
-        }
-      ],
-      "title": "gRPC (Unary)",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
-      },
-      "description": "Shows rate of handled Unary gRPC requests from other queriers.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 100,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 0,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [
-
-          ],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/Aborted/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#EAB839",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/AlreadyExists/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#37872D",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/FailedPrecondition/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#E0B400",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/Unimplemented/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#E0B400",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/InvalidArgument/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#1F60C4",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/NotFound/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#1F60C4",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/PermissionDenied/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#1F60C4",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/Unauthenticated/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#1F60C4",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/Canceled/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#C4162A",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/DataLoss/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#C4162A",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/DeadlineExceeded/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#C4162A",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/Internal/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#C4162A",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/OutOfRange/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#C4162A",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/ResourceExhausted/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#C4162A",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/Unavailable/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#C4162A",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/Unknown/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#C4162A",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/OK/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#37872D",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "error"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#C4162A",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 0,
-        "y": 32
-      },
-      "id": 7,
-      "links": [
-
-      ],
-      "options": {
-        "legend": {
-          "calcs": [
-
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.4.3",
-      "targets": [
-        {
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "expr": "sum by (job, grpc_method, grpc_code) (rate(grpc_client_handled_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", grpc_type=\"unary\"}[$interval]))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "{{job}} {{grpc_method}} {{grpc_code}}",
-          "range": true,
-          "refId": "A",
-          "step": 10
-        }
-      ],
-      "title": "Rate",
-      "type": "timeseries"
-    },
-    {
-      "aliasColors": {
-        "error": "#E24D42"
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
-      },
-      "description": "Shows ratio of errors compared to the total number of handled requests from other queriers.",
-      "fill": 10,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 8,
-        "y": 32
-      },
-      "hiddenSeries": false,
-      "id": 8,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 0,
-      "links": [
-
-      ],
-      "nullPointMode": "null as zero",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "9.4.3",
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": true,
-      "steppedLine": false,
-      "targets": [
-        {
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "expr": "sum by (job) (rate(grpc_client_handled_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", grpc_code=~\"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss\",job=~\"$job\", grpc_type=\"unary\"}[$interval])) / sum by (job) (rate(grpc_client_handled_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", grpc_type=\"unary\"}[$interval]))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "error",
-          "range": true,
-          "refId": "A",
-          "step": 10
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeRegions": [
-
-      ],
-      "title": "Errors",
-      "tooltip": {
-        "shared": false,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "mode": "time",
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "percentunit",
-          "logBase": 1,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "logBase": 1,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false
-      }
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
-      },
-      "description": "Shows how long has it taken to handle requests from other queriers, in quantiles.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [
-
-          ],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "p99"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#FA6400",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 10
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 10
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "p90"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#E0B400",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 10
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 10
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "p50"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#37872D",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 100
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 16,
+        "w": 12,
+        "x": 12,
         "y": 32
       },
       "id": 9,
@@ -2615,45 +2099,16 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.50, sum by (job, le) (rate(grpc_client_handling_seconds_bucket{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", grpc_type=\"unary\"}[$interval]))) * 1",
+          "expr": "sum by (job) (rate(thanos_alert_queue_alerts_dropped_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}[$interval])) / sum by (job) (rate(thanos_alert_queue_alerts_pushed_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}[$interval]))",
           "format": "time_series",
           "intervalFactor": 2,
-          "legendFormat": "p50 {{job}}",
-          "logBase": 10,
+          "legendFormat": "error",
           "range": true,
           "refId": "A",
           "step": 10
-        },
-        {
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "expr": "histogram_quantile(0.90, sum by (job, le) (rate(grpc_client_handling_seconds_bucket{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", grpc_type=\"unary\"}[$interval]))) * 1",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "p90 {{job}}",
-          "logBase": 10,
-          "range": true,
-          "refId": "B",
-          "step": 10
-        },
-        {
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "expr": "histogram_quantile(0.99, sum by (job, le) (rate(grpc_client_handling_seconds_bucket{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", grpc_type=\"unary\"}[$interval]))) * 1",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "p99 {{job}}",
-          "logBase": 10,
-          "range": true,
-          "refId": "C",
-          "step": 10
         }
       ],
-      "title": "Duration",
+      "title": "Drop Ratio",
       "type": "timeseries"
     },
     {
@@ -2681,7 +2136,7 @@
           "refId": "A"
         }
       ],
-      "title": "gRPC (Stream)",
+      "title": "gRPC (Unary)",
       "type": "row"
     },
     {
@@ -2689,7 +2144,7 @@
         "type": "prometheus",
         "uid": "$datasource"
       },
-      "description": "Shows rate of handled Streamed gRPC requests from other queriers.",
+      "description": "Shows rate of handled Unary gRPC requests.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -3048,7 +2503,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum by (job, grpc_method, grpc_code) (rate(grpc_client_handled_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", grpc_type=\"server_stream\"}[$interval]))",
+          "expr": "sum by (job, grpc_method, grpc_code) (rate(grpc_server_handled_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", grpc_type=\"unary\"}[$interval]))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{job}} {{grpc_method}} {{grpc_code}}",
@@ -3061,63 +2516,115 @@
       "type": "timeseries"
     },
     {
-      "aliasColors": {
-        "error": "#E24D42"
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
       "datasource": {
         "type": "prometheus",
         "uid": "$datasource"
       },
-      "description": "Shows ratio of errors compared to the total number of handled requests from other queriers.",
-      "fill": 10,
-      "fillGradient": 0,
+      "description": "Shows ratio of errors compared to the total number of handled requests.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 100,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 0,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "error"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#E24D42",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
       "gridPos": {
         "h": 7,
         "w": 8,
         "x": 8,
         "y": 40
       },
-      "hiddenSeries": false,
       "id": 11,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 0,
       "links": [
 
       ],
-      "nullPointMode": "null as zero",
       "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "9.4.3",
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
+        "legend": {
+          "calcs": [
 
-      ],
-      "spaceLength": 10,
-      "stack": true,
-      "steppedLine": false,
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.4.3",
       "targets": [
         {
           "datasource": {
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum by (job) (rate(grpc_client_handled_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", grpc_code=~\"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss\",job=~\"$job\", grpc_type=\"server_stream\"}[$interval])) / sum by (job) (rate(grpc_client_handled_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", grpc_type=\"server_stream\"}[$interval]))",
+          "expr": "sum by (job) (rate(grpc_server_handled_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", grpc_code=~\"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss\",job=~\"$job\", grpc_type=\"unary\"}[$interval])) / sum by (job) (rate(grpc_server_handled_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", grpc_type=\"unary\"}[$interval]))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "error",
@@ -3126,49 +2633,15 @@
           "step": 10
         }
       ],
-      "thresholds": [
-
-      ],
-      "timeRegions": [
-
-      ],
       "title": "Errors",
-      "tooltip": {
-        "shared": false,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "mode": "time",
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "percentunit",
-          "logBase": 1,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "logBase": 1,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false
-      }
+      "type": "timeseries"
     },
     {
       "datasource": {
         "type": "prometheus",
         "uid": "$datasource"
       },
-      "description": "Shows how long has it taken to handle requests from other queriers, in quantiles",
+      "description": "Shows how long has it taken to handle requests, in quantiles.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -3322,7 +2795,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.50, sum by (job, le) (rate(grpc_client_handling_seconds_bucket{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", grpc_type=\"server_stream\"}[$interval]))) * 1",
+          "expr": "histogram_quantile(0.50, sum by (job, le) (rate(grpc_server_handling_seconds_bucket{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", grpc_type=\"unary\"}[$interval]))) * 1",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "p50 {{job}}",
@@ -3336,7 +2809,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.90, sum by (job, le) (rate(grpc_client_handling_seconds_bucket{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", grpc_type=\"server_stream\"}[$interval]))) * 1",
+          "expr": "histogram_quantile(0.90, sum by (job, le) (rate(grpc_server_handling_seconds_bucket{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", grpc_type=\"unary\"}[$interval]))) * 1",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "p90 {{job}}",
@@ -3350,7 +2823,732 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.99, sum by (job, le) (rate(grpc_client_handling_seconds_bucket{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", grpc_type=\"server_stream\"}[$interval]))) * 1",
+          "expr": "histogram_quantile(0.99, sum by (job, le) (rate(grpc_server_handling_seconds_bucket{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", grpc_type=\"unary\"}[$interval]))) * 1",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "p99 {{job}}",
+          "logBase": 10,
+          "range": true,
+          "refId": "C",
+          "step": 10
+        }
+      ],
+      "title": "Duration",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 47
+      },
+      "id": 23,
+      "panels": [
+
+      ],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "refId": "A"
+        }
+      ],
+      "title": "gRPC (Stream)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "$datasource"
+      },
+      "description": "Shows rate of handled Streamed gRPC requests.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 100,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 0,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/Aborted/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#EAB839",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/AlreadyExists/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#37872D",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/FailedPrecondition/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#E0B400",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/Unimplemented/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#E0B400",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/InvalidArgument/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#1F60C4",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/NotFound/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#1F60C4",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/PermissionDenied/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#1F60C4",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/Unauthenticated/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#1F60C4",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/Canceled/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#C4162A",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/DataLoss/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#C4162A",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/DeadlineExceeded/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#C4162A",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/Internal/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#C4162A",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/OutOfRange/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#C4162A",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/ResourceExhausted/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#C4162A",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/Unavailable/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#C4162A",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/Unknown/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#C4162A",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/OK/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#37872D",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "error"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#C4162A",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 48
+      },
+      "id": 13,
+      "links": [
+
+      ],
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
+          "expr": "sum by (job, grpc_method, grpc_code) (rate(grpc_server_handled_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", grpc_type=\"server_stream\"}[$interval]))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "{{job}} {{grpc_method}} {{grpc_code}}",
+          "range": true,
+          "refId": "A",
+          "step": 10
+        }
+      ],
+      "title": "Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "$datasource"
+      },
+      "description": "Shows ratio of errors compared to the total number of handled requests.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 100,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 0,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "error"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#E24D42",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 48
+      },
+      "id": 14,
+      "links": [
+
+      ],
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
+          "expr": "sum by (job) (rate(grpc_server_handled_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", grpc_code=~\"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss\",job=~\"$job\", grpc_type=\"server_stream\"}[$interval])) / sum by (job) (rate(grpc_server_handled_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", grpc_type=\"server_stream\"}[$interval]))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "error",
+          "range": true,
+          "refId": "A",
+          "step": 10
+        }
+      ],
+      "title": "Errors",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "$datasource"
+      },
+      "description": "Shows how long has it taken to handle requests, in quantiles",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "p99"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#FA6400",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 10
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 10
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "p90"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#E0B400",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 10
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 10
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "p50"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#37872D",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 100
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 16,
+        "y": 48
+      },
+      "id": 15,
+      "links": [
+
+      ],
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.50, sum by (job, le) (rate(grpc_server_handling_seconds_bucket{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", grpc_type=\"server_stream\"}[$interval]))) * 1",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "p50 {{job}}",
+          "logBase": 10,
+          "range": true,
+          "refId": "A",
+          "step": 10
+        },
+        {
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.90, sum by (job, le) (rate(grpc_server_handling_seconds_bucket{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", grpc_type=\"server_stream\"}[$interval]))) * 1",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "p90 {{job}}",
+          "logBase": 10,
+          "range": true,
+          "refId": "B",
+          "step": 10
+        },
+        {
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.99, sum by (job, le) (rate(grpc_server_handling_seconds_bucket{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\", grpc_type=\"server_stream\"}[$interval]))) * 1",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "p99 {{job}}",
@@ -3373,375 +3571,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 47
-      },
-      "id": 23,
-      "panels": [
-        {
-          "aliasColors": {
-          },
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "$datasource"
-          },
-          "description": "Shows rate of DNS lookups to discover stores.",
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 7,
-            "w": 12,
-            "x": 0,
-            "y": 89
-          },
-          "hiddenSeries": false,
-          "id": 13,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [
-
-          ],
-          "nullPointMode": "null as zero",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "9.4.3",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-
-          ],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "datasource": {
-                "uid": "$datasource"
-              },
-              "editorMode": "code",
-              "expr": "sum by (job) (rate(thanos_query_store_apis_dns_lookups_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}[$interval]))",
-              "format": "time_series",
-              "intervalFactor": 2,
-              "legendFormat": "lookups {{job}}",
-              "range": true,
-              "refId": "A",
-              "step": 10
-            }
-          ],
-          "thresholds": [
-
-          ],
-          "timeRegions": [
-
-          ],
-          "title": "Rate",
-          "tooltip": {
-            "shared": false,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true,
-            "values": [
-
-            ]
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "logBase": 1,
-              "min": 0,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false
-          }
-        },
-        {
-          "aliasColors": {
-            "error": "#E24D42"
-          },
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "$datasource"
-          },
-          "description": "Shows ratio of failures compared to the total number of executed DNS lookups.",
-          "fill": 10,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 7,
-            "w": 12,
-            "x": 12,
-            "y": 89
-          },
-          "hiddenSeries": false,
-          "id": 14,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 0,
-          "links": [
-
-          ],
-          "nullPointMode": "null as zero",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "9.4.3",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-
-          ],
-          "spaceLength": 10,
-          "stack": true,
-          "steppedLine": false,
-          "targets": [
-            {
-              "datasource": {
-                "uid": "$datasource"
-              },
-              "editorMode": "code",
-              "expr": "sum by (job) (rate(thanos_query_store_apis_dns_failures_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}[$interval])) / sum by (job) (rate(thanos_query_store_apis_dns_lookups_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}[$interval]))",
-              "format": "time_series",
-              "intervalFactor": 2,
-              "legendFormat": "error",
-              "range": true,
-              "refId": "A",
-              "step": 10
-            }
-          ],
-          "thresholds": [
-
-          ],
-          "timeRegions": [
-
-          ],
-          "title": "Errors",
-          "tooltip": {
-            "shared": false,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true,
-            "values": [
-
-            ]
-          },
-          "yaxes": [
-            {
-              "format": "percentunit",
-              "logBase": 1,
-              "min": 0,
-              "show": true
-            },
-            {
-              "format": "short",
-              "logBase": 1,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false
-          }
-        }
-      ],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PA258B30F88C30650"
-          },
-          "refId": "A"
-        }
-      ],
-      "title": "DNS",
-      "type": "row"
-    },
-    {
-      "collapsed": true,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PA258B30F88C30650"
-      },
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 48
+        "y": 55
       },
       "id": 24,
-      "panels": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "$datasource"
-          },
-          "description": "Shows available capacity of processing queries in parallel.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [
-
-              ],
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "short"
-            },
-            "overrides": [
-
-            ]
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 24,
-            "x": 0,
-            "y": 90
-          },
-          "id": 15,
-          "links": [
-
-          ],
-          "options": {
-            "legend": {
-              "calcs": [
-
-              ],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "9.4.3",
-          "targets": [
-            {
-              "datasource": {
-                "uid": "$datasource"
-              },
-              "editorMode": "code",
-              "expr": "max_over_time(thanos_query_concurrent_gate_queries_max{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}[$__rate_interval]) - avg_over_time(thanos_query_concurrent_gate_queries_in_flight{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}[$__rate_interval])",
-              "format": "time_series",
-              "intervalFactor": 2,
-              "legendFormat": "{{job}} - {{pod}}",
-              "range": true,
-              "refId": "A",
-              "step": 10
-            }
-          ],
-          "title": "Concurrent Capacity",
-          "type": "timeseries"
-        }
-      ],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PA258B30F88C30650"
-          },
-          "refId": "A"
-        }
-      ],
-      "title": "Query Concurrency",
-      "type": "row"
-    },
-    {
-      "collapsed": true,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PA258B30F88C30650"
-      },
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 49
-      },
-      "id": 25,
       "panels": [
         {
           "datasource": {
@@ -3810,7 +3642,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 91
+            "y": 97
           },
           "id": 16,
           "links": [
@@ -3837,7 +3669,7 @@
                 "uid": "$datasource"
               },
               "editorMode": "code",
-              "expr": "go_memstats_alloc_bytes{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\",job=~\"$job\"}",
+              "expr": "go_memstats_alloc_bytes{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "alloc all {{instance}}",
@@ -3850,7 +3682,7 @@
                 "uid": "$datasource"
               },
               "editorMode": "code",
-              "expr": "go_memstats_heap_alloc_bytes{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\",job=~\"$job\"}",
+              "expr": "go_memstats_heap_alloc_bytes{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "alloc heap {{instance}}",
@@ -3863,7 +3695,7 @@
                 "uid": "$datasource"
               },
               "editorMode": "code",
-              "expr": "rate(go_memstats_alloc_bytes_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\",job=~\"$job\"}[30s])",
+              "expr": "rate(go_memstats_alloc_bytes_total{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}[30s])",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "alloc rate all {{instance}}",
@@ -3876,7 +3708,7 @@
                 "uid": "$datasource"
               },
               "editorMode": "code",
-              "expr": "rate(go_memstats_heap_alloc_bytes{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\",job=~\"$job\"}[30s])",
+              "expr": "rate(go_memstats_heap_alloc_bytes{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}[30s])",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "alloc rate heap {{instance}}",
@@ -3889,7 +3721,7 @@
                 "uid": "$datasource"
               },
               "editorMode": "code",
-              "expr": "go_memstats_stack_inuse_bytes{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\",job=~\"$job\"}",
+              "expr": "go_memstats_stack_inuse_bytes{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "inuse heap {{instance}}",
@@ -3902,7 +3734,7 @@
                 "uid": "$datasource"
               },
               "editorMode": "code",
-              "expr": "go_memstats_heap_inuse_bytes{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\",job=~\"$job\"}",
+              "expr": "go_memstats_heap_inuse_bytes{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "inuse stack {{instance}}",
@@ -3981,7 +3813,7 @@
             "h": 7,
             "w": 8,
             "x": 8,
-            "y": 91
+            "y": 97
           },
           "id": 17,
           "links": [
@@ -4087,7 +3919,7 @@
             "h": 7,
             "w": 8,
             "x": 16,
-            "y": 91
+            "y": 97
           },
           "id": 18,
           "links": [
@@ -4114,7 +3946,7 @@
                 "uid": "$datasource"
               },
               "editorMode": "code",
-              "expr": "go_gc_duration_seconds{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\",job=~\"$job\"}",
+              "expr": "go_gc_duration_seconds{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"$job\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{quantile}} {{instance}}",
@@ -4142,7 +3974,7 @@
   ],
   "refresh": "5m",
   "revision": 1,
-  "schemaVersion": 39,
+  "schemaVersion": 38,
   "style": "dark",
   "tags": [
     "protected",
@@ -4228,7 +4060,7 @@
           "text": "ops",
           "value": "ops"
         },
-        "definition": "label_values(thanos_build_info, environment)",
+        "definition": "label_values(thanos_build_info{}, environment)",
         "hide": 0,
         "includeAll": false,
         "label": "Environment",
@@ -4238,7 +4070,7 @@
 
         ],
         "query": {
-          "query": "label_values(thanos_build_info, environment)",
+          "query": "label_values(thanos_build_info{}, environment)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -4306,7 +4138,7 @@
           "type": "prometheus",
           "uid": "$datasource"
         },
-        "definition": "label_values(thanos_build_info{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=\"thanos-query\"}, job)",
+        "definition": "label_values(thanos_build_info{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"thanos-rule.+\"}, job)",
         "hide": 0,
         "includeAll": true,
         "label": "job",
@@ -4316,7 +4148,7 @@
 
         ],
         "query": {
-          "query": "label_values(thanos_build_info{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=\"thanos-query\"}, job)",
+          "query": "label_values(thanos_build_info{environment=\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", job=~\"thanos-rule.+\"}, job)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -4360,8 +4192,8 @@
     ]
   },
   "timezone": "UTC",
-  "title": "thanos: Thanos / Query",
-  "uid": "af36c91291a603f1d9fbdabdd127ac4a",
-  "version": 6,
+  "title": "thanos: Thanos / Rule",
+  "uid": "35da848f5f92b2dc612e0c3a0577b8a1",
+  "version": 4,
   "weekStart": ""
 }
