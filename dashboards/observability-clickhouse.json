@@ -51,57 +51,21 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4101161542 at Wed Apr 12 14:01:50 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4101161542 at Wed Apr 12 13:57:28 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
   "hideControls": false,
   "id": null,
   "links": [
-    {
-      "asDropdown": true,
-      "icon": "external link",
-      "includeVars": false,
-      "keepTime": true,
-      "tags": "",
-      "targetBlank": false,
-      "title": "🔙 Back to thanos service",
-      "type": "link",
-      "url": "https://dashboards.gitlab.net/d/thanos-main/thanos-overview?orgId=1"
-    },
-    {
-      "asDropdown": true,
-      "icon": "dashboard",
-      "includeVars": true,
-      "keepTime": true,
-      "tags": "type:thanos",
-      "targetBlank": false,
-      "title": "thanos Detail",
-      "type": "dashboards",
-      "url": ""
-    },
-    {
-      "asDropdown": true,
-      "icon": "external link",
-      "includeVars": true,
-      "keepTime": true,
-      "tags": [
-        "managed",
-        "type:thanos",
-        "kube detail"
-      ],
-      "targetBlank": false,
-      "title": "☸️ thanos Kubernetes Detail",
-      "type": "dashboards",
-      "url": ""
-    }
+
   ],
   "panels": [
     {
       "collapse": false,
       "collapsed": false,
       "gridPos": {
-        "h": 8,
+        "h": 1,
         "w": 24,
         "x": 0,
         "y": 0
@@ -114,7 +78,7 @@
       "repeatIteration": null,
       "repeatRowId": null,
       "showTitle": true,
-      "title": "memcached-thanos-bucket-cache deployment",
+      "title": "ClickHouse - Deployed Version(s)",
       "titleSize": "h6",
       "type": "row"
     },
@@ -131,9 +95,9 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
-        "w": 8,
+        "w": 12,
         "x": 0,
-        "y": 8
+        "y": 1
       },
       "id": 3,
       "legend": {
@@ -150,7 +114,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -168,11 +132,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      deployment=\"memcached-thanos-bucket-cache\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n    }[$__rate_interval]\n  )\n)\n",
+          "expr": "count(\n    kube_pod_container_info{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", container=\"clickhouse-server\"}\n) by (image)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "{{ cluster }}",
+          "legendFormat": "{{ image }}",
           "refId": "A"
         }
       ],
@@ -181,7 +145,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "memcached-thanos-bucket-cache Deployment: CPU",
+      "title": "Active Version - clickhouse-server",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -229,9 +193,9 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 8
+        "w": 12,
+        "x": 12,
+        "y": 1
       },
       "id": 4,
       "legend": {
@@ -248,7 +212,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -266,11 +230,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    deployment=\"memcached-thanos-bucket-cache\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n  }\n)\n",
+          "expr": "count(\n    kube_pod_container_info{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", container=\"clickhouse-keeper\"}\n) by (image)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "{{ cluster }}",
+          "legendFormat": "{{ image }}",
           "refId": "A"
         }
       ],
@@ -279,7 +243,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "memcached-thanos-bucket-cache Deployment: Memory",
+      "title": "Active Version - clickhouse-keeper",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -297,7 +261,7 @@
       },
       "yaxes": [
         {
-          "format": "bytes",
+          "format": "short",
           "label": "",
           "logBase": 1,
           "max": null,
@@ -315,38 +279,58 @@
       ]
     },
     {
+      "collapse": false,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 100
+      },
+      "id": 5,
+      "panels": [
+
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "ClickHouse - CPU",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
       "aliasColors": {
       },
       "bars": false,
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "Network utilization",
+      "decimals": 3,
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 12,
         "w": 8,
-        "x": 16,
-        "y": 8
+        "x": 0,
+        "y": 101
       },
-      "id": 5,
+      "id": 6,
       "legend": {
-        "alignAsTable": false,
-        "avg": true,
+        "alignAsTable": true,
+        "avg": false,
         "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
+        "hideEmpty": false,
+        "max": false,
+        "min": false,
         "rightSide": false,
         "show": true,
         "sideWidth": null,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -357,30 +341,35 @@
       "renderer": "flot",
       "repeat": null,
       "seriesOverrides": [
-        {
-          "alias": "/receive .*/",
-          "transform": "negative-Y"
-        }
+
       ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_transmit_bytes_total:labeled{\n      deployment=\"memcached-thanos-bucket-cache\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n    }[$__rate_interval]\n  )\n)\n",
+          "expr": "sum(\n    rate(container_cpu_usage_seconds_total{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", container=\"clickhouse-server\"}[2m])\n) by (pod)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "send {{ cluster }}",
+          "legendFormat": "usage: {{ pod }}",
           "refId": "A"
         },
         {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_receive_bytes_total:labeled{\n      deployment=\"memcached-thanos-bucket-cache\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n    }[$__rate_interval]\n  )\n)\n",
+          "expr": "kube_pod_container_resource_limits{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", resource=\"cpu\", container=\"clickhouse-server\"}\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "receive {{ cluster }}",
+          "legendFormat": "limit: {{ pod }}",
           "refId": "B"
+        },
+        {
+          "expr": "kube_pod_container_resource_requests{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", resource=\"cpu\", container=\"clickhouse-server\"}\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "request: {{ pod }}",
+          "refId": "C"
         }
       ],
       "thresholds": [
@@ -388,10 +377,10 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "memcached-thanos-bucket-cache Deployment: Network IO",
+      "title": "CPU (cores) - Server",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "type": "graph",
@@ -406,43 +395,24 @@
       },
       "yaxes": [
         {
-          "format": "Bps",
-          "label": "Network utilization",
+          "decimals": 3,
+          "format": null,
+          "label": null,
           "logBase": 1,
           "max": null,
           "min": null,
           "show": true
         },
         {
-          "format": "short",
+          "decimals": 3,
+          "format": null,
           "label": null,
           "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
+          "max": null,
+          "min": null,
+          "show": true
         }
       ]
-    },
-    {
-      "collapse": false,
-      "collapsed": false,
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 16
-      },
-      "id": 6,
-      "panels": [
-
-      ],
-      "repeat": null,
-      "repeatIteration": null,
-      "repeatRowId": null,
-      "showTitle": true,
-      "title": "memcached-thanos-index-cache deployment",
-      "titleSize": "h6",
-      "type": "row"
     },
     {
       "aliasColors": {
@@ -451,24 +421,23 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "",
+      "decimals": 3,
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 12,
         "w": 8,
-        "x": 0,
-        "y": 24
+        "x": 8,
+        "y": 101
       },
       "id": 7,
       "legend": {
         "alignAsTable": true,
-        "avg": true,
+        "avg": false,
         "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
+        "hideEmpty": false,
+        "max": false,
+        "min": false,
         "rightSide": false,
         "show": true,
         "sideWidth": null,
@@ -476,7 +445,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -494,12 +463,28 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      deployment=\"memcached-thanos-index-cache\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n    }[$__rate_interval]\n  )\n)\n",
+          "expr": "sum(\n    rate(container_cpu_usage_seconds_total{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", container=\"clickhouse-keeper\"}[2m])\n) by (pod)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "{{ cluster }}",
+          "legendFormat": "usage: {{ pod }}",
           "refId": "A"
+        },
+        {
+          "expr": "kube_pod_container_resource_limits{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", resource=\"cpu\", container=\"clickhouse-keeper\"}\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "limit: {{ pod }}",
+          "refId": "B"
+        },
+        {
+          "expr": "kube_pod_container_resource_requests{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", resource=\"cpu\", container=\"clickhouse-keeper\"}\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "request: {{ pod }}",
+          "refId": "C"
         }
       ],
       "thresholds": [
@@ -507,10 +492,10 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "memcached-thanos-index-cache Deployment: CPU",
+      "title": "CPU (cores) - Keeper",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "type": "graph",
@@ -525,20 +510,22 @@
       },
       "yaxes": [
         {
-          "format": "short",
-          "label": "",
+          "decimals": 3,
+          "format": null,
+          "label": null,
           "logBase": 1,
           "max": null,
-          "min": 0,
+          "min": null,
           "show": true
         },
         {
-          "format": "short",
+          "decimals": 3,
+          "format": null,
           "label": null,
           "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
+          "max": null,
+          "min": null,
+          "show": true
         }
       ]
     },
@@ -549,24 +536,23 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "",
+      "decimals": 3,
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 12,
         "w": 8,
-        "x": 8,
-        "y": 24
+        "x": 16,
+        "y": 101
       },
       "id": 8,
       "legend": {
         "alignAsTable": true,
-        "avg": true,
+        "avg": false,
         "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
+        "hideEmpty": false,
+        "max": false,
+        "min": false,
         "rightSide": false,
         "show": true,
         "sideWidth": null,
@@ -574,7 +560,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -592,121 +578,28 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    deployment=\"memcached-thanos-index-cache\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n  }\n)\n",
+          "expr": "sum(\n    rate(container_cpu_usage_seconds_total{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", container=\"zookeeper-exporter\"}[2m])\n) by (pod)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "{{ cluster }}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "memcached-thanos-index-cache Deployment: Memory",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "bytes",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "Network utilization",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 24
-      },
-      "id": 9,
-      "legend": {
-        "alignAsTable": false,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-        {
-          "alias": "/receive .*/",
-          "transform": "negative-Y"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_transmit_bytes_total:labeled{\n      deployment=\"memcached-thanos-index-cache\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "send {{ cluster }}",
+          "legendFormat": "usage: {{ pod }}",
           "refId": "A"
         },
         {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_receive_bytes_total:labeled{\n      deployment=\"memcached-thanos-index-cache\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n    }[$__rate_interval]\n  )\n)\n",
+          "expr": "kube_pod_container_resource_limits{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", resource=\"cpu\", container=\"zookeeper-exporter\"}\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "receive {{ cluster }}",
+          "legendFormat": "limit: {{ pod }}",
           "refId": "B"
+        },
+        {
+          "expr": "kube_pod_container_resource_requests{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", resource=\"cpu\", container=\"zookeeper-exporter\"}\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "request: {{ pod }}",
+          "refId": "C"
         }
       ],
       "thresholds": [
@@ -714,10 +607,10 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "memcached-thanos-index-cache Deployment: Network IO",
+      "title": "CPU (cores) - ZK Exporter",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "type": "graph",
@@ -732,43 +625,24 @@
       },
       "yaxes": [
         {
-          "format": "Bps",
-          "label": "Network utilization",
+          "decimals": 3,
+          "format": null,
+          "label": null,
           "logBase": 1,
           "max": null,
           "min": null,
           "show": true
         },
         {
-          "format": "short",
+          "decimals": 3,
+          "format": null,
           "label": null,
           "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
+          "max": null,
+          "min": null,
+          "show": true
         }
       ]
-    },
-    {
-      "collapse": false,
-      "collapsed": false,
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 32
-      },
-      "id": 10,
-      "panels": [
-
-      ],
-      "repeat": null,
-      "repeatIteration": null,
-      "repeatRowId": null,
-      "showTitle": true,
-      "title": "memcached-thanos-qfe-labels deployment",
-      "titleSize": "h6",
-      "type": "row"
     },
     {
       "aliasColors": {
@@ -777,24 +651,221 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "",
+      "decimals": 3,
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 12,
         "w": 8,
         "x": 0,
-        "y": 40
+        "y": 113
+      },
+      "id": 9,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "hideEmpty": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "100*(\n    sum(\n        rate(container_cpu_cfs_throttled_periods_total{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", container=\"clickhouse-server\"}[2m])\n    ) by (pod)\n    /\n    sum(\n        rate(container_cpu_cfs_periods_total{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", container=\"clickhouse-server\"}[2m])\n    ) by (pod)\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "{{ pod }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Throttled % - Server",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "decimals": 3,
+          "format": null,
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "decimals": 3,
+          "format": null,
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 3,
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 12,
+        "w": 8,
+        "x": 8,
+        "y": 113
+      },
+      "id": 10,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "hideEmpty": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "100*(\n    sum(\n        rate(container_cpu_cfs_throttled_periods_total{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", container=\"clickhouse-keeper\"}[2m])\n    ) by (pod)\n    /\n    sum(\n        rate(container_cpu_cfs_periods_total{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", container=\"clickhouse-keeper\"}[2m])\n    ) by (pod)\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "{{ pod }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Throttled % - Keeper",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "decimals": 3,
+          "format": null,
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "decimals": 3,
+          "format": null,
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 3,
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 12,
+        "w": 8,
+        "x": 16,
+        "y": 113
       },
       "id": 11,
       "legend": {
         "alignAsTable": true,
-        "avg": true,
+        "avg": false,
         "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
+        "hideEmpty": false,
+        "max": false,
+        "min": false,
         "rightSide": false,
         "show": true,
         "sideWidth": null,
@@ -802,7 +873,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -820,11 +891,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      deployment=\"memcached-thanos-qfe-labels\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n    }[$__rate_interval]\n  )\n)\n",
+          "expr": "100*(\n    sum(\n        rate(container_cpu_cfs_throttled_periods_total{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", container=\"zookeeper-exporter\"}[2m])\n    ) by (pod)\n    /\n    sum(\n        rate(container_cpu_cfs_periods_total{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", container=\"zookeeper-exporter\"}[2m])\n    ) by (pod)\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "{{ cluster }}",
+          "legendFormat": "{{ pod }}",
           "refId": "A"
         }
       ],
@@ -833,10 +904,10 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "memcached-thanos-qfe-labels Deployment: CPU",
+      "title": "Throttled % - ZK Exporter",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "type": "graph",
@@ -851,227 +922,22 @@
       },
       "yaxes": [
         {
-          "format": "short",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
+          "decimals": 3,
+          "format": null,
           "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 40
-      },
-      "id": 12,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    deployment=\"memcached-thanos-qfe-labels\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n  }\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ cluster }}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "memcached-thanos-qfe-labels Deployment: Memory",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "bytes",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "Network utilization",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 40
-      },
-      "id": 13,
-      "legend": {
-        "alignAsTable": false,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-        {
-          "alias": "/receive .*/",
-          "transform": "negative-Y"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_transmit_bytes_total:labeled{\n      deployment=\"memcached-thanos-qfe-labels\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "send {{ cluster }}",
-          "refId": "A"
-        },
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_receive_bytes_total:labeled{\n      deployment=\"memcached-thanos-qfe-labels\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "receive {{ cluster }}",
-          "refId": "B"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "memcached-thanos-qfe-labels Deployment: Network IO",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "Bps",
-          "label": "Network utilization",
           "logBase": 1,
           "max": null,
           "min": null,
           "show": true
         },
         {
-          "format": "short",
+          "decimals": 3,
+          "format": null,
           "label": null,
           "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
+          "max": null,
+          "min": null,
+          "show": true
         }
       ]
     },
@@ -1079,12 +945,12 @@
       "collapse": false,
       "collapsed": false,
       "gridPos": {
-        "h": 8,
+        "h": 1,
         "w": 24,
         "x": 0,
-        "y": 48
+        "y": 200
       },
-      "id": 14,
+      "id": 12,
       "panels": [
 
       ],
@@ -1092,7 +958,7 @@
       "repeatIteration": null,
       "repeatRowId": null,
       "showTitle": true,
-      "title": "memcached-thanos-qfe-query-range deployment",
+      "title": "ClickHouse - Memory",
       "titleSize": "h6",
       "type": "row"
     },
@@ -1103,24 +969,253 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "",
+      "decimals": 3,
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 12,
         "w": 8,
         "x": 0,
-        "y": 56
+        "y": 201
+      },
+      "id": 13,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "hideEmpty": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(\n    rate(container_memory_working_set_bytes{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", container=\"clickhouse-server\"}[2m])\n) by (pod) / (1024*1024*1024)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "usage: {{ pod }}",
+          "refId": "A"
+        },
+        {
+          "expr": "kube_pod_container_resource_limits{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", resource=\"memory\", container=\"clickhouse-server\"} / (1024*1024*1024)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "limit: {{ pod }}",
+          "refId": "B"
+        },
+        {
+          "expr": "kube_pod_container_resource_requests{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", resource=\"memory\", container=\"clickhouse-server\"} / (1024*1024*1024)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "request: {{ pod }}",
+          "refId": "C"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Memory (GB) - Server",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "decimals": 3,
+          "format": null,
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "decimals": 3,
+          "format": null,
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 3,
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 12,
+        "w": 8,
+        "x": 8,
+        "y": 201
+      },
+      "id": 14,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "hideEmpty": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(\n    rate(container_memory_working_set_bytes{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", container=\"clickhouse-keeper\"}[2m])\n) by (pod) / (1024*1024*1024)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "usage: {{ pod }}",
+          "refId": "A"
+        },
+        {
+          "expr": "kube_pod_container_resource_limits{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", resource=\"memory\", container=\"clickhouse-keeper\"} / (1024*1024*1024)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "limit: {{ pod }}",
+          "refId": "B"
+        },
+        {
+          "expr": "kube_pod_container_resource_requests{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", resource=\"memory\", container=\"clickhouse-keeper\"} / (1024*1024*1024)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "request: {{ pod }}",
+          "refId": "C"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Memory (GB) - Keeper",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "decimals": 3,
+          "format": null,
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "decimals": 3,
+          "format": null,
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 3,
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 12,
+        "w": 8,
+        "x": 16,
+        "y": 201
       },
       "id": 15,
       "legend": {
         "alignAsTable": true,
-        "avg": true,
+        "avg": false,
         "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
+        "hideEmpty": false,
+        "max": false,
+        "min": false,
         "rightSide": false,
         "show": true,
         "sideWidth": null,
@@ -1128,7 +1223,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -1146,219 +1241,28 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      deployment=\"memcached-thanos-qfe-query-range\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n    }[$__rate_interval]\n  )\n)\n",
+          "expr": "sum(\n    rate(container_memory_working_set_bytes{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", container=\"zookeeper-exporter\"}[2m])\n) by (pod) / (1024*1024*1024)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "{{ cluster }}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "memcached-thanos-qfe-query-range Deployment: CPU",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 56
-      },
-      "id": 16,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    deployment=\"memcached-thanos-qfe-query-range\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n  }\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ cluster }}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "memcached-thanos-qfe-query-range Deployment: Memory",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "bytes",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "Network utilization",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 56
-      },
-      "id": 17,
-      "legend": {
-        "alignAsTable": false,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-        {
-          "alias": "/receive .*/",
-          "transform": "negative-Y"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_transmit_bytes_total:labeled{\n      deployment=\"memcached-thanos-qfe-query-range\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "send {{ cluster }}",
+          "legendFormat": "usage: {{ pod }}",
           "refId": "A"
         },
         {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_receive_bytes_total:labeled{\n      deployment=\"memcached-thanos-qfe-query-range\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n    }[$__rate_interval]\n  )\n)\n",
+          "expr": "kube_pod_container_resource_limits{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", resource=\"memory\", container=\"zookeeper-exporter\"} / (1024*1024*1024)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "receive {{ cluster }}",
+          "legendFormat": "limit: {{ pod }}",
           "refId": "B"
+        },
+        {
+          "expr": "kube_pod_container_resource_requests{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"cluster-.*\", resource=\"memory\", container=\"zookeeper-exporter\"} / (1024*1024*1024)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "request: {{ pod }}",
+          "refId": "C"
         }
       ],
       "thresholds": [
@@ -1366,10 +1270,10 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "memcached-thanos-qfe-query-range Deployment: Network IO",
+      "title": "Memory (GB) - ZK Exporter",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "type": "graph",
@@ -1384,20 +1288,22 @@
       },
       "yaxes": [
         {
-          "format": "Bps",
-          "label": "Network utilization",
+          "decimals": 3,
+          "format": null,
+          "label": null,
           "logBase": 1,
           "max": null,
           "min": null,
           "show": true
         },
         {
-          "format": "short",
+          "decimals": 3,
+          "format": null,
           "label": null,
           "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
+          "max": null,
+          "min": null,
+          "show": true
         }
       ]
     },
@@ -1405,12 +1311,12 @@
       "collapse": false,
       "collapsed": false,
       "gridPos": {
-        "h": 8,
+        "h": 1,
         "w": 24,
         "x": 0,
-        "y": 64
+        "y": 300
       },
-      "id": 18,
+      "id": 16,
       "panels": [
 
       ],
@@ -1418,7 +1324,7 @@
       "repeatIteration": null,
       "repeatRowId": null,
       "showTitle": true,
-      "title": "thanos-query deployment",
+      "title": "ClickHouse - Storage",
       "titleSize": "h6",
       "type": "row"
     },
@@ -1429,24 +1335,237 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "",
+      "decimals": 3,
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 12,
         "w": 8,
         "x": 0,
-        "y": 72
+        "y": 301
+      },
+      "id": 17,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "hideEmpty": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(\n    kubelet_volume_stats_used_bytes{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", persistentvolumeclaim=~\"data-cluster-.*\"}\n) by (persistentvolumeclaim) / (1024*1024*1024)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "used: {{ persistentvolumeclaim }}",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(\n    kubelet_volume_stats_capacity_bytes{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", persistentvolumeclaim=~\"data-cluster-.*\"}\n) by (persistentvolumeclaim) / (1024*1024*1024)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "capacity: {{ persistentvolumeclaim }}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Volume Size (GB) - Data",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "decimals": 3,
+          "format": "GB",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "decimals": 3,
+          "format": null,
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 3,
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 12,
+        "w": 8,
+        "x": 8,
+        "y": 301
+      },
+      "id": 18,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "hideEmpty": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(\n    kubelet_volume_stats_used_bytes{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", persistentvolumeclaim=~\"logs-cluster-.*\"}\n) by (persistentvolumeclaim) / (1024*1024*1024)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "used: {{ persistentvolumeclaim }}",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(\n    kubelet_volume_stats_capacity_bytes{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", persistentvolumeclaim=~\"logs-cluster-.*\"}\n) by (persistentvolumeclaim) / (1024*1024*1024)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "capacity: {{ persistentvolumeclaim }}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Volume Size (GB) - Logs",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "decimals": 3,
+          "format": "GB",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "decimals": 3,
+          "format": null,
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 3,
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 12,
+        "w": 8,
+        "x": 16,
+        "y": 301
       },
       "id": 19,
       "legend": {
         "alignAsTable": true,
-        "avg": true,
+        "avg": false,
         "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
+        "hideEmpty": false,
+        "max": false,
+        "min": false,
         "rightSide": false,
         "show": true,
         "sideWidth": null,
@@ -1454,7 +1573,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -1472,12 +1591,20 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      deployment=\"thanos-query\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n    }[$__rate_interval]\n  )\n)\n",
+          "expr": "sum(\n    kubelet_volume_stats_used_bytes{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", persistentvolumeclaim=~\"keeper-logs-cluster-.*\"}\n) by (persistentvolumeclaim) / (1024*1024*1024)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "{{ cluster }}",
+          "legendFormat": "used: {{ persistentvolumeclaim }}",
           "refId": "A"
+        },
+        {
+          "expr": "sum(\n    kubelet_volume_stats_capacity_bytes{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", persistentvolumeclaim=~\"keeper-logs-cluster-.*\"}\n) by (persistentvolumeclaim) / (1024*1024*1024)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "capacity: {{ persistentvolumeclaim }}",
+          "refId": "B"
         }
       ],
       "thresholds": [
@@ -1485,10 +1612,10 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "thanos-query Deployment: CPU",
+      "title": "Volume Size (GB) - Keeper Logs",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "type": "graph",
@@ -1503,22 +1630,45 @@
       },
       "yaxes": [
         {
-          "format": "short",
-          "label": "",
+          "decimals": 3,
+          "format": "GB",
+          "label": null,
           "logBase": 1,
           "max": null,
-          "min": 0,
+          "min": null,
           "show": true
         },
         {
-          "format": "short",
+          "decimals": 3,
+          "format": null,
           "label": null,
           "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
+          "max": null,
+          "min": null,
+          "show": true
         }
       ]
+    },
+    {
+      "collapse": false,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 400
+      },
+      "id": 20,
+      "panels": [
+
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "ClickHouse - Replication",
+      "titleSize": "h6",
+      "type": "row"
     },
     {
       "aliasColors": {
@@ -1532,112 +1682,14 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 72
-      },
-      "id": 20,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    deployment=\"thanos-query\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n  }\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ cluster }}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "thanos-query Deployment: Memory",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "bytes",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "Network utilization",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 72
+        "h": 12,
+        "w": 12,
+        "x": 0,
+        "y": 401
       },
       "id": 21,
       "legend": {
-        "alignAsTable": false,
+        "alignAsTable": true,
         "avg": true,
         "current": true,
         "hideEmpty": true,
@@ -1647,10 +1699,10 @@
         "show": true,
         "sideWidth": null,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -1661,30 +1713,19 @@
       "renderer": "flot",
       "repeat": null,
       "seriesOverrides": [
-        {
-          "alias": "/receive .*/",
-          "transform": "negative-Y"
-        }
+
       ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_transmit_bytes_total:labeled{\n      deployment=\"thanos-query\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n    }[$__rate_interval]\n  )\n)\n",
+          "expr": "ClickHouseMetrics_ReadonlyReplica{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\"}\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "send {{ cluster }}",
+          "legendFormat": "{{ pod }}",
           "refId": "A"
-        },
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_receive_bytes_total:labeled{\n      deployment=\"thanos-query\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "receive {{ cluster }}",
-          "refId": "B"
         }
       ],
       "thresholds": [
@@ -1692,7 +1733,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "thanos-query Deployment: Network IO",
+      "title": "Number of read-only replicas",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1710,11 +1751,11 @@
       },
       "yaxes": [
         {
-          "format": "Bps",
-          "label": "Network utilization",
+          "format": "short",
+          "label": "",
           "logBase": 1,
           "max": null,
-          "min": null,
+          "min": 0,
           "show": true
         },
         {
@@ -1728,44 +1769,23 @@
       ]
     },
     {
-      "collapse": false,
-      "collapsed": false,
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "",
+      "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 80
+        "h": 12,
+        "w": 12,
+        "x": 12,
+        "y": 401
       },
       "id": 22,
-      "panels": [
-
-      ],
-      "repeat": null,
-      "repeatIteration": null,
-      "repeatRowId": null,
-      "showTitle": true,
-      "title": "thanos-query-frontend deployment",
-      "titleSize": "h6",
-      "type": "row"
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 88
-      },
-      "id": 23,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1780,7 +1800,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -1798,11 +1818,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      deployment=\"thanos-query-frontend\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n    }[$__rate_interval]\n  )\n)\n",
+          "expr": "ClickHouseAsyncMetrics_NumberOfDetachedParts{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\"}\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "{{ cluster }}",
+          "legendFormat": "{{ pod }}",
           "refId": "A"
         }
       ],
@@ -1811,7 +1831,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "thanos-query-frontend Deployment: CPU",
+      "title": "Number of detached parts",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1845,553 +1865,6 @@
           "show": false
         }
       ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 88
-      },
-      "id": 24,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    deployment=\"thanos-query-frontend\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n  }\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ cluster }}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "thanos-query-frontend Deployment: Memory",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "bytes",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "Network utilization",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 88
-      },
-      "id": 25,
-      "legend": {
-        "alignAsTable": false,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-        {
-          "alias": "/receive .*/",
-          "transform": "negative-Y"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_transmit_bytes_total:labeled{\n      deployment=\"thanos-query-frontend\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "send {{ cluster }}",
-          "refId": "A"
-        },
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_receive_bytes_total:labeled{\n      deployment=\"thanos-query-frontend\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "receive {{ cluster }}",
-          "refId": "B"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "thanos-query-frontend Deployment: Network IO",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "Bps",
-          "label": "Network utilization",
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "collapse": false,
-      "collapsed": false,
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 96
-      },
-      "id": 26,
-      "panels": [
-
-      ],
-      "repeat": null,
-      "repeatIteration": null,
-      "repeatRowId": null,
-      "showTitle": true,
-      "title": "thanos-store deployment",
-      "titleSize": "h6",
-      "type": "row"
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 104
-      },
-      "id": 27,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      deployment=\"thanos-store\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ cluster }}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "thanos-store Deployment: CPU",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 104
-      },
-      "id": 28,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    deployment=\"thanos-store\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n  }\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ cluster }}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "thanos-store Deployment: Memory",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "bytes",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "Network utilization",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 104
-      },
-      "id": 29,
-      "legend": {
-        "alignAsTable": false,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-        {
-          "alias": "/receive .*/",
-          "transform": "negative-Y"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_transmit_bytes_total:labeled{\n      deployment=\"thanos-store\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "send {{ cluster }}",
-          "refId": "A"
-        },
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_receive_bytes_total:labeled{\n      deployment=\"thanos-store\",env=\"$environment\",environment=\"$environment\",type=\"thanos\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "receive {{ cluster }}",
-          "refId": "B"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "thanos-store Deployment: Network IO",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "Bps",
-          "label": "Network utilization",
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "content": "Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards)\n",
-      "datasource": null,
-      "gridPos": {
-        "h": 2,
-        "w": 24,
-        "x": 0,
-        "y": 110000
-      },
-      "id": 30,
-      "mode": "markdown",
-      "title": "Source",
-      "type": "text"
     }
   ],
   "refresh": "",
@@ -2402,11 +1875,8 @@
   "style": "light",
   "tags": [
     "managed",
-    "thanos",
-    "thanos",
-    "type:thanos",
-    "kube",
-    "kube detail"
+    "observability",
+    "gitlab-observability"
   ],
   "templating": {
     "list": [
@@ -2452,6 +1922,108 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "NewMergeRequestWorker",
+          "value": "NewMergeRequestWorker"
+        },
+        "datasource": "$PROMETHEUS_DS",
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": false,
+        "name": "Node",
+        "options": [
+
+        ],
+        "query": "query_result(count(count_over_time(kube_node_labels{environment=\"$environment\", cluster=\"$cluster\"}[1w])) by (label_kubernetes_io_hostname))",
+        "refresh": 2,
+        "regex": "/.*=\"(.*)\".*/",
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [
+
+        ],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "gprd",
+          "value": "gprd"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Environment",
+        "multi": false,
+        "name": "environment",
+        "options": [
+          {
+            "text": "gstg",
+            "value": "gstg"
+          },
+          {
+            "text": "gprd",
+            "value": "gprd"
+          }
+        ],
+        "query": "gstg,gprd",
+        "refresh": 0,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+        },
+        "datasource": "$PROMETHEUS_DS",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Cluster",
+        "multi": false,
+        "name": "cluster",
+        "options": [
+
+        ],
+        "query": "label_values(kube_pod_container_info{env=\"$environment\", cluster=~\"opstrace-.*\"}, cluster)",
+        "refresh": 1,
+        "regex": "",
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [
+
+        ],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+        },
+        "datasource": "$PROMETHEUS_DS",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Namespace",
+        "multi": false,
+        "name": "namespace",
+        "options": [
+
+        ],
+        "query": "label_values(kube_statefulset_status_replicas{env=\"gprd\", cluster=~\"opstrace-.*\", statefulset=~\"cluster-.*\"}, namespace)",
+        "refresh": 2,
+        "regex": "",
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [
+
+        ],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       }
     ]
   },
@@ -2480,7 +2052,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "thanos: Kube Deployment Detail",
-  "uid": "thanos-kube-deployments",
-  "version": 209
+  "title": "observability: Clickhouse",
+  "uid": "observability-clickhouse",
+  "version": 1
 }
