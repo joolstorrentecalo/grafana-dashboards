@@ -67,27 +67,16 @@
           }
         },
         "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Started Deploy On"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "time: YYYY-MM-DD"
-              }
-            ]
-          }
+
         ]
       },
       "gridPos": {
-        "h": 9,
+        "h": 8,
         "w": 12,
         "x": 0,
         "y": 0
       },
-      "id": 2,
+      "id": 7,
       "options": {
         "footer": {
           "countRows": false,
@@ -108,7 +97,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count by (version) (rate(delivery_deployment_started[$__range])) unless (count by (version) (rate(delivery_deployment_completed[$__range])))",
+          "expr": "max_over_time((count by (version) (delivery_deployment_started unless delivery_deployment_completed))[1d:12h]) <= 1",
           "format": "table",
           "instant": false,
           "legendFormat": "__auto",
@@ -117,71 +106,6 @@
         }
       ],
       "title": "Panel Title",
-      "transformations": [
-        {
-          "id": "sortBy",
-          "options": {
-            "fields": {
-            },
-            "sort": [
-              {
-                "desc": true,
-                "field": "Time"
-              }
-            ]
-          }
-        },
-        {
-          "id": "groupBy",
-          "options": {
-            "fields": {
-              "Time": {
-                "aggregations": [
-                  "last"
-                ],
-                "operation": "aggregate"
-              },
-              "version": {
-                "aggregations": [
-
-                ],
-                "operation": "groupby"
-              }
-            }
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Value": true
-            },
-            "indexByName": {
-              "Time (last)": 0,
-              "version": 1
-            },
-            "renameByName": {
-              "Time (first)": "Deployed on",
-              "Time (last)": "Started Deploy On",
-              "Value": "",
-              "version": "Auto-Deploy Version"
-            }
-          }
-        },
-        {
-          "id": "sortBy",
-          "options": {
-            "fields": {
-            },
-            "sort": [
-              {
-                "desc": true,
-                "field": "Started Deploy On"
-              }
-            ]
-          }
-        }
-      ],
       "type": "table"
     },
     {
@@ -335,6 +259,152 @@
         }
       ],
       "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 2,
+      "options": {
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "(count by (version) (rate(delivery_deployment_started[$__range]))) unless (count by (version) (rate(delivery_deployment_completed[$__range])))",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "{{label_name}}",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Panel Title",
+      "transformations": [
+        {
+          "disabled": true,
+          "id": "sortBy",
+          "options": {
+            "fields": {
+            },
+            "sort": [
+              {
+                "desc": true,
+                "field": "Time"
+              }
+            ]
+          }
+        },
+        {
+          "disabled": true,
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Time": {
+                "aggregations": [
+                  "last"
+                ],
+                "operation": "aggregate"
+              },
+              "version": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "disabled": true,
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Value": true
+            },
+            "indexByName": {
+              "Time (last)": 0,
+              "version": 1
+            },
+            "renameByName": {
+              "Time (first)": "Deployed on",
+              "Time (last)": "Started Deploy On",
+              "Value": "",
+              "version": "Auto-Deploy Version"
+            }
+          }
+        },
+        {
+          "disabled": true,
+          "id": "sortBy",
+          "options": {
+            "fields": {
+            },
+            "sort": [
+              {
+                "desc": true,
+                "field": "Started Deploy On"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "table"
     }
   ],
   "refresh": "",
@@ -358,6 +428,6 @@
   "timezone": "",
   "title": "[Playground - Delivery] Jenny test failed deployments",
   "uid": "LsuDuuY4z",
-  "version": 6,
+  "version": 7,
   "weekStart": ""
 }
