@@ -37,6 +37,7 @@
         "type": "prometheus",
         "uid": "PA258B30F88C30650"
       },
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -97,314 +98,127 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "max_over_time((count by (version) (delivery_deployment_started unless delivery_deployment_completed))[1d:12h]) <= 1",
-          "format": "table",
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Panel Title",
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PA258B30F88C30650"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Time"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "time: YYYY-MM-DD"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 12,
-        "y": 0
-      },
-      "id": 5,
-      "options": {
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true
-      },
-      "pluginVersion": "9.4.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PA258B30F88C30650"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "count by (version) (rate(delivery_deployment_started[$__range])) unless (count by (version) (rate(delivery_deployment_completed[$__range])))",
-          "format": "table",
-          "instant": false,
-          "interval": "1d",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Panel Title",
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "version": true
-            },
-            "indexByName": {
-            },
-            "renameByName": {
-            }
-          }
-        },
-        {
-          "id": "groupBy",
-          "options": {
-            "fields": {
-              "Time": {
-                "aggregations": [
-
-                ],
-                "operation": "groupby"
-              },
-              "Value": {
-                "aggregations": [
-                  "sum"
-                ],
-                "operation": "aggregate"
-              }
-            }
-          }
-        },
-        {
-          "id": "convertFieldType",
-          "options": {
-            "conversions": [
-              {
-                "dateFormat": "",
-                "destinationType": "time",
-                "targetField": "Time"
-              },
-              {
-                "destinationType": "number",
-                "targetField": "Value (sum)"
-              }
-            ],
-            "fields": {
-            }
-          }
-        },
-        {
-          "id": "sortBy",
-          "options": {
-            "fields": {
-            },
-            "sort": [
-              {
-                "desc": true,
-                "field": "Time"
-              }
-            ]
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PA258B30F88C30650"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 0,
-        "y": 8
-      },
-      "id": 2,
-      "options": {
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true
-      },
-      "pluginVersion": "9.4.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PA258B30F88C30650"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "(count by (version) (rate(delivery_deployment_started[$__range]))) unless (count by (version) (rate(delivery_deployment_completed[$__range])))",
+          "expr": "sum by (version) (max_over_time(delivery_deployment_completed[$__range])) < 4",
           "format": "table",
           "instant": true,
-          "interval": "",
-          "legendFormat": "{{label_name}}",
+          "legendFormat": "__auto",
           "range": false,
           "refId": "A"
         }
       ],
-      "title": "Panel Title",
+      "title": "Incomplete auto-deploy versions",
       "transformations": [
         {
-          "disabled": true,
-          "id": "sortBy",
-          "options": {
-            "fields": {
-            },
-            "sort": [
-              {
-                "desc": true,
-                "field": "Time"
-              }
-            ]
-          }
-        },
-        {
-          "disabled": true,
-          "id": "groupBy",
-          "options": {
-            "fields": {
-              "Time": {
-                "aggregations": [
-                  "last"
-                ],
-                "operation": "aggregate"
-              },
-              "version": {
-                "aggregations": [
-
-                ],
-                "operation": "groupby"
-              }
-            }
-          }
-        },
-        {
-          "disabled": true,
           "id": "organize",
           "options": {
             "excludeByName": {
+              "Time": true,
               "Value": true
             },
             "indexByName": {
-              "Time (last)": 0,
-              "version": 1
             },
             "renameByName": {
-              "Time (first)": "Deployed on",
-              "Time (last)": "Started Deploy On",
-              "Value": "",
-              "version": "Auto-Deploy Version"
+              "version": ""
             }
-          }
-        },
-        {
-          "disabled": true,
-          "id": "sortBy",
-          "options": {
-            "fields": {
-            },
-            "sort": [
-              {
-                "desc": true,
-                "field": "Started Deploy On"
-              }
-            ]
           }
         }
       ],
       "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "Because of how range vector works with our current metrics, it always includes one complete deployment in the calculation, it has an error rate of +/- 2",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by (version) (max_over_time(delivery_deployment_completed[$__range])) < 4",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Total number of Incomplete auto-deploy versions",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true
+            },
+            "indexByName": {
+            },
+            "renameByName": {
+            }
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "labelsToFields": true,
+            "mode": "seriesToRows",
+            "reducers": [
+              "changeCount"
+            ]
+          }
+        }
+      ],
+      "type": "stat"
     }
   ],
   "refresh": "",
@@ -428,6 +242,6 @@
   "timezone": "",
   "title": "[Playground - Delivery] Jenny test failed deployments",
   "uid": "LsuDuuY4z",
-  "version": 7,
+  "version": 13,
   "weekStart": ""
 }
