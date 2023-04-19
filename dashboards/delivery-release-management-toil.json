@@ -10,7 +10,7 @@
 
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4138257574 at Wed Apr 19 07:24:56 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4142236000 at Wed Apr 19 15:32:42 UTC 2023",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
@@ -92,7 +92,7 @@
       "repeatIteration": null,
       "repeatRowId": null,
       "showTitle": true,
-      "title": "Auto Deploy Job Retries",
+      "title": "🔄 Auto Deploy Job Retries 🔄",
       "titleSize": "h6",
       "type": "row"
     },
@@ -143,7 +143,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "🔄 Number of auto-deploy job retries per Project 🔄",
+      "title": "Number of auto-deploy job retries per Project",
       "transformations": [
         {
           "id": "organize",
@@ -214,7 +214,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "🔄 Number of auto-deploy retries per job 🔄",
+      "title": "Number of auto-deploy retries per job",
       "transformations": [
         {
           "id": "organize",
@@ -249,7 +249,7 @@
       "repeatIteration": null,
       "repeatRowId": null,
       "showTitle": true,
-      "title": "Tagged Releases",
+      "title": "🚀 Tagged Releases 🚀",
       "titleSize": "h6",
       "type": "row"
     },
@@ -338,7 +338,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "🚀 Number of Tagged Releases by Type 🚀",
+      "title": "Number of Tagged Releases by Type",
       "transformations": [
         {
           "alias": "Release Type",
@@ -435,6 +435,167 @@
       "type": "table"
     },
     {
+      "collapse": false,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 300
+      },
+      "id": 8,
+      "panels": [
+
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "❌ Incomplete/Failed Deployments ❌",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "columns": [
+
+      ],
+      "datasource": "$PROMETHEUS_DS",
+      "description": "Remember to not count the currently deploying version. Because of of how the delivery_deployment_completed metric works, it will always include the last one that is still deploying by the end of this query range (at the top).",
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 301
+      },
+      "id": 9,
+      "links": [
+
+      ],
+      "styles": null,
+      "targets": [
+        {
+          "expr": "sum by (version) (max_over_time(delivery_deployment_completed[$__range])) < 4",
+          "format": "table",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Incomplete Auto-Deployment Versions",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true
+            },
+            "indexByName": {
+            },
+            "renameByName": {
+              "version": "versions (read description)"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": null,
+      "description": "Because of of how the delivery_deployment_completed metric works, it will always include the last one that is still deploying by the end of this query range (at the top). That is why this number is 1 less than the number of rows from the Incomplete Auto-Deploy Versions table.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "",
+          "links": [
+
+          ],
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "white",
+                "value": null
+              }
+            ]
+          },
+          "unit": ""
+        }
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 301
+      },
+      "id": 10,
+      "links": [
+
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "sum by (version) (max_over_time(delivery_deployment_completed[$__range])) < 4",
+          "format": "table",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Number of Incomplete Auto-Deployments",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true
+            },
+            "indexByName": {
+            },
+            "renameByName": {
+            }
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "labelsToFields": true,
+            "mode": "seriesToRows",
+            "reducers": [
+              "changeCount"
+            ]
+          }
+        }
+      ],
+      "transparent": false,
+      "type": "stat"
+    },
+    {
       "content": "Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards)\n",
       "datasource": null,
       "gridPos": {
@@ -443,7 +604,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 8,
+      "id": 11,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -507,5 +668,5 @@
   "timezone": "utc",
   "title": "delivery: Release Management Toil",
   "uid": "delivery-release_management_toil",
-  "version": 268
+  "version": 271
 }
