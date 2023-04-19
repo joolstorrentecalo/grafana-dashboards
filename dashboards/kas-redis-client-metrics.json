@@ -51,72 +51,113 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4138257574 at Wed Apr 19 07:25:08 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4138257574 at Wed Apr 19 07:24:31 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
   "hideControls": false,
   "id": null,
   "links": [
-    {
-      "asDropdown": true,
-      "icon": "external link",
-      "includeVars": false,
-      "keepTime": true,
-      "tags": "",
-      "targetBlank": false,
-      "title": "🔙 Back to websockets service",
-      "type": "link",
-      "url": "https://dashboards.gitlab.net/d/websockets/websockets?orgId=1"
-    },
-    {
-      "asDropdown": true,
-      "icon": "dashboard",
-      "includeVars": true,
-      "keepTime": true,
-      "tags": "type:websockets",
-      "targetBlank": false,
-      "title": "websockets Detail",
-      "type": "dashboards",
-      "url": ""
-    },
-    {
-      "asDropdown": true,
-      "icon": "external link",
-      "includeVars": true,
-      "keepTime": true,
-      "tags": [
-        "managed",
-        "type:websockets",
-        "kube detail"
-      ],
-      "targetBlank": false,
-      "title": "☸️ websockets Kubernetes Detail",
-      "type": "dashboards",
-      "url": ""
-    }
+
   ],
   "panels": [
     {
-      "collapse": false,
-      "collapsed": false,
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "Number of times a connection was found in the pool",
+      "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
-        "h": 8,
-        "w": 24,
+        "h": 10,
+        "w": 8,
         "x": 0,
         "y": 0
       },
       "id": 2,
-      "panels": [
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": false,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
 
       ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
       "repeat": null,
-      "repeatIteration": null,
-      "repeatRowId": null,
-      "showTitle": true,
-      "title": "websockets deployment",
-      "titleSize": "h6",
-      "type": "row"
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum (increase(redis_pool_hit_total{env=\"$environment\", stage=\"$stage\", app=\"kas\"}[$__rate_interval]))\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Connection found in pool",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "times",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
     },
     {
       "aliasColors": {
@@ -126,14 +167,14 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 0,
-      "description": "",
+      "description": "Number of times a connection was not found in the pool",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 8,
-        "x": 0,
-        "y": 8
+        "x": 8,
+        "y": 0
       },
       "id": 3,
       "legend": {
@@ -144,13 +185,13 @@
         "max": true,
         "min": true,
         "rightSide": false,
-        "show": true,
+        "show": false,
         "sideWidth": null,
         "total": false,
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -168,11 +209,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      deployment=\"websockets\",env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"websockets\"\n    }[$__rate_interval]\n  )\n)\n",
+          "expr": "sum (increase(redis_pool_miss_total{env=\"$environment\", stage=\"$stage\", app=\"kas\"}[$__rate_interval]))\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "{{ cluster }}",
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -181,7 +222,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "websockets Deployment: CPU",
+      "title": "Connection not found in pool",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -200,7 +241,7 @@
       "yaxes": [
         {
           "format": "short",
-          "label": "",
+          "label": "times",
           "logBase": 1,
           "max": null,
           "min": 0,
@@ -224,14 +265,14 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 0,
-      "description": "",
+      "description": "Number of times a timeout occurred when looking for a connection in the pool",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 8,
-        "x": 8,
-        "y": 8
+        "x": 16,
+        "y": 0
       },
       "id": 4,
       "legend": {
@@ -242,13 +283,13 @@
         "max": true,
         "min": true,
         "rightSide": false,
-        "show": true,
+        "show": false,
         "sideWidth": null,
         "total": false,
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -266,11 +307,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    deployment=\"websockets\",env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"websockets\"\n  }\n)\n",
+          "expr": "sum (increase(redis_pool_timeout_total{env=\"$environment\", stage=\"$stage\", app=\"kas\"}[$__rate_interval]))\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "{{ cluster }}",
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -279,7 +320,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "websockets Deployment: Memory",
+      "title": "Timeout retrieving connection from pool",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -296,121 +337,12 @@
         ]
       },
       "yaxes": [
-        {
-          "format": "bytes",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
         {
           "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "Network utilization",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 8
-      },
-      "id": 5,
-      "legend": {
-        "alignAsTable": false,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-        {
-          "alias": "/receive .*/",
-          "transform": "negative-Y"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_transmit_bytes_total:labeled{\n      deployment=\"websockets\",env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"websockets\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "send {{ cluster }}",
-          "refId": "A"
-        },
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_receive_bytes_total:labeled{\n      deployment=\"websockets\",env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"websockets\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "receive {{ cluster }}",
-          "refId": "B"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "websockets Deployment: Network IO",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "Bps",
-          "label": "Network utilization",
+          "label": "times",
           "logBase": 1,
           "max": null,
-          "min": null,
+          "min": 0,
           "show": true
         },
         {
@@ -431,14 +363,112 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 0,
-      "description": "Ratio of requested CPU resources from allocatable resources.\nIdeally we have requests utilization close to 100%. Values are\nbelow 100% typically because pods do not fit well on nodes or\nbecause we might be bound by memory requests already.\n",
+      "description": "Current number of idle connections in the pool",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
-        "w": 12,
+        "h": 10,
+        "w": 8,
         "x": 0,
-        "y": 16
+        "y": 10
+      },
+      "id": 5,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": false,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum (redis_pool_conn_idle_current{env=\"$environment\", stage=\"$stage\", app=\"kas\"})\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 3,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Number of idle connections in pool",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "connections",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "Number of times a connection was removed from the pool because it was stale",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 8,
+        "x": 8,
+        "y": 10
       },
       "id": 6,
       "legend": {
@@ -449,13 +479,13 @@
         "max": true,
         "min": true,
         "rightSide": false,
-        "show": true,
+        "show": false,
         "sideWidth": null,
         "total": false,
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -473,11 +503,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (node) (\n  kube_pod_container_resource_requests{resource=\"cpu\", unit=\"core\"}\n)\n/ on (node) group_left()\nkube_node_status_allocatable:labeled{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"websockets\",resource=\"cpu\"}\n",
+          "expr": "sum (increase(redis_pool_conn_stale_total{env=\"$environment\", stage=\"$stage\", app=\"kas\"}[$__rate_interval]))\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 3,
-          "legendFormat": "{{ node }}",
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -486,7 +516,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Node CPU Requests Utilization",
+      "title": "Removed stale connections",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -504,8 +534,8 @@
       },
       "yaxes": [
         {
-          "format": "percentunit",
-          "label": "",
+          "format": "short",
+          "label": "connections",
           "logBase": 1,
           "max": null,
           "min": 0,
@@ -520,118 +550,6 @@
           "show": false
         }
       ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "Ratio of requested Memory resources from allocatable resources.\nIdeally we have requests utilization close to 100%. Values are\nbelow 100% typically because pods do not fit well on nodes or\nbecause we might be bound by CPU requests already.\n",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 16
-      },
-      "id": 7,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by (node) (\n  kube_pod_container_resource_requests{resource=\"memory\", unit=\"byte\"}\n)\n/ on (node) group_left()\nkube_node_status_allocatable:labeled{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"websockets\",resource=\"memory\"}\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{ node }}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Node Memory Requests Utilization",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "percentunit",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "content": "Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards)\n",
-      "datasource": null,
-      "gridPos": {
-        "h": 2,
-        "w": 24,
-        "x": 0,
-        "y": 110000
-      },
-      "id": 8,
-      "mode": "markdown",
-      "title": "Source",
-      "type": "text"
     }
   ],
   "refresh": "",
@@ -642,11 +560,8 @@
   "style": "light",
   "tags": [
     "managed",
-    "websockets",
-    "websockets",
-    "type:websockets",
-    "kube",
-    "kube detail"
+    "kas",
+    "kas"
   ],
   "templating": {
     "list": [
@@ -749,7 +664,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "websockets: Kube Deployment Detail",
-  "uid": "websockets-kube-deployments",
-  "version": 2351
+  "title": "kas: Redis client metrics",
+  "uid": "kas-redis-client",
+  "version": 1
 }
