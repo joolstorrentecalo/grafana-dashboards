@@ -37,7 +37,6 @@
         "type": "prometheus",
         "uid": "PA258B30F88C30650"
       },
-      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -65,7 +64,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "s"
         },
         "overrides": [
 
@@ -77,7 +77,7 @@
         "x": 0,
         "y": 0
       },
-      "id": 7,
+      "id": 10,
       "options": {
         "footer": {
           "countRows": false,
@@ -97,28 +97,51 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "exemplar": false,
-          "expr": "sum by (version) (max_over_time(delivery_deployment_completed[$__range])) < 4",
+          "expr": "sum by (deploy_version) (delivery_deployment_pipeline_duration_seconds)",
           "format": "table",
-          "instant": true,
           "legendFormat": "__auto",
-          "range": false,
+          "range": true,
           "refId": "A"
         }
       ],
-      "title": "Incomplete auto-deploy versions",
+      "title": "Panel Title",
       "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Time": {
+                "aggregations": [
+                  "first"
+                ],
+                "operation": "aggregate"
+              },
+              "Value": {
+                "aggregations": [
+                  "max"
+                ],
+                "operation": "aggregate"
+              },
+              "deploy_version": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
         {
           "id": "organize",
           "options": {
             "excludeByName": {
-              "Time": true,
-              "Value": true
             },
             "indexByName": {
             },
             "renameByName": {
-              "version": ""
+              "Time (first)": "Start Time",
+              "Value (max)": "Total Pipeline Duration",
+              "deploy_version": "Deploy version"
             }
           }
         }
@@ -219,6 +242,99 @@
         }
       ],
       "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 7,
+      "options": {
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by (version) (max_over_time(delivery_deployment_completed[$__range])) < 4",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Incomplete auto-deploy versions",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true
+            },
+            "indexByName": {
+            },
+            "renameByName": {
+              "version": ""
+            }
+          }
+        }
+      ],
+      "type": "table"
     }
   ],
   "refresh": "",
@@ -230,7 +346,31 @@
   ],
   "templating": {
     "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "gitlab-com/gl-infra/deployer",
+          "value": "gitlab-com/gl-infra/deployer"
+        },
+        "definition": "label_values(delivery_deployment_pipeline_duration_seconds, project_name)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Project Name",
+        "multi": false,
+        "name": "project_name",
+        "options": [
 
+        ],
+        "query": {
+          "query": "label_values(delivery_deployment_pipeline_duration_seconds, project_name)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
     ]
   },
   "time": {
@@ -242,6 +382,6 @@
   "timezone": "",
   "title": "[Playground - Delivery] Jenny testing pipeline visualizations",
   "uid": "LsuDuuY4z",
-  "version": 14,
+  "version": 16,
   "weekStart": ""
 }
