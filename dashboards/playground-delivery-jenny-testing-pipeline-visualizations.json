@@ -97,14 +97,14 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "sum by (deploy_version) (delivery_deployment_pipeline_duration_seconds)",
+          "expr": "sum by (deploy_version) (delivery_deployment_pipeline_duration_seconds{project_name=\"gitlab-org/release/tools\"})",
           "format": "table",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Panel Title",
+      "title": "Auto-deploy Deployments Pipeline Duration",
       "transformations": [
         {
           "id": "groupBy",
@@ -144,6 +144,19 @@
               "deploy_version": "Deploy version"
             }
           }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {
+            },
+            "sort": [
+              {
+                "desc": true,
+                "field": "Deploy version"
+              }
+            ]
+          }
         }
       ],
       "type": "table"
@@ -153,11 +166,17 @@
         "type": "prometheus",
         "uid": "PA258B30F88C30650"
       },
-      "description": "Because of how range vector works with our current metrics, it always includes one complete deployment in the calculation, it has an error rate of +/- 2",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
           },
           "mappings": [
 
@@ -168,9 +187,14 @@
               {
                 "color": "green",
                 "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ]
-          }
+          },
+          "unit": "s"
         },
         "overrides": [
 
@@ -182,20 +206,17 @@
         "x": 12,
         "y": 0
       },
-      "id": 8,
+      "id": 12,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+        "footer": {
+          "countRows": false,
           "fields": "",
-          "values": false
+          "reducer": [
+            "sum"
+          ],
+          "show": false
         },
-        "textMode": "auto"
+        "showHeader": true
       },
       "pluginVersion": "9.4.7",
       "targets": [
@@ -205,43 +226,62 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "exemplar": false,
-          "expr": "sum by (version) (max_over_time(delivery_deployment_completed[$__range])) < 4",
+          "expr": "sum by (target_env, target_stage) (delivery_deployment_pipeline_duration_seconds{deploy_version=\"$deploy_version\",target_env!=\"\",target_stage!=\"\"})",
           "format": "table",
-          "instant": true,
           "legendFormat": "__auto",
-          "range": false,
+          "range": true,
           "refId": "A"
         }
       ],
-      "title": "Total number of Incomplete auto-deploy versions",
+      "title": "Auto-deploy Deployments Downstream Pipeline Durations",
       "transformations": [
         {
-          "id": "organize",
+          "id": "groupBy",
           "options": {
-            "excludeByName": {
-              "Time": true,
-              "Value": true
-            },
-            "indexByName": {
-            },
-            "renameByName": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "max"
+                ],
+                "operation": "aggregate"
+              },
+              "project_name": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "target_env": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "target_stage": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              }
             }
           }
         },
         {
-          "id": "reduce",
+          "id": "organize",
           "options": {
-            "includeTimeField": false,
-            "labelsToFields": true,
-            "mode": "seriesToRows",
-            "reducers": [
-              "changeCount"
-            ]
+            "excludeByName": {
+            },
+            "indexByName": {
+            },
+            "renameByName": {
+              "Value (max)": "Duration",
+              "target_env": "Environment",
+              "target_stage": "Stage"
+            }
           }
         }
       ],
-      "type": "stat"
+      "type": "table"
     },
     {
       "datasource": {
@@ -335,6 +375,189 @@
         }
       ],
       "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#ffffff",
+                "value": null
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 11,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "sum by (deploy_version) (delivery_deployment_pipeline_duration_seconds{project_name=\"gitlab-org/release/tools\", deploy_version=\"$deploy_version\"})",
+          "format": "table",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Pipeline Duration for Auto-deploy Version",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "max"
+                ],
+                "operation": "aggregate"
+              },
+              "deploy_version": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "Because of how range vector works with our current metrics, it always includes one complete deployment in the calculation, it has an error rate of +/- 2",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by (version) (max_over_time(delivery_deployment_completed[$__range])) < 4",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Total number of Incomplete auto-deploy versions",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true
+            },
+            "indexByName": {
+            },
+            "renameByName": {
+            }
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "labelsToFields": true,
+            "mode": "seriesToRows",
+            "reducers": [
+              "changeCount"
+            ]
+          }
+        }
+      ],
+      "type": "stat"
     }
   ],
   "refresh": "",
@@ -351,6 +574,10 @@
           "selected": false,
           "text": "gprd",
           "value": "gprd"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PA258B30F88C30650"
         },
         "definition": "label_values(delivery_deployment_pipeline_duration_seconds, target_env)",
         "hide": 0,
@@ -377,6 +604,10 @@
           "text": "cny",
           "value": "cny"
         },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PA258B30F88C30650"
+        },
         "definition": "label_values(delivery_deployment_pipeline_duration_seconds, target_stage)",
         "hide": 0,
         "includeAll": false,
@@ -395,6 +626,35 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "15.11.202304210820-2c30e77234c.d0a3bf16f11",
+          "value": "15.11.202304210820-2c30e77234c.d0a3bf16f11"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PA258B30F88C30650"
+        },
+        "definition": "label_values(delivery_deployment_pipeline_duration_seconds, deploy_version)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Deploy Version",
+        "multi": false,
+        "name": "deploy_version",
+        "options": [
+
+        ],
+        "query": {
+          "query": "label_values(delivery_deployment_pipeline_duration_seconds, deploy_version)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 2,
+        "type": "query"
       }
     ]
   },
@@ -407,6 +667,6 @@
   "timezone": "",
   "title": "[Playground - Delivery] Jenny testing pipeline visualizations",
   "uid": "LsuDuuY4z",
-  "version": 17,
+  "version": 25,
   "weekStart": ""
 }
