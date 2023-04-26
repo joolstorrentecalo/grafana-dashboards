@@ -169,15 +169,15 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "fixedColor": "green",
+            "mode": "fixed"
           },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
+          "links": [
+            {
+              "title": "Deploy version",
+              "url": "https://dashboards.gitlab.net/d/LsuDuuY4z/playground-delivery-jenny-testing-pipeline-visualizations?orgId=1&${__url_time_range}&var-deploy_version=${__data.fields.deploy_version}"
+            }
+          ],
           "mappings": [
 
           ],
@@ -187,10 +187,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -206,17 +202,133 @@
         "x": 12,
         "y": 0
       },
+      "id": 13,
+      "links": [
+
+      ],
+      "options": {
+        "displayMode": "basic",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+
+          ],
+          "fields": "/^Value \\(max\\)$/",
+          "values": true
+        },
+        "showUnfilled": true
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "sum by (deploy_version) (delivery_deployment_pipeline_duration_seconds{project_name=\"gitlab-org/release/tools\"})",
+          "format": "table",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Auto-deploy Deployments Pipeline Duration",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Time": {
+                "aggregations": [
+                  "first"
+                ],
+                "operation": "aggregate"
+              },
+              "Value": {
+                "aggregations": [
+                  "max"
+                ],
+                "operation": "aggregate"
+              },
+              "deploy_version": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {
+            },
+            "sort": [
+              {
+                "desc": true,
+                "field": "deploy_version"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "green",
+            "mode": "fixed"
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
       "id": 12,
       "options": {
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
+        "displayMode": "basic",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+
           ],
-          "show": false
+          "fields": "",
+          "values": true
         },
-        "showHeader": true
+        "showUnfilled": true,
+        "text": {
+        }
       },
       "pluginVersion": "9.4.7",
       "targets": [
@@ -265,23 +377,9 @@
               }
             }
           }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-            },
-            "indexByName": {
-            },
-            "renameByName": {
-              "Value (max)": "Duration",
-              "target_env": "Environment",
-              "target_stage": "Stage"
-            }
-          }
         }
       ],
-      "type": "table"
+      "type": "bargauge"
     },
     {
       "datasource": {
@@ -315,7 +413,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 8
+        "y": 16
       },
       "id": 11,
       "options": {
@@ -421,6 +519,6 @@
   "timezone": "",
   "title": "[Playground - Delivery] Jenny testing pipeline visualizations",
   "uid": "LsuDuuY4z",
-  "version": 27,
+  "version": 32,
   "weekStart": ""
 }
