@@ -69,24 +69,18 @@
         "type": "prometheus",
         "uid": "PA258B30F88C30650"
       },
-      "description": "Deployment duration by Gitlab project",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-GrYlRd"
+            "mode": "thresholds"
           },
           "custom": {
-            "fillOpacity": 70,
-            "lineWidth": 0,
-            "spanNulls": false
+            "align": "center",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
           },
-          "links": [
-            {
-              "targetBlank": true,
-              "title": "View merge request",
-              "url": "https://gitlab.com/gitlab-org/gitlab/-/merge_requests/${__field.labels.mr_id}"
-            }
-          ],
           "mappings": [
 
           ],
@@ -94,35 +88,157 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#73BF69",
+                "color": "green",
                 "value": null
               },
               {
-                "color": "#CCCC00",
-                "value": 39600
-              },
-              {
-                "color": "#CC6600",
-                "value": 43200
-              },
-              {
-                "color": "#CC3300",
-                "value": 46800
+                "color": "red",
+                "value": 80
               }
             ]
-          },
-          "unit": "s"
+          }
         },
         "overrides": [
           {
             "matcher": {
               "id": "byName",
-              "options": "Time"
+              "options": "Value"
             },
             "properties": [
               {
-                "id": "custom.lineWidth",
-                "value": 3
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 91
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "failed": {
+                        "color": "red",
+                        "index": 1
+                      },
+                      "success": {
+                        "color": "green",
+                        "index": 0
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Project"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 216
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Pipeline"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Show details",
+                    "url": "${__data.fields.web_url}"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 674
+              },
+              {
+                "id": "custom.align",
+                "value": "auto"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "web_url"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 3600
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "gauge"
+                }
               }
             ]
           }
@@ -134,24 +250,23 @@
         "x": 0,
         "y": 1
       },
-      "id": 3,
-      "links": [
-
-      ],
+      "id": 10,
       "options": {
-        "alignValue": "left",
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
         },
-        "mergeValues": true,
-        "rowHeight": 0.9,
-        "showValue": "auto",
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Duration"
+          }
+        ]
       },
       "pluginVersion": "9.4.7",
       "targets": [
@@ -161,17 +276,90 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "delivery_deployment_pipeline_duration_seconds{deploy_version=\"$deploy_version\"}",
-          "format": "time_series",
+          "exemplar": false,
+          "expr": "last_over_time(delivery_deployment_pipeline_duration_seconds{target_env=\"gstg\", target_stage=\"cny\", deploy_version=\"16.0.202304261820-691e344cf63.e331bffafa1\"}[$__range])",
+          "format": "table",
           "instant": true,
-          "interval": "1m",
-          "intervalFactor": 3,
-          "legendFormat": "{{project_name}}",
+          "legendFormat": "{{label_name}}",
+          "range": false,
           "refId": "A"
         }
       ],
-      "title": "Deployment duration",
-      "type": "state-timeline"
+      "title": "Pipelines overview",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "cluster": true,
+              "container": true,
+              "deploy_version": true,
+              "endpoint": true,
+              "env": true,
+              "environment": true,
+              "instance": true,
+              "job": true,
+              "monitor": true,
+              "namespace": true,
+              "pipeline_id": true,
+              "pod": true,
+              "prometheus": true,
+              "provider": true,
+              "region": true,
+              "service": true,
+              "shard": true,
+              "stage": true,
+              "target_env": true,
+              "target_stage": true,
+              "tier": true,
+              "type": true,
+              "web_url": false
+            },
+            "indexByName": {
+              "Time": 5,
+              "Value": 3,
+              "__name__": 6,
+              "cluster": 7,
+              "container": 8,
+              "deploy_version": 9,
+              "endpoint": 10,
+              "env": 11,
+              "environment": 12,
+              "instance": 13,
+              "job": 14,
+              "monitor": 15,
+              "namespace": 16,
+              "pipeline_id": 17,
+              "pipeline_name": 0,
+              "pipeline_status": 2,
+              "pod": 18,
+              "project_name": 1,
+              "prometheus": 19,
+              "provider": 20,
+              "region": 21,
+              "service": 22,
+              "shard": 23,
+              "stage": 24,
+              "target_env": 25,
+              "target_stage": 26,
+              "tier": 27,
+              "type": 28,
+              "web_url": 4
+            },
+            "renameByName": {
+              "Time": "",
+              "Value": "Duration",
+              "__name__": "",
+              "pipeline_name": "Pipeline",
+              "pipeline_status": "Status",
+              "project_name": "Project"
+            }
+          }
+        }
+      ],
+      "type": "table"
     },
     {
       "datasource": {
@@ -193,24 +381,12 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "blue",
+                "color": "green",
                 "value": null
               },
               {
-                "color": "#73BF69",
-                "value": 0
-              },
-              {
-                "color": "#CCCC00",
-                "value": 39600
-              },
-              {
-                "color": "#CC6600",
-                "value": 43200
-              },
-              {
-                "color": "#CC3300",
-                "value": 46800
+                "color": "red",
+                "value": 3600
               }
             ]
           },
@@ -251,7 +427,8 @@
             "type": "prometheus",
             "uid": "PA258B30F88C30650"
           },
-          "expr": "sum(last_over_time(delivery_deployment_pipeline_duration_seconds{target_env=\"$environment\", target_stage=\"$target_stage\", deploy_version=\"$deploy_version\"}[$__range]))",
+          "editorMode": "code",
+          "expr": "sum(last_over_time(delivery_deployment_pipeline_duration_seconds{deploy_version=\"16.0.202304261820-691e344cf63.e331bffafa1\", target_env=\"gstg\", target_stage=\"cny\"}[$__range]))",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -479,7 +656,6 @@
       "type": "stat"
     },
     {
-      "content": "Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards)\n",
       "datasource": {
         "type": "prometheus",
         "uid": "PA258B30F88C30650"
@@ -491,7 +667,16 @@
         "y": 22
       },
       "id": 8,
-      "mode": "markdown",
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards)\n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "9.4.7",
       "targets": [
         {
           "datasource": {
@@ -505,7 +690,7 @@
       "type": "text"
     }
   ],
-  "refresh": "",
+  "refresh": false,
   "revision": 1,
   "schemaVersion": 38,
   "style": "light",
@@ -619,6 +804,19 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PA258B30F88C30650"
+        },
+        "filters": [
+
+        ],
+        "hide": 0,
+        "name": "Filters",
+        "skipUrlSync": false,
+        "type": "adhoc"
       }
     ]
   },
@@ -649,6 +847,6 @@
   "timezone": "utc",
   "title": "delivery: Deployment Overview",
   "uid": "delivery-deployment-overview",
-  "version": 2,
+  "version": 23,
   "weekStart": ""
 }
