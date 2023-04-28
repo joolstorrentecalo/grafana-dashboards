@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4186178755 at Wed Apr 26 21:13:01 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4194936064 at Fri Apr 28 05:11:47 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -1847,7 +1847,7 @@
           "expr": "sum by (shard, stage) (sidekiq_jobs_execution_time:10m{environment=\"$environment\", shard=~\"$shard\"})\n/\nsum by (stage, shard)  (avg_over_time(sidekiq_concurrency{environment=\"$environment\", shard=~\"$shard\"}[10m]))\n",
           "format": "time_series",
           "interval": "1m",
-          "intervalFactor": 3,
+          "intervalFactor": 1,
           "legendFormat": "{{ shard }} utilization (per 10m)",
           "refId": "B"
         },
@@ -1855,7 +1855,7 @@
           "expr": "sum by (shard, stage) (sidekiq_jobs_execution_time:1m{environment=\"$environment\", shard=~\"$shard\"})\n/\nsum by (stage, shard)  (avg_over_time(sidekiq_concurrency{environment=\"$environment\", shard=~\"$shard\"}[1m]))\n",
           "format": "time_series",
           "interval": "1m",
-          "intervalFactor": 3,
+          "intervalFactor": 1,
           "legendFormat": "{{ shard }} utilization (instant)",
           "refId": "C"
         }
@@ -2792,7 +2792,7 @@
               "expr": "avg(instance:node_cpu_utilization:ratio{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}) by (fqdn)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 5,
+              "intervalFactor": 1,
               "legendFormat": "{{ fqdn }}",
               "refId": "A"
             }
@@ -2890,7 +2890,7 @@
               "expr": "clamp_min(clamp_max(max(1 - rate(node_cpu_seconds_total{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", mode=\"idle\"}[$__interval])) by (fqdn)\n,1),0)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "{{ fqdn }}",
               "refId": "A"
             }
@@ -2989,7 +2989,7 @@
               "expr": "sum(rate(node_network_transmit_bytes_total{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}[$__interval])) by (fqdn)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 5,
+              "intervalFactor": 1,
               "legendFormat": "send {{ fqdn }}",
               "refId": "A"
             },
@@ -2997,7 +2997,7 @@
               "expr": "sum(rate(node_network_receive_bytes_total{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}[$__interval])) by (fqdn)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 5,
+              "intervalFactor": 1,
               "legendFormat": "receive {{ fqdn }}",
               "refId": "B"
             }
@@ -4315,7 +4315,7 @@
               "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard) (\n  clamp_min(\n    clamp_max(\n      1 - avg by (environment, tier, type, stage, shard) (\n        rate(node_cpu_seconds_total{mode=\"idle\", environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}[5m])\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "{{ type }}",
               "refId": "A"
             },
@@ -4323,7 +4323,7 @@
               "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"cpu\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "aggregated {{ component }}",
               "refId": "B"
             },
@@ -4331,7 +4331,7 @@
               "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"cpu\"}\n)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "95th quantile for week {{ component }}",
               "refId": "C"
             },
@@ -4339,7 +4339,7 @@
               "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"cpu\"}\n)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "99th quantile for week {{ component }}",
               "refId": "D"
             },
@@ -4347,7 +4347,7 @@
               "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"cpu\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "Soft SLO: {{ component }}",
               "refId": "E"
             },
@@ -4355,7 +4355,7 @@
               "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"cpu\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "Hard SLO: {{ component }}",
               "refId": "F"
             }
@@ -4509,7 +4509,7 @@
               "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn, device) (\n  clamp_min(\n    clamp_max(\n      (\n        1 - node_filesystem_avail_bytes{fstype=~\"ext.|xfs\", environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"} / node_filesystem_size_bytes{fstype=~\"ext.|xfs\", environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "{{ fqdn }} {{ device }}",
               "refId": "A"
             },
@@ -4517,7 +4517,7 @@
               "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"disk_space\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "aggregated {{ component }}",
               "refId": "B"
             },
@@ -4525,7 +4525,7 @@
               "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"disk_space\"}\n)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "95th quantile for week {{ component }}",
               "refId": "C"
             },
@@ -4533,7 +4533,7 @@
               "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"disk_space\"}\n)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "99th quantile for week {{ component }}",
               "refId": "D"
             },
@@ -4541,7 +4541,7 @@
               "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"disk_space\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "Soft SLO: {{ component }}",
               "refId": "E"
             },
@@ -4549,7 +4549,7 @@
               "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"disk_space\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "Hard SLO: {{ component }}",
               "refId": "F"
             }
@@ -4703,7 +4703,7 @@
               "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn) (\n  clamp_min(\n    clamp_max(\n      instance:node_memory_utilization:ratio{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"} or instance:node_memory_utilisation:ratio{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "{{ fqdn }}",
               "refId": "A"
             },
@@ -4711,7 +4711,7 @@
               "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"memory\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "aggregated {{ component }}",
               "refId": "B"
             },
@@ -4719,7 +4719,7 @@
               "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"memory\"}\n)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "95th quantile for week {{ component }}",
               "refId": "C"
             },
@@ -4727,7 +4727,7 @@
               "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"memory\"}\n)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "99th quantile for week {{ component }}",
               "refId": "D"
             },
@@ -4735,7 +4735,7 @@
               "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"memory\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "Soft SLO: {{ component }}",
               "refId": "E"
             },
@@ -4743,7 +4743,7 @@
               "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"memory\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "Hard SLO: {{ component }}",
               "refId": "F"
             }
@@ -4897,7 +4897,7 @@
               "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, job, instance) (\n  clamp_min(\n    clamp_max(\n      (\n        process_open_fds{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}\n        /\n        process_max_fds{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}\n      )\n      or\n      (\n        ruby_file_descriptors{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}\n        /\n        ruby_process_max_fds{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "{{ job }} {{ instance }}",
               "refId": "A"
             },
@@ -4905,7 +4905,7 @@
               "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"open_fds\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "aggregated {{ component }}",
               "refId": "B"
             },
@@ -4913,7 +4913,7 @@
               "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"open_fds\"}\n)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "95th quantile for week {{ component }}",
               "refId": "C"
             },
@@ -4921,7 +4921,7 @@
               "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"open_fds\"}\n)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "99th quantile for week {{ component }}",
               "refId": "D"
             },
@@ -4929,7 +4929,7 @@
               "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"open_fds\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "Soft SLO: {{ component }}",
               "refId": "E"
             },
@@ -4937,7 +4937,7 @@
               "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"open_fds\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "Hard SLO: {{ component }}",
               "refId": "F"
             }
@@ -5091,7 +5091,7 @@
               "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, shard) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, tier, type, stage, shard, shard) (\n        avg_over_time(sidekiq_running_jobs{shard!~\"database-throttled|elasticsearch|gitaly-throttled|urgent-authorized-projects\", environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}[5m])\n      )\n      /\n      sum by (environment, tier, type, stage, shard, shard) (\n        avg_over_time(sidekiq_concurrency{shard!~\"database-throttled|elasticsearch|gitaly-throttled|urgent-authorized-projects\", environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}[5m])\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "{{ shard }}",
               "refId": "A"
             },
@@ -5099,7 +5099,7 @@
               "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"sidekiq_shard_workers\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "aggregated {{ component }}",
               "refId": "B"
             },
@@ -5107,7 +5107,7 @@
               "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"sidekiq_shard_workers\"}\n)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "95th quantile for week {{ component }}",
               "refId": "C"
             },
@@ -5115,7 +5115,7 @@
               "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"sidekiq_shard_workers\"}\n)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "99th quantile for week {{ component }}",
               "refId": "D"
             },
@@ -5123,7 +5123,7 @@
               "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"sidekiq_shard_workers\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "Soft SLO: {{ component }}",
               "refId": "E"
             },
@@ -5131,7 +5131,7 @@
               "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"sidekiq_shard_workers\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "Hard SLO: {{ component }}",
               "refId": "F"
             }
@@ -5285,7 +5285,7 @@
               "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn) (\n  clamp_min(\n    clamp_max(\n      avg without(cpu, mode) (1 - rate(node_cpu_seconds_total{mode=\"idle\", environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}[5m]))\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "{{ fqdn }}",
               "refId": "A"
             },
@@ -5293,7 +5293,7 @@
               "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"single_node_cpu\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "aggregated {{ component }}",
               "refId": "B"
             },
@@ -5301,7 +5301,7 @@
               "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"single_node_cpu\"}\n)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "95th quantile for week {{ component }}",
               "refId": "C"
             },
@@ -5309,7 +5309,7 @@
               "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"single_node_cpu\"}\n)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "99th quantile for week {{ component }}",
               "refId": "D"
             },
@@ -5317,7 +5317,7 @@
               "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"single_node_cpu\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "Soft SLO: {{ component }}",
               "refId": "E"
             },
@@ -5325,7 +5325,7 @@
               "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"single_node_cpu\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "Hard SLO: {{ component }}",
               "refId": "F"
             }
@@ -5479,7 +5479,7 @@
               "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn) (\n  clamp_min(\n    clamp_max(\n      sum by(environment, tier, type, stage, shard, fqdn) (avg_over_time(instance:puma_active_connections:sum{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}[1m]))\n      /\n      sum by(environment, tier, type, stage, shard, fqdn) (instance:puma_max_threads:sum{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"})\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "{{ fqdn }}",
               "refId": "A"
             },
@@ -5487,7 +5487,7 @@
               "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"single_node_puma_workers\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "aggregated {{ component }}",
               "refId": "B"
             },
@@ -5495,7 +5495,7 @@
               "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"single_node_puma_workers\"}\n)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "95th quantile for week {{ component }}",
               "refId": "C"
             },
@@ -5503,7 +5503,7 @@
               "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"single_node_puma_workers\"}\n)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "99th quantile for week {{ component }}",
               "refId": "D"
             },
@@ -5511,7 +5511,7 @@
               "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"single_node_puma_workers\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "Soft SLO: {{ component }}",
               "refId": "E"
             },
@@ -5519,7 +5519,7 @@
               "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"single_node_puma_workers\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
-              "intervalFactor": 3,
+              "intervalFactor": 1,
               "legendFormat": "Hard SLO: {{ component }}",
               "refId": "F"
             }
@@ -5716,5 +5716,5 @@
   "timezone": "utc",
   "title": "sidekiq: Shard Detail",
   "uid": "sidekiq-shard-detail",
-  "version": 3199
+  "version": 3200
 }
