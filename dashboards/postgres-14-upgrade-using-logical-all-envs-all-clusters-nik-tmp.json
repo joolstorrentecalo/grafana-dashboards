@@ -50,6 +50,33 @@
         "type": "prometheus",
         "uid": "PA258B30F88C30650"
       },
+      "description": "",
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 0
+      },
+      "id": 39,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "#  **$env** **$cluster**",
+        "mode": "markdown"
+      },
+      "pluginVersion": "9.4.7",
+      "title": "Context",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -109,7 +136,7 @@
         ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 12,
         "x": 6,
         "y": 0
@@ -143,8 +170,89 @@
           "refId": "A"
         }
       ],
-      "title": "🏃🏻‍♀️ Logical replication lag (all slots in env)",
+      "title": "🏃🏻‍♀️ Logical replication lag (all slots in $env)",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 0
+      },
+      "id": 38,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "- [Ansible playbooks](https://gitlab.com/gitlab-com/gl-infra/db-migration/-/tree/master/pg-upgrade-logical)\n- [Inventory in Ansible](https://gitlab.com/gitlab-com/gl-infra/db-migration/-/tree/master/pg-upgrade-logical/inventory)\n- [CR template](https://gitlab.com/gitlab-com/gl-infra/db-migration/-/blob/master/.gitlab/issue_templates/pg14_upgrade.md) (individual CRs are to be located at ops.gitlab.net)\n- [Diagram illustrating the process](https://gitlab.com/gitlab-com/gl-infra/db-migration/-/blob/master/.gitlab/issue_templates/pg14_upgrade.md#high-level-overview)",
+        "mode": "markdown"
+      },
+      "pluginVersion": "9.4.7",
+      "title": "Useful links",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 0,
+        "y": 7
+      },
+      "id": 40,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "🏹 Source cluster: PG12, Ubuntu 20.04 (prefixes contain hard-coded `v12` and/or `2004`)",
+        "mode": "markdown"
+      },
+      "pluginVersion": "9.4.7",
+      "title": "Cluster on the left",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 18,
+        "y": 7
+      },
+      "id": 41,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "🎯 Target cluster: PG14 (prefixes contain hard-coded `v14`)",
+        "mode": "markdown"
+      },
+      "pluginVersion": "9.4.7",
+      "title": "Cluster on the right",
+      "transparent": true,
+      "type": "text"
     },
     {
       "collapsed": false,
@@ -152,7 +260,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 8
+        "y": 10
       },
       "id": 2,
       "panels": [
@@ -228,15 +336,16 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 9
+        "y": 11
       },
       "id": 4,
       "options": {
         "legend": {
           "calcs": [
-
+            "max",
+            "mean"
           ],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
@@ -253,7 +362,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "(sum(irate(pg_stat_database_xact_commit{env=\"$env\", fqdn=~\"patroni-main-2004-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==0",
+          "expr": "(sum(irate(pg_stat_database_xact_commit{env=\"$env\", fqdn=~\"(patroni-${cluster}-2004|patroni-v12-${cluster})-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==0",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -330,15 +439,16 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 9
+        "y": 11
       },
       "id": 5,
       "options": {
         "legend": {
           "calcs": [
-
+            "max",
+            "mean"
           ],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
@@ -354,7 +464,7 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "(sum(irate(pg_stat_database_xact_commit{env=\"$env\", fqdn=~\"patroni-main-v14-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==0",
+          "expr": "(sum(irate(pg_stat_database_xact_commit{env=\"$env\", fqdn=~\"patroni-${cluster}-v14-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==0",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -432,7 +542,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 17
+        "y": 19
       },
       "id": 6,
       "options": {
@@ -457,7 +567,7 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "(sum(irate(pg_stat_database_xact_commit{env=\"$env\", fqdn=~\"patroni-main-2004-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1",
+          "expr": "(sum(irate(pg_stat_database_xact_commit{env=\"$env\", fqdn=~\"(patroni-${cluster}-2004|patroni-v12-${cluster})-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -532,7 +642,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 17
+        "y": 19
       },
       "id": 7,
       "options": {
@@ -557,7 +667,7 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "(sum(irate(pg_stat_database_xact_commit{env=\"$env\", fqdn=~\"patroni-main-v14-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1",
+          "expr": "(sum(irate(pg_stat_database_xact_commit{env=\"$env\", fqdn=~\"patroni-${cluster}-v14-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -572,7 +682,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 27
       },
       "id": 9,
       "panels": [
@@ -648,15 +758,16 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 26
+        "y": 28
       },
       "id": 11,
       "options": {
         "legend": {
           "calcs": [
-
+            "max",
+            "mean"
           ],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
@@ -673,7 +784,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "(sum(irate(pg_stat_database_xact_rollback{env=\"$env\", fqdn=~\"patroni-main-2004-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==0",
+          "expr": "(sum(irate(pg_stat_database_xact_rollback{env=\"$env\", fqdn=~\"(patroni-${cluster}-2004|patroni-v12-${cluster})-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==0",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -750,15 +861,16 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 26
+        "y": 28
       },
       "id": 12,
       "options": {
         "legend": {
           "calcs": [
-
+            "max",
+            "mean"
           ],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
@@ -774,7 +886,7 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "(sum(irate(pg_stat_database_xact_rollback{env=\"$env\", fqdn=~\"patroni-main-v14-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==0",
+          "expr": "(sum(irate(pg_stat_database_xact_rollback{env=\"$env\", fqdn=~\"patroni-${cluster}-v14-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==0",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -849,7 +961,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 34
+        "y": 36
       },
       "id": 13,
       "options": {
@@ -874,7 +986,7 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "(sum(irate(pg_stat_database_xact_rollback{env=\"$env\", fqdn=~\"patroni-main-2004-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1",
+          "expr": "(sum(irate(pg_stat_database_xact_rollback{env=\"$env\", fqdn=~\"(patroni-${cluster}-2004|patroni-v12-${cluster})-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -949,7 +1061,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 34
+        "y": 36
       },
       "id": 14,
       "options": {
@@ -974,7 +1086,7 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "(sum(irate(pg_stat_database_xact_rollback{env=\"$env\", fqdn=~\"patroni-main-v14-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1",
+          "expr": "(sum(irate(pg_stat_database_xact_rollback{env=\"$env\", fqdn=~\"patroni-${cluster}-v14-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -989,7 +1101,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 42
+        "y": 44
       },
       "id": 20,
       "panels": [
@@ -1059,15 +1171,16 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 43
+            "y": 67
           },
           "id": 21,
           "options": {
             "legend": {
               "calcs": [
-
+                "max",
+                "mean"
               ],
-              "displayMode": "list",
+              "displayMode": "table",
               "placement": "bottom",
               "showLegend": true
             },
@@ -1084,7 +1197,7 @@
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "sum(irate(pg_stat_user_tables_n_tup_ins{env=\"$env\",fqdn=~\"patroni-main-2004-.*\"}[1m])\n+\nirate(pg_stat_user_tables_n_tup_del{env=\"$env\",fqdn=~\"patroni-main-2004-.*\"}[1m])\n+\nirate(pg_stat_user_tables_n_tup_upd{env=\"$env\",fqdn=~\"patroni-main-2004-.*\"}[1m])) by (instance)\nand on(instance) pg_replication_is_replica==0",
+              "expr": "sum(irate(pg_stat_user_tables_n_tup_ins{env=\"$env\", fqdn=~\"(patroni-${cluster}-2004|patroni-v12-${cluster})-.*\"}[1m])\n+\nirate(pg_stat_user_tables_n_tup_del{env=\"$env\", fqdn=~\"(patroni-${cluster}-2004|patroni-v12-${cluster})-.*\"}[1m])\n+\nirate(pg_stat_user_tables_n_tup_upd{env=\"$env\", fqdn=~\"(patroni-${cluster}-2004|patroni-v12-${cluster})-.*\"}[1m])) by (instance)\nand on(instance) pg_replication_is_replica==0",
               "instant": false,
               "legendFormat": "__auto",
               "range": true,
@@ -1160,15 +1273,16 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 43
+            "y": 67
           },
           "id": 22,
           "options": {
             "legend": {
               "calcs": [
-
+                "max",
+                "mean"
               ],
-              "displayMode": "list",
+              "displayMode": "table",
               "placement": "bottom",
               "showLegend": true
             },
@@ -1185,7 +1299,7 @@
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "sum(irate(pg_stat_user_tables_n_tup_ins{env=\"$env\",fqdn=~\"patroni-main-v14-.*\"}[1m])\n+\nirate(pg_stat_user_tables_n_tup_del{env=\"$env\",fqdn=~\"patroni-main-v14-.*\"}[1m])\n+\nirate(pg_stat_user_tables_n_tup_upd{env=\"$env\",fqdn=~\"patroni-main-v14-.*\"}[1m])) by (instance)\nand on(instance) pg_replication_is_replica==0",
+              "expr": "sum(irate(pg_stat_user_tables_n_tup_ins{env=\"$env\", fqdn=~\"patroni-${cluster}-v14-.*\"}[1m])\n+\nirate(pg_stat_user_tables_n_tup_del{env=\"$env\", fqdn=~\"patroni-${cluster}-v14-.*\"}[1m])\n+\nirate(pg_stat_user_tables_n_tup_upd{env=\"$env\", fqdn=~\"patroni-${cluster}-v14-.*\"}[1m])) by (instance)\nand on(instance) pg_replication_is_replica==0",
               "instant": false,
               "legendFormat": "__auto",
               "range": true,
@@ -1261,7 +1375,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 51
+            "y": 75
           },
           "id": 23,
           "options": {
@@ -1287,7 +1401,7 @@
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "(sum(rate(pg_stat_user_tables_idx_tup_fetch{env=\"$env\", instance=~\"(patroni-main-2004-.*)\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1",
+              "expr": "(sum(rate(pg_stat_user_tables_idx_tup_fetch{env=\"$env\", fqdn=~\"(patroni-${cluster}-2004|patroni-v12-${cluster})-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1",
               "instant": false,
               "legendFormat": "__auto",
               "range": true,
@@ -1363,7 +1477,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 51
+            "y": 75
           },
           "id": 24,
           "options": {
@@ -1389,7 +1503,7 @@
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "(sum(rate(pg_stat_user_tables_idx_tup_fetch{env=\"$env\", instance=~\"(patroni-main-v14-.*)\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1",
+              "expr": "(sum(rate(pg_stat_user_tables_idx_tup_fetch{env=\"$env\", fqdn=~\"patroni-${cluster}-v14-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1",
               "instant": false,
               "legendFormat": "__auto",
               "range": true,
@@ -1465,7 +1579,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 59
+            "y": 83
           },
           "id": 25,
           "options": {
@@ -1491,7 +1605,7 @@
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "(sum(rate(pg_stat_user_tables_seq_tup_read{env=\"$env\", instance=~\"(patroni-main-2004-.*)\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1",
+              "expr": "(sum(rate(pg_stat_user_tables_seq_tup_read{env=\"$env\", fqdn=~\"(patroni-${cluster}-2004|patroni-v12-${cluster})-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1",
               "instant": false,
               "legendFormat": "__auto",
               "range": true,
@@ -1567,7 +1681,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 59
+            "y": 83
           },
           "id": 26,
           "options": {
@@ -1593,7 +1707,7 @@
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "(sum(rate(pg_stat_user_tables_seq_tup_read{env=\"$env\", instance=~\"(patroni-main-v14-.*)\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1",
+              "expr": "(sum(rate(pg_stat_user_tables_seq_tup_read{env=\"$env\", fqdn=~\"patroni-${cluster}-v14-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1",
               "instant": false,
               "legendFormat": "__auto",
               "range": true,
@@ -1613,13 +1727,13 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 43
+        "y": 45
       },
       "id": 28,
       "panels": [
 
       ],
-      "title": "Backups (TODO, WIP)",
+      "title": "Backups (daily full backups and continuous WAL archiving)",
       "type": "row"
     },
     {
@@ -1688,7 +1802,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 44
+        "y": 46
       },
       "id": 29,
       "options": {
@@ -1714,7 +1828,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(rate(walg_backup_completed_count{env=\"$env\", fqdn=~\"patroni-main-2004-.*\"}[1m])) by (instance)",
+          "expr": "sum(rate(walg_backup_completed_count{env=\"$env\", fqdn=~\"(patroni-${cluster}-2004|patroni-v12-${cluster})-.*\"}[1m])) by (instance)",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -1790,7 +1904,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 44
+        "y": 46
       },
       "id": 30,
       "options": {
@@ -1816,7 +1930,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(rate(walg_backup_completed_count{env=\"$env\", fqdn=~\"patroni-main-v14-.*\"}[1m])) by (instance)",
+          "expr": "sum(rate(walg_backup_completed_count{env=\"$env\", fqdn=~\"patroni-${cluster}-v14-.*\"}[1m])) by (instance)",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -1824,6 +1938,624 @@
         }
       ],
       "title": "🎯 Target WALs archived",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "IMPORTANT: look at least 2 day interval. If you see 2 rows, then a gap, then another 2 rows, then you have a recent (< 24 hours) successful backup. The gap is the period of time when the backups were executing. You can use a timestamp converter https://www.epochconverter.com/ to convert the timestamps into human-readable date/time if you want to check when the backup finished.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "blue",
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 54
+      },
+      "id": 31,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "gitlab_job_success_timestamp_seconds{resource=\"walg-basebackup\", env=\"$env\", type=~\"${env}-patroni-${cluster}-(pg12|2004).*\"} > gitlab_job_start_timestamp_seconds{resource=\"walg-basebackup\", env=\"$env\", type=~\"${env}-patroni-${cluster}-(pg12|2004).*\"} and on (resource, env, type) gitlab_job_failed == 0",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "🏹 Source full backups (chat at least 2 days)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "IMPORTANT: look at least 2 day interval. If you see 2 rows, then a gap, then another 2 rows, then you have a recent (< 24 hours) successful backup. The gap is the period of time when the backups were executing. You can use a timestamp converter https://www.epochconverter.com/ to convert the timestamps into human-readable date/time if you want to check when the backup finished.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "blue",
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "WALs/s"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 54
+      },
+      "id": 32,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "gitlab_job_success_timestamp_seconds{resource=\"walg-basebackup\", env=\"$env\", type=~\"${env}-patroni-${cluster}-(v14).*\"} > gitlab_job_start_timestamp_seconds{resource=\"walg-basebackup\", env=\"$env\", type=~\"${env}-patroni-${cluster}-(v14).*\"} and on (resource, env, type) gitlab_job_failed == 0",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "🎯  Target full backups (chat at least 2 days)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "you should be able to see an increase of the value every time the backup starts (around midnight). If the last increase was more than 24 hours ago then it means that the last backup hasn't started as it should have, and you'll need to investigate why the job failed to start.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "blue",
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 62
+      },
+      "id": 33,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "gitlab_job_start_timestamp_seconds{resource=\"walg-basebackup\", env=\"$env\", type=~\"${env}-patroni-${cluster}-(pg12|2004).*\"}",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "🏹 Source full backup start time",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "you should be able to see an increase of the value every time the backup starts (around midnight). If the last increase was more than 24 hours ago then it means that the last backup hasn't started as it should have, and you'll need to investigate why the job failed to start.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "blue",
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 62
+      },
+      "id": 35,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "gitlab_job_start_timestamp_seconds{resource=\"walg-basebackup\", env=\"$env\", type=~\"${env}-patroni-${cluster}-(v14).*\"}",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "🎯  Target full backup start time",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "If the value is > 0 for any time in the past 24 hours, then you'll need to investigate why the job failed.\n\n\nThe backup job is triggered by crond (user: gitlab-psql) and any replica is eligible to run the job but it only runs on the one that acquires the consul lock.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "blue",
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 70
+      },
+      "id": 34,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "gitlab_job_failed{resource=\"walg-basebackup\", env=\"$env\", type=~\"${env}-patroni-${cluster}-(pg12|2004).*\"}",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "🏹 Source full backup failures ❌",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "If the value is > 0 for any time in the past 24 hours, then you'll need to investigate why the job failed.\n\n\nThe backup job is triggered by crond (user: gitlab-psql) and any replica is eligible to run the job but it only runs on the one that acquires the consul lock.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "blue",
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 70
+      },
+      "id": 36,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "gitlab_job_failed{resource=\"walg-basebackup\", env=\"$env\", type=~\"${env}-patroni-${cluster}-(v14).*\"}",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "🎯  Target full backup failures ❌",
       "type": "timeseries"
     }
   ],
@@ -1863,18 +2595,50 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "main",
+          "value": "main"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "cluster",
+        "options": [
+          {
+            "selected": true,
+            "text": "main",
+            "value": "main"
+          },
+          {
+            "selected": false,
+            "text": "ci",
+            "value": "ci"
+          },
+          {
+            "selected": false,
+            "text": "registry",
+            "value": "registry"
+          }
+        ],
+        "query": "main,ci,registry",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
       }
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-2d",
     "to": "now"
   },
   "timepicker": {
   },
   "timezone": "",
-  "title": "Postgres 14 upgrade (Nik, tmp) – MAIN cluster",
+  "title": "Postgres 14 upgrade using logical (all envs, all clusters)   (Nik, tmp)",
   "uid": "lj_udxs4k",
-  "version": 23,
+  "version": 42,
   "weekStart": ""
 }
