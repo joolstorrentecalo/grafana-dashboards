@@ -74,7 +74,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4289173003 at Mon May 15 21:25:40 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4294193789 at Tue May 16 14:05:11 UTC 2023",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
@@ -638,16 +638,57 @@
       "type": "stat"
     },
     {
-      "description": "Number of `Pick into` merge requests for previous releases.",
+      "description": "Number of S1/S2 merge requests merged in previous releases.",
       "fieldConfig": {
         "defaults": {
-          "links": [
-            {
-              "targetBlank": true,
-              "title": "View merge requests",
-              "url": "https://gitlab.com/groups/gitlab-org/-/merge_requests?scope=all&state=${__field.labels.state}&label_name[]=Pick+into+${__field.labels.version}"
-            }
-          ],
+          "max": 25,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#73BF69",
+                "value": 0
+              },
+              {
+                "color": "#CC3300",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "values": false
+      },
+      "gridPos": {
+        "h": 15,
+        "w": 4,
+        "x": 12,
+        "y": 1
+      },
+      "id": 14,
+      "options": {
+        "displayMode": "basic",
+        "orientation": "horizontal",
+        "showUnfilled": true
+      },
+      "pluginVersion": "7.0.3",
+      "targets": [
+        {
+          "expr": "sum by (version) (delivery_release_pressure{severity=~\"severity::1|severity::2\",job=\"delivery-metrics\"})\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{version}}"
+        }
+      ],
+      "title": "Patch release pressure: S1/S2",
+      "type": "bargauge"
+    },
+    {
+      "description": "Number of merge requests merged in previous releases regardless severity.",
+      "fieldConfig": {
+        "defaults": {
           "max": 25,
           "min": 0,
           "thresholds": {
@@ -676,10 +717,10 @@
       "gridPos": {
         "h": 15,
         "w": 4,
-        "x": 12,
+        "x": 16,
         "y": 1
       },
-      "id": 14,
+      "id": 15,
       "options": {
         "displayMode": "basic",
         "orientation": "horizontal",
@@ -688,120 +729,16 @@
       "pluginVersion": "7.0.3",
       "targets": [
         {
-          "expr": "sum(delivery_release_pressure{state=\"merged\"}) by (state, version)\n",
+          "expr": "sum by (version) (delivery_release_pressure{job=\"delivery-metrics\"})\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{version}} ({{state}})"
+          "legendFormat": "{{version}}"
         }
       ],
-      "title": "Release pressure",
+      "title": "Patch release pressure: Total ",
       "type": "bargauge"
-    },
-    {
-      "description": "Total of unreleased S1/S2 merge requests merged into stable branches",
-      "fieldConfig": {
-        "defaults": {
-          "displayName": "S1/S2 pressure",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "#CC3300",
-                "value": 1
-              }
-            ]
-          },
-          "unit": "none"
-        }
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 4,
-        "x": 16,
-        "y": 1
-      },
-      "id": 15,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "value_and_name"
-      },
-      "pluginVersion": "7",
-      "targets": [
-        {
-          "expr": "sum(delivery_release_pressure{severity=~\"severity::1|severity::2\",job=\"delivery-metrics\"})",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Patch release pressure (not ready for use)",
-      "transparent": false,
-      "type": "stat"
-    },
-    {
-      "description": "Total of unreleased merge requests merged into stable branches",
-      "fieldConfig": {
-        "defaults": {
-          "displayName": "Total pressure",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "#CCCC00",
-                "value": 1
-              }
-            ]
-          },
-          "unit": "none"
-        }
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 4,
-        "x": 16,
-        "y": 4
-      },
-      "id": 16,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "value_and_name"
-      },
-      "pluginVersion": "7",
-      "targets": [
-        {
-          "expr": "sum(delivery_release_pressure{job=\"delivery-metrics\"})",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Patch release pressure (not ready for use)",
-      "transparent": false,
-      "type": "stat"
     },
     {
       "description": "The number of migrations pending execution in each environment.",
@@ -838,7 +775,7 @@
         "x": 20,
         "y": 1
       },
-      "id": 17,
+      "id": 16,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -875,146 +812,9 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 1000
-      },
-      "id": 18,
-      "panels": [
-
-      ],
-      "repeat": null,
-      "repeatIteration": null,
-      "repeatRowId": null,
-      "showTitle": true,
-      "title": "Patch release pressure (not ready for use)",
-      "titleSize": "h6",
-      "type": "row"
-    },
-    {
-      "description": "Number of S1/S2 merge requests merged in previous releases.",
-      "fieldConfig": {
-        "defaults": {
-          "links": [
-
-          ],
-          "max": 25,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "#73BF69",
-                "value": 0
-              },
-              {
-                "color": "#CC3300",
-                "value": 1
-              }
-            ]
-          }
-        },
-        "values": false
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 8,
-        "x": 0,
-        "y": 1000
-      },
-      "id": 19,
-      "links": [
-
-      ],
-      "options": {
-        "displayMode": "basic",
-        "orientation": "horizontal",
-        "showUnfilled": true
-      },
-      "pluginVersion": "7.0.3",
-      "targets": [
-        {
-          "expr": "sum by (version) (delivery_release_pressure{severity=~\"severity::1|severity::2\",job=\"delivery-metrics\"})\n",
-          "format": "time_series",
-          "instant": true,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "{{version}}"
-        }
-      ],
-      "title": "S1/S2 MR Pressure (not ready for use)",
-      "type": "bargauge"
-    },
-    {
-      "description": "Number of merge requests merged in previous releases.",
-      "fieldConfig": {
-        "defaults": {
-          "links": [
-
-          ],
-          "max": 25,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "#73BF69",
-                "value": null
-              },
-              {
-                "color": "#CCCC00",
-                "value": 5
-              },
-              {
-                "color": "#CC6600",
-                "value": 10
-              },
-              {
-                "color": "#CC3300",
-                "value": 15
-              }
-            ]
-          }
-        },
-        "values": false
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 8,
-        "x": 8,
-        "y": 1000
-      },
-      "id": 20,
-      "links": [
-
-      ],
-      "options": {
-        "displayMode": "basic",
-        "orientation": "horizontal",
-        "showUnfilled": true
-      },
-      "pluginVersion": "7.0.3",
-      "targets": [
-        {
-          "expr": "sum by (version) (delivery_release_pressure{job=\"delivery-metrics\"})\n",
-          "format": "time_series",
-          "instant": true,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "{{version}}"
-        }
-      ],
-      "title": "Total MR Pressure (not ready for use)",
-      "type": "bargauge"
-    },
-    {
-      "collapse": false,
-      "collapsed": false,
-      "gridPos": {
-        "h": 12,
-        "w": 24,
-        "x": 0,
         "y": 2000
       },
-      "id": 21,
+      "id": 17,
       "panels": [
 
       ],
@@ -1043,7 +843,7 @@
         "x": 0,
         "y": 2002
       },
-      "id": 22,
+      "id": 18,
       "legend": {
         "alignAsTable": false,
         "avg": false,
@@ -1133,7 +933,7 @@
         "x": 0,
         "y": 4000
       },
-      "id": 23,
+      "id": 19,
       "panels": [
 
       ],
@@ -1162,7 +962,7 @@
         "x": 0,
         "y": 4002
       },
-      "id": 24,
+      "id": 20,
       "legend": {
         "alignAsTable": false,
         "avg": false,
@@ -1252,7 +1052,7 @@
         "x": 0,
         "y": 6000
       },
-      "id": 25,
+      "id": 21,
       "panels": [
 
       ],
@@ -1281,7 +1081,7 @@
         "x": 0,
         "y": 6002
       },
-      "id": 26,
+      "id": 22,
       "legend": {
         "alignAsTable": false,
         "avg": false,
@@ -1371,7 +1171,7 @@
         "x": 0,
         "y": 8000
       },
-      "id": 27,
+      "id": 23,
       "panels": [
 
       ],
@@ -1400,7 +1200,7 @@
         "x": 0,
         "y": 8002
       },
-      "id": 28,
+      "id": 24,
       "legend": {
         "alignAsTable": false,
         "avg": false,
@@ -1490,7 +1290,7 @@
         "x": 0,
         "y": 10000
       },
-      "id": 29,
+      "id": 25,
       "panels": [
 
       ],
@@ -1519,7 +1319,7 @@
         "x": 0,
         "y": 10002
       },
-      "id": 30,
+      "id": 26,
       "legend": {
         "alignAsTable": false,
         "avg": false,
@@ -1609,7 +1409,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 31,
+      "id": 27,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -1673,5 +1473,5 @@
   "timezone": "utc",
   "title": "delivery: Release Management",
   "uid": "delivery-release_management",
-  "version": 3005
+  "version": 3009
 }
