@@ -10,7 +10,7 @@
 
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4322942381 at Mon May 22 06:38:07 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4327126259 at Mon May 22 15:37:09 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -67,16 +67,10 @@
     },
     {
       "datasource": "$PROMETHEUS_DS",
-      "description": "Availability",
+      "description": "Recorded availability",
       "fieldConfig": {
         "defaults": {
           "decimals": 2,
-          "links": [
-
-          ],
-          "mappings": [
-
-          ],
           "max": 1,
           "min": 0,
           "thresholds": {
@@ -116,15 +110,12 @@
         }
       },
       "gridPos": {
-        "h": 5,
+        "h": 3,
         "w": 4,
         "x": 0,
         "y": 1
       },
       "id": 3,
-      "links": [
-
-      ],
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -157,25 +148,99 @@
     },
     {
       "datasource": "$PROMETHEUS_DS",
-      "description": "Availability",
+      "description": "Availability taking into account weights from the dropdowns",
       "fieldConfig": {
         "defaults": {
-          "decimals": 1,
-          "displayName": "Budget Spent",
-          "links": [
-
-          ],
-          "mappings": [
-
-          ],
+          "decimals": 2,
           "max": 1,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-blue",
-                "value": null
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "light-red",
+                "value": 0.95
+              },
+              {
+                "color": "orange",
+                "value": 0.99
+              },
+              {
+                "color": "light-orange",
+                "value": 0.995
+              },
+              {
+                "color": "yellow",
+                "value": 0.9994
+              },
+              {
+                "color": "light-yellow",
+                "value": 0.9995
+              },
+              {
+                "color": "green",
+                "value": 0.9998
+              }
+            ]
+          },
+          "unit": "percentunit"
+        }
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 4,
+        "x": 0,
+        "y": 4
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "sum by (environment, env, stage) (\n  min without (slo) (avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"api\"}[$__range])) * $api_weight\n  or\n  min without (slo) (avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"ci-runners\"}[$__range])) * $ci_runners_weight\n  or\n  min without (slo) (avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"git\"}[$__range])) * $git_weight\n  or\n  min without (slo) (avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"internal-api\"}[$__range])) * $internal_api_weight\n  or\n  min without (slo) (avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"registry\"}[$__range])) * $registry_weight\n  or\n  min without (slo) (avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"sidekiq\"}[$__range])) * $sidekiq_weight\n  or\n  min without (slo) (avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"web\"}[$__range])) * $web_weight\n  or\n  min without (slo) (avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"web-pages\"}[$__range])) * $web_pages_weight\n)\n/\nsum by (environment, env, stage) (\n  group without (slo) (avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"api\"}[$__range])) * $api_weight\n  or\n  group without (slo) (avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"ci-runners\"}[$__range])) * $ci_runners_weight\n  or\n  group without (slo) (avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"git\"}[$__range])) * $git_weight\n  or\n  group without (slo) (avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"internal-api\"}[$__range])) * $internal_api_weight\n  or\n  group without (slo) (avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"registry\"}[$__range])) * $registry_weight\n  or\n  group without (slo) (avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"sidekiq\"}[$__range])) * $sidekiq_weight\n  or\n  group without (slo) (avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"web\"}[$__range])) * $web_weight\n  or\n  group without (slo) (avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"web-pages\"}[$__range])) * $web_pages_weight\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Gitlab.com Availability with selected weights",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "Availability",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "displayName": "Budget Spent",
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-blue"
               }
             ]
           },
@@ -188,10 +253,7 @@
         "x": 4,
         "y": 1
       },
-      "id": 4,
-      "links": [
-
-      ],
+      "id": 5,
       "options": {
         "colorMode": "value",
         "graphMode": "none",
@@ -228,7 +290,6 @@
         "cellPadding": "3",
         "cellRadius": "2",
         "cellSize": "11",
-        "colLimit": null,
         "displayLegend": false,
         "domain": "month",
         "domainGutter": 2,
@@ -250,15 +311,6 @@
           "min": "#F2495C"
         },
         "legendStr": "0.995",
-        "legendTitleFormat": {
-          "inner": {
-          },
-          "lower": {
-          },
-          "upper": {
-          }
-        },
-        "rowLimit": null,
         "subDomain": "day",
         "subDomainTitleFormat": {
           "empty": "{date}",
@@ -267,22 +319,13 @@
         "verticalOrientation": false
       },
       "datasource": "$PROMETHEUS_DS",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-          }
-        },
-        "overrides": [
-
-        ]
-      },
       "gridPos": {
         "h": 5,
         "w": 4,
         "x": 8,
         "y": 1
       },
-      "id": 5,
+      "id": 6,
       "targets": [
         {
           "expr": "avg_over_time(sla:gitlab:ratio{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",sla_type=\"$sla_type\",stage=\"main\"}[1d])\n",
@@ -297,8 +340,6 @@
       "type": "neocat-cal-heatmap-panel"
     },
     {
-      "aliasColors": {
-      },
       "bars": false,
       "dashLength": 10,
       "dashes": false,
@@ -313,7 +354,7 @@
         "x": 12,
         "y": 1
       },
-      "id": 6,
+      "id": 7,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -323,21 +364,16 @@
         "min": true,
         "rightSide": false,
         "show": false,
-        "sideWidth": null,
         "total": false,
         "values": true
       },
       "lines": true,
       "linewidth": 2,
-      "links": [
-
-      ],
       "nullPointMode": "null",
       "percentage": false,
       "pointradius": 3,
       "points": false,
       "renderer": "flot",
-      "repeat": null,
       "seriesOverrides": [
         {
           "alias": "gitlab.com SLA",
@@ -369,8 +405,6 @@
           "yaxis": "left"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Overall SLA over time period - gitlab.com",
       "tooltip": {
         "shared": true,
@@ -379,13 +413,8 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
+        "show": true
       },
       "yaxes": [
         {
@@ -393,12 +422,10 @@
           "label": "SLA",
           "logBase": 1,
           "max": 1,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
           "max": 1,
           "min": 0,
@@ -415,7 +442,7 @@
         "x": 0,
         "y": 2000
       },
-      "id": 7,
+      "id": 8,
       "panels": [
 
       ],
@@ -484,7 +511,7 @@
         "x": 0,
         "y": 2101
       },
-      "id": 8,
+      "id": 9,
       "links": [
         {
           "title": "web service: Overview Dashboard",
@@ -554,7 +581,7 @@
         "x": 4,
         "y": 2101
       },
-      "id": 9,
+      "id": 10,
       "links": [
         {
           "title": "web service: Overview Dashboard",
@@ -651,7 +678,7 @@
         "x": 8,
         "y": 2101
       },
-      "id": 10,
+      "id": 11,
       "targets": [
         {
           "expr": "min(\n  clamp_max(\n    avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"web\"}[1d]),\n    1\n  )\n)\n",
@@ -682,7 +709,7 @@
         "x": 12,
         "y": 2101
       },
-      "id": 11,
+      "id": 12,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -836,7 +863,7 @@
         "x": 0,
         "y": 2106
       },
-      "id": 12,
+      "id": 13,
       "links": [
         {
           "title": "git service: Overview Dashboard",
@@ -906,7 +933,7 @@
         "x": 4,
         "y": 2106
       },
-      "id": 13,
+      "id": 14,
       "links": [
         {
           "title": "git service: Overview Dashboard",
@@ -1003,7 +1030,7 @@
         "x": 8,
         "y": 2106
       },
-      "id": 14,
+      "id": 15,
       "targets": [
         {
           "expr": "min(\n  clamp_max(\n    avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"git\"}[1d]),\n    1\n  )\n)\n",
@@ -1034,7 +1061,7 @@
         "x": 12,
         "y": 2106
       },
-      "id": 15,
+      "id": 16,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1188,7 +1215,7 @@
         "x": 0,
         "y": 2111
       },
-      "id": 16,
+      "id": 17,
       "links": [
         {
           "title": "api service: Overview Dashboard",
@@ -1258,7 +1285,7 @@
         "x": 4,
         "y": 2111
       },
-      "id": 17,
+      "id": 18,
       "links": [
         {
           "title": "api service: Overview Dashboard",
@@ -1355,7 +1382,7 @@
         "x": 8,
         "y": 2111
       },
-      "id": 18,
+      "id": 19,
       "targets": [
         {
           "expr": "min(\n  clamp_max(\n    avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"api\"}[1d]),\n    1\n  )\n)\n",
@@ -1386,7 +1413,7 @@
         "x": 12,
         "y": 2111
       },
-      "id": 19,
+      "id": 20,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1540,7 +1567,7 @@
         "x": 0,
         "y": 2116
       },
-      "id": 20,
+      "id": 21,
       "links": [
         {
           "title": "ci-runners service: Overview Dashboard",
@@ -1610,7 +1637,7 @@
         "x": 4,
         "y": 2116
       },
-      "id": 21,
+      "id": 22,
       "links": [
         {
           "title": "ci-runners service: Overview Dashboard",
@@ -1707,7 +1734,7 @@
         "x": 8,
         "y": 2116
       },
-      "id": 22,
+      "id": 23,
       "targets": [
         {
           "expr": "min(\n  clamp_max(\n    avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"ci-runners\"}[1d]),\n    1\n  )\n)\n",
@@ -1738,7 +1765,7 @@
         "x": 12,
         "y": 2116
       },
-      "id": 23,
+      "id": 24,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1892,7 +1919,7 @@
         "x": 0,
         "y": 2121
       },
-      "id": 24,
+      "id": 25,
       "links": [
         {
           "title": "registry service: Overview Dashboard",
@@ -1962,7 +1989,7 @@
         "x": 4,
         "y": 2121
       },
-      "id": 25,
+      "id": 26,
       "links": [
         {
           "title": "registry service: Overview Dashboard",
@@ -2059,7 +2086,7 @@
         "x": 8,
         "y": 2121
       },
-      "id": 26,
+      "id": 27,
       "targets": [
         {
           "expr": "min(\n  clamp_max(\n    avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"registry\"}[1d]),\n    1\n  )\n)\n",
@@ -2090,7 +2117,7 @@
         "x": 12,
         "y": 2121
       },
-      "id": 27,
+      "id": 28,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -2244,7 +2271,7 @@
         "x": 0,
         "y": 2126
       },
-      "id": 28,
+      "id": 29,
       "links": [
         {
           "title": "web-pages service: Overview Dashboard",
@@ -2314,7 +2341,7 @@
         "x": 4,
         "y": 2126
       },
-      "id": 29,
+      "id": 30,
       "links": [
         {
           "title": "web-pages service: Overview Dashboard",
@@ -2411,7 +2438,7 @@
         "x": 8,
         "y": 2126
       },
-      "id": 30,
+      "id": 31,
       "targets": [
         {
           "expr": "min(\n  clamp_max(\n    avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"web-pages\"}[1d]),\n    1\n  )\n)\n",
@@ -2442,7 +2469,7 @@
         "x": 12,
         "y": 2126
       },
-      "id": 31,
+      "id": 32,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -2596,7 +2623,7 @@
         "x": 0,
         "y": 2131
       },
-      "id": 32,
+      "id": 33,
       "links": [
         {
           "title": "sidekiq service: Overview Dashboard",
@@ -2666,7 +2693,7 @@
         "x": 4,
         "y": 2131
       },
-      "id": 33,
+      "id": 34,
       "links": [
         {
           "title": "sidekiq service: Overview Dashboard",
@@ -2763,7 +2790,7 @@
         "x": 8,
         "y": 2131
       },
-      "id": 34,
+      "id": 35,
       "targets": [
         {
           "expr": "min(\n  clamp_max(\n    avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"sidekiq\"}[1d]),\n    1\n  )\n)\n",
@@ -2794,7 +2821,7 @@
         "x": 12,
         "y": 2131
       },
-      "id": 35,
+      "id": 36,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -2948,7 +2975,7 @@
         "x": 0,
         "y": 2136
       },
-      "id": 36,
+      "id": 37,
       "links": [
         {
           "title": "internal-api service: Overview Dashboard",
@@ -3018,7 +3045,7 @@
         "x": 4,
         "y": 2136
       },
-      "id": 37,
+      "id": 38,
       "links": [
         {
           "title": "internal-api service: Overview Dashboard",
@@ -3115,7 +3142,7 @@
         "x": 8,
         "y": 2136
       },
-      "id": 38,
+      "id": 39,
       "targets": [
         {
           "expr": "min(\n  clamp_max(\n    avg_over_time(slo_observation_status{env=~\"ops|$environment\",environment=\"$environment\",monitor=~\"global|\",stage=\"main\",type=\"internal-api\"}[1d]),\n    1\n  )\n)\n",
@@ -3146,7 +3173,7 @@
         "x": 12,
         "y": 2136
       },
-      "id": 39,
+      "id": 40,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -3252,7 +3279,7 @@
         "x": 0,
         "y": 3001
       },
-      "id": 40,
+      "id": 41,
       "mode": "markdown",
       "title": "GitLab SLA Dashboard Explainer",
       "type": "text"
@@ -3266,7 +3293,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 41,
+      "id": 42,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -3356,6 +3383,238 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "5",
+          "value": "5"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "web_weight",
+        "options": [
+          {
+            "text": "0",
+            "value": "0"
+          },
+          {
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "text": "5",
+            "value": "5"
+          }
+        ],
+        "query": "0,1,5",
+        "refresh": 0,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "5",
+          "value": "5"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "git_weight",
+        "options": [
+          {
+            "text": "0",
+            "value": "0"
+          },
+          {
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "text": "5",
+            "value": "5"
+          }
+        ],
+        "query": "0,1,5",
+        "refresh": 0,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "5",
+          "value": "5"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "api_weight",
+        "options": [
+          {
+            "text": "0",
+            "value": "0"
+          },
+          {
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "text": "5",
+            "value": "5"
+          }
+        ],
+        "query": "0,1,5",
+        "refresh": 0,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "0",
+          "value": "0"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "ci_runners_weight",
+        "options": [
+          {
+            "text": "0",
+            "value": "0"
+          },
+          {
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "text": "5",
+            "value": "5"
+          }
+        ],
+        "query": "0,1,5",
+        "refresh": 0,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "1",
+          "value": "1"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "registry_weight",
+        "options": [
+          {
+            "text": "0",
+            "value": "0"
+          },
+          {
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "text": "5",
+            "value": "5"
+          }
+        ],
+        "query": "0,1,5",
+        "refresh": 0,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "0",
+          "value": "0"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "web_pages_weight",
+        "options": [
+          {
+            "text": "0",
+            "value": "0"
+          },
+          {
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "text": "5",
+            "value": "5"
+          }
+        ],
+        "query": "0,1,5",
+        "refresh": 0,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "0",
+          "value": "0"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "sidekiq_weight",
+        "options": [
+          {
+            "text": "0",
+            "value": "0"
+          },
+          {
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "text": "5",
+            "value": "5"
+          }
+        ],
+        "query": "0,1,5",
+        "refresh": 0,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "0",
+          "value": "0"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "internal_api_weight",
+        "options": [
+          {
+            "text": "0",
+            "value": "0"
+          },
+          {
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "text": "5",
+            "value": "5"
+          }
+        ],
+        "query": "0,1,5",
+        "refresh": 0,
+        "type": "custom"
       }
     ]
   },
@@ -3386,5 +3645,5 @@
   "timezone": "utc",
   "title": "general: SLAs",
   "uid": "general-slas",
-  "version": 4203
+  "version": 4208
 }

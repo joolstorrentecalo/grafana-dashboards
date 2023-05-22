@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4322942381 at Mon May 22 06:41:29 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4327126259 at Mon May 22 15:40:25 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -1257,6 +1257,124 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
+      "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 31
+      },
+      "id": 3729461084,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "gitlab_shell_v2 RPS",
+          "color": "#E7D551",
+          "zindex": 3
+        },
+        {
+          "alias": "last week",
+          "color": "#dddddd80",
+          "dashLength": 4,
+          "dashes": true,
+          "fill": 0,
+          "legend": true,
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "spaceLength": 2,
+          "zindex": -3
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "sli-gitlab_shell_v2-ops-rate",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "avg_over_time(gitlab_component_ops:rate_5m{component=\"gitlab_shell_v2\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"git\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "gitlab_shell_v2 RPS",
+          "refId": "A"
+        },
+        {
+          "expr": "gitlab_component_ops:rate_5m{component=\"gitlab_shell_v2\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"git\"} offset 1w\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "last week",
+          "refId": "B"
+        }
+      ],
+      "title": "gitlab_shell_v2 SLI RPS - Requests per Second",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Operations per Second",
+          "logBase": 1,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "content": "### Description\n\nWe monitor GitLab shell, using HAProxy 2.6 SSH connection information.\n\n\n\n### Observability Tools\n\n* [📖 Kibana: GitLab Shell logs](https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.command,json.msg,json.level,json.gl_project_path,json.error),filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.type,params:git,type:phrase),query:(match:(json.type:(query:git,type:phrase))))),index:'AWORyp9K1NBBQZg_dXA9')&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📖 Kibana: GitLab Shell failed request logs](https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.command,json.msg,json.level,json.gl_project_path,json.error),filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.type,params:git,type:phrase),query:(match:(json.type:(query:git,type:phrase)))),(meta:(key:json.level,params:error,type:phrase),query:(match:(json.level:(query:error,type:phrase))))),index:'AWORyp9K1NBBQZg_dXA9')&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: GitLab Shell requests](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=AWORyp9K1NBBQZg_dXA9&_a=(filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.type,params:git,type:phrase),query:(match:(json.type:(query:git,type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(),schema:metric,type:count),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:json.time,interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: GitLab Shell failed requests](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=AWORyp9K1NBBQZg_dXA9&_a=(filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.type,params:git,type:phrase),query:(match:(json.type:(query:git,type:phrase)))),(meta:(key:json.level,params:error,type:phrase),query:(match:(json.level:(query:error,type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(),schema:metric,type:count),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:json.time,interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n\n",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 31
+      },
+      "id": 13,
+      "mode": "markdown",
+      "title": "Details",
+      "type": "text"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
       "description": "Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
       "fill": 0,
       "fillGradient": 0,
@@ -1264,7 +1382,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 31
+        "y": 41
       },
       "id": 2395479737,
       "legend": {
@@ -1602,9 +1720,9 @@
         "h": 1,
         "w": 6,
         "x": 0,
-        "y": 38
+        "y": 48
       },
-      "id": 13,
+      "id": 15,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -1648,7 +1766,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 31
+        "y": 41
       },
       "id": 2213856730,
       "legend": {
@@ -1975,9 +2093,9 @@
         "h": 1,
         "w": 6,
         "x": 6,
-        "y": 38
+        "y": 48
       },
-      "id": 15,
+      "id": 17,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -2021,7 +2139,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 31
+        "y": 41
       },
       "id": 315783164,
       "legend": {
@@ -2119,9 +2237,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 31
+        "y": 41
       },
-      "id": 17,
+      "id": 19,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -2139,7 +2257,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 41
+        "y": 51
       },
       "id": 3255520955,
       "legend": {
@@ -2466,9 +2584,9 @@
         "h": 1,
         "w": 8,
         "x": 0,
-        "y": 48
+        "y": 58
       },
-      "id": 19,
+      "id": 21,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -2512,7 +2630,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 41
+        "y": 51
       },
       "id": 138982496,
       "legend": {
@@ -2610,9 +2728,9 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 41
+        "y": 51
       },
-      "id": 21,
+      "id": 23,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -2630,7 +2748,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 51
+        "y": 61
       },
       "id": 2063210499,
       "legend": {
@@ -2957,9 +3075,9 @@
         "h": 1,
         "w": 8,
         "x": 0,
-        "y": 58
+        "y": 68
       },
-      "id": 23,
+      "id": 25,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -3003,7 +3121,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 51
+        "y": 61
       },
       "id": 3437608064,
       "legend": {
@@ -3101,9 +3219,9 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 51
+        "y": 61
       },
-      "id": 25,
+      "id": 27,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -3121,7 +3239,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 61
+        "y": 71
       },
       "id": 495984175,
       "legend": {
@@ -3459,9 +3577,9 @@
         "h": 1,
         "w": 6,
         "x": 0,
-        "y": 68
+        "y": 78
       },
-      "id": 27,
+      "id": 29,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -3505,7 +3623,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 61
+        "y": 71
       },
       "id": 387946920,
       "legend": {
@@ -3832,9 +3950,9 @@
         "h": 1,
         "w": 6,
         "x": 6,
-        "y": 68
+        "y": 78
       },
-      "id": 29,
+      "id": 31,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -3878,7 +3996,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 61
+        "y": 71
       },
       "id": 538903447,
       "legend": {
@@ -3976,9 +4094,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 61
+        "y": 71
       },
-      "id": 31,
+      "id": 33,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -3996,7 +4114,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 71
+        "y": 81
       },
       "id": 2586818196,
       "legend": {
@@ -4334,9 +4452,9 @@
         "h": 1,
         "w": 6,
         "x": 0,
-        "y": 78
+        "y": 88
       },
-      "id": 33,
+      "id": 35,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -4380,7 +4498,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 71
+        "y": 81
       },
       "id": 2047984749,
       "legend": {
@@ -4707,9 +4825,9 @@
         "h": 1,
         "w": 6,
         "x": 6,
-        "y": 78
+        "y": 88
       },
-      "id": 35,
+      "id": 37,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -4753,7 +4871,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 71
+        "y": 81
       },
       "id": 831392945,
       "legend": {
@@ -4851,9 +4969,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 71
+        "y": 81
       },
-      "id": 37,
+      "id": 39,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -4871,7 +4989,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 81
+        "y": 91
       },
       "id": 3139093701,
       "legend": {
@@ -5209,9 +5327,9 @@
         "h": 1,
         "w": 6,
         "x": 0,
-        "y": 88
+        "y": 98
       },
-      "id": 39,
+      "id": 41,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -5255,7 +5373,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 81
+        "y": 91
       },
       "id": 2715630864,
       "legend": {
@@ -5582,9 +5700,9 @@
         "h": 1,
         "w": 6,
         "x": 6,
-        "y": 88
+        "y": 98
       },
-      "id": 41,
+      "id": 43,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -5628,7 +5746,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 81
+        "y": 91
       },
       "id": 1588439617,
       "legend": {
@@ -5726,9 +5844,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 81
+        "y": 91
       },
-      "id": 43,
+      "id": 45,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -5742,7 +5860,7 @@
         "x": 0,
         "y": 100
       },
-      "id": 44,
+      "id": 46,
       "panels": [
         {
           "bars": false,
@@ -5759,7 +5877,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 45,
+          "id": 47,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5838,7 +5956,103 @@
         "x": 0,
         "y": 110
       },
-      "id": 46,
+      "id": 48,
+      "panels": [
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 0
+          },
+          "id": 49,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by () (\n  rate(haproxy_backend_sessions_total{backend=~\"altssh|ssh\",env=\"$environment\",environment=\"$environment\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "overall",
+              "refId": "A"
+            }
+          ],
+          "title": "gitlab_shell_v2 RPS - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "🔬 SLI Detail: gitlab_shell_v2",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "collapse": true,
+      "collapsed": true,
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 120
+      },
+      "id": 50,
       "panels": [
         {
           "bars": false,
@@ -5855,7 +6069,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 47,
+          "id": 51,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5951,7 +6165,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 48,
+          "id": 52,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6027,7 +6241,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 49,
+          "id": 53,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6104,9 +6318,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 120
+        "y": 130
       },
-      "id": 50,
+      "id": 54,
       "panels": [
         {
           "bars": false,
@@ -6123,7 +6337,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 51,
+          "id": 55,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6199,7 +6413,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 52,
+          "id": 56,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6275,7 +6489,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 53,
+          "id": 57,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6356,7 +6570,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 54,
+          "id": 58,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6432,7 +6646,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 55,
+          "id": 59,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6508,7 +6722,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 56,
+          "id": 60,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6589,7 +6803,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 57,
+          "id": 61,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6665,7 +6879,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 58,
+          "id": 62,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6741,7 +6955,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 59,
+          "id": 63,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6822,7 +7036,7 @@
             "x": 8,
             "y": 30
           },
-          "id": 60,
+          "id": 64,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6898,7 +7112,7 @@
             "x": 16,
             "y": 30
           },
-          "id": 61,
+          "id": 65,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6975,9 +7189,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 130
+        "y": 140
       },
-      "id": 62,
+      "id": 66,
       "panels": [
         {
           "bars": false,
@@ -6994,7 +7208,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 63,
+          "id": 67,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7090,7 +7304,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 64,
+          "id": 68,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7166,7 +7380,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 65,
+          "id": 69,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7242,7 +7456,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 66,
+          "id": 70,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7338,7 +7552,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 67,
+          "id": 71,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7419,7 +7633,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 68,
+          "id": 72,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7495,7 +7709,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 69,
+          "id": 73,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7571,7 +7785,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 70,
+          "id": 74,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7667,7 +7881,7 @@
             "x": 6,
             "y": 20
           },
-          "id": 71,
+          "id": 75,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7748,7 +7962,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 72,
+          "id": 76,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7824,7 +8038,7 @@
             "x": 18,
             "y": 20
           },
-          "id": 73,
+          "id": 77,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7901,9 +8115,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 140
+        "y": 150
       },
-      "id": 74,
+      "id": 78,
       "panels": [
         {
           "bars": false,
@@ -7920,7 +8134,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 75,
+          "id": 79,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8015,7 +8229,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 76,
+          "id": 80,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8091,7 +8305,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 77,
+          "id": 81,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8167,7 +8381,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 78,
+          "id": 82,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8262,7 +8476,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 79,
+          "id": 83,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8343,7 +8557,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 80,
+          "id": 84,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8419,7 +8633,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 81,
+          "id": 85,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8498,7 +8712,7 @@
         "x": 0,
         "y": 400
       },
-      "id": 82,
+      "id": 86,
       "panels": [
         {
           "aliasColors": {
@@ -8517,7 +8731,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 83,
+          "id": 87,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8622,7 +8836,7 @@
             "x": 8,
             "y": 1
           },
-          "id": 84,
+          "id": 88,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8727,7 +8941,7 @@
             "x": 16,
             "y": 1
           },
-          "id": 85,
+          "id": 89,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -8843,7 +9057,7 @@
             "x": 0,
             "y": 9
           },
-          "id": 86,
+          "id": 90,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8948,7 +9162,7 @@
             "x": 8,
             "y": 9
           },
-          "id": 87,
+          "id": 91,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9053,7 +9267,7 @@
             "x": 16,
             "y": 9
           },
-          "id": 88,
+          "id": 92,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -9169,7 +9383,7 @@
             "x": 0,
             "y": 17
           },
-          "id": 89,
+          "id": 93,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9267,7 +9481,7 @@
             "x": 12,
             "y": 17
           },
-          "id": 90,
+          "id": 94,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9366,7 +9580,7 @@
         "x": 0,
         "y": 500
       },
-      "id": 91,
+      "id": 95,
       "panels": [
         {
           "aliasColors": {
@@ -11326,7 +11540,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 102,
+      "id": 106,
       "panels": [
 
       ],
@@ -11355,7 +11569,7 @@
         "x": 0,
         "y": 1001
       },
-      "id": 103,
+      "id": 107,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11467,7 +11681,7 @@
         "x": 12,
         "y": 1001
       },
-      "id": 104,
+      "id": 108,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11579,7 +11793,7 @@
         "x": 0,
         "y": 1011
       },
-      "id": 105,
+      "id": 109,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11691,7 +11905,7 @@
         "x": 12,
         "y": 1011
       },
-      "id": 106,
+      "id": 110,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11803,7 +12017,7 @@
         "x": 0,
         "y": 1021
       },
-      "id": 107,
+      "id": 111,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11915,7 +12129,7 @@
         "x": 12,
         "y": 1021
       },
-      "id": 108,
+      "id": 112,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12027,7 +12241,7 @@
         "x": 0,
         "y": 1031
       },
-      "id": 109,
+      "id": 113,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12230,7 +12444,7 @@
         "x": 0,
         "y": 3000
       },
-      "id": 111,
+      "id": 115,
       "panels": [
 
       ],
@@ -12259,7 +12473,7 @@
         "x": 0,
         "y": 3001
       },
-      "id": 112,
+      "id": 116,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12371,7 +12585,7 @@
         "x": 12,
         "y": 3001
       },
-      "id": 113,
+      "id": 117,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12483,7 +12697,7 @@
         "x": 0,
         "y": 3011
       },
-      "id": 114,
+      "id": 118,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12595,7 +12809,7 @@
         "x": 12,
         "y": 3011
       },
-      "id": 115,
+      "id": 119,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12707,7 +12921,7 @@
         "x": 0,
         "y": 3021
       },
-      "id": 116,
+      "id": 120,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12819,7 +13033,7 @@
         "x": 12,
         "y": 3021
       },
-      "id": 117,
+      "id": 121,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12931,7 +13145,7 @@
         "x": 0,
         "y": 3031
       },
-      "id": 118,
+      "id": 122,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -13035,7 +13249,7 @@
         "x": 0,
         "y": 5000
       },
-      "id": 119,
+      "id": 123,
       "panels": [
         {
           "aliasColors": {
@@ -13054,7 +13268,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 120,
+          "id": 124,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13152,7 +13366,7 @@
             "x": 12,
             "y": 1
           },
-          "id": 121,
+          "id": 125,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13250,7 +13464,7 @@
             "x": 0,
             "y": 11
           },
-          "id": 122,
+          "id": 126,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13348,7 +13562,7 @@
             "x": 12,
             "y": 11
           },
-          "id": 123,
+          "id": 127,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13446,7 +13660,7 @@
             "x": 0,
             "y": 21
           },
-          "id": 124,
+          "id": 128,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13543,7 +13757,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 125,
+      "id": 129,
       "panels": [
         {
           "colors": [
@@ -13564,7 +13778,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 126,
+          "id": 130,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -13677,7 +13891,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 127,
+          "id": 131,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -13788,7 +14002,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 128,
+          "id": 132,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -13893,7 +14107,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 129,
+      "id": 133,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -14016,5 +14230,5 @@
   "timezone": "utc",
   "title": "git: Overview",
   "uid": "git-main",
-  "version": 3720
+  "version": 3725
 }
