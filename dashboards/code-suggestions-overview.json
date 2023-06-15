@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4473068990 at Wed Jun 14 14:05:28 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4476278463 at Wed Jun 14 21:55:37 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -2889,7 +2889,7 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
-      "description": "Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
+      "description": "Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -2897,6 +2897,1010 @@
         "w": 8,
         "x": 0,
         "y": 41
+      },
+      "id": 3061278412,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": [
+          {
+            "targetBlank": true,
+            "title": "native_model_inference SLI Apdex SLO Analysis",
+            "url": "/d/alerts-component_slo_apdex?${__url_time_range}&${__all_variables}&var-component=native_model_inference&var-type=code_suggestions"
+          }
+        ]
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "6h Degradation SLO (5% of monthly error budget)",
+          "color": "#FF4500",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "connected",
+          "spaceLength": 10,
+          "zindex": -2
+        },
+        {
+          "alias": "1h Outage SLO (2% of monthly error budget)",
+          "color": "#F2495C",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 4,
+          "nullPointMode": "connected",
+          "spaceLength": 4,
+          "zindex": -2
+        },
+        {
+          "alias": "SLO",
+          "color": "#FF4500",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 4,
+          "nullPointMode": "connected",
+          "spaceLength": 4,
+          "zindex": -2
+        },
+        {
+          "alias": "native_model_inference apdex",
+          "color": "#E7D551",
+          "zindex": 3
+        },
+        {
+          "alias": "native_model_inference apdex avg",
+          "color": "#5794F2",
+          "dashLength": 1,
+          "fillBelowTo": "native_model_inference apdex",
+          "linewidth": 1,
+          "spaceLength": 1,
+          "zindex": -3
+        },
+        {
+          "alias": "last week",
+          "color": "#dddddd80",
+          "dashLength": 4,
+          "dashes": true,
+          "fill": 0,
+          "legend": true,
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "spaceLength": 2,
+          "zindex": -3
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "sli-native_model_inference-apdex",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "min_over_time(gitlab_component_apdex:ratio_5m{component=\"native_model_inference\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"code_suggestions\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "native_model_inference apdex",
+          "refId": "A"
+        },
+        {
+          "expr": "(1 - 6 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"native_model_inference\",monitor=\"global\",type=\"code_suggestions\"})\n))\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 1,
+          "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+          "refId": "B"
+        },
+        {
+          "expr": "(1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"native_model_inference\",monitor=\"global\",type=\"code_suggestions\"})\n))\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 1,
+          "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+          "refId": "C"
+        },
+        {
+          "expr": "avg_over_time(gitlab_component_apdex:ratio_5m{component=\"native_model_inference\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"code_suggestions\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "native_model_inference apdex avg",
+          "refId": "D"
+        },
+        {
+          "expr": "clamp_min(\n  gitlab_component_apdex:ratio_5m{component=\"native_model_inference\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"code_suggestions\"} offset 1w\n,\n  scalar(min((1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"native_model_inference\",monitor=\"global\",type=\"code_suggestions\"})\n))\n))\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "last week",
+          "refId": "E"
+        }
+      ],
+      "title": "native_model_inference SLI Apdex",
+      "tooltip": {
+        "shared": true,
+        "sort": 1,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "Apdex %",
+          "logBase": 1,
+          "max": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "displayName": "Status",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "0": {
+                  "color": "black",
+                  "index": 0,
+                  "text": "Healthy"
+                },
+                "1": {
+                  "color": "orange",
+                  "index": 1,
+                  "text": "Warning 🔥"
+                },
+                "10": {
+                  "color": "orange",
+                  "index": 10,
+                  "text": "Warning 🔥🥵"
+                },
+                "11": {
+                  "color": "red",
+                  "index": 11,
+                  "text": "Degraded 🔥🥵"
+                },
+                "12": {
+                  "color": "red",
+                  "index": 12,
+                  "text": "Degraded 🥵"
+                },
+                "13": {
+                  "color": "red",
+                  "index": 13,
+                  "text": "Degraded 🔥🥵"
+                },
+                "14": {
+                  "color": "red",
+                  "index": 14,
+                  "text": "Degraded 🔥🥵"
+                },
+                "15": {
+                  "color": "red",
+                  "index": 15,
+                  "text": "Degraded 🔥🥵"
+                },
+                "2": {
+                  "color": "orange",
+                  "index": 2,
+                  "text": "Warning 🔥"
+                },
+                "3": {
+                  "color": "red",
+                  "index": 3,
+                  "text": "Degraded 🔥"
+                },
+                "4": {
+                  "color": "orange",
+                  "index": 4,
+                  "text": "Warning 🥵"
+                },
+                "5": {
+                  "color": "orange",
+                  "index": 5,
+                  "text": "Warning 🔥🥵"
+                },
+                "6": {
+                  "color": "orange",
+                  "index": 6,
+                  "text": "Warning 🔥🥵"
+                },
+                "7": {
+                  "color": "red",
+                  "index": 7,
+                  "text": "Degraded 🔥🥵"
+                },
+                "8": {
+                  "color": "orange",
+                  "index": 8,
+                  "text": "Warning 🥵"
+                },
+                "9": {
+                  "color": "orange",
+                  "index": 9,
+                  "text": "Warning 🔥🥵"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "black",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "orange",
+                "value": 2
+              },
+              {
+                "color": "red",
+                "value": 3
+              },
+              {
+                "color": "orange",
+                "value": 4
+              },
+              {
+                "color": "orange",
+                "value": 5
+              },
+              {
+                "color": "orange",
+                "value": 6
+              },
+              {
+                "color": "red",
+                "value": 7
+              },
+              {
+                "color": "orange",
+                "value": 8
+              },
+              {
+                "color": "orange",
+                "value": 9
+              },
+              {
+                "color": "orange",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 11
+              },
+              {
+                "color": "red",
+                "value": 12
+              },
+              {
+                "color": "red",
+                "value": 13
+              },
+              {
+                "color": "red",
+                "value": 14
+              },
+              {
+                "color": "red",
+                "value": 15
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 8,
+        "x": 0,
+        "y": 48
+      },
+      "id": 23,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"native_model_inference\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"code_suggestions\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"native_model_inference\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"code_suggestions\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"native_model_inference\",monitor=\"global\",type=\"code_suggestions\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"native_model_inference\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"code_suggestions\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"native_model_inference\",monitor=\"global\",type=\"code_suggestions\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"native_model_inference\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"code_suggestions\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"native_model_inference\",monitor=\"global\",type=\"code_suggestions\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"native_model_inference\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"code_suggestions\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"native_model_inference\",monitor=\"global\",type=\"code_suggestions\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "native_model_inference SLI | Latency/Apdex",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
+      "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 41
+      },
+      "id": 1859944536,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "native_model_inference RPS",
+          "color": "#E7D551",
+          "zindex": 3
+        },
+        {
+          "alias": "last week",
+          "color": "#dddddd80",
+          "dashLength": 4,
+          "dashes": true,
+          "fill": 0,
+          "legend": true,
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "spaceLength": 2,
+          "zindex": -3
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "sli-native_model_inference-ops-rate",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "avg_over_time(gitlab_component_ops:rate_5m{component=\"native_model_inference\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"code_suggestions\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "native_model_inference RPS",
+          "refId": "A"
+        },
+        {
+          "expr": "gitlab_component_ops:rate_5m{component=\"native_model_inference\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"code_suggestions\"} offset 1w\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "last week",
+          "refId": "B"
+        }
+      ],
+      "title": "native_model_inference SLI RPS - Requests per Second",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Operations per Second",
+          "logBase": 1,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "content": "### Description\n\nInference requests performed by native models.\n\n\n\n### Observability Tools\n\n* [📖 Kibana: Native Models logs](https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.jsonPayload.level,json.jsonPayload.method,json.jsonPayload.status_code,json.jsonPayload.path,json.jsonPayload.duration_s,json.jsonPayload.correlation_id),filters:!((meta:(key:json.jsonPayload.model_engine,params:codegen,type:phrase),query:(match:(json.jsonPayload.model_engine:(query:codegen,type:phrase)))),(meta:(key:json.type,params:code_suggestions,type:phrase),query:(match:(json.type:(query:code_suggestions,type:phrase))))),index:'8cd9c4c0-f0a7-11ed-a017-0d32180b1390')&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📖 Kibana: Native Models failed request logs](https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.jsonPayload.level,json.jsonPayload.method,json.jsonPayload.status_code,json.jsonPayload.path,json.jsonPayload.duration_s,json.jsonPayload.correlation_id),filters:!((meta:(key:json.jsonPayload.model_engine,params:codegen,type:phrase),query:(match:(json.jsonPayload.model_engine:(query:codegen,type:phrase)))),(meta:(key:json.type,params:code_suggestions,type:phrase),query:(match:(json.type:(query:code_suggestions,type:phrase)))),(meta:(field:json.jsonPayload.status_code,key:json.jsonPayload.status_code,params:(gte:500,lte:!n),type:range),query:(range:(json.jsonPayload.status_code:(gte:500,lte:!n))))),index:'8cd9c4c0-f0a7-11ed-a017-0d32180b1390')&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Native Models requests](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=8cd9c4c0-f0a7-11ed-a017-0d32180b1390&_a=(filters:!((meta:(key:json.jsonPayload.model_engine,params:codegen,type:phrase),query:(match:(json.jsonPayload.model_engine:(query:codegen,type:phrase)))),(meta:(key:json.type,params:code_suggestions,type:phrase),query:(match:(json.type:(query:code_suggestions,type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(),schema:metric,type:count),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Native Models failed requests](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=8cd9c4c0-f0a7-11ed-a017-0d32180b1390&_a=(filters:!((meta:(key:json.jsonPayload.model_engine,params:codegen,type:phrase),query:(match:(json.jsonPayload.model_engine:(query:codegen,type:phrase)))),(meta:(key:json.type,params:code_suggestions,type:phrase),query:(match:(json.type:(query:code_suggestions,type:phrase)))),(meta:(field:json.jsonPayload.status_code,key:json.jsonPayload.status_code,params:(gte:500,lte:!n),type:range),query:(range:(json.jsonPayload.status_code:(gte:500,lte:!n))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(),schema:metric,type:count),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Native Models sum latency aggregated](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=8cd9c4c0-f0a7-11ed-a017-0d32180b1390&_a=(filters:!((meta:(key:json.jsonPayload.model_engine,params:codegen,type:phrase),query:(match:(json.jsonPayload.model_engine:(query:codegen,type:phrase)))),(meta:(key:json.type,params:code_suggestions,type:phrase),query:(match:(json.type:(query:code_suggestions,type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.jsonPayload.duration_s),schema:metric,type:sum),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram),(enabled:!t,id:'3',params:(field:json.jsonPayload.url,missingBucket:!f,missingBucketLabel:Missing,order:desc,orderBy:'1',otherBucket:!t,otherBucketLabel:Other,size:5),schema:group,type:terms)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'Sum+Request+Duration:+json.jsonPayload.duration_s'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Native Models sum latency aggregated (split)](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=8cd9c4c0-f0a7-11ed-a017-0d32180b1390&_a=(filters:!((meta:(key:json.jsonPayload.model_engine,params:codegen,type:phrase),query:(match:(json.jsonPayload.model_engine:(query:codegen,type:phrase)))),(meta:(key:json.type,params:code_suggestions,type:phrase),query:(match:(json.type:(query:code_suggestions,type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.jsonPayload.duration_s),schema:metric,type:sum),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram),(enabled:!t,id:'3',params:(field:json.jsonPayload.url,missingBucket:!f,missingBucketLabel:Missing,order:desc,orderBy:'1',otherBucket:!t,otherBucketLabel:Other,size:5),schema:group,type:terms)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'Sum+Request+Duration:+json.jsonPayload.duration_s'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Native Models percentile latency aggregated](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=8cd9c4c0-f0a7-11ed-a017-0d32180b1390&_a=(filters:!((meta:(key:json.jsonPayload.model_engine,params:codegen,type:phrase),query:(match:(json.jsonPayload.model_engine:(query:codegen,type:phrase)))),(meta:(key:json.type,params:code_suggestions,type:phrase),query:(match:(json.type:(query:code_suggestions,type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.jsonPayload.duration_s,percents:!(95)),schema:metric,type:percentiles),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'p95+Request+Duration:+json.jsonPayload.duration_s'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Native Models percentile latency aggregated (split)](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=8cd9c4c0-f0a7-11ed-a017-0d32180b1390&_a=(filters:!((meta:(key:json.jsonPayload.model_engine,params:codegen,type:phrase),query:(match:(json.jsonPayload.model_engine:(query:codegen,type:phrase)))),(meta:(key:json.type,params:code_suggestions,type:phrase),query:(match:(json.type:(query:code_suggestions,type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.jsonPayload.duration_s,percents:!(95)),schema:metric,type:percentiles),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram),(enabled:!t,id:'3',params:(field:json.jsonPayload.url,missingBucket:!f,missingBucketLabel:Missing,order:desc,orderAgg:(enabled:!t,id:'3-orderAgg',params:(field:json.jsonPayload.duration_s),schema:orderAgg,type:sum),orderBy:custom,otherBucket:!t,otherBucketLabel:Other,size:5),schema:group,type:terms)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'p95+Request+Duration:+json.jsonPayload.duration_s'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n\n",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 41
+      },
+      "id": 25,
+      "mode": "markdown",
+      "title": "Details",
+      "type": "text"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
+      "description": "Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 51
+      },
+      "id": 1588199131,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": [
+          {
+            "targetBlank": true,
+            "title": "third_party_model_inference SLI Apdex SLO Analysis",
+            "url": "/d/alerts-component_slo_apdex?${__url_time_range}&${__all_variables}&var-component=third_party_model_inference&var-type=code_suggestions"
+          }
+        ]
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "6h Degradation SLO (5% of monthly error budget)",
+          "color": "#FF4500",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "connected",
+          "spaceLength": 10,
+          "zindex": -2
+        },
+        {
+          "alias": "1h Outage SLO (2% of monthly error budget)",
+          "color": "#F2495C",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 4,
+          "nullPointMode": "connected",
+          "spaceLength": 4,
+          "zindex": -2
+        },
+        {
+          "alias": "SLO",
+          "color": "#FF4500",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 4,
+          "nullPointMode": "connected",
+          "spaceLength": 4,
+          "zindex": -2
+        },
+        {
+          "alias": "third_party_model_inference apdex",
+          "color": "#E7D551",
+          "zindex": 3
+        },
+        {
+          "alias": "third_party_model_inference apdex avg",
+          "color": "#5794F2",
+          "dashLength": 1,
+          "fillBelowTo": "third_party_model_inference apdex",
+          "linewidth": 1,
+          "spaceLength": 1,
+          "zindex": -3
+        },
+        {
+          "alias": "last week",
+          "color": "#dddddd80",
+          "dashLength": 4,
+          "dashes": true,
+          "fill": 0,
+          "legend": true,
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "spaceLength": 2,
+          "zindex": -3
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "sli-third_party_model_inference-apdex",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "min_over_time(gitlab_component_apdex:ratio_5m{component=\"third_party_model_inference\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"code_suggestions\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "third_party_model_inference apdex",
+          "refId": "A"
+        },
+        {
+          "expr": "(1 - 6 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"third_party_model_inference\",monitor=\"global\",type=\"code_suggestions\"})\n))\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 1,
+          "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+          "refId": "B"
+        },
+        {
+          "expr": "(1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"third_party_model_inference\",monitor=\"global\",type=\"code_suggestions\"})\n))\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 1,
+          "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+          "refId": "C"
+        },
+        {
+          "expr": "avg_over_time(gitlab_component_apdex:ratio_5m{component=\"third_party_model_inference\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"code_suggestions\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "third_party_model_inference apdex avg",
+          "refId": "D"
+        },
+        {
+          "expr": "clamp_min(\n  gitlab_component_apdex:ratio_5m{component=\"third_party_model_inference\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"code_suggestions\"} offset 1w\n,\n  scalar(min((1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"third_party_model_inference\",monitor=\"global\",type=\"code_suggestions\"})\n))\n))\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "last week",
+          "refId": "E"
+        }
+      ],
+      "title": "third_party_model_inference SLI Apdex",
+      "tooltip": {
+        "shared": true,
+        "sort": 1,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "Apdex %",
+          "logBase": 1,
+          "max": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "displayName": "Status",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "0": {
+                  "color": "black",
+                  "index": 0,
+                  "text": "Healthy"
+                },
+                "1": {
+                  "color": "orange",
+                  "index": 1,
+                  "text": "Warning 🔥"
+                },
+                "10": {
+                  "color": "orange",
+                  "index": 10,
+                  "text": "Warning 🔥🥵"
+                },
+                "11": {
+                  "color": "red",
+                  "index": 11,
+                  "text": "Degraded 🔥🥵"
+                },
+                "12": {
+                  "color": "red",
+                  "index": 12,
+                  "text": "Degraded 🥵"
+                },
+                "13": {
+                  "color": "red",
+                  "index": 13,
+                  "text": "Degraded 🔥🥵"
+                },
+                "14": {
+                  "color": "red",
+                  "index": 14,
+                  "text": "Degraded 🔥🥵"
+                },
+                "15": {
+                  "color": "red",
+                  "index": 15,
+                  "text": "Degraded 🔥🥵"
+                },
+                "2": {
+                  "color": "orange",
+                  "index": 2,
+                  "text": "Warning 🔥"
+                },
+                "3": {
+                  "color": "red",
+                  "index": 3,
+                  "text": "Degraded 🔥"
+                },
+                "4": {
+                  "color": "orange",
+                  "index": 4,
+                  "text": "Warning 🥵"
+                },
+                "5": {
+                  "color": "orange",
+                  "index": 5,
+                  "text": "Warning 🔥🥵"
+                },
+                "6": {
+                  "color": "orange",
+                  "index": 6,
+                  "text": "Warning 🔥🥵"
+                },
+                "7": {
+                  "color": "red",
+                  "index": 7,
+                  "text": "Degraded 🔥🥵"
+                },
+                "8": {
+                  "color": "orange",
+                  "index": 8,
+                  "text": "Warning 🥵"
+                },
+                "9": {
+                  "color": "orange",
+                  "index": 9,
+                  "text": "Warning 🔥🥵"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "black",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "orange",
+                "value": 2
+              },
+              {
+                "color": "red",
+                "value": 3
+              },
+              {
+                "color": "orange",
+                "value": 4
+              },
+              {
+                "color": "orange",
+                "value": 5
+              },
+              {
+                "color": "orange",
+                "value": 6
+              },
+              {
+                "color": "red",
+                "value": 7
+              },
+              {
+                "color": "orange",
+                "value": 8
+              },
+              {
+                "color": "orange",
+                "value": 9
+              },
+              {
+                "color": "orange",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 11
+              },
+              {
+                "color": "red",
+                "value": 12
+              },
+              {
+                "color": "red",
+                "value": 13
+              },
+              {
+                "color": "red",
+                "value": 14
+              },
+              {
+                "color": "red",
+                "value": 15
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 8,
+        "x": 0,
+        "y": 58
+      },
+      "id": 27,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"third_party_model_inference\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"code_suggestions\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"third_party_model_inference\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"code_suggestions\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"third_party_model_inference\",monitor=\"global\",type=\"code_suggestions\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"third_party_model_inference\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"code_suggestions\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"third_party_model_inference\",monitor=\"global\",type=\"code_suggestions\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"third_party_model_inference\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"code_suggestions\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"third_party_model_inference\",monitor=\"global\",type=\"code_suggestions\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"third_party_model_inference\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"code_suggestions\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"third_party_model_inference\",monitor=\"global\",type=\"code_suggestions\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "third_party_model_inference SLI | Latency/Apdex",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
+      "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 51
+      },
+      "id": 2980213879,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "third_party_model_inference RPS",
+          "color": "#E7D551",
+          "zindex": 3
+        },
+        {
+          "alias": "last week",
+          "color": "#dddddd80",
+          "dashLength": 4,
+          "dashes": true,
+          "fill": 0,
+          "legend": true,
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "spaceLength": 2,
+          "zindex": -3
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "sli-third_party_model_inference-ops-rate",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "avg_over_time(gitlab_component_ops:rate_5m{component=\"third_party_model_inference\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"code_suggestions\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "third_party_model_inference RPS",
+          "refId": "A"
+        },
+        {
+          "expr": "gitlab_component_ops:rate_5m{component=\"third_party_model_inference\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"code_suggestions\"} offset 1w\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "last week",
+          "refId": "B"
+        }
+      ],
+      "title": "third_party_model_inference SLI RPS - Requests per Second",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Operations per Second",
+          "logBase": 1,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "content": "### Description\n\nInference requests performed by third party models.\n\n\n\n### Observability Tools\n\n* [📖 Kibana: Third Party Models logs](https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.jsonPayload.level,json.jsonPayload.method,json.jsonPayload.status_code,json.jsonPayload.path,json.jsonPayload.duration_s,json.jsonPayload.correlation_id),filters:!((meta:(key:json.jsonPayload.model_engine,params:'vertex-ai',type:phrase),query:(match:(json.jsonPayload.model_engine:(query:'vertex-ai',type:phrase)))),(meta:(key:json.type,params:code_suggestions,type:phrase),query:(match:(json.type:(query:code_suggestions,type:phrase))))),index:'8cd9c4c0-f0a7-11ed-a017-0d32180b1390')&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📖 Kibana: Third Party Models failed request logs](https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.jsonPayload.level,json.jsonPayload.method,json.jsonPayload.status_code,json.jsonPayload.path,json.jsonPayload.duration_s,json.jsonPayload.correlation_id),filters:!((meta:(key:json.jsonPayload.model_engine,params:'vertex-ai',type:phrase),query:(match:(json.jsonPayload.model_engine:(query:'vertex-ai',type:phrase)))),(meta:(key:json.type,params:code_suggestions,type:phrase),query:(match:(json.type:(query:code_suggestions,type:phrase)))),(meta:(field:json.jsonPayload.status_code,key:json.jsonPayload.status_code,params:(gte:500,lte:!n),type:range),query:(range:(json.jsonPayload.status_code:(gte:500,lte:!n))))),index:'8cd9c4c0-f0a7-11ed-a017-0d32180b1390')&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Third Party Models requests](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=8cd9c4c0-f0a7-11ed-a017-0d32180b1390&_a=(filters:!((meta:(key:json.jsonPayload.model_engine,params:'vertex-ai',type:phrase),query:(match:(json.jsonPayload.model_engine:(query:'vertex-ai',type:phrase)))),(meta:(key:json.type,params:code_suggestions,type:phrase),query:(match:(json.type:(query:code_suggestions,type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(),schema:metric,type:count),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Third Party Models failed requests](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=8cd9c4c0-f0a7-11ed-a017-0d32180b1390&_a=(filters:!((meta:(key:json.jsonPayload.model_engine,params:'vertex-ai',type:phrase),query:(match:(json.jsonPayload.model_engine:(query:'vertex-ai',type:phrase)))),(meta:(key:json.type,params:code_suggestions,type:phrase),query:(match:(json.type:(query:code_suggestions,type:phrase)))),(meta:(field:json.jsonPayload.status_code,key:json.jsonPayload.status_code,params:(gte:500,lte:!n),type:range),query:(range:(json.jsonPayload.status_code:(gte:500,lte:!n))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(),schema:metric,type:count),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Third Party Models sum latency aggregated](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=8cd9c4c0-f0a7-11ed-a017-0d32180b1390&_a=(filters:!((meta:(key:json.jsonPayload.model_engine,params:'vertex-ai',type:phrase),query:(match:(json.jsonPayload.model_engine:(query:'vertex-ai',type:phrase)))),(meta:(key:json.type,params:code_suggestions,type:phrase),query:(match:(json.type:(query:code_suggestions,type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.jsonPayload.duration_s),schema:metric,type:sum),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram),(enabled:!t,id:'3',params:(field:json.jsonPayload.url,missingBucket:!f,missingBucketLabel:Missing,order:desc,orderBy:'1',otherBucket:!t,otherBucketLabel:Other,size:5),schema:group,type:terms)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'Sum+Request+Duration:+json.jsonPayload.duration_s'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Third Party Models sum latency aggregated (split)](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=8cd9c4c0-f0a7-11ed-a017-0d32180b1390&_a=(filters:!((meta:(key:json.jsonPayload.model_engine,params:'vertex-ai',type:phrase),query:(match:(json.jsonPayload.model_engine:(query:'vertex-ai',type:phrase)))),(meta:(key:json.type,params:code_suggestions,type:phrase),query:(match:(json.type:(query:code_suggestions,type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.jsonPayload.duration_s),schema:metric,type:sum),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram),(enabled:!t,id:'3',params:(field:json.jsonPayload.url,missingBucket:!f,missingBucketLabel:Missing,order:desc,orderBy:'1',otherBucket:!t,otherBucketLabel:Other,size:5),schema:group,type:terms)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'Sum+Request+Duration:+json.jsonPayload.duration_s'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Third Party Models percentile latency aggregated](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=8cd9c4c0-f0a7-11ed-a017-0d32180b1390&_a=(filters:!((meta:(key:json.jsonPayload.model_engine,params:'vertex-ai',type:phrase),query:(match:(json.jsonPayload.model_engine:(query:'vertex-ai',type:phrase)))),(meta:(key:json.type,params:code_suggestions,type:phrase),query:(match:(json.type:(query:code_suggestions,type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.jsonPayload.duration_s,percents:!(95)),schema:metric,type:percentiles),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'p95+Request+Duration:+json.jsonPayload.duration_s'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: Third Party Models percentile latency aggregated (split)](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=8cd9c4c0-f0a7-11ed-a017-0d32180b1390&_a=(filters:!((meta:(key:json.jsonPayload.model_engine,params:'vertex-ai',type:phrase),query:(match:(json.jsonPayload.model_engine:(query:'vertex-ai',type:phrase)))),(meta:(key:json.type,params:code_suggestions,type:phrase),query:(match:(json.type:(query:code_suggestions,type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.jsonPayload.duration_s,percents:!(95)),schema:metric,type:percentiles),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram),(enabled:!t,id:'3',params:(field:json.jsonPayload.url,missingBucket:!f,missingBucketLabel:Missing,order:desc,orderAgg:(enabled:!t,id:'3-orderAgg',params:(field:json.jsonPayload.duration_s),schema:orderAgg,type:sum),orderBy:custom,otherBucket:!t,otherBucketLabel:Other,size:5),schema:group,type:terms)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'p95+Request+Duration:+json.jsonPayload.duration_s'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n\n",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 51
+      },
+      "id": 29,
+      "mode": "markdown",
+      "title": "Details",
+      "type": "text"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
+      "description": "Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 61
       },
       "id": 1690412366,
       "legend": {
@@ -3223,9 +4227,9 @@
         "h": 1,
         "w": 8,
         "x": 0,
-        "y": 48
+        "y": 68
       },
-      "id": 23,
+      "id": 31,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -3269,7 +4273,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 41
+        "y": 61
       },
       "id": 1126060874,
       "legend": {
@@ -3367,9 +4371,9 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 41
+        "y": 61
       },
-      "id": 25,
+      "id": 33,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -3383,7 +4387,7 @@
         "x": 0,
         "y": 100
       },
-      "id": 26,
+      "id": 34,
       "panels": [
         {
           "bars": false,
@@ -3400,7 +4404,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 27,
+          "id": 35,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3496,7 +4500,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 28,
+          "id": 36,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3572,7 +4576,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 29,
+          "id": 37,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3648,7 +4652,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 30,
+          "id": 38,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3744,7 +4748,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 31,
+          "id": 39,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3825,7 +4829,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 32,
+          "id": 40,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3901,7 +4905,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 33,
+          "id": 41,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3977,7 +4981,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 34,
+          "id": 42,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4073,7 +5077,7 @@
             "x": 6,
             "y": 20
           },
-          "id": 35,
+          "id": 43,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4154,7 +5158,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 36,
+          "id": 44,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4230,7 +5234,7 @@
             "x": 18,
             "y": 20
           },
-          "id": 37,
+          "id": 45,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4306,7 +5310,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 38,
+          "id": 46,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4402,7 +5406,7 @@
             "x": 6,
             "y": 30
           },
-          "id": 39,
+          "id": 47,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4483,7 +5487,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 40,
+          "id": 48,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4559,7 +5563,7 @@
             "x": 18,
             "y": 30
           },
-          "id": 41,
+          "id": 49,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4638,7 +5642,7 @@
         "x": 0,
         "y": 110
       },
-      "id": 42,
+      "id": 50,
       "panels": [
         {
           "bars": false,
@@ -4655,7 +5659,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 43,
+          "id": 51,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4750,7 +5754,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 44,
+          "id": 52,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4826,7 +5830,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 45,
+          "id": 53,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4902,7 +5906,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 46,
+          "id": 54,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4997,7 +6001,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 47,
+          "id": 55,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5078,7 +6082,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 48,
+          "id": 56,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5154,7 +6158,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 49,
+          "id": 57,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5230,7 +6234,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 50,
+          "id": 58,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5325,7 +6329,7 @@
             "x": 6,
             "y": 20
           },
-          "id": 51,
+          "id": 59,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5406,7 +6410,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 52,
+          "id": 60,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5482,7 +6486,7 @@
             "x": 18,
             "y": 20
           },
-          "id": 53,
+          "id": 61,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5558,7 +6562,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 54,
+          "id": 62,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5653,7 +6657,7 @@
             "x": 6,
             "y": 30
           },
-          "id": 55,
+          "id": 63,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5734,7 +6738,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 56,
+          "id": 64,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5810,7 +6814,7 @@
             "x": 18,
             "y": 30
           },
-          "id": 57,
+          "id": 65,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5889,7 +6893,7 @@
         "x": 0,
         "y": 120
       },
-      "id": 58,
+      "id": 66,
       "panels": [
         {
           "bars": false,
@@ -5906,7 +6910,1403 @@
             "x": 0,
             "y": 0
           },
-          "id": 59,
+          "id": 67,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    rate(code_suggestions_inference_request_duration_seconds_bucket{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",model_engine=\"codegen\",type=\"code_suggestions\"}[$__interval])\n  )\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "p95 overall",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.5)",
+              "line": false,
+              "op": "gt",
+              "value": 10,
+              "yaxis": "left"
+            },
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.25)",
+              "line": false,
+              "op": "gt",
+              "value": 5,
+              "yaxis": "left"
+            }
+          ],
+          "title": "Estimated p95 native_model_inference Latency - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": "Duration",
+              "logBase": 10,
+              "min": 0.01,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 0
+          },
+          "id": 68,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by () (\n  rate(code_suggestions_inference_requests_total{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",model_engine=\"codegen\",type=\"code_suggestions\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "overall",
+              "refId": "A"
+            }
+          ],
+          "title": "native_model_inference RPS - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 10
+          },
+          "id": 69,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,model_engine) (\n    rate(code_suggestions_inference_request_duration_seconds_bucket{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",model_engine!=\"\",type=\"code_suggestions\"}[$__interval])\n  )\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "p95 {{model_engine}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.5)",
+              "line": false,
+              "op": "gt",
+              "value": 10,
+              "yaxis": "left"
+            },
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.25)",
+              "line": false,
+              "op": "gt",
+              "value": 5,
+              "yaxis": "left"
+            }
+          ],
+          "title": "Estimated p95 native_model_inference Latency - per model_engine",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": "Duration",
+              "logBase": 10,
+              "min": 0.01,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 8,
+            "y": 10
+          },
+          "id": 70,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (model_engine) (\n  rate(code_suggestions_inference_request_duration_seconds_bucket{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",le=\"+Inf\",model_engine!=\"\",type=\"code_suggestions\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (model_engine) (\n    rate(code_suggestions_inference_request_duration_seconds_bucket{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",le=\"5\",model_engine!=\"\",type=\"code_suggestions\"}[$__interval])\n  )\n  +\n  sum by (model_engine) (\n    rate(code_suggestions_inference_request_duration_seconds_bucket{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",le=\"10\",model_engine!=\"\",type=\"code_suggestions\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(model_engine) group_left()\n  (\n    sum by () (\n  rate(code_suggestions_inference_request_duration_seconds_bucket{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",le=\"+Inf\",model_engine!=\"\",type=\"code_suggestions\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{model_engine}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for native_model_inference Latency - per model_engine",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 16,
+            "y": 10
+          },
+          "id": 71,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (model_engine) (\n  rate(code_suggestions_inference_requests_total{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",model_engine=\"codegen\",type=\"code_suggestions\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{model_engine}}",
+              "refId": "A"
+            }
+          ],
+          "title": "native_model_inference RPS - per model_engine",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 20
+          },
+          "id": 72,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,model_name) (\n    rate(code_suggestions_inference_request_duration_seconds_bucket{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",model_engine=\"codegen\",model_name!=\"\",type=\"code_suggestions\"}[$__interval])\n  )\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "p95 {{model_name}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.5)",
+              "line": false,
+              "op": "gt",
+              "value": 10,
+              "yaxis": "left"
+            },
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.25)",
+              "line": false,
+              "op": "gt",
+              "value": 5,
+              "yaxis": "left"
+            }
+          ],
+          "title": "Estimated p95 native_model_inference Latency - per model_name",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": "Duration",
+              "logBase": 10,
+              "min": 0.01,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 8,
+            "y": 20
+          },
+          "id": 73,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (model_name) (\n  rate(code_suggestions_inference_request_duration_seconds_bucket{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",le=\"+Inf\",model_engine=\"codegen\",model_name!=\"\",type=\"code_suggestions\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (model_name) (\n    rate(code_suggestions_inference_request_duration_seconds_bucket{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",le=\"5\",model_engine=\"codegen\",model_name!=\"\",type=\"code_suggestions\"}[$__interval])\n  )\n  +\n  sum by (model_name) (\n    rate(code_suggestions_inference_request_duration_seconds_bucket{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",le=\"10\",model_engine=\"codegen\",model_name!=\"\",type=\"code_suggestions\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(model_name) group_left()\n  (\n    sum by () (\n  rate(code_suggestions_inference_request_duration_seconds_bucket{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",le=\"+Inf\",model_engine=\"codegen\",model_name!=\"\",type=\"code_suggestions\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{model_name}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for native_model_inference Latency - per model_name",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 16,
+            "y": 20
+          },
+          "id": 74,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (model_name) (\n  rate(code_suggestions_inference_requests_total{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",model_engine=\"codegen\",model_name!=\"\",type=\"code_suggestions\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{model_name}}",
+              "refId": "A"
+            }
+          ],
+          "title": "native_model_inference RPS - per model_name",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "🔬 SLI Detail: native_model_inference",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "collapse": true,
+      "collapsed": true,
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 130
+      },
+      "id": 75,
+      "panels": [
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 0
+          },
+          "id": 76,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    rate(code_suggestions_inference_request_duration_seconds_bucket{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",model_engine!=\"codegen\",type=\"code_suggestions\"}[$__interval])\n  )\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "p95 overall",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.5)",
+              "line": false,
+              "op": "gt",
+              "value": 10,
+              "yaxis": "left"
+            },
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.25)",
+              "line": false,
+              "op": "gt",
+              "value": 5,
+              "yaxis": "left"
+            }
+          ],
+          "title": "Estimated p95 third_party_model_inference Latency - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": "Duration",
+              "logBase": 10,
+              "min": 0.01,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 0
+          },
+          "id": 77,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by () (\n  rate(code_suggestions_inference_requests_total{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",model_engine!=\"codegen\",type=\"code_suggestions\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "overall",
+              "refId": "A"
+            }
+          ],
+          "title": "third_party_model_inference RPS - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 10
+          },
+          "id": 78,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,model_engine) (\n    rate(code_suggestions_inference_request_duration_seconds_bucket{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",model_engine!=\"\",type=\"code_suggestions\"}[$__interval])\n  )\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "p95 {{model_engine}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.5)",
+              "line": false,
+              "op": "gt",
+              "value": 10,
+              "yaxis": "left"
+            },
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.25)",
+              "line": false,
+              "op": "gt",
+              "value": 5,
+              "yaxis": "left"
+            }
+          ],
+          "title": "Estimated p95 third_party_model_inference Latency - per model_engine",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": "Duration",
+              "logBase": 10,
+              "min": 0.01,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 8,
+            "y": 10
+          },
+          "id": 79,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (model_engine) (\n  rate(code_suggestions_inference_request_duration_seconds_bucket{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",le=\"+Inf\",model_engine!=\"\",type=\"code_suggestions\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (model_engine) (\n    rate(code_suggestions_inference_request_duration_seconds_bucket{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",le=\"5\",model_engine!=\"\",type=\"code_suggestions\"}[$__interval])\n  )\n  +\n  sum by (model_engine) (\n    rate(code_suggestions_inference_request_duration_seconds_bucket{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",le=\"10\",model_engine!=\"\",type=\"code_suggestions\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(model_engine) group_left()\n  (\n    sum by () (\n  rate(code_suggestions_inference_request_duration_seconds_bucket{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",le=\"+Inf\",model_engine!=\"\",type=\"code_suggestions\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{model_engine}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for third_party_model_inference Latency - per model_engine",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 16,
+            "y": 10
+          },
+          "id": 80,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (model_engine) (\n  rate(code_suggestions_inference_requests_total{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",model_engine!=\"codegen\",type=\"code_suggestions\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{model_engine}}",
+              "refId": "A"
+            }
+          ],
+          "title": "third_party_model_inference RPS - per model_engine",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 20
+          },
+          "id": 81,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,model_name) (\n    rate(code_suggestions_inference_request_duration_seconds_bucket{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",model_engine!=\"codegen\",model_name!=\"\",type=\"code_suggestions\"}[$__interval])\n  )\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "p95 {{model_name}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.5)",
+              "line": false,
+              "op": "gt",
+              "value": 10,
+              "yaxis": "left"
+            },
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.25)",
+              "line": false,
+              "op": "gt",
+              "value": 5,
+              "yaxis": "left"
+            }
+          ],
+          "title": "Estimated p95 third_party_model_inference Latency - per model_name",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": "Duration",
+              "logBase": 10,
+              "min": 0.01,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 8,
+            "y": 20
+          },
+          "id": 82,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (model_name) (\n  rate(code_suggestions_inference_request_duration_seconds_bucket{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",le=\"+Inf\",model_engine!=\"codegen\",model_name!=\"\",type=\"code_suggestions\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (model_name) (\n    rate(code_suggestions_inference_request_duration_seconds_bucket{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",le=\"5\",model_engine!=\"codegen\",model_name!=\"\",type=\"code_suggestions\"}[$__interval])\n  )\n  +\n  sum by (model_name) (\n    rate(code_suggestions_inference_request_duration_seconds_bucket{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",le=\"10\",model_engine!=\"codegen\",model_name!=\"\",type=\"code_suggestions\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(model_name) group_left()\n  (\n    sum by () (\n  rate(code_suggestions_inference_request_duration_seconds_bucket{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",le=\"+Inf\",model_engine!=\"codegen\",model_name!=\"\",type=\"code_suggestions\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{model_name}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for third_party_model_inference Latency - per model_name",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 16,
+            "y": 20
+          },
+          "id": 83,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (model_name) (\n  rate(code_suggestions_inference_requests_total{container=\"model-gateway\",env=\"$environment\",environment=\"$environment\",model_engine!=\"codegen\",model_name!=\"\",type=\"code_suggestions\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{model_name}}",
+              "refId": "A"
+            }
+          ],
+          "title": "third_party_model_inference RPS - per model_name",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "🔬 SLI Detail: third_party_model_inference",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "collapse": true,
+      "collapsed": true,
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 140
+      },
+      "id": 84,
+      "panels": [
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 0
+          },
+          "id": 85,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5982,7 +8382,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 60,
+          "id": 86,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6058,7 +8458,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 61,
+          "id": 87,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6134,7 +8534,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 62,
+          "id": 88,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6213,7 +8613,7 @@
         "x": 0,
         "y": 400
       },
-      "id": 63,
+      "id": 89,
       "panels": [
 
       ],
@@ -6234,7 +8634,7 @@
         "x": 0,
         "y": 500
       },
-      "id": 64,
+      "id": 90,
       "panels": [
         {
           "aliasColors": {
@@ -8580,7 +10980,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 77,
+      "id": 103,
       "panels": [
         {
           "colors": [
@@ -8601,7 +11001,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 78,
+          "id": 104,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -8714,7 +11114,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 79,
+          "id": 105,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -8825,7 +11225,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 80,
+          "id": 106,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -8930,7 +11330,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 81,
+      "id": 107,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -9024,5 +11424,5 @@
   "timezone": "utc",
   "title": "code_suggestions: Overview",
   "uid": "code_suggestions-main",
-  "version": 97
+  "version": 101
 }
