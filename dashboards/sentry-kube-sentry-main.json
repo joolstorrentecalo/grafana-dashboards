@@ -10,7 +10,7 @@
 
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4555306942 at Wed Jun 28 02:08:26 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4562823309 at Thu Jun 29 01:28:17 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -91,7 +91,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(sentry_ingest_consumer_process_event_count[1m])",
+          "expr": "rate(sentry_ingest_consumer_process_event_count{cluster=\"ops-gitlab-gke\",env=\"ops\",namespace=\"sentry\"}[1m])",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -189,11 +189,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sentry_jobs_duration",
+          "expr": "sentry_jobs_duration{cluster=\"ops-gitlab-gke\",env=\"ops\",namespace=\"sentry\"}",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{ pod }}",
+          "legendFormat": "{{ quantile }}",
           "refId": "A"
         }
       ],
@@ -287,7 +287,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sentry_ingest_consumer_process_event",
+          "expr": "sentry_ingest_consumer_process_event{cluster=\"ops-gitlab-gke\",env=\"ops\",namespace=\"sentry\"}",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -406,7 +406,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(pod) (nginx_ingress_controller_nginx_process_connections{namespace=\"sentry\"})",
+          "expr": "sum by(pod) (nginx_ingress_controller_nginx_process_connections{cluster=\"ops-gitlab-gke\",env=\"ops\",namespace=\"sentry\"}",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -504,7 +504,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(exported_service) (rate(nginx_ingress_controller_requests{namespace=\"sentry\", exported_service=~\"sentry-relay|sentry-web\"}[5m]))",
+          "expr": "sum by(exported_service) (rate(nginx_ingress_controller_requests{cluster=\"ops-gitlab-gke\",env=\"ops\",namespace=\"sentry\", exported_service=~\"sentry-relay|sentry-web\"}[5m]))",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -623,7 +623,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(ClickHouseMetrics_TCPConnection)",
+          "expr": "sum by(hostname)(chi_clickhouse_metric_TCPConnection{chi=\"sentry\"})",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -721,11 +721,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "ClickHouseAsyncMetrics_ReplicasMaxAbsoluteDelay",
+          "expr": "chi_clickhouse_metric_ReplicasMaxAbsoluteDelay{chi=\"sentry\"}",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{ pod }}",
+          "legendFormat": "{{ hostname }}",
           "refId": "A"
         }
       ],
@@ -819,129 +819,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(ClickHouseMetrics_RWLockActiveReaders)",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "Active Readers",
-          "refId": "A"
-        },
-        {
-          "expr": "sum(ClickHouseMetrics_RWLockActiveWriters)",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "Active Writers",
-          "refId": "B"
-        },
-        {
-          "expr": "sum(ClickHouseMetrics_RWLockWaitingReaders)",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "Waiting Readers",
-          "refId": "C"
-        },
-        {
-          "expr": "sum(ClickHouseMetrics_RWLockWaitingWriters)",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "Waiting Writers",
-          "refId": "D"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Active vs Waiting Readers/Writers",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 211
-      },
-      "id": 13,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum(ClickHouseMetrics_ZooKeeperRequest)",
+          "expr": "sum by(hostname)(chi_clickhouse_metric_ZooKeeperRequest{chi=\"sentry\"})",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1048,5 +926,5 @@
   "timezone": "utc",
   "title": "sentry: Kube Sentry main",
   "uid": "sentry-main-kube",
-  "version": 609
+  "version": 610
 }
