@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4588201603 at Tue Jul  4 06:52:58 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4592140338 at Tue Jul  4 15:52:04 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -2623,6 +2623,497 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
+      "description": "Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 51
+      },
+      "id": 795598114,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": [
+          {
+            "targetBlank": true,
+            "title": "shared_runner_image_pull_failures SLI Error-Rate SLO Analysis",
+            "url": "/d/alerts-component_slo_error?${__url_time_range}&${__all_variables}&var-component=shared_runner_image_pull_failures&var-type=ci-runners&var-stage=$stage"
+          }
+        ]
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "6h Degradation SLO (5% of monthly error budget)",
+          "color": "#FF4500",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "connected",
+          "spaceLength": 10,
+          "zindex": -2
+        },
+        {
+          "alias": "1h Outage SLO (2% of monthly error budget)",
+          "color": "#F2495C",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 4,
+          "nullPointMode": "connected",
+          "spaceLength": 4,
+          "zindex": -2
+        },
+        {
+          "alias": "shared_runner_image_pull_failures error ratio",
+          "color": "#E7D551",
+          "fillBelowTo": "shared_runner_image_pull_failures error ratio avg",
+          "zindex": 3
+        },
+        {
+          "alias": "shared_runner_image_pull_failures error ratio avg",
+          "color": "#5794F2",
+          "dashLength": 1,
+          "fillGradient": 10,
+          "linewidth": 1,
+          "spaceLength": 1,
+          "zindex": -3
+        },
+        {
+          "alias": "last week",
+          "color": "#dddddd80",
+          "dashLength": 4,
+          "dashes": true,
+          "fill": 0,
+          "legend": true,
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "spaceLength": 2,
+          "zindex": -3
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "sli-shared_runner_image_pull_failures-error-rate",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "clamp_max(\n  max_over_time(gitlab_component_errors:ratio_5m{component=\"shared_runner_image_pull_failures\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"ci-runners\"}[$__interval])\n,\n  1\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "shared_runner_image_pull_failures error ratio",
+          "refId": "A"
+        },
+        {
+          "expr": "(6 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"shared_runner_image_pull_failures\",monitor=\"global\",type=\"ci-runners\"})\n)\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 1,
+          "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+          "refId": "B"
+        },
+        {
+          "expr": "(14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"shared_runner_image_pull_failures\",monitor=\"global\",type=\"ci-runners\"})\n)\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 1,
+          "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+          "refId": "C"
+        },
+        {
+          "expr": "clamp_max(\n  avg_over_time(gitlab_component_errors:ratio_5m{component=\"shared_runner_image_pull_failures\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"ci-runners\"}[$__interval])\n,\n  1\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "shared_runner_image_pull_failures error ratio avg",
+          "refId": "D"
+        },
+        {
+          "expr": "clamp_max(\n  gitlab_component_errors:ratio_5m{component=\"shared_runner_image_pull_failures\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"ci-runners\"} offset 1w\n,\n  scalar(max((14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"shared_runner_image_pull_failures\",monitor=\"global\",type=\"ci-runners\"})\n)\n))\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "last week",
+          "refId": "E"
+        }
+      ],
+      "title": "shared_runner_image_pull_failures SLI Error Ratio",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "Error %",
+          "logBase": 1,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "displayName": "Status",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "0": {
+                  "color": "black",
+                  "index": 0,
+                  "text": "Healthy"
+                },
+                "1": {
+                  "color": "orange",
+                  "index": 1,
+                  "text": "Warning 🔥"
+                },
+                "10": {
+                  "color": "orange",
+                  "index": 10,
+                  "text": "Warning 🔥🥵"
+                },
+                "11": {
+                  "color": "red",
+                  "index": 11,
+                  "text": "Degraded 🔥🥵"
+                },
+                "12": {
+                  "color": "red",
+                  "index": 12,
+                  "text": "Degraded 🥵"
+                },
+                "13": {
+                  "color": "red",
+                  "index": 13,
+                  "text": "Degraded 🔥🥵"
+                },
+                "14": {
+                  "color": "red",
+                  "index": 14,
+                  "text": "Degraded 🔥🥵"
+                },
+                "15": {
+                  "color": "red",
+                  "index": 15,
+                  "text": "Degraded 🔥🥵"
+                },
+                "2": {
+                  "color": "orange",
+                  "index": 2,
+                  "text": "Warning 🔥"
+                },
+                "3": {
+                  "color": "red",
+                  "index": 3,
+                  "text": "Degraded 🔥"
+                },
+                "4": {
+                  "color": "orange",
+                  "index": 4,
+                  "text": "Warning 🥵"
+                },
+                "5": {
+                  "color": "orange",
+                  "index": 5,
+                  "text": "Warning 🔥🥵"
+                },
+                "6": {
+                  "color": "orange",
+                  "index": 6,
+                  "text": "Warning 🔥🥵"
+                },
+                "7": {
+                  "color": "red",
+                  "index": 7,
+                  "text": "Degraded 🔥🥵"
+                },
+                "8": {
+                  "color": "orange",
+                  "index": 8,
+                  "text": "Warning 🥵"
+                },
+                "9": {
+                  "color": "orange",
+                  "index": 9,
+                  "text": "Warning 🔥🥵"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "black",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "orange",
+                "value": 2
+              },
+              {
+                "color": "red",
+                "value": 3
+              },
+              {
+                "color": "orange",
+                "value": 4
+              },
+              {
+                "color": "orange",
+                "value": 5
+              },
+              {
+                "color": "orange",
+                "value": 6
+              },
+              {
+                "color": "red",
+                "value": 7
+              },
+              {
+                "color": "orange",
+                "value": 8
+              },
+              {
+                "color": "orange",
+                "value": 9
+              },
+              {
+                "color": "orange",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 11
+              },
+              {
+                "color": "red",
+                "value": 12
+              },
+              {
+                "color": "red",
+                "value": 13
+              },
+              {
+                "color": "red",
+                "value": 14
+              },
+              {
+                "color": "red",
+                "value": 15
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 8,
+        "x": 0,
+        "y": 58
+      },
+      "id": 23,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"shared_runner_image_pull_failures\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"ci-runners\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_component_errors:ratio_5m{component=\"shared_runner_image_pull_failures\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"ci-runners\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"shared_runner_image_pull_failures\",monitor=\"global\",type=\"ci-runners\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_component_errors:ratio_1h{component=\"shared_runner_image_pull_failures\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"ci-runners\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"shared_runner_image_pull_failures\",monitor=\"global\",type=\"ci-runners\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_component_errors:ratio_30m{component=\"shared_runner_image_pull_failures\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"ci-runners\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"shared_runner_image_pull_failures\",monitor=\"global\",type=\"ci-runners\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_component_errors:ratio_6h{component=\"shared_runner_image_pull_failures\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"ci-runners\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"shared_runner_image_pull_failures\",monitor=\"global\",type=\"ci-runners\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "shared_runner_image_pull_failures SLI | Errors",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
+      "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 51
+      },
+      "id": 2434309326,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "shared_runner_image_pull_failures RPS",
+          "color": "#E7D551",
+          "zindex": 3
+        },
+        {
+          "alias": "last week",
+          "color": "#dddddd80",
+          "dashLength": 4,
+          "dashes": true,
+          "fill": 0,
+          "legend": true,
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "spaceLength": 2,
+          "zindex": -3
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "sli-shared_runner_image_pull_failures-ops-rate",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "avg_over_time(gitlab_component_ops:rate_5m{component=\"shared_runner_image_pull_failures\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"ci-runners\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "shared_runner_image_pull_failures RPS",
+          "refId": "A"
+        },
+        {
+          "expr": "gitlab_component_ops:rate_5m{component=\"shared_runner_image_pull_failures\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"ci-runners\"} offset 1w\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "last week",
+          "refId": "B"
+        }
+      ],
+      "title": "shared_runner_image_pull_failures SLI RPS - Requests per Second",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Operations per Second",
+          "logBase": 1,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "content": "### Description\n\nThis SLI monitors the shared runner queues on GitLab.com. Each job is an operation.\n\nJobs marked as failing with image pull failures are considered to be in error.\n\n\n\n### Observability Tools\n\n* [📖 Kibana: CI Runners logs](https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.operation,json.job,json.operation,json.repo_url,json.project,json.msg),filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.type,params:'ci-runners',type:phrase),query:(match:(json.type:(query:'ci-runners',type:phrase))))),index:'pubsub-runner-inf-gprd')&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📖 Kibana: CI Runners slow request logs](https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.operation,json.job,json.operation,json.repo_url,json.project,json.msg),filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.type,params:'ci-runners',type:phrase),query:(match:(json.type:(query:'ci-runners',type:phrase)))),(meta:(field:json.duration,index:'pubsub-runner-inf-gprd',key:json.duration,params:(gte:60000000000,lte:!n),type:range),query:(range:(json.duration:(gte:60000000000,lte:!n))))),index:'pubsub-runner-inf-gprd',sort:!(!(json.duration,desc)))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📖 Kibana: CI Runners failed request logs](https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.operation,json.job,json.operation,json.repo_url,json.project,json.msg),filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.type,params:'ci-runners',type:phrase),query:(match:(json.type:(query:'ci-runners',type:phrase)))),(meta:(key:json.msg,params:'Job+failed+(system+failure)',type:phrase),query:(match:(json.msg:(query:'Job+failed+(system+failure)',type:phrase))))),index:'pubsub-runner-inf-gprd')&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: CI Runners requests](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=pubsub-runner-inf-gprd&_a=(filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.type,params:'ci-runners',type:phrase),query:(match:(json.type:(query:'ci-runners',type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(),schema:metric,type:count),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: CI Runners failed requests](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=pubsub-runner-inf-gprd&_a=(filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.type,params:'ci-runners',type:phrase),query:(match:(json.type:(query:'ci-runners',type:phrase)))),(meta:(key:json.msg,params:'Job+failed+(system+failure)',type:phrase),query:(match:(json.msg:(query:'Job+failed+(system+failure)',type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(),schema:metric,type:count),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: CI Runners sum latency aggregated](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=pubsub-runner-inf-gprd&_a=(filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.type,params:'ci-runners',type:phrase),query:(match:(json.type:(query:'ci-runners',type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.duration),schema:metric,type:sum),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram),(enabled:!t,id:'3',params:(field:json.repo_url.keyword,missingBucket:!f,missingBucketLabel:Missing,order:desc,orderBy:'1',otherBucket:!t,otherBucketLabel:Other,size:5),schema:group,type:terms)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'Sum+Request+Duration:+json.duration'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: CI Runners sum latency aggregated (split)](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=pubsub-runner-inf-gprd&_a=(filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.type,params:'ci-runners',type:phrase),query:(match:(json.type:(query:'ci-runners',type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.duration),schema:metric,type:sum),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram),(enabled:!t,id:'3',params:(field:json.repo_url.keyword,missingBucket:!f,missingBucketLabel:Missing,order:desc,orderBy:'1',otherBucket:!t,otherBucketLabel:Other,size:5),schema:group,type:terms)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'Sum+Request+Duration:+json.duration'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: CI Runners percentile latency aggregated](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=pubsub-runner-inf-gprd&_a=(filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.type,params:'ci-runners',type:phrase),query:(match:(json.type:(query:'ci-runners',type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.duration,percents:!(95)),schema:metric,type:percentiles),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'p95+Request+Duration:+json.duration'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: CI Runners percentile latency aggregated (split)](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=pubsub-runner-inf-gprd&_a=(filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.type,params:'ci-runners',type:phrase),query:(match:(json.type:(query:'ci-runners',type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.duration,percents:!(95)),schema:metric,type:percentiles),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram),(enabled:!t,id:'3',params:(field:json.repo_url.keyword,missingBucket:!f,missingBucketLabel:Missing,order:desc,orderAgg:(enabled:!t,id:'3-orderAgg',params:(field:json.duration),schema:orderAgg,type:sum),orderBy:custom,otherBucket:!t,otherBucketLabel:Other,size:5),schema:group,type:terms)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'p95+Request+Duration:+json.duration'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n\n",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 51
+      },
+      "id": 25,
+      "mode": "markdown",
+      "title": "Details",
+      "type": "text"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
       "description": "Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
       "fill": 0,
       "fillGradient": 0,
@@ -2630,7 +3121,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 51
+        "y": 61
       },
       "id": 433168901,
       "legend": {
@@ -2968,9 +3459,9 @@
         "h": 1,
         "w": 6,
         "x": 0,
-        "y": 58
+        "y": 68
       },
-      "id": 23,
+      "id": 27,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -3014,7 +3505,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 51
+        "y": 61
       },
       "id": 3460399973,
       "legend": {
@@ -3341,9 +3832,9 @@
         "h": 1,
         "w": 6,
         "x": 6,
-        "y": 58
+        "y": 68
       },
-      "id": 25,
+      "id": 29,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -3387,7 +3878,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 51
+        "y": 61
       },
       "id": 2477229312,
       "legend": {
@@ -3485,9 +3976,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 51
+        "y": 61
       },
-      "id": 27,
+      "id": 31,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -3505,7 +3996,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 61
+        "y": 71
       },
       "id": 294711071,
       "legend": {
@@ -3832,9 +4323,9 @@
         "h": 1,
         "w": 8,
         "x": 0,
-        "y": 68
+        "y": 78
       },
-      "id": 29,
+      "id": 33,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -3878,7 +4369,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 61
+        "y": 71
       },
       "id": 2495268542,
       "legend": {
@@ -3976,9 +4467,9 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 61
+        "y": 71
       },
-      "id": 31,
+      "id": 35,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -3992,7 +4483,7 @@
         "x": 0,
         "y": 100
       },
-      "id": 32,
+      "id": 36,
       "panels": [
         {
           "bars": false,
@@ -4009,7 +4500,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 33,
+          "id": 37,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4085,7 +4576,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 34,
+          "id": 38,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4161,7 +4652,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 35,
+          "id": 39,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4237,7 +4728,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 36,
+          "id": 40,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4316,7 +4807,7 @@
         "x": 0,
         "y": 110
       },
-      "id": 37,
+      "id": 41,
       "panels": [
         {
           "bars": false,
@@ -4333,7 +4824,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 38,
+          "id": 42,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4428,7 +4919,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 39,
+          "id": 43,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4504,7 +4995,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 40,
+          "id": 44,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4599,7 +5090,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 41,
+          "id": 45,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4680,7 +5171,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 42,
+          "id": 46,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4759,7 +5250,331 @@
         "x": 0,
         "y": 120
       },
-      "id": 43,
+      "id": 47,
+      "panels": [
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 0
+          },
+          "id": 48,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by () (\n  rate(gitlab_runner_failed_jobs_total{env=\"$environment\",environment=\"$environment\",failure_reason=\"image_pull_failure\",job=\"runners-manager\",shard=\"shared\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "overall",
+              "refId": "A"
+            }
+          ],
+          "title": "shared_runner_image_pull_failures Errors - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 0
+          },
+          "id": 49,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by () (\n  rate(gitlab_runner_jobs_total{env=\"$environment\",environment=\"$environment\",job=\"runners-manager\",shard=\"shared\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "overall",
+              "refId": "A"
+            }
+          ],
+          "title": "shared_runner_image_pull_failures RPS - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 10
+          },
+          "id": 50,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (jobs_running_for_project) (\n  rate(gitlab_runner_failed_jobs_total{env=\"$environment\",environment=\"$environment\",failure_reason=\"image_pull_failure\",job=\"runners-manager\",jobs_running_for_project!=\"\",shard=\"shared\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{jobs_running_for_project}}",
+              "refId": "A"
+            }
+          ],
+          "title": "shared_runner_image_pull_failures Errors - per jobs_running_for_project",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 10
+          },
+          "id": 51,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (jobs_running_for_project) (\n  rate(gitlab_runner_jobs_total{env=\"$environment\",environment=\"$environment\",job=\"runners-manager\",jobs_running_for_project!=\"\",shard=\"shared\",stage=\"$stage\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{jobs_running_for_project}}",
+              "refId": "A"
+            }
+          ],
+          "title": "shared_runner_image_pull_failures RPS - per jobs_running_for_project",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "🔬 SLI Detail: shared_runner_image_pull_failures",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "collapse": true,
+      "collapsed": true,
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 130
+      },
+      "id": 52,
       "panels": [
         {
           "bars": false,
@@ -4776,7 +5591,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 44,
+          "id": 53,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4871,7 +5686,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 45,
+          "id": 54,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4947,7 +5762,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 46,
+          "id": 55,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5023,7 +5838,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 47,
+          "id": 56,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5118,7 +5933,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 48,
+          "id": 57,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5199,7 +6014,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 49,
+          "id": 58,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5275,7 +6090,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 50,
+          "id": 59,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5352,9 +6167,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 130
+        "y": 140
       },
-      "id": 51,
+      "id": 60,
       "panels": [
         {
           "bars": false,
@@ -5371,7 +6186,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 52,
+          "id": 61,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5447,7 +6262,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 53,
+          "id": 62,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5526,7 +6341,7 @@
         "x": 0,
         "y": 300
       },
-      "id": 54,
+      "id": 63,
       "panels": [
         {
           "aliasColors": {
@@ -5545,7 +6360,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 55,
+          "id": 64,
           "legend": {
             "alignAsTable": false,
             "avg": false,
@@ -5643,7 +6458,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 56,
+          "id": 65,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5739,7 +6554,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 57,
+          "id": 66,
           "legend": {
             "alignAsTable": false,
             "avg": false,
@@ -5848,7 +6663,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 58,
+          "id": 67,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5944,7 +6759,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 59,
+          "id": 68,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6042,7 +6857,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 60,
+          "id": 69,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6140,7 +6955,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 61,
+          "id": 70,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6238,7 +7053,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 62,
+          "id": 71,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6336,7 +7151,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 63,
+          "id": 72,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6434,7 +7249,7 @@
             "x": 12,
             "y": 40
           },
-          "id": 64,
+          "id": 73,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6532,7 +7347,7 @@
             "x": 0,
             "y": 50
           },
-          "id": 65,
+          "id": 74,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6647,7 +7462,7 @@
             "x": 12,
             "y": 50
           },
-          "id": 66,
+          "id": 75,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6762,7 +7577,7 @@
             "x": 0,
             "y": 60
           },
-          "id": 67,
+          "id": 76,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6877,7 +7692,7 @@
             "x": 12,
             "y": 60
           },
-          "id": 68,
+          "id": 77,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6993,7 +7808,7 @@
         "x": 0,
         "y": 500
       },
-      "id": 69,
+      "id": 78,
       "panels": [
         {
           "aliasColors": {
@@ -9341,7 +10156,7 @@
         "x": 0,
         "y": 350
       },
-      "id": 82,
+      "id": 91,
       "panels": [
         {
           "aliasColors": {
@@ -9360,7 +10175,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 83,
+          "id": 92,
           "legend": {
             "alignAsTable": false,
             "avg": false,
@@ -9458,7 +10273,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 84,
+          "id": 93,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9554,7 +10369,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 85,
+          "id": 94,
           "legend": {
             "alignAsTable": false,
             "avg": false,
@@ -9663,7 +10478,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 86,
+          "id": 95,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9759,7 +10574,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 87,
+          "id": 96,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9857,7 +10672,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 88,
+          "id": 97,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9955,7 +10770,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 89,
+          "id": 98,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10053,7 +10868,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 90,
+          "id": 99,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10151,7 +10966,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 91,
+          "id": 100,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10249,7 +11064,7 @@
             "x": 12,
             "y": 40
           },
-          "id": 92,
+          "id": 101,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10347,7 +11162,7 @@
             "x": 0,
             "y": 50
           },
-          "id": 93,
+          "id": 102,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10462,7 +11277,7 @@
             "x": 12,
             "y": 50
           },
-          "id": 94,
+          "id": 103,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10577,7 +11392,7 @@
             "x": 0,
             "y": 60
           },
-          "id": 95,
+          "id": 104,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10692,7 +11507,7 @@
             "x": 12,
             "y": 60
           },
-          "id": 96,
+          "id": 105,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10808,7 +11623,7 @@
         "x": 0,
         "y": 400
       },
-      "id": 97,
+      "id": 106,
       "panels": [
         {
           "aliasColors": {
@@ -10827,7 +11642,7 @@
             "x": 0,
             "y": 401
           },
-          "id": 98,
+          "id": 107,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10925,7 +11740,7 @@
             "x": 12,
             "y": 401
           },
-          "id": 99,
+          "id": 108,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11023,7 +11838,7 @@
             "x": 0,
             "y": 411
           },
-          "id": 100,
+          "id": 109,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11121,7 +11936,7 @@
             "x": 12,
             "y": 411
           },
-          "id": 101,
+          "id": 110,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11219,7 +12034,7 @@
             "x": 0,
             "y": 421
           },
-          "id": 102,
+          "id": 111,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11316,7 +12131,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 103,
+      "id": 112,
       "panels": [
         {
           "colors": [
@@ -11337,7 +12152,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 104,
+          "id": 113,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -11450,7 +12265,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 105,
+          "id": 114,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -11561,7 +12376,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 106,
+          "id": 115,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -11666,7 +12481,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 107,
+      "id": 116,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -11789,5 +12604,5 @@
   "timezone": "utc",
   "title": "ci-runners: Overview",
   "uid": "ci-runners-main",
-  "version": 3961
+  "version": 3964
 }

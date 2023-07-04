@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4588201603 at Tue Jul  4 06:52:54 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4592140338 at Tue Jul  4 15:52:02 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -2831,6 +2831,224 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
+          "description": "Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 40
+          },
+          "id": 37,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": [
+              {
+                "targetBlank": true,
+                "title": "shared_runner_image_pull_failures SLI Error-Rate SLO Analysis",
+                "url": "/d/alerts-service_component_stage_groups_slo_error?${__url_time_range}&${__all_variables}&var-component=shared_runner_image_pull_failures&var-stage=$stage"
+              }
+            ]
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "6h Degradation SLO (5% of monthly error budget)",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "1h Outage SLO (2% of monthly error budget)",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "sli-shared_runner_image_pull_failures-error-rate",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_max(\n  max_over_time(gitlab:component:stage_group:execution:error:ratio_5m{component=\"shared_runner_image_pull_failures\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner\"}[$__interval])\n,\n  1\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{ type }} error ratio",
+              "refId": "A"
+            },
+            {
+              "expr": "(6 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"shared_runner_image_pull_failures\",monitor=\"global\"})\n)\n",
+              "format": "time_series",
+              "interval": "5m",
+              "intervalFactor": 1,
+              "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+              "refId": "B"
+            },
+            {
+              "expr": "(14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"shared_runner_image_pull_failures\",monitor=\"global\"})\n)\n",
+              "format": "time_series",
+              "interval": "5m",
+              "intervalFactor": 1,
+              "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+              "refId": "C"
+            }
+          ],
+          "title": "shared_runner_image_pull_failures SLI Error Ratio",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Error %",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 8,
+            "y": 40
+          },
+          "id": 38,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stableId": "sli-shared_runner_image_pull_failures-ops-rate",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "avg_over_time(gitlab:component:stage_group:execution:ops:rate_5m{component=\"shared_runner_image_pull_failures\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"runner\"}[$__interval])\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{ type }} RPS",
+              "refId": "A"
+            }
+          ],
+          "title": "shared_runner_image_pull_failures SLI RPS - Requests per Second",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Operations per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "content": "### Description\n\nThis SLI monitors the shared runner queues on GitLab.com. Each job is an operation.\n\nJobs marked as failing with image pull failures are considered to be in error.\n\n\n\n### Observability Tools\n\n* [📖 Kibana: CI Runners logs](https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.operation,json.job,json.operation,json.repo_url,json.project,json.msg),filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase))))),index:'pubsub-runner-inf-gprd')&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📖 Kibana: CI Runners slow request logs](https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.operation,json.job,json.operation,json.repo_url,json.project,json.msg),filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(field:json.duration,index:'pubsub-runner-inf-gprd',key:json.duration,params:(gte:60000000000,lte:!n),type:range),query:(range:(json.duration:(gte:60000000000,lte:!n))))),index:'pubsub-runner-inf-gprd',sort:!(!(json.duration,desc)))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📖 Kibana: CI Runners failed request logs](https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.operation,json.job,json.operation,json.repo_url,json.project,json.msg),filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.msg,params:'Job+failed+(system+failure)',type:phrase),query:(match:(json.msg:(query:'Job+failed+(system+failure)',type:phrase))))),index:'pubsub-runner-inf-gprd')&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: CI Runners requests](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=pubsub-runner-inf-gprd&_a=(filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(),schema:metric,type:count),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: CI Runners failed requests](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=pubsub-runner-inf-gprd&_a=(filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase)))),(meta:(key:json.msg,params:'Job+failed+(system+failure)',type:phrase),query:(match:(json.msg:(query:'Job+failed+(system+failure)',type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(),schema:metric,type:count),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: CI Runners sum latency aggregated](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=pubsub-runner-inf-gprd&_a=(filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.duration),schema:metric,type:sum),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram),(enabled:!t,id:'3',params:(field:json.repo_url.keyword,missingBucket:!f,missingBucketLabel:Missing,order:desc,orderBy:'1',otherBucket:!t,otherBucketLabel:Other,size:5),schema:group,type:terms)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'Sum+Request+Duration:+json.duration'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: CI Runners sum latency aggregated (split)](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=pubsub-runner-inf-gprd&_a=(filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.duration),schema:metric,type:sum),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram),(enabled:!t,id:'3',params:(field:json.repo_url.keyword,missingBucket:!f,missingBucketLabel:Missing,order:desc,orderBy:'1',otherBucket:!t,otherBucketLabel:Other,size:5),schema:group,type:terms)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'Sum+Request+Duration:+json.duration'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: CI Runners percentile latency aggregated](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=pubsub-runner-inf-gprd&_a=(filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.duration,percents:!(95)),schema:metric,type:percentiles),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'p95+Request+Duration:+json.duration'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n* [📈 Kibana: CI Runners percentile latency aggregated (split)](https://log.gprd.gitlab.net/app/kibana#/visualize/create?type=line&indexPattern=pubsub-runner-inf-gprd&_a=(filters:!((meta:(key:json.stage,params:'$stage',type:phrase),query:(match:(json.stage:(query:'$stage',type:phrase))))),query:(language:kuery,query:''),vis:(aggs:!((enabled:!t,id:'1',params:(field:json.duration,percents:!(95)),schema:metric,type:percentiles),(enabled:!t,id:'2',params:(drop_partials:!t,extended_bounds:(),field:'@timestamp',interval:auto,min_doc_count:1,scaleMetricValues:!f,timeRange:(from:'${__from:date:iso}',to:'${__to:date:iso}'),useNormalizedEsInterval:!t),schema:segment,type:date_histogram),(enabled:!t,id:'3',params:(field:json.repo_url.keyword,missingBucket:!f,missingBucketLabel:Missing,order:desc,orderAgg:(enabled:!t,id:'3-orderAgg',params:(field:json.duration),schema:orderAgg,type:sum),orderBy:custom,otherBucket:!t,otherBucketLabel:Other,size:5),schema:group,type:terms)),params:(valueAxes:!((id:'ValueAxis-1',name:'LeftAxis-1',position:left,scale:(mode:normal,type:linear),show:!t,style:(),title:(text:'p95+Request+Duration:+json.duration'),type:value)))))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n\n",
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 16,
+            "y": 40
+          },
+          "id": 39,
+          "mode": "markdown",
+          "title": "Details",
+          "type": "text"
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
           "description": "Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
           "fill": 0,
           "fillGradient": 0,
@@ -2838,9 +3056,9 @@
             "h": 10,
             "w": 6,
             "x": 0,
-            "y": 40
+            "y": 50
           },
-          "id": 37,
+          "id": 40,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2978,9 +3196,9 @@
             "h": 10,
             "w": 6,
             "x": 6,
-            "y": 40
+            "y": 50
           },
-          "id": 38,
+          "id": 41,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3106,9 +3324,9 @@
             "h": 10,
             "w": 6,
             "x": 12,
-            "y": 40
+            "y": 50
           },
-          "id": 39,
+          "id": 42,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3176,9 +3394,9 @@
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 40
+            "y": 50
           },
-          "id": 40,
+          "id": 43,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -3308,5 +3526,5 @@
   "timezone": "utc",
   "title": "stage-groups: Runner: group error budget detail",
   "uid": "stage-groups-detail-runner",
-  "version": 1526
+  "version": 1529
 }
