@@ -126,7 +126,7 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
-      "description": "Disk inode utilization per device per node.\n\nIf this is too high, its possible that a directory is filling up with\nfiles. Consider logging in an checking temp directories for large numbers\nof files\n Lower is better.",
+      "description": "GCP Quota utilization / limit ratio\n\nSaturation on a quota may cause problems with creating infrastructure resources on GCP.\n\nTo fix, we can request a quota increase for the specific resource to the GCP support team.\n Lower is better.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -135,7 +135,7 @@
         "x": 0,
         "y": 0
       },
-      "id": 39965907,
+      "id": 1515902021,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -219,20 +219,20 @@
         }
       ],
       "spaceLength": 10,
-      "stableId": "saturation-disk_inodes",
+      "stableId": "saturation-gcp_quota_limit_vertex_ai",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn, device) (\n  clamp_min(\n    clamp_max(\n      1 - (\n        node_filesystem_files_free{fstype=~\"(ext.|xfs)\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n        /\n        node_filesystem_files{fstype=~\"(ext.|xfs)\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, model_engine, model_name) (\n  clamp_min(\n    clamp_max(\n      (\n        rate(code_suggestions_inference_requests_total{model_engine=\"vertex-ai\",model_name=\"PalmModel.CODE_GECKO\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}[1m]) * 60\n        /\n        1000\n      ) > 0\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{ fqdn }} {{ device }}",
+          "legendFormat": "{{ model_engine }} {{ model_name }}",
           "refId": "A"
         },
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"disk_inodes\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"gcp_quota_limit_vertex_ai\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -240,7 +240,7 @@
           "refId": "B"
         },
         {
-          "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"disk_inodes\"}\n)\n",
+          "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"gcp_quota_limit_vertex_ai\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -248,7 +248,7 @@
           "refId": "C"
         },
         {
-          "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"disk_inodes\"}\n)\n",
+          "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"gcp_quota_limit_vertex_ai\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -256,7 +256,7 @@
           "refId": "D"
         },
         {
-          "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"disk_inodes\"}) by (component)\n",
+          "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"gcp_quota_limit_vertex_ai\"}) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -264,7 +264,7 @@
           "refId": "E"
         },
         {
-          "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"disk_inodes\"}) by (component)\n",
+          "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"gcp_quota_limit_vertex_ai\"}) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -277,7 +277,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "disk_inodes component saturation: Disk inode Utilization per Device per Node",
+      "title": "gcp_quota_limit_vertex_ai component saturation: GCP Quota utilization per environment",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -313,7 +313,7 @@
       ]
     },
     {
-      "content": "## Disk inode Utilization per Device per Node\n\nDisk inode utilization per device per node.\n\nIf this is too high, its possible that a directory is filling up with\nfiles. Consider logging in an checking temp directories for large numbers\nof files\n\n\n## What to do from here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=disk_inodes)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+disk_inodes&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
+      "content": "## GCP Quota utilization per environment\n\nGCP Quota utilization / limit ratio\n\nSaturation on a quota may cause problems with creating infrastructure resources on GCP.\n\nTo fix, we can request a quota increase for the specific resource to the GCP support team.\n\n\n## What to do from here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=gcp_quota_limit_vertex_ai)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+gcp_quota_limit_vertex_ai&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
       "datasource": null,
       "gridPos": {
         "h": 14,
@@ -468,8 +468,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "gitaly",
-          "value": "gitaly"
+          "text": "code_suggestions",
+          "value": "code_suggestions"
         },
         "datasource": "$PROMETHEUS_DS",
         "hide": 0,
@@ -548,7 +548,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "alerts: disk inodes: Saturation Detail",
-  "uid": "alerts-sat_disk_inodes",
-  "version": 3114
+  "title": "alerts: gcp quota limit vertex ai: Saturation Detail",
+  "uid": "alerts-sat_gcp_quota_limit_vertex_ai",
+  "version": 1
 }
