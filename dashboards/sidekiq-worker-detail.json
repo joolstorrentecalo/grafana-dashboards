@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4621435827 at Mon Jul 10 07:21:29 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4627950035 at Mon Jul 10 23:46:50 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -3027,7 +3027,7 @@
       "repeatIteration": null,
       "repeatRowId": null,
       "showTitle": true,
-      "title": "Deferred Jobs",
+      "title": "Skipped Jobs",
       "titleSize": "h6",
       "type": "row"
     },
@@ -3039,7 +3039,7 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 0,
-      "description": "Jobs deferred intentionally via feature flag `defer_sidekiq_jobs_<worker_name>`",
+      "description": "Jobs skipped (dropped/deferred) intentionally via feature flag `drop_sidekiq_jobs_<worker_name>` or `run_sidekiq_jobs_<worker_name>`",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -3048,7 +3048,7 @@
         "x": 0,
         "y": 802
       },
-      "id": 1760026825,
+      "id": 2019205131,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -3077,16 +3077,16 @@
 
       ],
       "spaceLength": 10,
-      "stableId": "jobs-deferred",
+      "stableId": "jobs-skipped",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (environment, worker)  (\n  rate(\n    sidekiq_jobs_deferred_total{environment=\"$environment\", worker=~\"$worker\"}[$__interval]\n    )\n  )\n  > 0\n",
+          "expr": "sum by (environment, worker, action)  (\n  rate(\n    sidekiq_jobs_skipped_total{environment=\"$environment\", worker=~\"$worker\"}[$__interval]\n    )\n  )\n  > 0\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{ worker }}",
+          "legendFormat": "{{ worker }} - {{ action }}",
           "refId": "A"
         }
       ],
@@ -3095,7 +3095,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Jobs Deferred",
+      "title": "Jobs Skipped",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -3287,5 +3287,5 @@
   "timezone": "utc",
   "title": "sidekiq: Worker Detail",
   "uid": "sidekiq-worker-detail",
-  "version": 2292
+  "version": 2295
 }

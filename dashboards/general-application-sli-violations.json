@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4621435827 at Mon Jul 10 07:22:06 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4627950035 at Mon Jul 10 23:47:30 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -299,7 +299,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Category"
+                  "options": "feature_category"
                 },
                 "properties": [
                   {
@@ -311,7 +311,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Stage Group"
+                  "options": "stage_group"
                 },
                 "properties": [
                   {
@@ -323,7 +323,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Urgency"
+                  "options": "request_urgency"
                 },
                 "properties": [
                   {
@@ -350,7 +350,41 @@
                   },
                   {
                     "id": "custom.width",
-                    "value": 120
+                    "value": 150
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "query_urgency"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "default": {
+                            "text": "🟠 default"
+                          },
+                          "high": {
+                            "text": "🟢 high"
+                          },
+                          "low": {
+                            "text": "🔴 low"
+                          },
+                          "medium": {
+                            "text": "🟡 medium"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 150
                   }
                 ]
               },
@@ -393,7 +427,19 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Operations"
+                  "options": "type"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 120
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "operations"
                 },
                 "properties": [
                   {
@@ -409,7 +455,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Apdex"
+                  "options": "apdex"
                 },
                 "properties": [
                   {
@@ -454,7 +500,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Errors"
+                  "options": "errors"
                 },
                 "properties": [
                   {
@@ -512,14 +558,14 @@
             "sortBy": [
               {
                 "desc": true,
-                "displayName": "Operations"
+                "displayName": "operations"
               }
             ]
           },
           "styles": null,
           "targets": [
             {
-              "expr": "ceil(\n  (\n    sum by(document_type,endpoint_id,feature_category,query_urgency,request_urgency,search_level,search_scope,search_type) (\n      sum_over_time(application_sli_aggregation:$component:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__range])\n    )\n    * on (feature_category) group_left(stage_group) gitlab:feature_category:stage_group:mapping{monitor=\"global\",product_stage=~\"$product_stage\",stage_group=~\"$stage_group\"}\n    or on () (sum by(document_type,endpoint_id,feature_category,query_urgency,request_urgency,search_level,search_scope,search_type) (\n      sum_over_time(application_sli_aggregation:$component:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__range])\n    )\n    )\n  ) * 60\n)\n",
+              "expr": "ceil(\n  (\n    sum by(document_type,endpoint_id,feature_category,query_urgency,request_urgency,search_level,search_scope,search_type,type) (\n      sum_over_time({__name__=~\"application_sli_aggregation:($component):ops:rate_1h\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__range])\n    )\n    * on (feature_category) group_left(stage_group) gitlab:feature_category:stage_group:mapping{monitor=\"global\",product_stage=~\"$product_stage\",stage_group=~\"$stage_group\"}\n    or on () (sum by(document_type,endpoint_id,feature_category,query_urgency,request_urgency,search_level,search_scope,search_type,type) (\n      sum_over_time({__name__=~\"application_sli_aggregation:($component):ops:rate_1h\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__range])\n    )\n    )\n  ) * 60\n)\n",
               "format": "table",
               "instant": true,
               "interval": "1m",
@@ -528,7 +574,7 @@
               "refId": "A"
             },
             {
-              "expr": "clamp_max(\n  sum by(document_type,endpoint_id,feature_category,query_urgency,request_urgency,search_level,search_scope,search_type) (\n    sum_over_time(application_sli_aggregation:$component:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__range]) > 0\n  )\n  /\n  sum by(document_type,endpoint_id,feature_category,query_urgency,request_urgency,search_level,search_scope,search_type) (\n    sum_over_time(application_sli_aggregation:$component:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__range]) > 0\n  )\n, 1\n)\n\n* on (feature_category) group_left(stage_group) gitlab:feature_category:stage_group:mapping{monitor=\"global\",product_stage=~\"$product_stage\",stage_group=~\"$stage_group\"}\nor on () (clamp_max(\n  sum by(document_type,endpoint_id,feature_category,query_urgency,request_urgency,search_level,search_scope,search_type) (\n    sum_over_time(application_sli_aggregation:$component:apdex:success:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__range]) > 0\n  )\n  /\n  sum by(document_type,endpoint_id,feature_category,query_urgency,request_urgency,search_level,search_scope,search_type) (\n    sum_over_time(application_sli_aggregation:$component:apdex:weight:score_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__range]) > 0\n  )\n, 1\n)\n)\n",
+              "expr": "clamp_max(\n  sum by(document_type,endpoint_id,feature_category,query_urgency,request_urgency,search_level,search_scope,search_type,type) (\n    sum_over_time({__name__=~\"application_sli_aggregation:($component):apdex:success:rate_1h\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__range]) > 0\n  )\n  /\n  sum by(document_type,endpoint_id,feature_category,query_urgency,request_urgency,search_level,search_scope,search_type,type) (\n    sum_over_time({__name__=~\"application_sli_aggregation:($component):apdex:weight:score_1h\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__range]) > 0\n  )\n, 1\n)\n\n* on (feature_category) group_left(stage_group) gitlab:feature_category:stage_group:mapping{monitor=\"global\",product_stage=~\"$product_stage\",stage_group=~\"$stage_group\"}\nor on () (clamp_max(\n  sum by(document_type,endpoint_id,feature_category,query_urgency,request_urgency,search_level,search_scope,search_type,type) (\n    sum_over_time({__name__=~\"application_sli_aggregation:($component):apdex:success:rate_1h\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__range]) > 0\n  )\n  /\n  sum by(document_type,endpoint_id,feature_category,query_urgency,request_urgency,search_level,search_scope,search_type,type) (\n    sum_over_time({__name__=~\"application_sli_aggregation:($component):apdex:weight:score_1h\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__range]) > 0\n  )\n, 1\n)\n)\n",
               "format": "table",
               "instant": true,
               "interval": "1m",
@@ -537,7 +583,7 @@
               "refId": "B"
             },
             {
-              "expr": "clamp_max(\n  sum by(document_type,endpoint_id,feature_category,query_urgency,request_urgency,search_level,search_scope,search_type) (\n    sum_over_time(application_sli_aggregation:$component:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__range])\n  )\n  /\n  sum by(document_type,endpoint_id,feature_category,query_urgency,request_urgency,search_level,search_scope,search_type) (\n    sum_over_time(application_sli_aggregation:$component:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__range])\n  )\n, 1\n)\n\n* on (feature_category) group_left(stage_group) gitlab:feature_category:stage_group:mapping{monitor=\"global\",product_stage=~\"$product_stage\",stage_group=~\"$stage_group\"}\nor on () (clamp_max(\n  sum by(document_type,endpoint_id,feature_category,query_urgency,request_urgency,search_level,search_scope,search_type) (\n    sum_over_time(application_sli_aggregation:$component:error:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__range])\n  )\n  /\n  sum by(document_type,endpoint_id,feature_category,query_urgency,request_urgency,search_level,search_scope,search_type) (\n    sum_over_time(application_sli_aggregation:$component:ops:rate_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__range])\n  )\n, 1\n)\n)\n",
+              "expr": "clamp_max(\n  sum by(document_type,endpoint_id,feature_category,query_urgency,request_urgency,search_level,search_scope,search_type,type) (\n    sum_over_time({__name__=~\"application_sli_aggregation:($component):error:rate_1h\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__range])\n  )\n  /\n  sum by(document_type,endpoint_id,feature_category,query_urgency,request_urgency,search_level,search_scope,search_type,type) (\n    sum_over_time({__name__=~\"application_sli_aggregation:($component):ops:rate_1h\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__range])\n  )\n, 1\n)\n\n* on (feature_category) group_left(stage_group) gitlab:feature_category:stage_group:mapping{monitor=\"global\",product_stage=~\"$product_stage\",stage_group=~\"$stage_group\"}\nor on () (clamp_max(\n  sum by(document_type,endpoint_id,feature_category,query_urgency,request_urgency,search_level,search_scope,search_type,type) (\n    sum_over_time({__name__=~\"application_sli_aggregation:($component):error:rate_1h\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__range])\n  )\n  /\n  sum by(document_type,endpoint_id,feature_category,query_urgency,request_urgency,search_level,search_scope,search_type,type) (\n    sum_over_time({__name__=~\"application_sli_aggregation:($component):ops:rate_1h\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__range])\n  )\n, 1\n)\n)\n",
               "format": "table",
               "instant": true,
               "interval": "1m",
@@ -557,49 +603,21 @@
               "id": "renameByRegex",
               "options": {
                 "regex": "Value #A",
-                "renamePattern": "Operations"
+                "renamePattern": "operations"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "Value #B",
-                "renamePattern": "Apdex"
+                "renamePattern": "apdex"
               }
             },
             {
               "id": "renameByRegex",
               "options": {
                 "regex": "Value #C",
-                "renamePattern": "Errors"
-              }
-            },
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "feature_category",
-                "renamePattern": "Category"
-              }
-            },
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "stage_group",
-                "renamePattern": "Stage Group"
-              }
-            },
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "request_urgency",
-                "renamePattern": "Urgency"
-              }
-            },
-            {
-              "id": "renameByRegex",
-              "options": {
-                "regex": "query_urgency",
-                "renamePattern": "Urgency"
+                "renamePattern": "errors"
               }
             },
             {
@@ -610,17 +628,19 @@
                   "env": true
                 },
                 "indexByName": {
-                  "Apdex": 10,
-                  "Category": 2,
-                  "Errors": 11,
-                  "Operations": 9,
-                  "Stage Group": 3,
-                  "Urgency": 4,
-                  "document_type": 8,
+                  "apdex": 12,
+                  "document_type": 9,
                   "endpoint_id": 1,
-                  "search_level": 5,
-                  "search_scope": 6,
-                  "search_type": 7
+                  "errors": 13,
+                  "feature_category": 2,
+                  "operations": 11,
+                  "query_urgency": 5,
+                  "request_urgency": 4,
+                  "search_level": 6,
+                  "search_scope": 7,
+                  "search_type": 8,
+                  "stage_group": 3,
+                  "type": 10
                 }
               }
             }
@@ -822,7 +842,7 @@
         "hide": 0,
         "includeAll": false,
         "label": null,
-        "multi": false,
+        "multi": true,
         "name": "component",
         "options": [
 
@@ -868,5 +888,5 @@
   "timezone": "utc",
   "title": "general: Application SLI Violations",
   "uid": "general-application-sli-violations",
-  "version": 55
+  "version": 58
 }
