@@ -266,7 +266,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab:component:feature_category:execution:apdex:ratio_1h{component=\"$component\",environment=\"$environment\",feature_category=\"$feature_category\",monitor=\"global\",stage=\"$stage\",type=\"$type\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab:component:feature_category:execution:apdex:ratio_5m{component=\"$component\",environment=\"$environment\",feature_category=\"$feature_category\",monitor=\"global\",stage=\"$stage\",type=\"$type\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"$component\",monitor=\"global\",type=\"$type\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab:component:feature_category:execution:apdex:ratio_1h{component=\"$component\",environment=\"$environment\",feature_category=\"$feature_category\",monitor=\"global\",stage=\"$stage\",type=\"$type\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"$component\",monitor=\"global\",type=\"$type\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab:component:feature_category:execution:apdex:ratio_30m{component=\"$component\",environment=\"$environment\",feature_category=\"$feature_category\",monitor=\"global\",stage=\"$stage\",type=\"$type\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"$component\",monitor=\"global\",type=\"$type\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab:component:feature_category:execution:apdex:ratio_6h{component=\"$component\",environment=\"$environment\",feature_category=\"$feature_category\",monitor=\"global\",stage=\"$stage\",type=\"$type\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"$component\",monitor=\"global\",type=\"$type\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_shard_apdex:ratio_1h{component=\"$component\",environment=\"$environment\",monitor=\"global\",shard=\"$shard\",stage=\"$stage\",type=\"$type\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_shard_apdex:ratio_5m{component=\"$component\",environment=\"$environment\",monitor=\"global\",shard=\"$shard\",stage=\"$stage\",type=\"$type\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"$component\",monitor=\"global\",type=\"$type\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_shard_apdex:ratio_1h{component=\"$component\",environment=\"$environment\",monitor=\"global\",shard=\"$shard\",stage=\"$stage\",type=\"$type\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"$component\",monitor=\"global\",type=\"$type\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_shard_apdex:ratio_30m{component=\"$component\",environment=\"$environment\",monitor=\"global\",shard=\"$shard\",stage=\"$stage\",type=\"$type\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"$component\",monitor=\"global\",type=\"$type\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_shard_apdex:ratio_6h{component=\"$component\",environment=\"$environment\",monitor=\"global\",shard=\"$shard\",stage=\"$stage\",type=\"$type\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"$component\",monitor=\"global\",type=\"$type\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -356,7 +356,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "avg(slo:max:events:gitlab_service_errors:ratio{monitor=\"global\",type=\"$type\"}) by (type)",
+          "expr": "avg(slo:min:events:gitlab_service_apdex:ratio{monitor=\"global\",type=\"$type\"}) by (type)",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -479,31 +479,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(clamp_max(gitlab:component:feature_category:execution:error:ratio_1h{component=\"$component\",environment=\"$environment\",feature_category=\"$feature_category\",monitor=\"global\",stage=\"$stage\",type=\"$type\"}\n,1),0)\n",
+          "expr": "clamp_min(clamp_max(gitlab_component_shard_apdex:ratio_1h{component=\"$component\",environment=\"$environment\",monitor=\"global\",shard=\"$shard\",stage=\"$stage\",type=\"$type\"}\n,1),0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "1h error burn rate",
+          "legendFormat": "1h apdex burn rate",
           "refId": "A"
         },
         {
-          "expr": "gitlab:component:feature_category:execution:error:ratio_5m{component=\"$component\",environment=\"$environment\",feature_category=\"$feature_category\",monitor=\"global\",stage=\"$stage\",type=\"$type\"}\n",
+          "expr": "gitlab_component_shard_apdex:ratio_5m{component=\"$component\",environment=\"$environment\",monitor=\"global\",shard=\"$shard\",stage=\"$stage\",type=\"$type\"}\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "5m error burn rate",
+          "legendFormat": "5m apdex burn rate",
           "refId": "B"
         },
         {
-          "expr": "(14.4 * avg(slo:max:events:gitlab_service_errors:ratio{monitor=\"global\", type=\"$type\"})) unless (vector($proposed_slo) > 0)",
+          "expr": "(1 - (14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{monitor=\"global\", type=\"$type\"})))) unless (vector($proposed_slo) > 0) ",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "1h error burn threshold",
+          "legendFormat": "1h apdex burn threshold",
           "refId": "C"
         },
         {
-          "expr": "14.4 * (1 - $proposed_slo)",
+          "expr": "1 - (14.4 * (1 - $proposed_slo))",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -511,31 +511,31 @@
           "refId": "D"
         },
         {
-          "expr": "gitlab:component:feature_category:execution:error:ratio_6h{component=\"$component\",environment=\"$environment\",feature_category=\"$feature_category\",monitor=\"global\",stage=\"$stage\",type=\"$type\"}\n",
+          "expr": "gitlab_component_shard_apdex:ratio_6h{component=\"$component\",environment=\"$environment\",monitor=\"global\",shard=\"$shard\",stage=\"$stage\",type=\"$type\"}\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "6h error burn rate",
+          "legendFormat": "6h apdex burn rate",
           "refId": "E"
         },
         {
-          "expr": "gitlab:component:feature_category:execution:error:ratio_30m{component=\"$component\",environment=\"$environment\",feature_category=\"$feature_category\",monitor=\"global\",stage=\"$stage\",type=\"$type\"}\n",
+          "expr": "gitlab_component_shard_apdex:ratio_30m{component=\"$component\",environment=\"$environment\",monitor=\"global\",shard=\"$shard\",stage=\"$stage\",type=\"$type\"}\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "30m error burn rate",
+          "legendFormat": "30m apdex burn rate",
           "refId": "F"
         },
         {
-          "expr": "(6 * avg(slo:max:events:gitlab_service_errors:ratio{monitor=\"global\", type=\"$type\"})) unless (vector($proposed_slo) > 0)",
+          "expr": "(1 - (6 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{monitor=\"global\", type=\"$type\"})))) unless (vector($proposed_slo) > 0) ",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "6h error burn threshold",
+          "legendFormat": "6h apdex burn threshold",
           "refId": "G"
         },
         {
-          "expr": "6 * (1 - $proposed_slo)",
+          "expr": "1 - (6 * (1 - $proposed_slo))",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -690,31 +690,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(clamp_max(gitlab:component:feature_category:execution:error:ratio_1h{component=\"$component\",environment=\"$environment\",feature_category=\"$feature_category\",monitor=\"global\",stage=\"$stage\",type=\"$type\"}\n,1),0)\n",
+          "expr": "clamp_min(clamp_max(gitlab_component_shard_apdex:ratio_1h{component=\"$component\",environment=\"$environment\",monitor=\"global\",shard=\"$shard\",stage=\"$stage\",type=\"$type\"}\n,1),0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "1h error burn rate",
+          "legendFormat": "1h apdex burn rate",
           "refId": "A"
         },
         {
-          "expr": "gitlab:component:feature_category:execution:error:ratio_5m{component=\"$component\",environment=\"$environment\",feature_category=\"$feature_category\",monitor=\"global\",stage=\"$stage\",type=\"$type\"}\n",
+          "expr": "gitlab_component_shard_apdex:ratio_5m{component=\"$component\",environment=\"$environment\",monitor=\"global\",shard=\"$shard\",stage=\"$stage\",type=\"$type\"}\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "5m error burn rate",
+          "legendFormat": "5m apdex burn rate",
           "refId": "B"
         },
         {
-          "expr": "(14.4 * avg(slo:max:events:gitlab_service_errors:ratio{monitor=\"global\", type=\"$type\"})) unless (vector($proposed_slo) > 0)",
+          "expr": "(1 - (14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{monitor=\"global\", type=\"$type\"})))) unless (vector($proposed_slo) > 0) ",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "1h error burn threshold",
+          "legendFormat": "1h apdex burn threshold",
           "refId": "C"
         },
         {
-          "expr": "14.4 * (1 - $proposed_slo)",
+          "expr": "1 - (14.4 * (1 - $proposed_slo))",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -869,31 +869,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(clamp_max(gitlab:component:feature_category:execution:error:ratio_6h{component=\"$component\",environment=\"$environment\",feature_category=\"$feature_category\",monitor=\"global\",stage=\"$stage\",type=\"$type\"}\n,1),0)\n",
+          "expr": "clamp_min(clamp_max(gitlab_component_shard_apdex:ratio_6h{component=\"$component\",environment=\"$environment\",monitor=\"global\",shard=\"$shard\",stage=\"$stage\",type=\"$type\"}\n,1),0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "6h error burn rate",
+          "legendFormat": "6h apdex burn rate",
           "refId": "A"
         },
         {
-          "expr": "gitlab:component:feature_category:execution:error:ratio_30m{component=\"$component\",environment=\"$environment\",feature_category=\"$feature_category\",monitor=\"global\",stage=\"$stage\",type=\"$type\"}\n",
+          "expr": "gitlab_component_shard_apdex:ratio_30m{component=\"$component\",environment=\"$environment\",monitor=\"global\",shard=\"$shard\",stage=\"$stage\",type=\"$type\"}\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "30m error burn rate",
+          "legendFormat": "30m apdex burn rate",
           "refId": "B"
         },
         {
-          "expr": "(6 * avg(slo:max:events:gitlab_service_errors:ratio{monitor=\"global\", type=\"$type\"})) unless (vector($proposed_slo) > 0)",
+          "expr": "(1 - (6 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{monitor=\"global\", type=\"$type\"})))) unless (vector($proposed_slo) > 0) ",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "6h error burn threshold",
+          "legendFormat": "6h apdex burn threshold",
           "refId": "C"
         },
         {
-          "expr": "6 * (1 - $proposed_slo)",
+          "expr": "1 - (6 * (1 - $proposed_slo))",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1048,19 +1048,19 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(clamp_max(gitlab:component:feature_category:execution:error:ratio_1h{component=\"$component\",environment=\"$environment\",feature_category=\"$feature_category\",monitor=\"global\",stage=\"$stage\",type=\"$type\"}\n,1),0)\n",
+          "expr": "clamp_min(clamp_max(gitlab_component_shard_apdex:ratio_1h{component=\"$component\",environment=\"$environment\",monitor=\"global\",shard=\"$shard\",stage=\"$stage\",type=\"$type\"}\n,1),0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "1h error burn rate",
+          "legendFormat": "1h apdex burn rate",
           "refId": "A"
         },
         {
-          "expr": "gitlab:component:feature_category:execution:error:ratio_5m{component=\"$component\",environment=\"$environment\",feature_category=\"$feature_category\",monitor=\"global\",stage=\"$stage\",type=\"$type\"}\n",
+          "expr": "gitlab_component_shard_apdex:ratio_5m{component=\"$component\",environment=\"$environment\",monitor=\"global\",shard=\"$shard\",stage=\"$stage\",type=\"$type\"}\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "5m error burn rate",
+          "legendFormat": "5m apdex burn rate",
           "refId": "B"
         }
       ],
@@ -1211,19 +1211,19 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(clamp_max(gitlab:component:feature_category:execution:error:ratio_6h{component=\"$component\",environment=\"$environment\",feature_category=\"$feature_category\",monitor=\"global\",stage=\"$stage\",type=\"$type\"}\n,1),0)\n",
+          "expr": "clamp_min(clamp_max(gitlab_component_shard_apdex:ratio_6h{component=\"$component\",environment=\"$environment\",monitor=\"global\",shard=\"$shard\",stage=\"$stage\",type=\"$type\"}\n,1),0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "6h error burn rate",
+          "legendFormat": "6h apdex burn rate",
           "refId": "A"
         },
         {
-          "expr": "gitlab:component:feature_category:execution:error:ratio_30m{component=\"$component\",environment=\"$environment\",feature_category=\"$feature_category\",monitor=\"global\",stage=\"$stage\",type=\"$type\"}\n",
+          "expr": "gitlab_component_shard_apdex:ratio_30m{component=\"$component\",environment=\"$environment\",monitor=\"global\",shard=\"$shard\",stage=\"$stage\",type=\"$type\"}\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "30m error burn rate",
+          "legendFormat": "30m apdex burn rate",
           "refId": "B"
         }
       ],
@@ -1364,7 +1364,7 @@
         "options": [
 
         ],
-        "query": "label_values(gitlab:component:feature_category:execution:error:ratio_1h{monitor=\"global\"}, environment)",
+        "query": "label_values(gitlab_component_shard_apdex:ratio_1h{monitor=\"global\"}, environment)",
         "refresh": 2,
         "regex": "",
         "sort": 1,
@@ -1389,7 +1389,7 @@
         "options": [
 
         ],
-        "query": "label_values(gitlab:component:feature_category:execution:error:ratio_1h{environment=\"$environment\",monitor=\"global\"}, type)",
+        "query": "label_values(gitlab_component_shard_apdex:ratio_1h{environment=\"$environment\",monitor=\"global\"}, type)",
         "refresh": 2,
         "regex": "",
         "sort": 1,
@@ -1414,7 +1414,32 @@
         "options": [
 
         ],
-        "query": "label_values(gitlab:component:feature_category:execution:error:ratio_1h{environment=\"$environment\",monitor=\"global\",type=\"$type\"}, stage)",
+        "query": "label_values(gitlab_component_shard_apdex:ratio_1h{environment=\"$environment\",monitor=\"global\",type=\"$type\"}, stage)",
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [
+
+        ],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+        },
+        "datasource": "$PROMETHEUS_DS",
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "shard",
+        "options": [
+
+        ],
+        "query": "label_values(gitlab_component_shard_apdex:ratio_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"$type\"}, shard)",
         "refresh": 2,
         "regex": "",
         "sort": 1,
@@ -1439,32 +1464,7 @@
         "options": [
 
         ],
-        "query": "label_values(gitlab:component:feature_category:execution:error:ratio_1h{environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"$type\"}, component)",
-        "refresh": 2,
-        "regex": "",
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tags": [
-
-        ],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": null,
-        "current": {
-        },
-        "datasource": "$PROMETHEUS_DS",
-        "hide": 0,
-        "includeAll": false,
-        "label": null,
-        "multi": false,
-        "name": "feature_category",
-        "options": [
-
-        ],
-        "query": "label_values(gitlab:component:feature_category:execution:error:ratio_1h{component=\"$component\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"$type\"}, feature_category)",
+        "query": "label_values(gitlab_component_shard_apdex:ratio_1h{environment=\"$environment\",monitor=\"global\",shard=\"$shard\",stage=\"$stage\",type=\"$type\"}, component)",
         "refresh": 2,
         "regex": "",
         "sort": 1,
@@ -1552,7 +1552,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "alerts: Feature Category Metrics Error SLO Analysis",
-  "uid": "alerts-feature_category_slo_error",
-  "version": 2512
+  "title": "alerts: Global Shard-Aggregated SLI Metrics Apdex SLO Analysis",
+  "uid": "alerts-component_shard_slo_apdex",
+  "version": 1
 }
