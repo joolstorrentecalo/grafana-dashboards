@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4682619092 at Tue Jul 18 22:54:01 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4683858391 at Wed Jul 19 05:38:17 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -1076,11 +1076,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "max(\n  max_over_time(\n    gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"sidekiq\"}[$__interval]\n  )\n) by (component)\n",
+          "expr": "max(\n  max_over_time(\n    gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}[$__interval]\n  )\n) by (component, shard)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{ component }} component",
+          "legendFormat": "{{ component }} component - {{ shard }} shard",
           "refId": "A"
         }
       ],
@@ -8057,7 +8057,7 @@
           {
             "targetBlank": true,
             "title": "sidekiq_execution SLI Apdex SLO Analysis",
-            "url": "/d/alerts-component_slo_apdex?${__url_time_range}&${__all_variables}&var-component=sidekiq_execution&var-type=sidekiq&var-stage=$stage"
+            "url": "/d/alerts-component_shard_slo_apdex?${__url_time_range}&${__all_variables}&var-component=sidekiq_execution&var-type=sidekiq&var-stage=$stage"
           }
         ]
       },
@@ -8103,15 +8103,15 @@
           "zindex": -2
         },
         {
-          "alias": "sidekiq_execution apdex",
+          "alias": "sidekiq_execution - {{ shard }} apdex",
           "color": "#E7D551",
           "zindex": 3
         },
         {
-          "alias": "sidekiq_execution apdex avg",
+          "alias": "sidekiq_execution - {{ shard }} apdex avg",
           "color": "#5794F2",
           "dashLength": 1,
-          "fillBelowTo": "sidekiq_execution apdex",
+          "fillBelowTo": "sidekiq_execution - {{ shard }} apdex",
           "linewidth": 1,
           "spaceLength": 1,
           "zindex": -3
@@ -8136,11 +8136,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "min_over_time(gitlab_component_apdex:ratio_5m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"}[$__interval])\n",
+          "expr": "min_over_time(gitlab_component_shard_apdex:ratio_5m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}[$__interval])\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "sidekiq_execution apdex",
+          "legendFormat": "sidekiq_execution - {{ shard }} apdex",
           "refId": "A"
         },
         {
@@ -8160,15 +8160,15 @@
           "refId": "C"
         },
         {
-          "expr": "avg_over_time(gitlab_component_apdex:ratio_5m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"}[$__interval])\n",
+          "expr": "avg_over_time(gitlab_component_shard_apdex:ratio_5m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}[$__interval])\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "sidekiq_execution apdex avg",
+          "legendFormat": "sidekiq_execution - {{ shard }} apdex avg",
           "refId": "D"
         },
         {
-          "expr": "clamp_min(\n  gitlab_component_apdex:ratio_5m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"} offset 1w\n,\n  scalar(min((1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"sidekiq_execution\",monitor=\"global\",type=\"sidekiq\"})\n))\n))\n)\n",
+          "expr": "clamp_min(\n  gitlab_component_shard_apdex:ratio_5m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"} offset 1w\n,\n  scalar(min((1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"sidekiq_execution\",monitor=\"global\",type=\"sidekiq\"})\n))\n))\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -8392,7 +8392,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"sidekiq_execution\",monitor=\"global\",type=\"sidekiq\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"sidekiq_execution\",monitor=\"global\",type=\"sidekiq\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"sidekiq_execution\",monitor=\"global\",type=\"sidekiq\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"sidekiq_execution\",monitor=\"global\",type=\"sidekiq\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_shard_apdex:ratio_1h{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_shard_apdex:ratio_5m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"sidekiq_execution\",monitor=\"global\",type=\"sidekiq\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_shard_apdex:ratio_1h{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"sidekiq_execution\",monitor=\"global\",type=\"sidekiq\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_shard_apdex:ratio_30m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"sidekiq_execution\",monitor=\"global\",type=\"sidekiq\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_shard_apdex:ratio_6h{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"sidekiq_execution\",monitor=\"global\",type=\"sidekiq\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -8441,7 +8441,7 @@
           {
             "targetBlank": true,
             "title": "sidekiq_execution SLI Error-Rate SLO Analysis",
-            "url": "/d/alerts-component_slo_error?${__url_time_range}&${__all_variables}&var-component=sidekiq_execution&var-type=sidekiq&var-stage=$stage"
+            "url": "/d/alerts-component_shard_slo_error?${__url_time_range}&${__all_variables}&var-component=sidekiq_execution&var-type=sidekiq&var-stage=$stage"
           }
         ]
       },
@@ -8475,13 +8475,13 @@
           "zindex": -2
         },
         {
-          "alias": "sidekiq_execution error ratio",
+          "alias": "sidekiq_execution - {{ shard }} error ratio",
           "color": "#E7D551",
-          "fillBelowTo": "sidekiq_execution error ratio avg",
+          "fillBelowTo": "sidekiq_execution - {{ shard }} error ratio avg",
           "zindex": 3
         },
         {
-          "alias": "sidekiq_execution error ratio avg",
+          "alias": "sidekiq_execution - {{ shard }} error ratio avg",
           "color": "#5794F2",
           "dashLength": 1,
           "fillGradient": 10,
@@ -8509,11 +8509,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_max(\n  max_over_time(gitlab_component_errors:ratio_5m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"}[$__interval])\n,\n  1\n)\n",
+          "expr": "clamp_max(\n  max_over_time(gitlab_component_shard_errors:ratio_5m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}[$__interval])\n,\n  1\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "sidekiq_execution error ratio",
+          "legendFormat": "sidekiq_execution - {{ shard }} error ratio",
           "refId": "A"
         },
         {
@@ -8533,15 +8533,15 @@
           "refId": "C"
         },
         {
-          "expr": "clamp_max(\n  avg_over_time(gitlab_component_errors:ratio_5m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"}[$__interval])\n,\n  1\n)\n",
+          "expr": "clamp_max(\n  avg_over_time(gitlab_component_shard_errors:ratio_5m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}[$__interval])\n,\n  1\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "sidekiq_execution error ratio avg",
+          "legendFormat": "sidekiq_execution - {{ shard }} error ratio avg",
           "refId": "D"
         },
         {
-          "expr": "clamp_max(\n  gitlab_component_errors:ratio_5m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"} offset 1w\n,\n  scalar(max((14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"sidekiq_execution\",monitor=\"global\",type=\"sidekiq\"})\n)\n))\n)\n",
+          "expr": "clamp_max(\n  gitlab_component_shard_errors:ratio_5m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"} offset 1w\n,\n  scalar(max((14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"sidekiq_execution\",monitor=\"global\",type=\"sidekiq\"})\n)\n))\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -8765,7 +8765,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_component_errors:ratio_5m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"sidekiq_execution\",monitor=\"global\",type=\"sidekiq\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_component_errors:ratio_1h{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"sidekiq_execution\",monitor=\"global\",type=\"sidekiq\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_component_errors:ratio_30m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"sidekiq_execution\",monitor=\"global\",type=\"sidekiq\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_component_errors:ratio_6h{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"sidekiq_execution\",monitor=\"global\",type=\"sidekiq\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_component_shard_errors:ratio_1h{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_component_shard_errors:ratio_5m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"sidekiq_execution\",monitor=\"global\",type=\"sidekiq\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_component_shard_errors:ratio_1h{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"sidekiq_execution\",monitor=\"global\",type=\"sidekiq\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_component_shard_errors:ratio_30m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"sidekiq_execution\",monitor=\"global\",type=\"sidekiq\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_component_shard_errors:ratio_6h{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"sidekiq_execution\",monitor=\"global\",type=\"sidekiq\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -8815,7 +8815,7 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
-          "alias": "sidekiq_execution RPS",
+          "alias": "sidekiq_execution - {{ shard }} RPS",
           "color": "#E7D551",
           "zindex": 3
         },
@@ -8839,15 +8839,15 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "avg_over_time(gitlab_component_ops:rate_5m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"}[$__interval])\n",
+          "expr": "avg_over_time(gitlab_component_shard_ops:rate_5m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}[$__interval])\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "sidekiq_execution RPS",
+          "legendFormat": "sidekiq_execution - {{ shard }} RPS",
           "refId": "A"
         },
         {
-          "expr": "gitlab_component_ops:rate_5m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"sidekiq\"} offset 1w\n",
+          "expr": "gitlab_component_shard_ops:rate_5m{component=\"sidekiq_execution\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"} offset 1w\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -29840,6 +29840,33 @@
         "query": "main,cny,",
         "refresh": 0,
         "type": "custom"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "all",
+          "value": "$__all"
+        },
+        "datasource": "$PROMETHEUS_DS",
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "shard",
+        "options": [
+
+        ],
+        "query": "label_values(up{environment=\"$environment\", type=\"sidekiq\"}, shard)",
+        "refresh": 1,
+        "regex": "",
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [
+
+        ],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       }
     ]
   },
@@ -29870,5 +29897,5 @@
   "timezone": "utc",
   "title": "sidekiq: Overview",
   "uid": "sidekiq-main",
-  "version": 4387
+  "version": 4388
 }
