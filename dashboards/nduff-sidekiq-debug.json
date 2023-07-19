@@ -1,15 +1,12 @@
 {
-  "__inputs": [
-
-  ],
-  "__requires": [
-
-  ],
   "annotations": {
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": true,
         "hide": false,
         "iconColor": "#96D98D",
@@ -23,7 +20,10 @@
       },
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": false,
         "hide": false,
         "iconColor": "#FFEE52",
@@ -37,7 +37,10 @@
       },
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": false,
         "hide": false,
         "iconColor": "#CA95E5",
@@ -51,15 +54,28 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4682619092 at Tue Jul 18 22:53:31 UTC 2023",
-  "editable": false,
-  "gnetId": null,
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4679452170 at Tue Jul 18 14:17:00 UTC 2023",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "hideControls": false,
   "id": null,
   "links": [
-
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "managed",
+        "service overview"
+      ],
+      "targetBlank": false,
+      "title": "Service Overview Dashboards",
+      "type": "dashboards",
+      "url": ""
+    }
   ],
+  "liveNow": false,
   "panels": [
     {
       "aliasColors": {
@@ -67,17 +83,20 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "The total number of sent Git Push notifications to agentks in Flux module",
+      "datasource": {
+        "uid": "$PROMETHEUS_DS"
+      },
+      "decimals": 2,
+      "description": "Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 10,
-        "w": 8,
+        "h": 8,
+        "w": 24,
         "x": 0,
         "y": 0
       },
+      "hiddenSeries": false,
       "id": 2,
       "legend": {
         "alignAsTable": true,
@@ -87,54 +106,68 @@
         "max": true,
         "min": true,
         "rightSide": false,
-        "show": false,
-        "sideWidth": null,
+        "show": true,
         "total": false,
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
+      "pluginVersion": "9.5.1",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeat": null,
       "seriesOverrides": [
-
+        {
+          "alias": "/ SLO violation$/",
+          "color": "#00000088",
+          "dashLength": 1,
+          "dashes": true,
+          "fill": true,
+          "hideTooltip": true,
+          "legend": false,
+          "lines": true,
+          "spaceLength": 4
+        }
       ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum (increase(flux_git_push_notifications_total{env=\"$environment\",stage=\"$stage\",type=\"kas\"}[$__rate_interval]))\n",
+          "datasource": {
+            "uid": "$PROMETHEUS_DS"
+          },
+          "expr": "min_over_time(gitlab_service_apdex:ratio_5m{env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__interval])\n",
           "format": "time_series",
           "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "",
+          "intervalFactor": 3,
+          "legendFormat": "{{ type }} service",
           "refId": "A"
         }
       ],
       "thresholds": [
 
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Flux: Git push notifications sent",
+      "timeRegions": [
+
+      ],
+      "title": "Latency: Apdex",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 1,
         "value_type": "individual"
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -142,22 +175,23 @@
       },
       "yaxes": [
         {
-          "format": "short",
-          "label": "Count",
+          "format": "percentunit",
+          "label": "Apdex %",
           "logBase": 1,
-          "max": null,
-          "min": 0,
+          "max": 1,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
           "max": 1,
           "min": 0,
           "show": false
         }
-      ]
+      ],
+      "yaxis": {
+        "align": false
+      }
     },
     {
       "aliasColors": {
@@ -165,17 +199,20 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "The total number of dropped Git push notifications in Flux module",
+      "datasource": {
+        "uid": "$PROMETHEUS_DS"
+      },
+      "decimals": 2,
+      "description": "Error rates are a measure of unhandled service exceptions within a minute period. Client errors are excluded when possible. Lower is better",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 10,
-        "w": 8,
-        "x": 8,
-        "y": 0
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 8
       },
+      "hiddenSeries": false,
       "id": 3,
       "legend": {
         "alignAsTable": true,
@@ -185,44 +222,60 @@
         "max": true,
         "min": true,
         "rightSide": false,
-        "show": false,
-        "sideWidth": null,
+        "show": true,
         "total": false,
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
+      "pluginVersion": "9.5.1",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeat": null,
       "seriesOverrides": [
-
+        {
+          "alias": "/ SLO violation$/",
+          "color": "#00000088",
+          "dashLength": 1,
+          "dashes": true,
+          "fill": true,
+          "hideTooltip": true,
+          "legend": false,
+          "lines": true,
+          "spaceLength": 4
+        }
       ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum (increase(flux_dropped_git_push_notifications_total{env=\"$environment\",stage=\"$stage\",type=\"kas\"}[$__rate_interval]))\n",
+          "datasource": {
+            "uid": "$PROMETHEUS_DS"
+          },
+          "expr": "clamp_max(\n  max_over_time(gitlab_service_errors:ratio_5m{env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__interval])\n,\n  0.14999999999999999\n)\n",
           "format": "time_series",
           "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "",
+          "intervalFactor": 3,
+          "legendFormat": "{{ type }} service",
           "refId": "A"
         }
       ],
       "thresholds": [
 
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Flux: Git push notifications dropped",
+      "timeRegions": [
+
+      ],
+      "title": "Error Ratios",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -230,9 +283,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -240,22 +291,23 @@
       },
       "yaxes": [
         {
-          "format": "short",
-          "label": "Count",
+          "format": "percentunit",
+          "label": "% Requests in Error",
           "logBase": 1,
-          "max": null,
           "min": 0,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
           "max": 1,
           "min": 0,
           "show": false
         }
-      ]
+      ],
+      "yaxis": {
+        "align": false
+      }
     },
     {
       "aliasColors": {
@@ -263,17 +315,20 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "Git push gRPC notifications",
+      "datasource": {
+        "uid": "$PROMETHEUS_DS"
+      },
+      "decimals": 2,
+      "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 10,
-        "w": 8,
-        "x": 16,
-        "y": 0
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
       },
+      "hiddenSeries": false,
       "id": 4,
       "legend": {
         "alignAsTable": true,
@@ -284,43 +339,59 @@
         "min": true,
         "rightSide": false,
         "show": true,
-        "sideWidth": null,
         "total": false,
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
+      "pluginVersion": "9.5.1",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeat": null,
       "seriesOverrides": [
-
+        {
+          "alias": "/ SLO violation$/",
+          "color": "#00000088",
+          "dashLength": 1,
+          "dashes": true,
+          "fill": true,
+          "hideTooltip": true,
+          "legend": false,
+          "lines": true,
+          "spaceLength": 4
+        }
       ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (grpc_code) (\n  rate(grpc_server_handled_total{env=\"$environment\",stage=\"$stage\",type=\"kas\",\n    grpc_service=\"gitlab.agent.notifications.rpc.Notifications\",\n    grpc_method=\"GitPushEvent\"\n  }[$__rate_interval])\n)\n",
+          "datasource": {
+            "uid": "$PROMETHEUS_DS"
+          },
+          "expr": "avg_over_time(gitlab_service_ops:rate_5m{env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\"}[$__interval])\n",
           "format": "time_series",
           "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "{{grpc_service}}/{{grpc_method}} {{grpc_code}}",
+          "intervalFactor": 3,
+          "legendFormat": "{{ type }} service",
           "refId": "A"
         }
       ],
       "thresholds": [
 
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Git push notifications RPCs",
+      "timeRegions": [
+
+      ],
+      "title": "Service Requests per Second",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -328,9 +399,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -339,21 +408,21 @@
       "yaxes": [
         {
           "format": "short",
-          "label": "rps",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
+          "label": "Operations per Second",
+          "logBase": 10,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
           "max": 1,
           "min": 0,
           "show": false
         }
-      ]
+      ],
+      "yaxis": {
+        "align": false
+      }
     },
     {
       "aliasColors": {
@@ -361,42 +430,47 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "OK gRPC calls related to GitOps",
+      "datasource": {
+        "uid": "$PROMETHEUS_DS"
+      },
+      "decimals": 2,
+      "description": "Each timeseries represents the distance, in standard deviations, that each service is away from its normal range. The further from zero, the more anomalous",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 10,
-        "w": 8,
-        "x": 0,
-        "y": 10
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
       },
+      "hiddenSeries": false,
       "id": 5,
       "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
         "hideEmpty": true,
-        "max": true,
-        "min": true,
+        "max": false,
+        "min": false,
         "rightSide": false,
         "show": true,
-        "sideWidth": null,
         "total": false,
-        "values": true
+        "values": false
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
+      "pluginVersion": "9.5.1",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeat": null,
       "seriesOverrides": [
 
       ],
@@ -405,20 +479,59 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (grpc_service, grpc_method) (\n  rate(grpc_server_handled_total{env=\"$environment\",stage=\"$stage\",type=\"kas\", grpc_code=\"OK\",\n    grpc_service=~\"gitlab.agent.gitops.rpc.Gitops|gitlab.agent.flux.rpc.GitLabFlux\"\n  }[$__rate_interval])\n)\n",
+          "datasource": {
+            "uid": "$PROMETHEUS_DS"
+          },
+          "expr": "clamp_min(\n  clamp_max(\n    avg((\n  gitlab_service_ops:rate{env=\"$environment\",environment=\"$environment\",stage=\"$stage\"}\n  -\n  gitlab_service_ops:rate:prediction{env=\"$environment\",environment=\"$environment\",stage=\"$stage\"}\n)\n/\ngitlab_service_ops:rate:stddev_over_time_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\"}\n) by (type),\n    6.000000),\n  -3.000000)\n",
           "format": "time_series",
           "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "{{grpc_service}}/{{grpc_method}}",
+          "intervalFactor": 3,
+          "legendFormat": "{{ type }} service",
           "refId": "A"
         }
       ],
       "thresholds": [
+        {
+          "colorMode": "custom",
+          "fill": true,
+          "fillColor": "rgba(242, 73, 92, 0.5)",
+          "line": false,
+          "op": "gt",
+          "value": 4,
+          "yaxis": "left"
+        },
+        {
+          "colorMode": "custom",
+          "fill": true,
+          "fillColor": "rgba(242, 73, 92, 0.25)",
+          "line": false,
+          "op": "gt",
+          "value": 3,
+          "yaxis": "left"
+        },
+        {
+          "colorMode": "custom",
+          "fill": true,
+          "fillColor": "rgba(242, 73, 92, 0.25)",
+          "line": false,
+          "op": "lt",
+          "value": -3,
+          "yaxis": "left"
+        },
+        {
+          "colorMode": "custom",
+          "fill": true,
+          "fillColor": "rgba(242, 73, 92, 0.5)",
+          "line": false,
+          "op": "lt",
+          "value": -4,
+          "yaxis": "left"
+        }
+      ],
+      "timeRegions": [
 
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "OK gRPC calls/second",
+      "title": "Anomaly detection: Requests per second",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -426,9 +539,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -436,22 +547,24 @@
       },
       "yaxes": [
         {
+          "decimals": 1,
           "format": "short",
-          "label": "rps",
+          "label": "Sigma σ",
           "logBase": 1,
-          "max": null,
-          "min": 0,
+          "max": 6,
+          "min": -3,
           "show": true
         },
         {
-          "format": "short",
-          "label": null,
+          "format": "none",
+          "label": "",
           "logBase": 1,
-          "max": 1,
-          "min": 0,
           "show": false
         }
-      ]
+      ],
+      "yaxis": {
+        "align": false
+      }
     },
     {
       "aliasColors": {
@@ -459,17 +572,20 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "Not OK gRPC calls related to GitOps",
+      "datasource": {
+        "uid": "$PROMETHEUS_DS"
+      },
+      "decimals": 2,
+      "description": "Saturation is a measure of the most saturated component of the service. Lower is better.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 10,
-        "w": 8,
-        "x": 8,
-        "y": 10
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 24
       },
+      "hiddenSeries": false,
       "id": 6,
       "legend": {
         "alignAsTable": true,
@@ -480,43 +596,59 @@
         "min": true,
         "rightSide": false,
         "show": true,
-        "sideWidth": null,
         "total": false,
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
+      "pluginVersion": "9.5.1",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeat": null,
       "seriesOverrides": [
-
+        {
+          "alias": "/ SLO violation$/",
+          "color": "#00000088",
+          "dashLength": 1,
+          "dashes": true,
+          "fill": true,
+          "hideTooltip": true,
+          "legend": false,
+          "lines": true,
+          "spaceLength": 4
+        }
       ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (grpc_service, grpc_method, grpc_code) (\n  rate(grpc_server_handled_total{env=\"$environment\",stage=\"$stage\",type=\"kas\", grpc_code!=\"OK\",\n    grpc_service=~\"gitlab.agent.gitops.rpc.Gitops|gitlab.agent.flux.rpc.GitLabFlux\"\n  }[$__rate_interval])\n)\n",
+          "datasource": {
+            "uid": "$PROMETHEUS_DS"
+          },
+          "expr": "max(\n  max_over_time(\n    gitlab_component_saturation:ratio{environment=\"$environment\", stage=\"$stage\"}[$__interval]\n  )\n) by (type)\n",
           "format": "time_series",
           "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "{{grpc_service}}/{{grpc_method}} {{grpc_code}}",
+          "intervalFactor": 3,
+          "legendFormat": "{{ type }} service",
           "refId": "A"
         }
       ],
       "thresholds": [
 
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Not OK gRPC calls/second",
+      "timeRegions": [
+
+      ],
+      "title": "Saturation",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -524,9 +656,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -534,44 +664,42 @@
       },
       "yaxes": [
         {
-          "format": "short",
-          "label": "rps",
+          "format": "percentunit",
+          "label": "Availability %",
           "logBase": 1,
-          "max": null,
-          "min": 0,
+          "max": 1,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
           "max": 1,
           "min": 0,
           "show": false
         }
-      ]
+      ],
+      "yaxis": {
+        "align": false
+      }
     }
   ],
   "refresh": "",
-  "rows": [
-
-  ],
-  "schemaVersion": 16,
+  "schemaVersion": 39,
   "style": "light",
   "tags": [
-    "managed",
-    "kas",
-    "kas"
+    "unmanaged"
   ],
   "templating": {
     "list": [
       {
         "current": {
+          "selected": false,
           "text": "Global",
           "value": "Global"
         },
         "hide": 0,
-        "label": null,
+        "includeAll": false,
+        "multi": false,
         "name": "PROMETHEUS_DS",
         "options": [
 
@@ -579,18 +707,22 @@
         "query": "prometheus",
         "refresh": 1,
         "regex": "",
+        "skipUrlSync": false,
         "type": "datasource"
       },
       {
-        "allValue": null,
         "current": {
+          "selected": false,
           "text": "gprd",
           "value": "gprd"
         },
-        "datasource": "$PROMETHEUS_DS",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "$PROMETHEUS_DS"
+        },
+        "definition": "",
         "hide": 0,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "environment",
         "options": [
@@ -599,17 +731,14 @@
         "query": "label_values(gitlab_service_ops:rate, environment)",
         "refresh": 1,
         "regex": "",
+        "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
-        "tags": [
-
-        ],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
-        "allValue": null,
         "current": {
           "text": "main",
           "value": "main"
@@ -621,20 +750,24 @@
         "name": "stage",
         "options": [
           {
+            "selected": true,
             "text": "main",
             "value": "main"
           },
           {
+            "selected": false,
             "text": "cny",
             "value": "cny"
           },
           {
+            "selected": false,
             "text": "",
             "value": ""
           }
         ],
         "query": "main,cny,",
         "refresh": 0,
+        "skipUrlSync": false,
         "type": "custom"
       }
     ]
@@ -664,7 +797,8 @@
     ]
   },
   "timezone": "utc",
-  "title": "kas: GitOps metrics",
-  "uid": "kas-gitops",
-  "version": 21
+  "title": "nduff - sidekiq debug",
+  "uid": "d34b63b4-c713-4e90-b5a4-fc8da1e70bbc",
+  "version": 2,
+  "weekStart": ""
 }
