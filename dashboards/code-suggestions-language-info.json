@@ -212,101 +212,18 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
             }
           },
           "mappings": [
 
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
+          ]
         },
         "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "c",
-                  "cc",
-                  "cpp",
-                  "cs",
-                  "erb",
-                  "go",
-                  "h",
-                  "hbs",
-                  "hh",
-                  "ipynb",
-                  "java",
-                  "js",
-                  "jsx",
-                  "php",
-                  "py",
-                  "rake",
-                  "rb",
-                  "robot",
-                  "rs",
-                  "sh",
-                  "svelte",
-                  "ts",
-                  "tsx",
-                  "vue",
-                  "yaml"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
+
         ]
       },
       "gridPos": {
@@ -315,21 +232,33 @@
         "x": 0,
         "y": 12
       },
-      "id": 4,
+      "id": 6,
       "options": {
+        "displayLabels": [
+          "name"
+        ],
         "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "percent"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
           "calcs": [
-
+            "lastNotNull"
           ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+          "fields": "",
+          "values": false
         },
         "tooltip": {
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "9.5.1",
       "targets": [
         {
           "datasource": {
@@ -337,14 +266,14 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "sum by(extension) (rate(code_suggestions_prompt_language_total[10m])) > 0.1",
+          "expr": "topk(5, sort_desc(sum by(extension) (rate(code_suggestions_prompt_language_total{lang=\"None\"}[1h]))))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Completions by File Extension",
-      "type": "timeseries"
+      "title": "Extensions with lang=None",
+      "type": "piechart"
     },
     {
       "datasource": {
@@ -497,7 +426,54 @@
           }
         },
         "overrides": [
-
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "c",
+                  "cc",
+                  "cpp",
+                  "cs",
+                  "erb",
+                  "go",
+                  "h",
+                  "hbs",
+                  "hh",
+                  "ipynb",
+                  "java",
+                  "js",
+                  "jsx",
+                  "php",
+                  "py",
+                  "rake",
+                  "rb",
+                  "robot",
+                  "rs",
+                  "sh",
+                  "svelte",
+                  "ts",
+                  "tsx",
+                  "vue",
+                  "yaml"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
         ]
       },
       "gridPos": {
@@ -505,6 +481,105 @@
         "w": 17,
         "x": 0,
         "y": 24
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "sort_desc(sum by(extension) (rate(code_suggestions_prompt_language_total[10m])) > 0.1)",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Completions by File Extension",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "Number of requested completions by language",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 17,
+        "x": 0,
+        "y": 36
       },
       "id": 3,
       "options": {
@@ -538,7 +613,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": false,
+  "refresh": "",
   "schemaVersion": 38,
   "style": "dark",
   "tags": [
@@ -558,6 +633,6 @@
   "timezone": "",
   "title": "code_suggestions: language info",
   "uid": "cdeca50b-1f81-48ed-97c7-5d69e0aa1ea5",
-  "version": 6,
+  "version": 8,
   "weekStart": ""
 }
