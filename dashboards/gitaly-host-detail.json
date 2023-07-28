@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4752475916 at Thu Jul 27 13:08:29 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4757416433 at Fri Jul 28 03:19:17 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -6072,7 +6072,7 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 0,
-          "description": "Percentage of requests that acquire a Gitaly rate-limit lock within 1 minute, by host and method",
+          "description": "",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -6090,13 +6090,13 @@
             "max": true,
             "min": true,
             "rightSide": false,
-            "show": true,
+            "show": false,
             "sideWidth": null,
             "total": false,
             "values": true
           },
           "lines": true,
-          "linewidth": 2,
+          "linewidth": 1,
           "links": [
 
           ],
@@ -6114,18 +6114,20 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(clamp_max(sum(\n  rate(\n    gitaly_rate_limiting_acquiring_seconds_bucket{\n      env=\"$environment\",environment=\"$environment\",fqdn=~\"$fqdn\",type=\"gitaly\",\n      le=\"60\"\n    }[$__interval]\n  )\n) by (environment, type, stage, fqdn, grpc_method)\n/\nsum(\n  rate(\n    gitaly_rate_limiting_acquiring_seconds_bucket{\n      env=\"$environment\",environment=\"$environment\",fqdn=~\"$fqdn\",type=\"gitaly\",\n      le=\"+Inf\"\n    }[$__interval]\n  )\n) by (environment, type, stage, fqdn, grpc_method)\n,1),0)\n",
+              "expr": "sum(gitaly_spawn_token_waiting_length{env=\"$environment\",environment=\"$environment\",fqdn=~\"$fqdn\",type=\"gitaly\"}) by (fqdn)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
-              "legendFormat": "{{fqdn}} - {{grpc_method}}",
+              "legendFormat": "{{ fqdn }}",
               "refId": "A"
             }
           ],
-          "thresholds": null,
+          "thresholds": [
+
+          ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Request % acquiring rate-limit lock within 1m, by host + method",
+          "title": "Gitaly Spawn Token queue length per Node",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -6143,11 +6145,207 @@
           },
           "yaxes": [
             {
-              "format": "percentunit",
-              "label": "Percent",
+              "format": "short",
+              "label": "",
               "logBase": 1,
               "max": null,
-              "min": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 5111
+          },
+          "id": 51,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": false,
+            "sideWidth": null,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [
+
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.99, sum(rate(gitaly_spawn_waiting_time_seconds_bucket{env=\"$environment\",environment=\"$environment\",fqdn=~\"$fqdn\",type=\"gitaly\"}[$__interval])) by (le))\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{ fqdn }}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Gitaly Spawn Token P99 waiting time per Node",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 5111
+          },
+          "id": 52,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": false,
+            "sideWidth": null,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [
+
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.99, sum(rate(gitaly_spawn_forking_time_seconds_bucket{env=\"$environment\",environment=\"$environment\",fqdn=~\"$fqdn\",type=\"gitaly\"}[$__interval])) by (le))\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{ fqdn }}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Gitaly Spawn Token P99 forking time per Node",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": 0,
               "show": true
             },
             {
@@ -6178,7 +6376,7 @@
         "x": 0,
         "y": 5200
       },
-      "id": 51,
+      "id": 53,
       "panels": [
         {
           "aliasColors": {
@@ -6197,7 +6395,7 @@
             "x": 0,
             "y": 5201
           },
-          "id": 52,
+          "id": 54,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6295,7 +6493,7 @@
             "x": 12,
             "y": 5201
           },
-          "id": 53,
+          "id": 55,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6393,7 +6591,7 @@
             "x": 0,
             "y": 5211
           },
-          "id": 54,
+          "id": 56,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6491,7 +6689,7 @@
             "x": 12,
             "y": 5211
           },
-          "id": 55,
+          "id": 57,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6589,7 +6787,7 @@
             "x": 0,
             "y": 5221
           },
-          "id": 56,
+          "id": 58,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6688,7 +6886,7 @@
         "x": 0,
         "y": 5300
       },
-      "id": 57,
+      "id": 59,
       "panels": [
         {
           "aliasColors": {
@@ -6707,7 +6905,7 @@
             "x": 0,
             "y": 5301
           },
-          "id": 58,
+          "id": 60,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6805,7 +7003,7 @@
             "x": 12,
             "y": 5301
           },
-          "id": 59,
+          "id": 61,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6903,7 +7101,7 @@
             "x": 0,
             "y": 5311
           },
-          "id": 60,
+          "id": 62,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7001,7 +7199,7 @@
             "x": 12,
             "y": 5311
           },
-          "id": 61,
+          "id": 63,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7099,7 +7297,7 @@
             "x": 0,
             "y": 5321
           },
-          "id": 62,
+          "id": 64,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7198,7 +7396,7 @@
         "x": 0,
         "y": 5400
       },
-      "id": 63,
+      "id": 65,
       "panels": [
         {
           "aliasColors": {
@@ -7217,7 +7415,7 @@
             "x": 0,
             "y": 5401
           },
-          "id": 64,
+          "id": 66,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7315,7 +7513,7 @@
             "x": 12,
             "y": 5401
           },
-          "id": 65,
+          "id": 67,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7413,7 +7611,7 @@
             "x": 0,
             "y": 5411
           },
-          "id": 66,
+          "id": 68,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7511,7 +7709,7 @@
             "x": 12,
             "y": 5411
           },
-          "id": 67,
+          "id": 69,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7609,7 +7807,7 @@
             "x": 0,
             "y": 5421
           },
-          "id": 68,
+          "id": 70,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7708,7 +7906,7 @@
         "x": 0,
         "y": 5500
       },
-      "id": 69,
+      "id": 71,
       "panels": [
         {
           "aliasColors": {
@@ -7727,7 +7925,7 @@
             "x": 0,
             "y": 5501
           },
-          "id": 70,
+          "id": 72,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7825,7 +8023,7 @@
             "x": 12,
             "y": 5501
           },
-          "id": 71,
+          "id": 73,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7923,7 +8121,7 @@
             "x": 0,
             "y": 5511
           },
-          "id": 72,
+          "id": 74,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8021,7 +8219,7 @@
             "x": 12,
             "y": 5511
           },
-          "id": 73,
+          "id": 75,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8120,7 +8318,7 @@
         "x": 0,
         "y": 5600
       },
-      "id": 74,
+      "id": 76,
       "panels": [
         {
           "aliasColors": {
@@ -8139,7 +8337,7 @@
             "x": 0,
             "y": 5601
           },
-          "id": 75,
+          "id": 77,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8237,7 +8435,7 @@
             "x": 12,
             "y": 5601
           },
-          "id": 76,
+          "id": 78,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8335,7 +8533,7 @@
             "x": 0,
             "y": 5611
           },
-          "id": 77,
+          "id": 79,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8433,7 +8631,7 @@
             "x": 12,
             "y": 5611
           },
-          "id": 78,
+          "id": 80,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8532,7 +8730,7 @@
         "x": 0,
         "y": 5700
       },
-      "id": 79,
+      "id": 81,
       "panels": [
         {
           "aliasColors": {
@@ -8551,7 +8749,7 @@
             "x": 0,
             "y": 5701
           },
-          "id": 80,
+          "id": 82,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8649,7 +8847,7 @@
             "x": 12,
             "y": 5701
           },
-          "id": 81,
+          "id": 83,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8747,7 +8945,7 @@
             "x": 0,
             "y": 5711
           },
-          "id": 82,
+          "id": 84,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8845,7 +9043,7 @@
             "x": 12,
             "y": 5711
           },
-          "id": 83,
+          "id": 85,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8935,7 +9133,7 @@
             "x": 0,
             "y": 5721
           },
-          "id": 84,
+          "id": 86,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -8958,7 +9156,7 @@
         "x": 0,
         "y": 5800
       },
-      "id": 85,
+      "id": 87,
       "panels": [
         {
           "aliasColors": {
@@ -8977,7 +9175,7 @@
             "x": 0,
             "y": 5802
           },
-          "id": 86,
+          "id": 88,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9075,7 +9273,7 @@
             "x": 12,
             "y": 5802
           },
-          "id": 87,
+          "id": 89,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9174,7 +9372,7 @@
         "x": 0,
         "y": 5900
       },
-      "id": 88,
+      "id": 90,
       "panels": [
         {
           "aliasColors": {
@@ -9193,7 +9391,7 @@
             "x": 0,
             "y": 5902
           },
-          "id": 89,
+          "id": 91,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9226,7 +9424,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "max(gitaly_pack_objects_process_active_callers{env=\"$environment\",environment=\"$environment\",fqdn=~\"$fqdn\",segment=\"repository\",type=\"gitaly\"}) by (fqdn)\n",
+              "expr": "max(gitaly_pack_objects_in_progress{env=\"$environment\",environment=\"$environment\",fqdn=~\"$fqdn\",type=\"gitaly\"}) by (fqdn)\n",
               "format": "time_series",
               "interval": "$__interval",
               "intervalFactor": 1,
@@ -9239,7 +9437,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Gitaly pack-objects concurrency by repository",
+          "title": "Gitaly pack-objects concurrency",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -9291,105 +9489,7 @@
             "x": 12,
             "y": 5902
           },
-          "id": 90,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "sideWidth": null,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [
-
-          ],
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "repeat": null,
-          "seriesOverrides": [
-
-          ],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "max(gitaly_pack_objects_process_active_callers{env=\"$environment\",environment=\"$environment\",fqdn=~\"$fqdn\",segment=\"remote_ip\",type=\"gitaly\"}) by (fqdn)\n",
-              "format": "time_series",
-              "interval": "$__interval",
-              "intervalFactor": 1,
-              "legendFormat": "concurrency by remote_ip",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [
-
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Gitaly pack-objects concurrency by remote_ip",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": [
-
-            ]
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": "",
-              "logBase": 1,
-              "max": null,
-              "min": 0,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": 1,
-              "min": 0,
-              "show": false
-            }
-          ]
-        },
-        {
-          "aliasColors": {
-          },
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PROMETHEUS_DS",
-          "decimals": 0,
-          "description": "",
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 12,
-            "x": 0,
-            "y": 5912
-          },
-          "id": 91,
+          "id": 92,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9484,10 +9584,10 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
+            "x": 0,
             "y": 5912
           },
-          "id": 92,
+          "id": 93,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9582,10 +9682,10 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
-            "y": 5922
+            "x": 12,
+            "y": 5912
           },
-          "id": 93,
+          "id": 94,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9680,10 +9780,10 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
+            "x": 0,
             "y": 5922
           },
-          "id": 94,
+          "id": 95,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9778,10 +9878,10 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
-            "y": 5932
+            "x": 12,
+            "y": 5922
           },
-          "id": 95,
+          "id": 96,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9880,7 +9980,7 @@
         "x": 0,
         "y": 6000
       },
-      "id": 96,
+      "id": 97,
       "panels": [
         {
           "aliasColors": {
@@ -9899,7 +9999,7 @@
             "x": 0,
             "y": 6001
           },
-          "id": 97,
+          "id": 98,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9997,7 +10097,7 @@
             "x": 12,
             "y": 6001
           },
-          "id": 98,
+          "id": 99,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10176,7 +10276,7 @@
             "x": 0,
             "y": 6011
           },
-          "id": 99,
+          "id": 100,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10274,7 +10374,7 @@
             "x": 12,
             "y": 6011
           },
-          "id": 100,
+          "id": 101,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10453,7 +10553,7 @@
             "x": 0,
             "y": 6021
           },
-          "id": 101,
+          "id": 102,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10551,7 +10651,7 @@
             "x": 12,
             "y": 6021
           },
-          "id": 102,
+          "id": 103,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10641,7 +10741,7 @@
             "x": 0,
             "y": 6031
           },
-          "id": 103,
+          "id": 104,
           "mode": "markdown",
           "title": "cgroup runbook",
           "type": "text"
@@ -10664,7 +10764,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 104,
+      "id": 105,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -10782,5 +10882,5 @@
   "timezone": "utc",
   "title": "gitaly: Host Detail",
   "uid": "gitaly-host-detail",
-  "version": 3909
+  "version": 3911
 }
