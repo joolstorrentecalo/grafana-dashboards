@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4787303381 at Wed Aug  2 07:04:41 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4790767134 at Wed Aug  2 14:30:38 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -651,7 +651,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(clamp_max(sum by (worker) (\n  (gitlab_background_jobs:queue:apdex:ratio_5m{environment=\"$environment\", worker=~\"$worker\"} >= 0)\n  *\n  (gitlab_background_jobs:queue:apdex:weight:score_5m{environment=\"$environment\", worker=~\"$worker\"} >= 0)\n)\n/\nsum by (worker) (\n  (gitlab_background_jobs:queue:apdex:weight:score_5m{environment=\"$environment\", worker=~\"$worker\"})\n)\n,1),0)\n",
+          "expr": "clamp_min(clamp_max(sum by (worker) (\n  clamp_max(\n    (application_sli_aggregation:sidekiq_queueing:apdex:success:rate_5m{environment=\"$environment\", worker=~\"$worker\"} >= 0)\n    /\n    (application_sli_aggregation:sidekiq_queueing:apdex:weight:score_5m{environment=\"$environment\", worker=~\"$worker\"} >= 0)\n  , 1)\n)\n,1),0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -768,7 +768,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(clamp_max(sum by (worker) (\n  (gitlab_background_jobs:execution:apdex:ratio_5m{environment=\"$environment\", worker=~\"$worker\"} >= 0)\n  *\n  (gitlab_background_jobs:execution:apdex:weight:score_5m{environment=\"$environment\", worker=~\"$worker\"} >= 0)\n)\n/\nsum by (worker) (\n  (gitlab_background_jobs:execution:apdex:weight:score_5m{environment=\"$environment\", worker=~\"$worker\"})\n)\n,1),0)\n",
+          "expr": "clamp_min(clamp_max(sum by (worker) (\n  clamp_max(\n    (application_sli_aggregation:sidekiq_execution:apdex:success:rate_5m{environment=\"$environment\", worker=~\"$worker\"} >= 0)\n    /\n    (application_sli_aggregation:sidekiq_execution:apdex:weight:score_5m{environment=\"$environment\", worker=~\"$worker\"} >= 0)\n  , 1)\n)\n,1),0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -885,7 +885,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (worker) (gitlab_background_jobs:execution:ops:rate_5m{environment=\"$environment\", worker=~\"$worker\"})\n",
+          "expr": "sum by (worker) (application_sli_aggregation:sidekiq_execution:ops:rate_5m{environment=\"$environment\", worker=~\"$worker\"})\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1002,7 +1002,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(clamp_max(sum by (worker) (\n  (gitlab_background_jobs:execution:error:rate_5m{environment=\"$environment\", worker=~\"$worker\"} >= 0)\n)\n/\nsum by (worker) (\n  (gitlab_background_jobs:execution:ops:rate_5m{environment=\"$environment\", worker=~\"$worker\"} >= 0)\n)\n,1),0)\n",
+          "expr": "clamp_min(clamp_max(sum by (worker) (\n  (application_sli_aggregation:sidekiq_execution:error:rate_5m{environment=\"$environment\", worker=~\"$worker\"} >= 0)\n)\n/\nsum by (worker) (\n  (application_sli_aggregation:sidekiq_execution:ops:rate_5m{environment=\"$environment\", worker=~\"$worker\"} >= 0)\n)\n,1),0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1772,7 +1772,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (worker) (\n  gitlab_background_jobs:execution:ops:rate_5m{environment=\"$environment\", worker=~\"$worker\"}\n)\n",
+          "expr": "sum by (worker) (\n  application_sli_aggregation:sidekiq_execution:ops:rate_5m{environment=\"$environment\", worker=~\"$worker\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1891,7 +1891,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (worker) (\n  gitlab_background_jobs:execution:error:rate_5m{environment=\"$environment\", worker=~\"$worker\"}\n)\n",
+          "expr": "sum by (worker) (\n  application_sli_aggregation:sidekiq_execution:error:rate_5m{environment=\"$environment\", worker=~\"$worker\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -3246,7 +3246,7 @@
         "options": [
 
         ],
-        "query": "label_values(gitlab_background_jobs:execution:ops:rate_1h{environment=\"$environment\", type=\"sidekiq\"}, worker)",
+        "query": "label_values(application_sli_aggregation:sidekiq_execution:ops:rate_1h{environment=\"$environment\", type=\"sidekiq\"}, worker)",
         "refresh": 1,
         "regex": "",
         "sort": 1,
@@ -3287,5 +3287,5 @@
   "timezone": "utc",
   "title": "sidekiq: Worker Detail",
   "uid": "sidekiq-worker-detail",
-  "version": 2378
+  "version": 2382
 }
