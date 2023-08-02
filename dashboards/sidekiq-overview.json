@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4785321273 at Tue Aug  1 21:23:15 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4787303381 at Wed Aug  2 07:04:48 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -4428,6 +4428,239 @@
               "show": false
             }
           ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 50
+          },
+          "id": 54,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (queue) (\n      sli_aggregations:gitlab_sli_sidekiq_execution_apdex_total_rate5m{env=\"$environment\",environment=\"$environment\",external_dependencies!=\"yes\",queue!=\"\",stage=\"$stage\",type=\"sidekiq\"}\n    )\n    -\n    sum by (queue) (\n      sli_aggregations:gitlab_sli_sidekiq_execution_apdex_success_total_rate5m{env=\"$environment\",environment=\"$environment\",external_dependencies!=\"yes\",queue!=\"\",stage=\"$stage\",type=\"sidekiq\"}\n    )\n  )\n  / ignoring (queue) group_left()\n  (\n    sum by () (\n      sli_aggregations:gitlab_sli_sidekiq_execution_apdex_total_rate5m{env=\"$environment\",environment=\"$environment\",external_dependencies!=\"yes\",queue!=\"\",stage=\"$stage\",type=\"sidekiq\"}\n    )\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{queue}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for sidekiq_execution Latency - per queue",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 8,
+            "y": 50
+          },
+          "id": 55,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (queue) (\n  sli_aggregations:gitlab_sli_sidekiq_execution_error_total_rate5m{env=\"$environment\",environment=\"$environment\",external_dependencies!=\"yes\",queue!=\"\",stage=\"$stage\",type=\"sidekiq\"}\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{queue}}",
+              "refId": "A"
+            }
+          ],
+          "title": "sidekiq_execution Errors - per queue",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 16,
+            "y": 50
+          },
+          "id": 56,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (queue) (\n  sli_aggregations:gitlab_sli_sidekiq_execution_total_rate5m{env=\"$environment\",environment=\"$environment\",external_dependencies!=\"yes\",queue!=\"\",stage=\"$stage\",type=\"sidekiq\"}\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{queue}}",
+              "refId": "A"
+            }
+          ],
+          "title": "sidekiq_execution RPS - per queue",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
         }
       ],
       "repeat": null,
@@ -4447,7 +4680,7 @@
         "x": 0,
         "y": 230
       },
-      "id": 54,
+      "id": 57,
       "panels": [
         {
           "bars": false,
@@ -4464,7 +4697,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 55,
+          "id": 58,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4540,7 +4773,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 56,
+          "id": 59,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4616,7 +4849,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 57,
+          "id": 60,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4697,7 +4930,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 58,
+          "id": 61,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4773,7 +5006,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 59,
+          "id": 62,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4849,7 +5082,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 60,
+          "id": 63,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4930,7 +5163,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 61,
+          "id": 64,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5006,7 +5239,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 62,
+          "id": 65,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5082,7 +5315,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 63,
+          "id": 66,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5163,7 +5396,7 @@
             "x": 8,
             "y": 30
           },
-          "id": 64,
+          "id": 67,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5239,7 +5472,7 @@
             "x": 16,
             "y": 30
           },
-          "id": 65,
+          "id": 68,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5315,7 +5548,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 66,
+          "id": 69,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5396,7 +5629,7 @@
             "x": 8,
             "y": 40
           },
-          "id": 67,
+          "id": 70,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5472,7 +5705,7 @@
             "x": 16,
             "y": 40
           },
-          "id": 68,
+          "id": 71,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5551,7 +5784,7 @@
         "x": 0,
         "y": 240
       },
-      "id": 69,
+      "id": 72,
       "panels": [
         {
           "bars": false,
@@ -5568,7 +5801,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 70,
+          "id": 73,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5644,7 +5877,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 71,
+          "id": 74,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5725,7 +5958,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 72,
+          "id": 75,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5801,7 +6034,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 73,
+          "id": 76,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5882,7 +6115,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 74,
+          "id": 77,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5958,7 +6191,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 75,
+          "id": 78,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6039,7 +6272,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 76,
+          "id": 79,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6115,7 +6348,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 77,
+          "id": 80,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6196,7 +6429,7 @@
             "x": 12,
             "y": 40
           },
-          "id": 78,
+          "id": 81,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6256,6 +6489,163 @@
               "show": false
             }
           ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 50
+          },
+          "id": 82,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (queue) (\n      sli_aggregations:gitlab_sli_sidekiq_queueing_apdex_total_rate5m{env=\"$environment\",environment=\"$environment\",external_dependencies!=\"yes\",queue!=\"\",stage=\"$stage\",type=\"sidekiq\"}\n    )\n    -\n    sum by (queue) (\n      sli_aggregations:gitlab_sli_sidekiq_queueing_apdex_success_total_rate5m{env=\"$environment\",environment=\"$environment\",external_dependencies!=\"yes\",queue!=\"\",stage=\"$stage\",type=\"sidekiq\"}\n    )\n  )\n  / ignoring (queue) group_left()\n  (\n    sum by () (\n      sli_aggregations:gitlab_sli_sidekiq_queueing_apdex_total_rate5m{env=\"$environment\",environment=\"$environment\",external_dependencies!=\"yes\",queue!=\"\",stage=\"$stage\",type=\"sidekiq\"}\n    )\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{queue}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for sidekiq_queueing Latency - per queue",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 50
+          },
+          "id": 83,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (queue) (\n  sli_aggregations:gitlab_sli_sidekiq_queueing_apdex_total_rate5m{env=\"$environment\",environment=\"$environment\",external_dependencies!=\"yes\",queue!=\"\",stage=\"$stage\",type=\"sidekiq\"}\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{queue}}",
+              "refId": "A"
+            }
+          ],
+          "title": "sidekiq_queueing RPS - per queue",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
         }
       ],
       "repeat": null,
@@ -6275,7 +6665,7 @@
         "x": 0,
         "y": 250
       },
-      "id": 79,
+      "id": 84,
       "panels": [
         {
           "bars": false,
@@ -6292,7 +6682,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 80,
+          "id": 85,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6368,7 +6758,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 81,
+          "id": 86,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6449,7 +6839,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 82,
+          "id": 87,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6525,7 +6915,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 83,
+          "id": 88,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6606,7 +6996,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 84,
+          "id": 89,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6682,7 +7072,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 85,
+          "id": 90,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6763,7 +7153,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 86,
+          "id": 91,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6839,7 +7229,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 87,
+          "id": 92,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6920,7 +7310,7 @@
             "x": 12,
             "y": 40
           },
-          "id": 88,
+          "id": 93,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6999,7 +7389,7 @@
         "x": 0,
         "y": 400
       },
-      "id": 89,
+      "id": 94,
       "panels": [
         {
           "aliasColors": {
@@ -7018,7 +7408,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 90,
+          "id": 95,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7123,7 +7513,7 @@
             "x": 8,
             "y": 1
           },
-          "id": 91,
+          "id": 96,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7228,7 +7618,7 @@
             "x": 16,
             "y": 1
           },
-          "id": 92,
+          "id": 97,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -7344,7 +7734,7 @@
             "x": 0,
             "y": 9
           },
-          "id": 93,
+          "id": 98,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7449,7 +7839,7 @@
             "x": 8,
             "y": 9
           },
-          "id": 94,
+          "id": 99,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7554,7 +7944,7 @@
             "x": 16,
             "y": 9
           },
-          "id": 95,
+          "id": 100,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -7670,7 +8060,7 @@
             "x": 0,
             "y": 17
           },
-          "id": 96,
+          "id": 101,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7775,7 +8165,7 @@
             "x": 8,
             "y": 17
           },
-          "id": 97,
+          "id": 102,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7880,7 +8270,7 @@
             "x": 16,
             "y": 17
           },
-          "id": 98,
+          "id": 103,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -7996,7 +8386,7 @@
             "x": 0,
             "y": 25
           },
-          "id": 99,
+          "id": 104,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8101,7 +8491,7 @@
             "x": 8,
             "y": 25
           },
-          "id": 100,
+          "id": 105,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8206,7 +8596,7 @@
             "x": 16,
             "y": 25
           },
-          "id": 101,
+          "id": 106,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -8322,7 +8712,7 @@
             "x": 0,
             "y": 33
           },
-          "id": 102,
+          "id": 107,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8427,7 +8817,7 @@
             "x": 8,
             "y": 33
           },
-          "id": 103,
+          "id": 108,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8532,7 +8922,7 @@
             "x": 16,
             "y": 33
           },
-          "id": 104,
+          "id": 109,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -8648,7 +9038,7 @@
             "x": 0,
             "y": 41
           },
-          "id": 105,
+          "id": 110,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8753,7 +9143,7 @@
             "x": 8,
             "y": 41
           },
-          "id": 106,
+          "id": 111,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8858,7 +9248,7 @@
             "x": 16,
             "y": 41
           },
-          "id": 107,
+          "id": 112,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -8974,7 +9364,7 @@
             "x": 0,
             "y": 49
           },
-          "id": 108,
+          "id": 113,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9079,7 +9469,7 @@
             "x": 8,
             "y": 49
           },
-          "id": 109,
+          "id": 114,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9184,7 +9574,7 @@
             "x": 16,
             "y": 49
           },
-          "id": 110,
+          "id": 115,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -9300,7 +9690,7 @@
             "x": 0,
             "y": 57
           },
-          "id": 111,
+          "id": 116,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9405,7 +9795,7 @@
             "x": 8,
             "y": 57
           },
-          "id": 112,
+          "id": 117,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9510,7 +9900,7 @@
             "x": 16,
             "y": 57
           },
-          "id": 113,
+          "id": 118,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -9626,7 +10016,7 @@
             "x": 0,
             "y": 65
           },
-          "id": 114,
+          "id": 119,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9731,7 +10121,7 @@
             "x": 8,
             "y": 65
           },
-          "id": 115,
+          "id": 120,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9836,7 +10226,7 @@
             "x": 16,
             "y": 65
           },
-          "id": 116,
+          "id": 121,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -9952,7 +10342,7 @@
             "x": 0,
             "y": 73
           },
-          "id": 117,
+          "id": 122,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10057,7 +10447,7 @@
             "x": 8,
             "y": 73
           },
-          "id": 118,
+          "id": 123,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10162,7 +10552,7 @@
             "x": 16,
             "y": 73
           },
-          "id": 119,
+          "id": 124,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -10278,7 +10668,7 @@
             "x": 0,
             "y": 81
           },
-          "id": 120,
+          "id": 125,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10376,7 +10766,7 @@
             "x": 12,
             "y": 81
           },
-          "id": 121,
+          "id": 126,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10475,7 +10865,7 @@
         "x": 0,
         "y": 500
       },
-      "id": 122,
+      "id": 127,
       "panels": [
         {
           "aliasColors": {
@@ -12435,7 +12825,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 133,
+      "id": 138,
       "panels": [
 
       ],
@@ -12464,7 +12854,7 @@
         "x": 0,
         "y": 1001
       },
-      "id": 134,
+      "id": 139,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12562,7 +12952,7 @@
         "x": 12,
         "y": 1001
       },
-      "id": 135,
+      "id": 140,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12660,7 +13050,7 @@
         "x": 0,
         "y": 1011
       },
-      "id": 136,
+      "id": 141,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12758,7 +13148,7 @@
         "x": 12,
         "y": 1011
       },
-      "id": 137,
+      "id": 142,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12848,7 +13238,7 @@
         "x": 0,
         "y": 1500
       },
-      "id": 138,
+      "id": 143,
       "panels": [
         {
           "aliasColors": {
@@ -12867,7 +13257,7 @@
             "x": 0,
             "y": 1501
           },
-          "id": 139,
+          "id": 144,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12981,7 +13371,7 @@
             "x": 12,
             "y": 1501
           },
-          "id": 140,
+          "id": 145,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13095,7 +13485,7 @@
             "x": 0,
             "y": 1511
           },
-          "id": 141,
+          "id": 146,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13210,7 +13600,7 @@
         "x": 0,
         "y": 2000
       },
-      "id": 142,
+      "id": 147,
       "panels": [
 
       ],
@@ -13239,7 +13629,7 @@
         "x": 0,
         "y": 2001
       },
-      "id": 143,
+      "id": 148,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -13337,7 +13727,7 @@
         "x": 12,
         "y": 2001
       },
-      "id": 144,
+      "id": 149,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -13435,7 +13825,7 @@
         "x": 0,
         "y": 2011
       },
-      "id": 145,
+      "id": 150,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -13533,7 +13923,7 @@
         "x": 12,
         "y": 2011
       },
-      "id": 146,
+      "id": 151,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -13623,7 +14013,7 @@
         "x": 0,
         "y": 2500
       },
-      "id": 147,
+      "id": 152,
       "panels": [
 
       ],
@@ -13652,7 +14042,7 @@
         "x": 0,
         "y": 2501
       },
-      "id": 148,
+      "id": 153,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -13750,7 +14140,7 @@
         "x": 12,
         "y": 2501
       },
-      "id": 149,
+      "id": 154,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -13856,7 +14246,7 @@
         "x": 0,
         "y": 2511
       },
-      "id": 150,
+      "id": 155,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -13954,7 +14344,7 @@
         "x": 12,
         "y": 2511
       },
-      "id": 151,
+      "id": 156,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -14060,7 +14450,7 @@
         "x": 0,
         "y": 2521
       },
-      "id": 152,
+      "id": 157,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -14158,7 +14548,7 @@
         "x": 12,
         "y": 2521
       },
-      "id": 153,
+      "id": 158,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -14256,7 +14646,7 @@
         "x": 0,
         "y": 2531
       },
-      "id": 154,
+      "id": 159,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -14362,7 +14752,7 @@
         "x": 12,
         "y": 2531
       },
-      "id": 155,
+      "id": 160,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -14468,7 +14858,7 @@
         "x": 0,
         "y": 2541
       },
-      "id": 156,
+      "id": 161,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -14566,7 +14956,7 @@
         "x": 0,
         "y": 3000
       },
-      "id": 157,
+      "id": 162,
       "panels": [
 
       ],
@@ -14595,7 +14985,7 @@
         "x": 0,
         "y": 3001
       },
-      "id": 158,
+      "id": 163,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -14699,7 +15089,7 @@
         "x": 12,
         "y": 3001
       },
-      "id": 159,
+      "id": 164,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -14803,7 +15193,7 @@
         "x": 0,
         "y": 3011
       },
-      "id": 160,
+      "id": 165,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -14907,7 +15297,7 @@
         "x": 12,
         "y": 3011
       },
-      "id": 161,
+      "id": 166,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -15003,7 +15393,7 @@
         "x": 0,
         "y": 5000
       },
-      "id": 162,
+      "id": 167,
       "panels": [
         {
           "aliasColors": {
@@ -15022,7 +15412,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 163,
+          "id": 168,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15134,7 +15524,7 @@
             "x": 12,
             "y": 1
           },
-          "id": 164,
+          "id": 169,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15246,7 +15636,7 @@
             "x": 0,
             "y": 11
           },
-          "id": 165,
+          "id": 170,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15358,7 +15748,7 @@
             "x": 12,
             "y": 11
           },
-          "id": 166,
+          "id": 171,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15470,7 +15860,7 @@
             "x": 0,
             "y": 21
           },
-          "id": 167,
+          "id": 172,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15582,7 +15972,7 @@
             "x": 12,
             "y": 21
           },
-          "id": 168,
+          "id": 173,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15694,7 +16084,7 @@
             "x": 0,
             "y": 31
           },
-          "id": 169,
+          "id": 174,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15805,7 +16195,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 170,
+      "id": 175,
       "panels": [
         {
           "colors": [
@@ -15826,7 +16216,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 171,
+          "id": 176,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -15939,7 +16329,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 172,
+          "id": 177,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -16050,7 +16440,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 173,
+          "id": 178,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -16155,7 +16545,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 174,
+      "id": 179,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -16305,5 +16695,5 @@
   "timezone": "utc",
   "title": "sidekiq: Overview",
   "uid": "sidekiq-main",
-  "version": 4445
+  "version": 4446
 }
