@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4821928034 at Tue Aug  8 03:10:49 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4826252147 at Tue Aug  8 14:09:11 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -78,7 +78,7 @@
       "repeatIteration": null,
       "repeatRowId": null,
       "showTitle": true,
-      "title": "Errortracking API version",
+      "title": "Deployed version(s)",
       "titleSize": "h6",
       "type": "row"
     },
@@ -94,8 +94,8 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 5,
-        "w": 12,
+        "h": 10,
+        "w": 8,
         "x": 0,
         "y": 1
       },
@@ -132,7 +132,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "count(kube_pod_container_info{env=~\"$environment\", cluster=\"$cluster\", node=~\"^$Node.*$\", namespace=\"$namespace\", container_id!=\"\", pod=~\"^$Deployment.*$\"}) by (image)",
+          "expr": "count(\n    kube_pod_container_info{cluster=\"$cluster\",env=\"$environment\",namespace=\"default\", pod=~\"errortracking-api.*\"}\n) by (image)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -145,7 +145,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Active Version",
+      "title": "Active version",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -192,9 +192,9 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 5,
-        "w": 12,
-        "x": 12,
+        "h": 10,
+        "w": 8,
+        "x": 8,
         "y": 1
       },
       "id": 4,
@@ -205,7 +205,7 @@
         "hideEmpty": true,
         "max": true,
         "min": true,
-        "rightSide": true,
+        "rightSide": false,
         "show": true,
         "sideWidth": null,
         "total": false,
@@ -230,11 +230,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "avg(kube_replicaset_spec_replicas{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", replicaset=~\"^$Deployment.*\"}) by (replicaset)",
+          "expr": "up{cluster=\"$cluster\",env=\"$environment\",namespace=\"default\", job=\"errortracking-api\", endpoint=\"metrics\"}\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{ replicaset }}",
+          "legendFormat": "{{ instance }}",
           "refId": "A"
         }
       ],
@@ -243,7 +243,105 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Active Replicaset",
+      "title": "Up",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 8,
+        "x": 16,
+        "y": 1
+      },
+      "id": 5,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "kube_statefulset_status_replicas_ready{cluster=\"$cluster\",env=\"$environment\",namespace=\"default\", statefulset=\"errortracking-api\"}\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{ statefulset }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Ready replicas",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -287,7 +385,7 @@
         "x": 0,
         "y": 100
       },
-      "id": 5,
+      "id": 6,
       "panels": [
 
       ],
@@ -298,79 +396,6 @@
       "title": "Deployment Info",
       "titleSize": "h6",
       "type": "row"
-    },
-    {
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "links": [
-
-          ],
-          "mappings": [
-
-          ],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 65
-              },
-              {
-                "color": "red",
-                "value": 90
-              }
-            ]
-          },
-          "unit": "percent"
-        }
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 8,
-        "x": 0,
-        "y": 101
-      },
-      "id": 6,
-      "links": [
-
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
-      },
-      "pluginVersion": "7",
-      "targets": [
-        {
-          "expr": "sum (container_memory_working_set_bytes{env=~\"$environment\", cluster=\"$cluster\", node=~\"^$Node.*$\", namespace=\"$namespace\", pod=~\"^$Deployment.*$\"}) / sum (kube_node_status_allocatable{resource=\"memory\", unit= \"byte\", env=~\"$environment\", node=~\"^$Node.*$\"}) * 100",
-          "format": "time_series",
-          "instant": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Deployment Memory Usage",
-      "transparent": false,
-      "type": "gauge"
     },
     {
       "datasource": null,
@@ -410,8 +435,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 8,
-        "x": 8,
+        "w": 12,
+        "x": 0,
         "y": 101
       },
       "id": 7,
@@ -432,7 +457,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (rate (container_cpu_usage_seconds_total{env=~\"$environment\", cluster=\"$cluster\", node=~\"^$Node.*$\", pod=~\"^$Deployment.*$\"}[2m])) / sum (machine_cpu_cores{env=~\"$environment\", cluster=\"$cluster\", node=~\"^$Node.*$\"}) * 100",
+          "expr": "100 *\nsum(\n  rate(\n    container_cpu_usage_seconds_total{cluster=\"$cluster\",env=\"$environment\", pod=~\"errortracking-api.*\"}[2m]\n  )\n)\n/\nsum(machine_cpu_cores{cluster=\"$cluster\",env=\"$environment\", node=~\"gke-.*\"})\n",
           "format": "time_series",
           "instant": false,
           "interval": "1m",
@@ -453,7 +478,6 @@
           "color": {
             "mode": "thresholds"
           },
-          "decimals": 0,
           "links": [
 
           ],
@@ -471,21 +495,21 @@
               },
               {
                 "color": "orange",
-                "value": 1
+                "value": 65
               },
               {
                 "color": "red",
-                "value": 30
+                "value": 90
               }
             ]
           },
-          "unit": "none"
+          "unit": "percent"
         }
       },
       "gridPos": {
         "h": 5,
-        "w": 8,
-        "x": 16,
+        "w": 12,
+        "x": 12,
         "y": 101
       },
       "id": 8,
@@ -506,7 +530,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "((sum(kube_deployment_status_replicas{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", deployment=~\"$Deployment.*\"}) or vector(0)) - ((sum(kube_deployment_status_replicas_available{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", deployment=~\"$Deployment.*\"}) or vector(0)))) / (sum(kube_deployment_status_replicas{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", deployment=~\"$Deployment.*\"}) or vector(0))",
+          "expr": "100 *\nsum(container_memory_working_set_bytes{cluster=\"$cluster\",env=\"$environment\",namespace=\"default\", pod=~\"errortracking-api.*\"})\n/\nsum(kube_node_status_allocatable{resource=\"memory\", unit= \"byte\", env=~\"$environment\", node=~\"gke-.*\"})\n",
           "format": "time_series",
           "instant": false,
           "interval": "1m",
@@ -515,417 +539,9 @@
           "refId": "A"
         }
       ],
-      "title": "Unavailable Replicas",
+      "title": "Deployment Memory Usage",
       "transparent": false,
       "type": "gauge"
-    },
-    {
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "decimals": 2,
-          "displayName": "",
-          "links": [
-
-          ],
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "",
-                "value": null
-              }
-            ]
-          },
-          "unit": "bytes"
-        }
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 0,
-        "y": 103
-      },
-      "id": 9,
-      "links": [
-
-      ],
-      "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "7",
-      "targets": [
-        {
-          "expr": "sum (container_memory_working_set_bytes{env=~\"$environment\", cluster=\"$cluster\", node=~\"^$Node.*$\", namespace=\"$namespace\", pod=~\"^$Deployment.*$\"})",
-          "format": "time_series",
-          "instant": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Memory Used",
-      "transformations": [
-
-      ],
-      "transparent": false,
-      "type": "stat"
-    },
-    {
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "decimals": 2,
-          "displayName": "",
-          "links": [
-
-          ],
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "",
-                "value": null
-              }
-            ]
-          },
-          "unit": "bytes"
-        }
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 4,
-        "y": 103
-      },
-      "id": 10,
-      "links": [
-
-      ],
-      "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "7",
-      "targets": [
-        {
-          "expr": "sum (kube_node_status_allocatable{env=~\"$environment\", cluster=\"$cluster\", resource=\"memory\", unit=\"byte\"})",
-          "format": "time_series",
-          "instant": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Memory Total (cluster)",
-      "transformations": [
-
-      ],
-      "transparent": false,
-      "type": "stat"
-    },
-    {
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "decimals": 2,
-          "displayName": "",
-          "links": [
-
-          ],
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        }
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 8,
-        "y": 103
-      },
-      "id": 11,
-      "links": [
-
-      ],
-      "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "7",
-      "targets": [
-        {
-          "expr": "sum (rate (container_cpu_usage_seconds_total{env=~\"$environment\", cluster=\"$cluster\", node=~\"^$Node.*$\", namespace=\"$namespace\", pod=~\"^$Deployment.*$\"}[1m]))",
-          "format": "time_series",
-          "instant": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "CPU Cores Used",
-      "transformations": [
-
-      ],
-      "transparent": false,
-      "type": "stat"
-    },
-    {
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "decimals": 0,
-          "displayName": "",
-          "links": [
-
-          ],
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        }
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 12,
-        "y": 103
-      },
-      "id": 12,
-      "links": [
-
-      ],
-      "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "7",
-      "targets": [
-        {
-          "expr": "sum (machine_cpu_cores{env=~\"$environment\", cluster=\"$cluster\"})",
-          "format": "time_series",
-          "instant": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "CPU Cores Total (cluster)",
-      "transformations": [
-
-      ],
-      "transparent": false,
-      "type": "stat"
-    },
-    {
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "decimals": 0,
-          "displayName": "",
-          "links": [
-
-          ],
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        }
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 16,
-        "y": 103
-      },
-      "id": 13,
-      "links": [
-
-      ],
-      "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "7",
-      "targets": [
-        {
-          "expr": "sum(kube_deployment_status_replicas_available{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", deployment=~\"$Deployment.*\"})",
-          "format": "time_series",
-          "instant": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Pods available (cluster)",
-      "transformations": [
-
-      ],
-      "transparent": false,
-      "type": "stat"
-    },
-    {
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "decimals": 0,
-          "displayName": "",
-          "links": [
-
-          ],
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        }
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 20,
-        "y": 103
-      },
-      "id": 14,
-      "links": [
-
-      ],
-      "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "7",
-      "targets": [
-        {
-          "expr": "sum(kube_deployment_status_replicas{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", deployment=~\"$Deployment.*\"})",
-          "format": "time_series",
-          "instant": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Pods total (cluster)",
-      "transformations": [
-
-      ],
-      "transparent": false,
-      "type": "stat"
     },
     {
       "collapse": false,
@@ -936,7 +552,7 @@
         "x": 0,
         "y": 200
       },
-      "id": 15,
+      "id": 9,
       "panels": [
 
       ],
@@ -964,7 +580,7 @@
         "x": 0,
         "y": 201
       },
-      "id": 16,
+      "id": 10,
       "legend": {
         "alignAsTable": true,
         "avg": false,
@@ -997,7 +613,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum (rate (container_cpu_usage_seconds_total{env=~\"$environment\", cluster=\"$cluster\", node=~\"^$Node.*$\", namespace=\"$namespace\", image!=\"\", pod=~\"^$Deployment.*$\"}[1m])) by (pod,node)",
+          "expr": "sum(\n  rate(\n    container_cpu_usage_seconds_total{cluster=\"$cluster\",env=\"$environment\",namespace=\"default\", pod=~\"errortracking-api.*\"}[1m]\n  )\n) by (pod,node)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1005,7 +621,7 @@
           "refId": "A"
         },
         {
-          "expr": "sum (kube_pod_container_resource_requests{env=~\"$environment\", cluster=\"$cluster\", node=~\"^$Node.*$\", namespace=\"$namespace\", resource=\"cpu\", unit=\"core\", pod=~\"^$Deployment.*$\"}) by (pod,node)",
+          "expr": "sum(\n  kube_pod_container_resource_requests{cluster=\"$cluster\",env=\"$environment\",namespace=\"default\", resource=\"cpu\", unit=\"core\", pod=~\"errortracking-api.*\"}\n) by (pod,node)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1054,93 +670,6 @@
       ]
     },
     {
-      "columns": [
-
-      ],
-      "datasource": "$PROMETHEUS_DS",
-      "gridPos": {
-        "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 211
-      },
-      "id": 17,
-      "links": [
-
-      ],
-      "styles": [
-        {
-          "alias": "Time",
-          "pattern": "Time",
-          "type": "hidden"
-        },
-        {
-          "alias": "Pod",
-          "decimals": 0,
-          "link": true,
-          "linkTooltip": "Drill Down",
-          "linkUrl": "/d/kubernetes-resources-pod/k8s-resources-pod?var-datasource=$datasource&var-cluster=$cluster&var-namespace=$namespace&var-pod=$__cell",
-          "pattern": "pod",
-          "type": "number",
-          "unit": "short"
-        },
-        {
-          "alias": "CPU Usage",
-          "decimals": 3,
-          "pattern": "Value #A",
-          "type": "number",
-          "unit": "short"
-        },
-        {
-          "alias": "CPU Requests",
-          "decimals": 3,
-          "pattern": "Value #B",
-          "type": "number",
-          "unit": "short"
-        },
-        {
-          "alias": "CPU Usage %",
-          "decimals": 0,
-          "pattern": "Value #C",
-          "type": "number",
-          "unit": "percentunit"
-        }
-      ],
-      "targets": [
-        {
-          "expr": "sum(label_replace(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{env=~\"$environment\"}, \"pod\", \"$1\", \"pod\", \"(.*)\") * on(namespace,pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"^$Deployment.*\"}) by (pod)",
-          "format": "table",
-          "instant": true,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        },
-        {
-          "expr": "sum(kube_pod_container_resource_requests{resource=\"cpu\", unit=\"core\", env=~\"$environment\"} * on(namespace,pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"^$Deployment.*\"}) by (pod)",
-          "format": "table",
-          "instant": true,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "B"
-        },
-        {
-          "expr": "sum(label_replace(namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{env=~\"$environment\"}, \"pod\", \"$1\", \"pod\", \"(.*)\") * on(pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"^$Deployment.*\"}) by (pod) / sum(kube_pod_container_resource_requests{resource=\"cpu\", unit=\"core\", env=~\"$environment\"} * on(pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"^$Deployment.*\"}) by (pod)",
-          "format": "table",
-          "instant": true,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "C"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Quota",
-      "type": "table"
-    },
-    {
       "collapse": false,
       "collapsed": false,
       "gridPos": {
@@ -1149,7 +678,7 @@
         "x": 0,
         "y": 300
       },
-      "id": 18,
+      "id": 11,
       "panels": [
 
       ],
@@ -1177,7 +706,7 @@
         "x": 0,
         "y": 301
       },
-      "id": 19,
+      "id": 12,
       "legend": {
         "alignAsTable": true,
         "avg": false,
@@ -1210,7 +739,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum (container_memory_working_set_bytes{env=~\"$environment\", cluster=\"$cluster\", node=~\"^$Node.*$\", namespace=\"$namespace\", id!=\"/\",pod=~\"^$Deployment.*$\", container=\"errortracking-api\"}) by (pod)",
+          "expr": "sum(\n  container_memory_working_set_bytes{cluster=\"$cluster\",env=\"$environment\",namespace=\"default\", pod=~\"errortracking-api.*\", container=\"errortracking-api\"}\n) by (pod)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1261,93 +790,6 @@
       ]
     },
     {
-      "columns": [
-
-      ],
-      "datasource": "$PROMETHEUS_DS",
-      "gridPos": {
-        "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 311
-      },
-      "id": 20,
-      "links": [
-
-      ],
-      "styles": [
-        {
-          "alias": "Time",
-          "pattern": "Time",
-          "type": "hidden"
-        },
-        {
-          "alias": "Pod",
-          "decimals": 0,
-          "link": true,
-          "linkTooltip": "Drill Down",
-          "linkUrl": "/d/kubernetes-resources-pod/k8s-resources-pod?var-datasource=$datasource&var-cluster=$cluster&var-namespace=$namespace&var-pod=$__cell",
-          "pattern": "pod",
-          "type": "number",
-          "unit": "short"
-        },
-        {
-          "alias": "Memory Usage",
-          "decimals": 2,
-          "pattern": "Value #A",
-          "type": "number",
-          "unit": "bytes"
-        },
-        {
-          "alias": "Memory Requests",
-          "decimals": 2,
-          "pattern": "Value #B",
-          "type": "number",
-          "unit": "bytes"
-        },
-        {
-          "alias": "Memory Usage %",
-          "decimals": 1,
-          "pattern": "Value #C",
-          "type": "number",
-          "unit": "percentunit"
-        }
-      ],
-      "targets": [
-        {
-          "expr": "sum(label_replace(container_memory_usage_bytes{env=~\"$environment\", container!=\"\"}, \"pod\", \"$1\", \"pod\", \"(.*)\") * on(pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"^$Deployment.*\"}) by (pod)",
-          "format": "table",
-          "instant": true,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        },
-        {
-          "expr": "sum(kube_pod_container_resource_requests{resource=\"memory\", unit=\"byte\", env=~\"$environment\"} * on(pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"^$Deployment.*\"}) by (pod)",
-          "format": "table",
-          "instant": true,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "B"
-        },
-        {
-          "expr": "sum(label_replace(container_memory_usage_bytes{env=~\"$environment\", container!=\"\"}, \"pod\", \"$1\", \"pod\", \"(.*)\") * on(pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"^$Deployment.*\"}) by (pod) /sum(kube_pod_container_resource_requests{resource=\"memory\", unit=\"byte\", env=~\"$environment\"} * on(pod) group_left(workload) mixin_pod_workload{env=~\"$environment\", cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"^$Deployment.*\"}) by (pod)",
-          "format": "table",
-          "instant": true,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "C"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Quota",
-      "type": "table"
-    },
-    {
       "collapse": false,
       "collapsed": false,
       "gridPos": {
@@ -1356,7 +798,7 @@
         "x": 0,
         "y": 400
       },
-      "id": 21,
+      "id": 13,
       "panels": [
 
       ],
@@ -1384,7 +826,7 @@
         "x": 0,
         "y": 401
       },
-      "id": 22,
+      "id": 14,
       "legend": {
         "alignAsTable": true,
         "avg": false,
@@ -1491,7 +933,7 @@
         "x": 0,
         "y": 401
       },
-      "id": 23,
+      "id": 15,
       "legend": {
         "alignAsTable": true,
         "avg": false,
@@ -1591,7 +1033,7 @@
         "x": 0,
         "y": 500
       },
-      "id": 24,
+      "id": 16,
       "panels": [
 
       ],
@@ -1599,7 +1041,7 @@
       "repeatIteration": null,
       "repeatRowId": null,
       "showTitle": true,
-      "title": "Request Handling Performance",
+      "title": "Requests",
       "titleSize": "h6",
       "type": "row"
     },
@@ -1620,7 +1062,7 @@
         "x": 0,
         "y": 601
       },
-      "id": 25,
+      "id": 17,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1653,7 +1095,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(http_requests_duration_seconds_count{env=\"$environment\", cluster=~\"$cluster\", pod=~\"$errortrackingPods\"}[$__rate_interval])) by (code) > 0 ",
+          "expr": "sum(\n  rate(\n    http_requests_duration_seconds_count{cluster=\"$cluster\",env=\"$environment\",namespace=\"default\", pod=~\"errortracking-api.*\"}[$__rate_interval]\n  )\n) by (code) > 0\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1718,7 +1160,7 @@
         "x": 12,
         "y": 601
       },
-      "id": 26,
+      "id": 18,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1751,7 +1193,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.5, sum by (code, le) (\n  rate(http_requests_duration_seconds_bucket{env=\"$environment\", cluster=~\"$cluster\", pod=~\"$errortrackingPods\"}[$__interval])\n))\n",
+          "expr": "histogram_quantile(0.5, sum by (code, le) (\n  rate(http_requests_duration_seconds_bucket{env=\"$environment\", cluster=~\"$cluster\", pod=~\"errortracking-api.*\"}[$__interval])\n))\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1759,7 +1201,7 @@
           "refId": "A"
         },
         {
-          "expr": "histogram_quantile(0.9, sum by (code, le) (\n  rate(http_requests_duration_seconds_bucket{env=\"$environment\", cluster=~\"$cluster\", pod=~\"$errortrackingPods\"}[$__interval])\n))\n",
+          "expr": "histogram_quantile(0.9, sum by (code, le) (\n  rate(http_requests_duration_seconds_bucket{env=\"$environment\", cluster=~\"$cluster\", pod=~\"errortracking-api.*\"}[$__interval])\n))\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1767,7 +1209,7 @@
           "refId": "B"
         },
         {
-          "expr": "histogram_quantile(0.95, sum by (code, le) (\n  rate(http_requests_duration_seconds_bucket{env=\"$environment\", cluster=~\"$cluster\", pod=~\"$errortrackingPods\"}[$__interval])\n))\n",
+          "expr": "histogram_quantile(0.95, sum by (code, le) (\n  rate(http_requests_duration_seconds_bucket{env=\"$environment\", cluster=~\"$cluster\", pod=~\"errortracking-api.*\"}[$__interval])\n))\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1775,7 +1217,7 @@
           "refId": "C"
         },
         {
-          "expr": "histogram_quantile(0.99, sum by (code, le) (\n  rate(http_requests_duration_seconds_bucket{env=\"$environment\", cluster=~\"$cluster\", pod=~\"$errortrackingPods\"}[$__interval])\n))\n",
+          "expr": "histogram_quantile(0.99, sum by (code, le) (\n  rate(http_requests_duration_seconds_bucket{env=\"$environment\", cluster=~\"$cluster\", pod=~\"errortracking-api.*\"}[$__interval])\n))\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1840,7 +1282,7 @@
         "x": 0,
         "y": 611
       },
-      "id": 27,
+      "id": 19,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1873,7 +1315,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(http_requests_duration_seconds_count{env=\"$environment\", cluster=~\"$cluster\", pod=~\"$errortrackingPods\"}[$__rate_interval])) by (path) > 0 ",
+          "expr": "sum(\n  rate(\n    http_requests_duration_seconds_count{cluster=\"$cluster\",env=\"$environment\",namespace=\"default\", pod=~\"errortracking-api.*\"}[$__rate_interval]\n  )\n) by (path) > 0\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1938,7 +1380,7 @@
         "x": 12,
         "y": 611
       },
-      "id": 28,
+      "id": 20,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1971,7 +1413,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.5, sum by (path, le) (\n  rate(http_requests_duration_seconds_bucket{env=\"$environment\", cluster=~\"$cluster\", pod=~\"$errortrackingPods\"}[$__interval])\n))\n",
+          "expr": "histogram_quantile(0.5, sum by (path, le) (\n  rate(http_requests_duration_seconds_bucket{env=\"$environment\", cluster=~\"$cluster\", pod=~\"errortracking-api.*\"}[$__interval])\n))\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1979,7 +1421,7 @@
           "refId": "A"
         },
         {
-          "expr": "histogram_quantile(0.9, sum by (path, le) (\n  rate(http_requests_duration_seconds_bucket{env=\"$environment\", cluster=~\"$cluster\", pod=~\"$errortrackingPods\"}[$__interval])\n))\n",
+          "expr": "histogram_quantile(0.9, sum by (path, le) (\n  rate(http_requests_duration_seconds_bucket{env=\"$environment\", cluster=~\"$cluster\", pod=~\"errortracking-api.*\"}[$__interval])\n))\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1987,7 +1429,7 @@
           "refId": "B"
         },
         {
-          "expr": "histogram_quantile(0.95, sum by (path, le) (\n  rate(http_requests_duration_seconds_bucket{env=\"$environment\", cluster=~\"$cluster\", pod=~\"$errortrackingPods\"}[$__interval])\n))\n",
+          "expr": "histogram_quantile(0.95, sum by (path, le) (\n  rate(http_requests_duration_seconds_bucket{env=\"$environment\", cluster=~\"$cluster\", pod=~\"errortracking-api.*\"}[$__interval])\n))\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1995,7 +1437,7 @@
           "refId": "C"
         },
         {
-          "expr": "histogram_quantile(0.99, sum by (path, le) (\n  rate(http_requests_duration_seconds_bucket{env=\"$environment\", cluster=~\"$cluster\", pod=~\"$errortrackingPods\"}[$__interval])\n))\n",
+          "expr": "histogram_quantile(0.99, sum by (path, le) (\n  rate(http_requests_duration_seconds_bucket{env=\"$environment\", cluster=~\"$cluster\", pod=~\"errortracking-api.*\"}[$__interval])\n))\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -2060,7 +1502,7 @@
         "x": 0,
         "y": 621
       },
-      "id": 29,
+      "id": 21,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -2093,7 +1535,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (method, path) (rate(http_requests_duration_seconds_count{env=\"$environment\", cluster=~\"$cluster\", pod=~\"$errortrackingPods\", code =~ \"[4-5].*\"}[$__rate_interval]))",
+          "expr": "sum by (method, path) (\n  rate(\n    http_requests_duration_seconds_count{cluster=\"$cluster\",env=\"$environment\",namespace=\"default\", pod=~\"errortracking-api.*\", code =~ \"[4-5].*\"}[$__rate_interval]\n  )\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -2150,7 +1592,7 @@
         "x": 0,
         "y": 700
       },
-      "id": 30,
+      "id": 22,
       "panels": [
 
       ],
@@ -2158,7 +1600,7 @@
       "repeatIteration": null,
       "repeatRowId": null,
       "showTitle": true,
-      "title": "Project data",
+      "title": "Project-specific telemetry",
       "titleSize": "h6",
       "type": "row"
     },
@@ -2175,11 +1617,11 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
-        "w": 12,
+        "w": 8,
         "x": 0,
         "y": 701
       },
-      "id": 31,
+      "id": 23,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -2212,7 +1654,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(project_envelope_total{env=\"$environment\", cluster=~\"$cluster\", pod=~\"$errortrackingPods\"}[$__rate_interval])) by (projectID)",
+          "expr": "sum(\n  rate(\n    project_envelope_total{cluster=\"$cluster\",env=\"$environment\",namespace=\"default\", pod=~\"errortracking-api.*\"}[$__rate_interval]\n  )\n) by (projectID)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -2273,11 +1715,11 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
-        "w": 12,
-        "x": 12,
+        "w": 8,
+        "x": 8,
         "y": 701
       },
-      "id": 32,
+      "id": 24,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -2310,7 +1752,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(project_get_error_total{env=\"$environment\", cluster=~\"$cluster\", pod=~\"$errortrackingPods\"}[$__rate_interval])) by (projectID)",
+          "expr": "sum(\n  rate(\n    project_get_error_total{cluster=\"$cluster\",env=\"$environment\",namespace=\"default\", pod=~\"errortracking-api.*\"}[$__rate_interval]\n  )\n) by (projectID)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -2371,11 +1813,11 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
-        "w": 12,
-        "x": 0,
-        "y": 711
+        "w": 8,
+        "x": 16,
+        "y": 701
       },
-      "id": 33,
+      "id": 25,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -2408,7 +1850,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(project_list_errors_total{env=\"$environment\", cluster=~\"$cluster\", pod=~\"$errortrackingPods\"}[$__rate_interval])) by (projectID)",
+          "expr": "sum(\n  rate(\n    project_list_errors_total{cluster=\"$cluster\",env=\"$environment\",namespace=\"default\", pod=~\"errortracking-api.*\"}[$__rate_interval]\n  )\n) by (projectID)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -2469,11 +1911,11 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
-        "w": 12,
-        "x": 12,
+        "w": 8,
+        "x": 0,
         "y": 711
       },
-      "id": 34,
+      "id": 26,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -2506,7 +1948,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(project_list_events_total{env=\"$environment\", cluster=~\"$cluster\", pod=~\"$errortrackingPods\"}[$__rate_interval])) by (projectID)",
+          "expr": "sum(\n  rate(\n    project_list_events_total{cluster=\"$cluster\",env=\"$environment\",namespace=\"default\", pod=~\"errortracking-api.*\"}[$__rate_interval]\n  )\n) by (projectID)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -2567,11 +2009,11 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
-        "w": 12,
-        "x": 0,
-        "y": 721
+        "w": 8,
+        "x": 8,
+        "y": 711
       },
-      "id": 35,
+      "id": 27,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -2604,7 +2046,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(project_store_total{env=\"$environment\", cluster=~\"$cluster\", pod=~\"$errortrackingPods\"}[$__rate_interval])) by (projectID)",
+          "expr": "sum(\n  rate(\n    project_store_total{cluster=\"$cluster\",env=\"$environment\",namespace=\"default\", pod=~\"errortracking-api.*\"}[$__rate_interval]\n  )\n) by (projectID)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -2662,8 +2104,6 @@
   "tags": [
     "managed",
     "observability",
-    "k8s",
-    "gos",
     "gitlab-observability"
   ],
   "templating": {
@@ -2703,33 +2143,6 @@
         "refresh": 1,
         "regex": "",
         "sort": 1,
-        "tagValuesQuery": "",
-        "tags": [
-
-        ],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": ".*",
-        "current": {
-          "text": "NewMergeRequestWorker",
-          "value": "NewMergeRequestWorker"
-        },
-        "datasource": "$PROMETHEUS_DS",
-        "hide": 0,
-        "includeAll": true,
-        "label": null,
-        "multi": false,
-        "name": "Node",
-        "options": [
-
-        ],
-        "query": "query_result(count(count_over_time(kube_node_labels{environment=\"$environment\", cluster=\"$cluster\"}[1w])) by (label_kubernetes_io_hostname))",
-        "refresh": 2,
-        "regex": "/.*=\"(.*)\".*/",
-        "sort": 0,
         "tagValuesQuery": "",
         "tags": [
 
@@ -2791,52 +2204,44 @@
       {
         "allValue": null,
         "current": {
+          "text": "default",
+          "value": "default"
         },
-        "datasource": "$PROMETHEUS_DS",
-        "hide": 0,
+        "hide": 2,
         "includeAll": false,
-        "label": "Errortracking-api namespace",
+        "label": "Environment",
         "multi": false,
         "name": "namespace",
         "options": [
-
+          {
+            "text": "default",
+            "value": "default"
+          }
         ],
-        "query": "label_values(kube_deployment_status_replicas{env=\"$environment\", cluster=~\"opstrace-.*\", deployment=~\"^errortracking-.*$\"}, namespace)",
-        "refresh": 2,
-        "regex": "",
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tags": [
-
-        ],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "query": "default",
+        "refresh": 0,
+        "type": "custom"
       },
       {
         "allValue": null,
         "current": {
+          "text": "gke-",
+          "value": "gke-"
         },
-        "datasource": "$PROMETHEUS_DS",
-        "hide": 0,
-        "includeAll": true,
-        "label": "Errortracking-api pods",
-        "multi": true,
-        "name": "errortrackingPods",
+        "hide": 2,
+        "includeAll": false,
+        "label": "Node",
+        "multi": false,
+        "name": "Node",
         "options": [
-
+          {
+            "text": "gke-",
+            "value": "gke-"
+          }
         ],
-        "query": "label_values(kube_pod_container_info{env=\"$environment\", cluster=~\"opstrace-.*\", container=\"errortracking-api\", namespace=\"$namespace\"}, pod)",
-        "refresh": 2,
-        "regex": "",
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tags": [
-
-        ],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "query": "gke-",
+        "refresh": 0,
+        "type": "custom"
       },
       {
         "allValue": null,
@@ -2853,13 +2258,9 @@
           {
             "text": "errortracking",
             "value": "errortracking"
-          },
-          {
-            "text": "",
-            "value": ""
           }
         ],
-        "query": "errortracking,",
+        "query": "errortracking",
         "refresh": 0,
         "type": "custom"
       }
@@ -2892,5 +2293,5 @@
   "timezone": "utc",
   "title": "observability: Errortracking API",
   "uid": "observability-errortracking",
-  "version": 913
+  "version": 916
 }
