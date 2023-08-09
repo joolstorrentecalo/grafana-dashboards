@@ -10,7 +10,7 @@
 
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4829430576 at Tue Aug  8 23:18:34 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4831162558 at Wed Aug  9 07:49:43 UTC 2023",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
@@ -127,7 +127,7 @@
     },
     {
       "datasource": null,
-      "description": "MTTP over selected time range when ignoring weekends",
+      "description": "MTTP over selected time range when ignoring weekends. If the adjusted metric is not available, it\n                    will use the regular (unadjusted) metric. The adjusted metric is available from 7th Aug 2023 onwards.",
       "fieldConfig": {
         "defaults": {
           "decimals": 2,
@@ -193,7 +193,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "avg(\n                last_over_time(delivery_deployment_merge_request_adjusted_lead_time_seconds{target_env=\"gprd\", target_stage=\"main\"}[$__range])\n                  unless\n                (\n                  last_over_time(\n                    delivery_deployment_merge_request_adjusted_lead_time_seconds{target_env=\"gprd\", target_stage=\"main\"}[12h] offset $__range\n                  )\n                )\n              )",
+          "expr": "avg(\n                (\n                  last_over_time(delivery_deployment_merge_request_adjusted_lead_time_seconds{target_env=\"gprd\", target_stage=\"main\"}[$__range])\n                    or\n                  last_over_time(delivery_deployment_merge_request_lead_time_seconds{target_env=\"gprd\", target_stage=\"main\"}[$__range])\n                )\n                  unless\n                (\n                  last_over_time(delivery_deployment_merge_request_adjusted_lead_time_seconds{target_env=\"gprd\", target_stage=\"main\"}[12h] offset $__range)\n                    or\n                  last_over_time(delivery_deployment_merge_request_lead_time_seconds{target_env=\"gprd\", target_stage=\"main\"}[12h] offset $__range)\n                )\n              )",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -1194,5 +1194,5 @@
   "timezone": "utc",
   "title": "delivery: deployment-metrics",
   "uid": "delivery-deployment_metrics",
-  "version": 620
+  "version": 625
 }
