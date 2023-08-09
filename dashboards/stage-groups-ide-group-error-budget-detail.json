@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4831162558 at Wed Aug  9 07:49:25 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4834443905 at Wed Aug  9 14:18:55 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -2746,6 +2746,224 @@
           "mode": "markdown",
           "title": "Details",
           "type": "text"
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 30
+          },
+          "id": 35,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": [
+              {
+                "targetBlank": true,
+                "title": "web_ide_worker SLI Error-Rate SLO Analysis",
+                "url": "/d/alerts-service_component_stage_groups_slo_error?${__url_time_range}&${__all_variables}&var-component=web_ide_worker&var-stage=$stage"
+              }
+            ]
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "6h Degradation SLO (5% of monthly error budget)",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "1h Outage SLO (2% of monthly error budget)",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "sli-web_ide_worker-error-rate",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_max(\n  max_over_time(gitlab:component:stage_group:execution:error:ratio_5m{component=\"web_ide_worker\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"ide\"}[$__interval])\n,\n  1\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{ type }} error ratio",
+              "refId": "A"
+            },
+            {
+              "expr": "(6 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"web_ide_worker\",monitor=\"global\"})\n)\n",
+              "format": "time_series",
+              "interval": "5m",
+              "intervalFactor": 1,
+              "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+              "refId": "B"
+            },
+            {
+              "expr": "(14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"web_ide_worker\",monitor=\"global\"})\n)\n",
+              "format": "time_series",
+              "interval": "5m",
+              "intervalFactor": 1,
+              "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+              "refId": "C"
+            }
+          ],
+          "title": "web_ide_worker SLI Error Ratio",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Error %",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 8,
+            "y": 30
+          },
+          "id": 36,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stableId": "sli-web_ide_worker-ops-rate",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "avg_over_time(gitlab:component:stage_group:execution:ops:rate_5m{component=\"web_ide_worker\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"ide\"}[$__interval])\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{ type }} RPS",
+              "refId": "A"
+            }
+          ],
+          "title": "web_ide_worker SLI RPS - Requests per Second",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Operations per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "content": "### Description\n\nCloudflare Worker used by our VS Code-based Web IDE to pull assets from *.cdn.web-ide.gitlab-static.net.\n\n",
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 16,
+            "y": 30
+          },
+          "id": 37,
+          "mode": "markdown",
+          "title": "Details",
+          "type": "text"
         }
       ],
       "repeat": null,
@@ -2872,5 +3090,5 @@
   "timezone": "utc",
   "title": "stage-groups: IDE: group error budget detail",
   "uid": "stage-groups-detail-ide",
-  "version": 426
+  "version": 431
 }
