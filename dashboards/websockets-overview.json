@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4866448118 at Mon Aug 14 07:42:20 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4867135074 at Mon Aug 14 09:33:27 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -5092,7 +5092,7 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "This uses the working set size from cAdvisor for the cgroup's memory usage. That may\nnot be a good measure as it includes filesystem cache pages that are not necessarily\nattributable to the application inside the cgroup, and are permitted to be evicted\ninstead of being OOM killed.\n Lower is better.",
+          "description": "Records the total anonymous (unevictable) memory utilization for containers for this\nservice, as a percentage of the memory limit as configured through Kubernetes.\n\nThis is computed using the container's resident set size (RSS), as opposed to\nkube_container_memory which uses the working set size. For our purposes, RSS is the\nbetter metric as cAdvisor's working set calculation includes pages from the\nfilesystem cache that can (and will) be evicted before the OOM killer kills the\ncgroup.\n\nA container's RSS (anonymous memory usage) is still not precisely what the OOM\nkiller will use, but it's a better approximation of what the container's workload is\nactually using. RSS metrics can, however, be dramatically inflated if a process in\nthe container uses MADV_FREE (lazy-free) memory. RSS will include the memory that is\navailable to be reclaimed without a page fault, but not currently in use.\n\nThe most common case of OOM kills is for anonymous memory demand to overwhelm the\ncontainer's memory limit. On swapless hosts, anonymous memory cannot be evicted from\nthe page cache, so when a container's memory usage is mostly anonymous pages, the\nonly remaining option to relieve memory pressure may be the OOM killer.\n\nAs container RSS approaches container memory limit, OOM kills become much more\nlikely. Consequently, this ratio is a good leading indicator of memory saturation\nand OOM risk.\n Lower is better.",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -5101,7 +5101,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 172578411,
+          "id": 2875690100,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5185,12 +5185,12 @@
             }
           ],
           "spaceLength": 10,
-          "stableId": "saturation-kube_container_memory",
+          "stableId": "saturation-kube_container_rss",
           "stack": false,
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard) (\n  clamp_min(\n    clamp_max(\n      container_memory_working_set_bytes:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"websockets\"}\n      /\n      (container_spec_memory_limit_bytes:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"websockets\"} > 0)\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard) (\n  clamp_min(\n    clamp_max(\n      container_memory_rss:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"websockets\"}\n      /\n      (container_spec_memory_limit_bytes:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"websockets\"} > 0)\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -5198,7 +5198,7 @@
               "refId": "A"
             },
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"websockets\", component=\"kube_container_memory\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"websockets\", component=\"kube_container_rss\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -5206,7 +5206,7 @@
               "refId": "B"
             },
             {
-              "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"websockets\", component=\"kube_container_memory\"}\n)\n",
+              "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"websockets\", component=\"kube_container_rss\"}\n)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -5214,7 +5214,7 @@
               "refId": "C"
             },
             {
-              "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"websockets\", component=\"kube_container_memory\"}\n)\n",
+              "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"websockets\", component=\"kube_container_rss\"}\n)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -5222,7 +5222,7 @@
               "refId": "D"
             },
             {
-              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"kube_container_memory\"}) by (component)\n",
+              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"kube_container_rss\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -5230,7 +5230,7 @@
               "refId": "E"
             },
             {
-              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"kube_container_memory\"}) by (component)\n",
+              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"kube_container_rss\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -5243,7 +5243,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "kube_container_memory component saturation: Kube Container Memory Utilization",
+          "title": "kube_container_rss component saturation: Kube Container Memory Utilization (RSS)",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -9148,5 +9148,5 @@
   "timezone": "utc",
   "title": "websockets: Overview",
   "uid": "websockets-main",
-  "version": 2776
+  "version": 2778
 }
