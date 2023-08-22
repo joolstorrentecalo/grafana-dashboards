@@ -91,7 +91,7 @@
           "orderByCol": "2",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "SELECT COUNT(chunk.prompt_id) FROM `gl_gitlab_codebase.scores_v4`",
+          "rawSql": "SELECT COUNT(chunk.prompt_id) FROM `gl_gitlab_codebase.scores_v4_combined`",
           "refId": "A",
           "select": [
             [
@@ -128,8 +128,6 @@
         "defaults": {
           "color": {
             "mode": "palette-classic"
-          },
-          "custom": {
           },
           "mappings": [
 
@@ -180,7 +178,7 @@
           "orderByCol": "2",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "SELECT chunking_method, COUNT(chunk.prompt_id) as count FROM `gl_gitlab_codebase.scores_v4` GROUP BY chunking_method\n",
+          "rawSql": "SELECT chunking_method, COUNT(chunk.prompt_id) as count FROM `gl_gitlab_codebase.scores_v4_combined` GROUP BY chunking_method\n",
           "refId": "A",
           "select": [
             [
@@ -251,7 +249,7 @@
         ]
       },
       "gridPos": {
-        "h": 6,
+        "h": 12,
         "w": 12,
         "x": 12,
         "y": 0
@@ -283,7 +281,7 @@
           "orderByCol": "2",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "SELECT\n  score\nFROM\n  `gl_gitlab_codebase.scores_v4`",
+          "rawSql": "SELECT\n  score\nFROM\n  `gl_gitlab_codebase.scores_v4_combined`",
           "refId": "A",
           "select": [
             [
@@ -382,7 +380,7 @@
           "orderByCol": "2",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "SELECT lang_id, COUNT(chunk.prompt_id) as count FROM `gl_gitlab_codebase.scores_v4` GROUP BY lang_id\n",
+          "rawSql": "SELECT lang_id, COUNT(chunk.prompt_id) as count FROM `gl_gitlab_codebase.scores_v4_combined` GROUP BY lang_id\n",
           "refId": "A",
           "select": [
             [
@@ -409,206 +407,6 @@
       ],
       "title": "Proportion of Prompts by Language",
       "type": "marcusolsson-treemap-panel"
-    },
-    {
-      "datasource": {
-        "type": "doitintl-bigquery-datasource",
-        "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 4,
-        "x": 12,
-        "y": 6
-      },
-      "id": 7,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "9.5.1",
-      "targets": [
-        {
-          "convertToUTC": false,
-          "datasource": {
-            "type": "doitintl-bigquery-datasource",
-            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
-          },
-          "format": "table",
-          "group": [
-
-          ],
-          "metricColumn": "none",
-          "orderByCol": "2",
-          "orderBySort": "1",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  MAX(percentile95) AS percentile95,\nFROM (\n  SELECT\n    PERCENTILE_CONT(score, 0.95) OVER() AS percentile95,\n  FROM\n    `gl_gitlab_codebase.scores_v4`)\nORDER BY\n  percentile95 DESC\n",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "-- value --"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "timeColumn": "-- time --",
-          "timeColumnType": "TIMESTAMP",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [
-
-              ],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "95 Pct Similarity Score",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "doitintl-bigquery-datasource",
-        "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 4,
-        "x": 16,
-        "y": 6
-      },
-      "id": 9,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "9.5.1",
-      "targets": [
-        {
-          "convertToUTC": false,
-          "datasource": {
-            "type": "doitintl-bigquery-datasource",
-            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
-          },
-          "format": "table",
-          "group": [
-
-          ],
-          "metricColumn": "none",
-          "orderByCol": "2",
-          "orderBySort": "1",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  MAX(median) AS median,\nFROM (\n  SELECT\n    PERCENTILE_CONT(score, 0.5) OVER() AS median,\n  FROM\n    `gl_gitlab_codebase.scores_v4`)\nORDER BY\n  median DESC\n",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "-- value --"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "timeColumn": "-- time --",
-          "timeColumnType": "TIMESTAMP",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [
-
-              ],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Median Similarity Score",
-      "type": "stat"
     },
     {
       "datasource": {
@@ -706,7 +504,7 @@
           "orderByCol": "2",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "SELECT\n  lang_id,\n  MAX(median) AS median,\n  MAX(percentile95) AS percentile95,\nFROM (\n  SELECT\n    PERCENTILE_CONT(score, 0.5) OVER (PARTITION BY lang_id) AS median,\n    PERCENTILE_CONT(score, 0.95) OVER (PARTITION BY lang_id) AS percentile95,\n    lang_id\n  FROM\n    `gl_gitlab_codebase.scores_v4`)\nGROUP BY\n  lang_id\nORDER BY\n  median DESC, percentile95 DESC",
+          "rawSql": "SELECT\n  lang_id,\n  MAX(median) AS median,\n  MAX(percentile95) AS percentile95,\nFROM (\n  SELECT\n    PERCENTILE_CONT(score, 0.5) OVER (PARTITION BY lang_id) AS median,\n    PERCENTILE_CONT(score, 0.95) OVER (PARTITION BY lang_id) AS percentile95,\n    lang_id\n  FROM\n    `gl_gitlab_codebase.scores_v4_combined`)\nGROUP BY\n  lang_id\nORDER BY\n  median DESC, percentile95 DESC",
           "refId": "A",
           "select": [
             [
@@ -736,6 +534,306 @@
 
       ],
       "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "doitintl-bigquery-datasource",
+        "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 12,
+        "y": 12
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.5.1",
+      "targets": [
+        {
+          "convertToUTC": false,
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "format": "table",
+          "group": [
+
+          ],
+          "metricColumn": "none",
+          "orderByCol": "2",
+          "orderBySort": "1",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  MAX(percentile95) AS percentile95,\nFROM (\n  SELECT\n    PERCENTILE_CONT(score, 0.95) OVER() AS percentile95,\n  FROM\n    `gl_gitlab_codebase.scores_v4_combined`)\nORDER BY\n  percentile95 DESC\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "-- time --",
+          "timeColumnType": "TIMESTAMP",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [
+
+              ],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "95 Pct Similarity Score",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "doitintl-bigquery-datasource",
+        "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 16,
+        "y": 12
+      },
+      "id": 9,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.5.1",
+      "targets": [
+        {
+          "convertToUTC": false,
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "format": "table",
+          "group": [
+
+          ],
+          "metricColumn": "none",
+          "orderByCol": "2",
+          "orderBySort": "1",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  MAX(median) AS median,\nFROM (\n  SELECT\n    PERCENTILE_CONT(score, 0.5) OVER() AS median,\n  FROM\n    `gl_gitlab_codebase.scores_v4_combined`)\nORDER BY\n  median DESC\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "-- time --",
+          "timeColumnType": "TIMESTAMP",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [
+
+              ],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Median Similarity Score",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "doitintl-bigquery-datasource",
+        "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 20,
+        "y": 12
+      },
+      "id": 13,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.5.1",
+      "targets": [
+        {
+          "convertToUTC": false,
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "format": "table",
+          "group": [
+
+          ],
+          "metricColumn": "none",
+          "orderByCol": "2",
+          "orderBySort": "1",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  AVG(score) AS mean,\nFROM\n  `gl_gitlab_codebase.scores_v4_combined`\nORDER BY\n  mean DESC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "-- time --",
+          "timeColumnType": "TIMESTAMP",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [
+
+              ],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Mean Similarity Score",
+      "type": "stat"
     },
     {
       "datasource": {
@@ -800,7 +898,7 @@
         "h": 13,
         "w": 12,
         "x": 12,
-        "y": 12
+        "y": 18
       },
       "id": 12,
       "options": {
@@ -842,7 +940,7 @@
           "orderByCol": "2",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "SELECT\n  project_name,\n  MAX(median) AS median,\n  MAX(percentile95) AS percentile95,\nFROM (\n  SELECT\n    PERCENTILE_CONT(score, 0.5) OVER (PARTITION BY `project`.name) AS median,\n    PERCENTILE_CONT(score, 0.95) OVER (PARTITION BY `project`.name) AS percentile95,\n    `project`.name AS project_name\n  FROM\n    `gl_gitlab_codebase.scores_v4`)\nGROUP BY\n  project_name\nORDER BY\n  median DESC, percentile95 DESC",
+          "rawSql": "SELECT\n  project_name,\n  MAX(median) AS median,\n  MAX(percentile95) AS percentile95,\nFROM (\n  SELECT\n    PERCENTILE_CONT(score, 0.5) OVER (PARTITION BY `project`.name) AS median,\n    PERCENTILE_CONT(score, 0.95) OVER (PARTITION BY `project`.name) AS percentile95,\n    `project`.name AS project_name\n  FROM\n    `gl_gitlab_codebase.scores_v4_combined`)\nGROUP BY\n  project_name\nORDER BY\n  median DESC, percentile95 DESC",
           "refId": "A",
           "select": [
             [
@@ -978,7 +1076,7 @@
           "partitionedField": "",
           "project": "unreview-poc-390200e5",
           "rawQuery": true,
-          "rawSql": "SELECT\n  lang_id,\n  chunking_method,\n  MAX(percentile95) AS percentile95,\nFROM (\n  SELECT\n    PERCENTILE_CONT(score, 0.95) OVER (PARTITION BY lang_id, chunking_method) AS percentile95,\n    lang_id,\n    chunking_method\n  FROM\n    `gl_gitlab_codebase.scores_v4`)\nGROUP BY\n  lang_id,\n  chunking_method\nORDER BY\n  percentile95 DESC\n",
+          "rawSql": "SELECT\n  lang_id,\n  chunking_method,\n  MAX(percentile95) AS percentile95,\nFROM (\n  SELECT\n    PERCENTILE_CONT(score, 0.95) OVER (PARTITION BY lang_id, chunking_method) AS percentile95,\n    lang_id,\n    chunking_method\n  FROM\n    `gl_gitlab_codebase.scores_v4_combined`)\nGROUP BY\n  lang_id,\n  chunking_method\nORDER BY\n  percentile95 DESC\n",
           "refId": "A",
           "select": [
             [
@@ -1078,7 +1176,7 @@
         "h": 13,
         "w": 12,
         "x": 12,
-        "y": 25
+        "y": 31
       },
       "id": 8,
       "options": {
@@ -1120,7 +1218,7 @@
           "orderByCol": "2",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "SELECT\n  chunking_method,\n  MAX(median) AS median,\n  MAX(percentile95) AS percentile95,\nFROM (\n  SELECT\n    PERCENTILE_CONT(score, 0.5) OVER (PARTITION BY chunking_method) AS median,\n    PERCENTILE_CONT(score, 0.95) OVER (PARTITION BY chunking_method) AS percentile95,\n    chunking_method\n  FROM\n    `gl_gitlab_codebase.scores_v4`)\nGROUP BY\n  chunking_method\nORDER BY\n  median DESC, percentile95 DESC",
+          "rawSql": "SELECT\n  chunking_method,\n  MAX(median) AS median,\n  MAX(percentile95) AS percentile95,\nFROM (\n  SELECT\n    PERCENTILE_CONT(score, 0.5) OVER (PARTITION BY chunking_method) AS median,\n    PERCENTILE_CONT(score, 0.95) OVER (PARTITION BY chunking_method) AS percentile95,\n    chunking_method\n  FROM\n    `gl_gitlab_codebase.scores_v4_combined`)\nGROUP BY\n  chunking_method\nORDER BY\n  median DESC, percentile95 DESC",
           "refId": "A",
           "select": [
             [
@@ -1172,6 +1270,6 @@
   "timezone": "",
   "title": "AI Model Validation",
   "uid": "e32fe188-2825-4c16-b83b-0b7bac1f9936",
-  "version": 17,
+  "version": 20,
   "weekStart": ""
 }

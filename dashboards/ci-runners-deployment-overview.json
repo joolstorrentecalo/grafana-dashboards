@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4918915160 at Tue Aug 22 07:39:46 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4923058058 at Tue Aug 22 15:38:57 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -980,7 +980,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(instance) (gitlab_runner_jobs{environment=~\"$environment\",stage=~\"$stage\",instance=~\"${runner_manager:pipe}\"})",
+          "expr": "sum by(instance) (\n  gitlab_runner_jobs{environment=~\"$environment\",stage=~\"$stage\",shard=~\"${shard:pipe}\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1078,7 +1078,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (instance)\n(\n  increase(gitlab_runner_failed_jobs_total{environment=~\"$environment\",stage=~\"$stage\",instance=~\"${runner_manager:pipe}\",failure_reason=~\"$runner_job_failure_reason\"}[$__rate_interval])\n)\n",
+          "expr": "sum by (instance)\n(\n  increase(gitlab_runner_failed_jobs_total{environment=~\"$environment\",stage=~\"$stage\",shard=~\"${shard:pipe}\",failure_reason=~\"$runner_job_failure_reason\"}[$__rate_interval])\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1289,7 +1289,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "count by(shard) (gitlab_runner_version_info{environment=~\"$environment\",stage=~\"$stage\",instance=~\"${runner_manager:pipe}\"})",
+          "expr": "count by(shard) (gitlab_runner_version_info{environment=~\"$environment\",stage=~\"$stage\",shard=~\"${shard:pipe}\"})",
           "format": "time_series",
           "instant": true,
           "interval": "1d",
@@ -1400,7 +1400,7 @@
       },
       "targets": [
         {
-          "expr": "gitlab_runner_version_info{environment=~\"$environment\",stage=~\"$stage\",instance=~\"${runner_manager:pipe}\"}",
+          "expr": "gitlab_runner_version_info{environment=~\"$environment\",stage=~\"$stage\",shard=~\"${shard:pipe}\"}",
           "format": "table",
           "instant": true,
           "interval": "1m",
@@ -1514,7 +1514,7 @@
       },
       "targets": [
         {
-          "expr": "time() - process_start_time_seconds{environment=~\"$environment\",stage=~\"$stage\",instance=~\"${runner_manager:pipe}\",job=\"runners-manager\"}",
+          "expr": "time() - process_start_time_seconds{environment=~\"$environment\",stage=~\"$stage\",shard=~\"${shard:pipe}\",job=\"runners-manager\"}",
           "format": "table",
           "instant": true,
           "interval": "1m",
@@ -1691,31 +1691,6 @@
         "includeAll": true,
         "label": null,
         "multi": true,
-        "name": "runner_manager",
-        "options": [
-
-        ],
-        "query": "query_result(label_replace(gitlab_runner_version_info{environment=~\"$environment\",stage=~\"$stage\",shard=~\"$shard\"}, \"fqdn\", \"$1.*\", \"instance\", \"([^:]*)(:[0-9]+)?$\"))\n",
-        "refresh": 1,
-        "regex": "/fqdn=\"([^\"]+)\"/",
-        "sort": true,
-        "tagValuesQuery": "",
-        "tags": [
-
-        ],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": null,
-        "current": {
-        },
-        "datasource": "$PROMETHEUS_DS",
-        "hide": 0,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
         "name": "runner_job_failure_reason",
         "options": [
 
@@ -1761,5 +1736,5 @@
   "timezone": "utc",
   "title": "ci-runners: Deployment overview",
   "uid": "ci-runners-deployment",
-  "version": 2624
+  "version": 2633
 }
