@@ -127,7 +127,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "SELECT COUNT(*) AS `Prompt Count`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`",
+          "rawSql": "SELECT COUNT(*) AS `Prompt Count`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\nWHERE score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)",
           "refId": "A",
           "select": [
             [
@@ -346,7 +346,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "SELECT lang_id, COUNT(*) AS `Prompt Count`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\nGROUP BY lang_id\nORDER BY `Prompt Count` DESC",
+          "rawSql": "SELECT lang_id, COUNT(*) AS `Prompt Count`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\nWHERE score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)\nGROUP BY lang_id\nORDER BY `Prompt Count` DESC",
           "refId": "A",
           "select": [
             [
@@ -553,7 +553,7 @@
           "orderByCol": "2",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH info AS (\n  SELECT lang_id, model, AVG(score) as avg_score,\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\n  WHERE cast(score as FLOAT64) BETWEEN ifnull($low_score, 0) AND ifnull($high_score, 1.00)\n  GROUP BY lang_id, model\n)\n\nSELECT\n  lang_id,\n  model,\n  avg_score AS `Average Score`,\n  CASE\n    WHEN avg_score >= 0.95 THEN 'high'\n    WHEN avg_score >= 0.85 THEN 'medium'\n    ELSE 'low'\n  END AS `Acceptance Likelihood`,\nFROM\n  info\nORDER BY lang_id, `Acceptance Likelihood` DESC",
+          "rawSql": "WITH info AS (\n  SELECT lang_id, model, AVG(score) as avg_score,\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\n  WHERE score BETWEEN ifnull($low_score, 0) AND ifnull($high_score, 1.00)\n  GROUP BY lang_id, model\n)\n\nSELECT\n  lang_id,\n  model,\n  avg_score AS `Average Score`,\n  CASE\n    WHEN avg_score >= 0.95 THEN 'high'\n    WHEN avg_score >= 0.85 THEN 'medium'\n    ELSE 'low'\n  END AS `Acceptance Likelihood`,\nFROM\n  info\nORDER BY lang_id, `Acceptance Likelihood` DESC",
           "refId": "A",
           "select": [
             [
@@ -985,7 +985,7 @@
           "orderByCol": "2",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH info AS (\n  SELECT lang_id, chunking_method, AVG(score) as avg_score,\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\n  GROUP BY  lang_id, chunking_method\n)\n\nSELECT\n  lang_id,\n  chunking_method AS `Chunking Method`,\n  avg_score AS `Average Score`,\n  CASE\n    WHEN avg_score >= 0.95 THEN 'high'\n    WHEN avg_score >= 0.85 THEN 'medium'\n    ELSE 'low'\n  END AS `Acceptance Likelihood`,\nFROM\n  info\nORDER BY lang_id, `Acceptance Likelihood` DESC",
+          "rawSql": "WITH info AS (\n  SELECT lang_id, chunking_method, AVG(score) as avg_score,\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\n  WHERE score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)\n  GROUP BY  lang_id, chunking_method\n)\n\nSELECT\n  lang_id,\n  chunking_method AS `Chunking Method`,\n  avg_score AS `Average Score`,\n  CASE\n    WHEN avg_score >= 0.95 THEN 'high'\n    WHEN avg_score >= 0.85 THEN 'medium'\n    ELSE 'low'\n  END AS `Acceptance Likelihood`,\nFROM\n  info\nORDER BY lang_id, `Acceptance Likelihood` DESC",
           "refId": "A",
           "select": [
             [
@@ -1108,7 +1108,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "SELECT\n  lang_id,\n  model,\n  chunk.code_before AS `Prompt Input`,\n  chunk.code_after AS `Developer Completion`,\n  completion.value AS `Model Completion`,\n  chunking_method AS `Chunking Method`,\n  score AS `Average Score`,\n  CASE\n    WHEN score >= 0.95 THEN 'high'\n    WHEN score >= 0.85 THEN 'medium'\n    ELSE 'low'\n  END AS `Acceptance Likelihood`,\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4`\nWHERE score != 0",
+          "rawSql": "SELECT\n  lang_id,\n  project.name AS `Project Name`,\n  model,\n  chunk.code_before AS `Prompt Input`,\n  chunk.code_after AS `Developer Completion`,\n  completion.value AS `Model Completion`,\n  chunking_method AS `Chunking Method`,\n  score AS `Average Score`,\n  CASE\n    WHEN score >= 0.95 THEN 'high'\n    WHEN score >= 0.85 THEN 'medium'\n    ELSE 'low'\n  END AS `Similarity Bucket`,\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4`\nWHERE score != 0 and score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)",
           "refId": "A",
           "select": [
             [
@@ -1168,7 +1168,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -1213,7 +1214,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "SELECT COUNT(*) AS `Prompt Count`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\nWHERE lang_id = '$programming_language' AND model = '$model'",
+          "rawSql": "SELECT COUNT(*) AS `Prompt Count`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\nWHERE lang_id = '$programming_language' AND model = '$model' and score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)",
           "refId": "A",
           "select": [
             [
@@ -1258,7 +1259,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1360,7 +1362,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1462,7 +1465,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -1556,7 +1560,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1603,7 +1608,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "SELECT\n  lang_id,\n  model,\n  chunk.code_before AS `Prompt Input`,\n  chunk.code_after AS `Developer Completion`,\n  completion.value AS `Model Completion`,\n  chunking_method AS `Chunking Method`,\n  score AS `Average Score`,\n  CASE\n    WHEN score >= 0.95 THEN 'high'\n    WHEN score >= 0.85 THEN 'medium'\n    ELSE 'low'\n  END AS `Acceptance Likelihood`,\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\nWHERE score != 0 AND lang_id = '$programming_language' AND model = '$model'",
+          "rawSql": "SELECT\n  lang_id,\n  project.name AS `Project Name`,\n  model,\n  chunk.code_before AS `Prompt Input`,\n  chunk.code_after AS `Developer Completion`,\n  completion.value AS `Model Completion`,\n  chunking_method AS `Chunking Method`,\n  score AS `Average Score`,\n  CASE\n    WHEN score >= 0.95 THEN 'high'\n    WHEN score >= 0.85 THEN 'medium'\n    ELSE 'low'\n  END AS `Similarity Bucket`,\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\nWHERE score != 0 AND lang_id = '$programming_language' AND model = '$model' AND score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)",
           "refId": "A",
           "select": [
             [
@@ -1650,7 +1655,7 @@
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 11
+            "y": 84
           },
           "id": 17,
           "options": {
@@ -1798,6 +1803,6 @@
   "timezone": "",
   "title": "Code Completion AI Evaluations v0 [DRAFT]",
   "uid": "fecc5b69-8e38-4b4e-9fed-1c837f9c2b7f",
-  "version": 33,
+  "version": 37,
   "weekStart": ""
 }
