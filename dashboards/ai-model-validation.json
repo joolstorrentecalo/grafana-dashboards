@@ -32,17 +32,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-YlBl"
-          },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "mode": "gradient",
-              "type": "gauge",
-              "valueDisplayMode": "text"
-            },
-            "inspect": false,
-            "minWidth": 100
+            "mode": "continuous-GrYlRd"
           },
           "mappings": [
 
@@ -53,33 +43,38 @@
               {
                 "color": "green",
                 "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ]
-          },
-          "unit": "none"
+          }
         },
         "overrides": [
 
         ]
       },
       "gridPos": {
-        "h": 8,
-        "w": 12,
+        "h": 6,
+        "w": 4,
         "x": 0,
         "y": 0
       },
-      "id": 14,
+      "id": 1,
       "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
           ],
-          "show": false
+          "fields": "",
+          "values": false
         },
-        "showHeader": true
+        "textMode": "auto"
       },
       "pluginVersion": "9.5.1",
       "targets": [
@@ -96,7 +91,7 @@
           "orderByCol": "2",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "SELECT\n  lang_id,\n  SUM(symbol.function_item) AS function_item,\n  SUM(symbol.method_definition) AS method_definition,\n  SUM(symbol.declaration) AS declaration,\n  SUM(symbol.import_static) AS import_static,\n  SUM(symbol.using_directive) AS using_directive,\n  SUM(symbol.function_definition) AS function_definition,\n  SUM(symbol.class_declaration) AS class_declaration,\n  SUM(symbol.method_declaration) AS method_declaration,\n  SUM(symbol.decorated_definition) AS decorated_definition,\n  SUM(symbol.class) AS class,\n  SUM(symbol.namespace_use_declaration) AS namespace_use_declaration,\n  SUM(symbol.function_declaration) AS function_declaration,\n  SUM(symbol.import_statement) AS import_statement,\n  SUM(symbol.preproc_include) AS preproc_include,\n  SUM(symbol.import_from_statement) AS import_from_statement,\n  SUM(symbol.struct_item) AS struct_item,\n  SUM(symbol.type_declaration) AS type_declaration,\n  SUM(symbol.method) AS method,\n  SUM(symbol.call) AS call,\n  SUM(symbol.import_declaration) AS import_declaration,\n  SUM(symbol.use_declaration) AS use_declaration,\n  SUM(symbol.class_definition) AS class_definition,\n  SUM(symbol.struct_specifier) AS struct_specifier,\n  SUM(symbol.trait_item) AS trait_item\nFROM\n  `gl_gitlab_codebase.scores_v4_combined`\nGROUP BY lang_id\n",
+          "rawSql": "SELECT COUNT(chunk.prompt_id) FROM `gl_gitlab_codebase.scores_v4_combined`",
           "refId": "A",
           "select": [
             [
@@ -121,20 +116,95 @@
           ]
         }
       ],
-      "title": "Panel Title",
-      "transformations": [
-        {
-          "id": "filterByValue",
-          "options": {
-            "filters": [
+      "title": "Total Count of Prompts",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "doitintl-bigquery-datasource",
+        "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [
 
-            ],
-            "match": "all",
-            "type": "exclude"
-          }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 4,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "colorByField": "count",
+        "sizeField": "count",
+        "tiling": "treemapBinary"
+      },
+      "pluginVersion": "9.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "format": "table",
+          "group": [
+
+          ],
+          "metricColumn": "none",
+          "orderByCol": "2",
+          "orderBySort": "1",
+          "rawQuery": true,
+          "rawSql": "SELECT chunking_method, COUNT(chunk.prompt_id) as count FROM `gl_gitlab_codebase.scores_v4_combined` GROUP BY chunking_method\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "-- time --",
+          "timeColumnType": "TIMESTAMP",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [
+
+              ],
+              "type": "macro"
+            }
+          ]
         }
       ],
-      "type": "table"
+      "title": "Proportion of Prompts by Chunking Method",
+      "type": "marcusolsson-treemap-panel"
     },
     {
       "datasource": {
@@ -285,9 +355,9 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 8
+        "y": 6
       },
-      "id": 1,
+      "id": 15,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -317,7 +387,7 @@
           "orderByCol": "2",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "SELECT COUNT(chunk.prompt_id) FROM `gl_gitlab_codebase.scores_v4_combined`",
+          "rawSql": "SELECT COUNT(DISTINCT(`project`.id)) FROM `gl_gitlab_codebase.scores_v4_combined`",
           "refId": "A",
           "select": [
             [
@@ -342,7 +412,7 @@
           ]
         }
       ],
-      "title": "Total Count of Prompts",
+      "title": "Total Count of Projects",
       "type": "stat"
     },
     {
@@ -381,11 +451,12 @@
         "h": 6,
         "w": 8,
         "x": 4,
-        "y": 8
+        "y": 6
       },
-      "id": 2,
+      "id": 11,
       "options": {
         "colorByField": "count",
+        "groupByField": "chunking_method",
         "sizeField": "count",
         "tiling": "treemapBinary"
       },
@@ -404,7 +475,7 @@
           "orderByCol": "2",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "SELECT chunking_method, COUNT(chunk.prompt_id) as count FROM `gl_gitlab_codebase.scores_v4_combined` GROUP BY chunking_method\n",
+          "rawSql": "SELECT lang_id, COUNT(chunk.prompt_id) as count FROM `gl_gitlab_codebase.scores_v4_combined` GROUP BY lang_id\n",
           "refId": "A",
           "select": [
             [
@@ -429,8 +500,135 @@
           ]
         }
       ],
-      "title": "Proportion of Prompts by Chunking Method",
+      "title": "Proportion of Prompts by Language",
       "type": "marcusolsson-treemap-panel"
+    },
+    {
+      "datasource": {
+        "type": "doitintl-bigquery-datasource",
+        "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 12,
+        "x": 0,
+        "y": 12
+      },
+      "id": 3,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "horizontal",
+        "showValue": "always",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 200
+      },
+      "pluginVersion": "9.5.1",
+      "targets": [
+        {
+          "convertToUTC": false,
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "format": "table",
+          "group": [
+
+          ],
+          "metricColumn": "none",
+          "orderByCol": "2",
+          "orderBySort": "1",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  lang_id,\n  MAX(median) AS median,\n  MAX(percentile95) AS percentile95,\nFROM (\n  SELECT\n    PERCENTILE_CONT(score, 0.5) OVER (PARTITION BY lang_id) AS median,\n    PERCENTILE_CONT(score, 0.95) OVER (PARTITION BY lang_id) AS percentile95,\n    lang_id\n  FROM\n    `gl_gitlab_codebase.scores_v4_combined`)\nGROUP BY\n  lang_id\nORDER BY\n  median DESC, percentile95 DESC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "-- time --",
+          "timeColumnType": "TIMESTAMP",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [
+
+              ],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Similarity Score by Language",
+      "transformations": [
+
+      ],
+      "type": "barchart"
     },
     {
       "datasource": {
@@ -742,94 +940,6 @@
           "color": {
             "mode": "palette-classic"
           },
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 8,
-        "x": 4,
-        "y": 14
-      },
-      "id": 11,
-      "options": {
-        "colorByField": "count",
-        "groupByField": "chunking_method",
-        "sizeField": "count",
-        "tiling": "treemapBinary"
-      },
-      "pluginVersion": "9.5.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "doitintl-bigquery-datasource",
-            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
-          },
-          "format": "table",
-          "group": [
-
-          ],
-          "metricColumn": "none",
-          "orderByCol": "2",
-          "orderBySort": "1",
-          "rawQuery": true,
-          "rawSql": "SELECT lang_id, COUNT(chunk.prompt_id) as count FROM `gl_gitlab_codebase.scores_v4_combined` GROUP BY lang_id\n",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "-- value --"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "timeColumn": "-- time --",
-          "timeColumnType": "TIMESTAMP",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [
-
-              ],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Proportion of Prompts by Language",
-      "type": "marcusolsson-treemap-panel"
-    },
-    {
-      "datasource": {
-        "type": "doitintl-bigquery-datasource",
-        "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
@@ -961,260 +1071,6 @@
         "type": "doitintl-bigquery-datasource",
         "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
       },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [
-
-          ],
-          "max": 1,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 13,
-        "w": 12,
-        "x": 0,
-        "y": 20
-      },
-      "id": 3,
-      "options": {
-        "barRadius": 0,
-        "barWidth": 0.97,
-        "fullHighlight": false,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [
-
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "orientation": "horizontal",
-        "showValue": "always",
-        "stacking": "none",
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        },
-        "xTickLabelRotation": 0,
-        "xTickLabelSpacing": 200
-      },
-      "pluginVersion": "9.5.1",
-      "targets": [
-        {
-          "convertToUTC": false,
-          "datasource": {
-            "type": "doitintl-bigquery-datasource",
-            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
-          },
-          "format": "table",
-          "group": [
-
-          ],
-          "metricColumn": "none",
-          "orderByCol": "2",
-          "orderBySort": "1",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  lang_id,\n  MAX(median) AS median,\n  MAX(percentile95) AS percentile95,\nFROM (\n  SELECT\n    PERCENTILE_CONT(score, 0.5) OVER (PARTITION BY lang_id) AS median,\n    PERCENTILE_CONT(score, 0.95) OVER (PARTITION BY lang_id) AS percentile95,\n    lang_id\n  FROM\n    `gl_gitlab_codebase.scores_v4_combined`)\nGROUP BY\n  lang_id\nORDER BY\n  median DESC, percentile95 DESC",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "-- value --"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "timeColumn": "-- time --",
-          "timeColumnType": "TIMESTAMP",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [
-
-              ],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Similarity Score by Language",
-      "transformations": [
-
-      ],
-      "type": "barchart"
-    },
-    {
-      "datasource": {
-        "type": "doitintl-bigquery-datasource",
-        "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [
-
-          ],
-          "max": 1,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 13,
-        "w": 12,
-        "x": 12,
-        "y": 31
-      },
-      "id": 8,
-      "options": {
-        "barRadius": 0,
-        "barWidth": 0.97,
-        "fullHighlight": false,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [
-
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "orientation": "horizontal",
-        "showValue": "always",
-        "stacking": "none",
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        },
-        "xTickLabelRotation": 0,
-        "xTickLabelSpacing": 200
-      },
-      "pluginVersion": "9.5.1",
-      "targets": [
-        {
-          "convertToUTC": false,
-          "datasource": {
-            "type": "doitintl-bigquery-datasource",
-            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
-          },
-          "format": "table",
-          "group": [
-
-          ],
-          "metricColumn": "none",
-          "orderByCol": "2",
-          "orderBySort": "1",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  chunking_method,\n  MAX(median) AS median,\n  MAX(percentile95) AS percentile95,\nFROM (\n  SELECT\n    PERCENTILE_CONT(score, 0.5) OVER (PARTITION BY chunking_method) AS median,\n    PERCENTILE_CONT(score, 0.95) OVER (PARTITION BY chunking_method) AS percentile95,\n    chunking_method\n  FROM\n    `gl_gitlab_codebase.scores_v4_combined`)\nGROUP BY\n  chunking_method\nORDER BY\n  median DESC, percentile95 DESC",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "-- value --"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "timeColumn": "-- time --",
-          "timeColumnType": "TIMESTAMP",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [
-
-              ],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Similarity Score by Chunking Method",
-      "transformations": [
-
-      ],
-      "type": "barchart"
-    },
-    {
-      "datasource": {
-        "type": "doitintl-bigquery-datasource",
-        "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
-      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1265,7 +1121,7 @@
         "h": 13,
         "w": 12,
         "x": 0,
-        "y": 33
+        "y": 25
       },
       "id": 4,
       "options": {
@@ -1360,10 +1216,249 @@
         }
       ],
       "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "doitintl-bigquery-datasource",
+        "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 31
+      },
+      "id": 8,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "horizontal",
+        "showValue": "always",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 200
+      },
+      "pluginVersion": "9.5.1",
+      "targets": [
+        {
+          "convertToUTC": false,
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "format": "table",
+          "group": [
+
+          ],
+          "metricColumn": "none",
+          "orderByCol": "2",
+          "orderBySort": "1",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  chunking_method,\n  MAX(median) AS median,\n  MAX(percentile95) AS percentile95,\nFROM (\n  SELECT\n    PERCENTILE_CONT(score, 0.5) OVER (PARTITION BY chunking_method) AS median,\n    PERCENTILE_CONT(score, 0.95) OVER (PARTITION BY chunking_method) AS percentile95,\n    chunking_method\n  FROM\n    `gl_gitlab_codebase.scores_v4_combined`)\nGROUP BY\n  chunking_method\nORDER BY\n  median DESC, percentile95 DESC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "-- time --",
+          "timeColumnType": "TIMESTAMP",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [
+
+              ],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Similarity Score by Chunking Method",
+      "transformations": [
+
+      ],
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "doitintl-bigquery-datasource",
+        "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-YlBl"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "mode": "basic",
+              "type": "gauge",
+              "valueDisplayMode": "text"
+            },
+            "inspect": false,
+            "minWidth": 100
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 38
+      },
+      "id": 14,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "format": "table",
+          "group": [
+
+          ],
+          "metricColumn": "none",
+          "orderByCol": "2",
+          "orderBySort": "1",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  lang_id,\n  SUM(symbol.function_item) AS function_item,\n  SUM(symbol.method_definition) AS method_definition,\n  SUM(symbol.declaration) AS declaration,\n  SUM(symbol.import_static) AS import_static,\n  SUM(symbol.using_directive) AS using_directive,\n  SUM(symbol.function_definition) AS function_definition,\n  SUM(symbol.class_declaration) AS class_declaration,\n  SUM(symbol.method_declaration) AS method_declaration,\n  SUM(symbol.decorated_definition) AS decorated_definition,\n  SUM(symbol.class) AS class,\n  SUM(symbol.namespace_use_declaration) AS namespace_use_declaration,\n  SUM(symbol.function_declaration) AS function_declaration,\n  SUM(symbol.import_statement) AS import_statement,\n  SUM(symbol.preproc_include) AS preproc_include,\n  SUM(symbol.import_from_statement) AS import_from_statement,\n  SUM(symbol.struct_item) AS struct_item,\n  SUM(symbol.type_declaration) AS type_declaration,\n  SUM(symbol.method) AS method,\n  SUM(symbol.call) AS call,\n  SUM(symbol.import_declaration) AS import_declaration,\n  SUM(symbol.use_declaration) AS use_declaration,\n  SUM(symbol.class_definition) AS class_definition,\n  SUM(symbol.struct_specifier) AS struct_specifier,\n  SUM(symbol.trait_item) AS trait_item\nFROM\n  `gl_gitlab_codebase.scores_v4_combined`\nGROUP BY lang_id\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "-- time --",
+          "timeColumnType": "TIMESTAMP",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [
+
+              ],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Symbols by Language",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+
+            ],
+            "match": "all",
+            "type": "exclude"
+          }
+        }
+      ],
+      "type": "table"
     }
   ],
   "refresh": "",
-  "schemaVersion": 39,
+  "schemaVersion": 38,
   "style": "dark",
   "tags": [
     "protected",
@@ -1383,6 +1478,6 @@
   "timezone": "",
   "title": "AI Model Validation",
   "uid": "e32fe188-2825-4c16-b83b-0b7bac1f9936",
-  "version": 24,
+  "version": 27,
   "weekStart": ""
 }
