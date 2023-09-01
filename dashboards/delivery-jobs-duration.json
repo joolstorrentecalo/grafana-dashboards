@@ -10,7 +10,7 @@
 
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4993801773 at Thu Aug 31 21:07:31 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/4999643375 at Fri Sep  1 15:09:19 UTC 2023",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
@@ -43,14 +43,14 @@
     },
     {
       "datasource": null,
-      "description": "",
+      "description": "Median duration over the selected time range",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "continuous-BlPu"
           },
-          "decimals": 0,
-          "displayName": "Average Job Duration",
+          "decimals": 2,
+          "displayName": "",
           "links": [
 
           ],
@@ -71,7 +71,7 @@
       },
       "gridPos": {
         "h": 10,
-        "w": 12,
+        "w": 7,
         "x": 0,
         "y": 0
       },
@@ -96,87 +96,25 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "avg_over_time(delivery_deployment_job_duration_seconds{deploy_version=\"$deploy_version\", job_name=\"$job_name\"}[$__range])",
+          "expr": "\n          quantile(0.5,\n            last_over_time(delivery_deployment_job_duration_seconds{job_name=\"$job_name\"}[$__range])\n              unless\n            last_over_time(delivery_deployment_job_duration_seconds{job_name=\"$job_name\"}[12h] offset $__range)\n          )",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "__auto",
+          "legendFormat": "Median",
           "refId": "A"
-        }
-      ],
-      "title": "Average Job Duration",
-      "transformations": [
-
-      ],
-      "transparent": false,
-      "type": "stat"
-    },
-    {
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-BlPu"
-          },
-          "decimals": 0,
-          "displayName": "Max Job Duration",
-          "links": [
-
-          ],
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "",
-                "value": null
-              }
-            ]
-          },
-          "unit": "s"
-        }
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 0
-      },
-      "id": 4,
-      "links": [
-
-      ],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
         },
-        "textMode": "value"
-      },
-      "pluginVersion": "7",
-      "targets": [
         {
-          "expr": "max_over_time(delivery_deployment_job_duration_seconds{deploy_version=\"$deploy_version\", job_name=\"$job_name\"}[$__range])",
+          "expr": "max(\n            last_over_time(delivery_deployment_job_duration_seconds{job_name=\"$job_name\"}[$__range])\n              unless\n            last_over_time(delivery_deployment_job_duration_seconds{job_name=\"$job_name\"}[12h] offset $__range)\n          )",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "__auto",
-          "refId": "A"
+          "legendFormat": "Max",
+          "refId": "B"
         }
       ],
-      "title": "Max Job Duration",
+      "title": "Job Duration",
       "transformations": [
 
       ],
@@ -211,7 +149,7 @@
         "x": 0,
         "y": 1
       },
-      "id": 5,
+      "id": 4,
       "links": [
 
       ],
@@ -264,7 +202,7 @@
         "x": 0,
         "y": 2
       },
-      "id": 6,
+      "id": 5,
       "links": [
 
       ],
@@ -298,7 +236,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 7,
+      "id": 6,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -411,5 +349,5 @@
   "timezone": "utc",
   "title": "delivery: jobs-duration",
   "uid": "delivery-jobs_duration",
-  "version": 497
+  "version": 500
 }
