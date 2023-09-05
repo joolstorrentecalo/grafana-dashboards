@@ -126,7 +126,7 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
-      "description": "Container memory utilization of the Runway service distributed across all container instances.\n\nFor scaling, refer to https://cloud.google.com/run/docs/configuring/services/memory-limits.\n Lower is better.",
+      "description": "Go goroutines utilization per node.\n\nGoroutines leaks can cause memory saturation which can cause service degradation.\n\nA limit of 250k goroutines is very generous, so if a service exceeds this limit,\nit's a sign of a leak and it should be dealt with.\n Lower is better.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -135,7 +135,7 @@
         "x": 0,
         "y": 0
       },
-      "id": 377718254,
+      "id": 3712788301,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -219,20 +219,20 @@
         }
       ],
       "spaceLength": 10,
-      "stableId": "saturation-runway_container_memory_utilization",
+      "stableId": "saturation-go_goroutines",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max by(environment, type, shard, revision_name) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, type, shard, revision_name) (\n        avg_over_time(stackdriver_cloud_run_revision_run_googleapis_com_container_memory_utilizations_sum{job=\"runway-exporter\",env=\"$environment\",stage=\"$stage\",type=\"$type\"}[30m])\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    max by(env, environment, tier, type, stage, shard, fqdn) (\n  clamp_min(\n    clamp_max(\n      sum by (env, environment, tier, type, stage, shard, fqdn) (\n        go_goroutines{env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n      )\n      /\n      250000\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{ revision_name }}",
+          "legendFormat": "{{ fqdn }}",
           "refId": "A"
         },
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"runway_container_memory_utilization\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"go_goroutines\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -240,7 +240,7 @@
           "refId": "B"
         },
         {
-          "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"runway_container_memory_utilization\"}\n)\n",
+          "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"go_goroutines\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -248,7 +248,7 @@
           "refId": "C"
         },
         {
-          "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"runway_container_memory_utilization\"}\n)\n",
+          "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"go_goroutines\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -256,7 +256,7 @@
           "refId": "D"
         },
         {
-          "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"runway_container_memory_utilization\"}) by (component)\n",
+          "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"go_goroutines\"}) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -264,7 +264,7 @@
           "refId": "E"
         },
         {
-          "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"runway_container_memory_utilization\"}) by (component)\n",
+          "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"go_goroutines\"}) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -277,7 +277,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "runway_container_memory_utilization component saturation: Runway Container Memory Utilization",
+      "title": "go_goroutines component saturation: Go goroutines Utilization per Node",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -313,7 +313,7 @@
       ]
     },
     {
-      "content": "## Runway Container Memory Utilization\n\nContainer memory utilization of the Runway service distributed across all container instances.\n\nFor scaling, refer to https://cloud.google.com/run/docs/configuring/services/memory-limits.\n\n\n## What to do from here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=runway_container_memory_utilization)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+runway_container_memory_utilization&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
+      "content": "## Go goroutines Utilization per Node\n\nGo goroutines utilization per node.\n\nGoroutines leaks can cause memory saturation which can cause service degradation.\n\nA limit of 250k goroutines is very generous, so if a service exceeds this limit,\nit's a sign of a leak and it should be dealt with.\n\n\n## What to do from here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=go_goroutines)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+go_goroutines&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
       "datasource": null,
       "gridPos": {
         "h": 14,
@@ -468,8 +468,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "ai-gateway",
-          "value": "ai-gateway"
+          "text": "gitaly",
+          "value": "gitaly"
         },
         "datasource": "$PROMETHEUS_DS",
         "hide": 0,
@@ -548,7 +548,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "alerts: runway container memory utilization: Saturation Detail",
-  "uid": "alerts-sat_runway_container_memory",
-  "version": 81
+  "title": "alerts: go goroutines: Saturation Detail",
+  "uid": "alerts-sat_go_goroutines",
+  "version": 1
 }

@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5016984182 at Tue Sep  5 05:04:10 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5021011102 at Tue Sep  5 13:41:59 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -15957,7 +15957,7 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "Go's memory allocation strategy can make it look like a Go process is saturating memory when measured using RSS, when in fact\nthe process is not at risk of memory saturation. For this reason, we measure Go processes using the `go_memstat_alloc_bytes`\nmetric instead of RSS.\n Lower is better.",
+          "description": "Go goroutines utilization per node.\n\nGoroutines leaks can cause memory saturation which can cause service degradation.\n\nA limit of 250k goroutines is very generous, so if a service exceeds this limit,\nit's a sign of a leak and it should be dealt with.\n Lower is better.",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -15965,6 +15965,200 @@
             "w": 12,
             "x": 12,
             "y": 10
+          },
+          "id": 3712788301,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "sideWidth": null,
+            "sort": "max",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [
+            {
+              "alias": "/^Soft SLO/",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^Hard SLO/",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            },
+            {
+              "alias": "/aggregated /",
+              "color": "#E7D551",
+              "linewidth": 2,
+              "zindex": 3
+            },
+            {
+              "alias": "/^95th quantile for week/",
+              "color": "#37872D",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 1,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^99th quantile for week/",
+              "color": "#56A64B",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "saturation-go_goroutines",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max by(env, environment, tier, type, stage, shard, fqdn) (\n  clamp_min(\n    clamp_max(\n      sum by (env, environment, tier, type, stage, shard, fqdn) (\n        go_goroutines{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"registry\"}\n      )\n      /\n      250000\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{ fqdn }}",
+              "refId": "A"
+            },
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"registry\", component=\"go_goroutines\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "aggregated {{ component }}",
+              "refId": "B"
+            },
+            {
+              "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"registry\", component=\"go_goroutines\"}\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "95th quantile for week {{ component }}",
+              "refId": "C"
+            },
+            {
+              "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"registry\", component=\"go_goroutines\"}\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "99th quantile for week {{ component }}",
+              "refId": "D"
+            },
+            {
+              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"go_goroutines\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "Soft SLO: {{ component }}",
+              "refId": "E"
+            },
+            {
+              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"go_goroutines\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "Hard SLO: {{ component }}",
+              "refId": "F"
+            }
+          ],
+          "thresholds": [
+
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "go_goroutines component saturation: Go goroutines Utilization per Node",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Saturation %",
+              "logBase": 1,
+              "max": 1,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Go's memory allocation strategy can make it look like a Go process is saturating memory when measured using RSS, when in fact\nthe process is not at risk of memory saturation. For this reason, we measure Go processes using the `go_memstat_alloc_bytes`\nmetric instead of RSS.\n Lower is better.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 20
           },
           "id": 3631721613,
           "legend": {
@@ -16157,7 +16351,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 20
           },
           "id": 2713861591,
@@ -16351,8 +16545,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 20
+            "x": 0,
+            "y": 30
           },
           "id": 172578411,
           "legend": {
@@ -16545,7 +16739,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 30
           },
           "id": 4163523952,
@@ -16739,8 +16933,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 30
+            "x": 0,
+            "y": 40
           },
           "id": 351198712,
           "legend": {
@@ -16933,7 +17127,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 40
           },
           "id": 1839360107,
@@ -17127,8 +17321,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 40
+            "x": 0,
+            "y": 50
           },
           "id": 1686893332,
           "legend": {
@@ -17321,7 +17515,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 50
           },
           "id": 1955556769,
@@ -17515,8 +17709,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 50
+            "x": 0,
+            "y": 60
           },
           "id": 503581002,
           "legend": {
@@ -17709,7 +17903,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 60
           },
           "id": 1415313189,
@@ -17903,8 +18097,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 60
+            "x": 0,
+            "y": 70
           },
           "id": 1001792825,
           "legend": {
@@ -18097,7 +18291,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 70
           },
           "id": 1472933476,
@@ -18291,8 +18485,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 70
+            "x": 0,
+            "y": 80
           },
           "id": 3372411356,
           "legend": {
@@ -18487,7 +18681,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 173,
+      "id": 174,
       "panels": [
         {
           "colors": [
@@ -18508,7 +18702,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 174,
+          "id": 175,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -18621,7 +18815,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 175,
+          "id": 176,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -18732,7 +18926,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 176,
+          "id": 177,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -18837,7 +19031,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 177,
+      "id": 178,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -18960,5 +19154,5 @@
   "timezone": "utc",
   "title": "registry: Overview",
   "uid": "registry-main",
-  "version": 4132
+  "version": 4135
 }
