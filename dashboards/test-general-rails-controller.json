@@ -51,91 +51,34 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5035203136 at Thu Sep  7 07:46:34 UTC 2023",
+  "description": "Uploaded by sylvesterchin at Thu Sep  7 03:18:56 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
   "hideControls": false,
   "id": null,
   "links": [
-    {
-      "asDropdown": true,
-      "icon": "external link",
-      "includeVars": false,
-      "keepTime": true,
-      "tags": "",
-      "targetBlank": false,
-      "title": "🔙 Back to ops-gitlab-net service",
-      "type": "link",
-      "url": "https://dashboards.gitlab.net/d/ops-gitlab-net-main/ops-gitlab-net-overview?orgId=1"
-    },
-    {
-      "asDropdown": true,
-      "icon": "dashboard",
-      "includeVars": true,
-      "keepTime": true,
-      "tags": "type:ops-gitlab-net",
-      "targetBlank": false,
-      "title": "ops-gitlab-net Detail",
-      "type": "dashboards",
-      "url": ""
-    },
-    {
-      "asDropdown": true,
-      "icon": "external link",
-      "includeVars": true,
-      "keepTime": true,
-      "tags": [
-        "managed",
-        "type:ops-gitlab-net",
-        "kube detail"
-      ],
-      "targetBlank": false,
-      "title": "☸️ ops-gitlab-net Kubernetes Detail",
-      "type": "dashboards",
-      "url": ""
-    }
+
   ],
   "panels": [
     {
-      "collapse": false,
-      "collapsed": false,
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 1,
+      "description": "",
+      "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
-        "h": 8,
-        "w": 24,
+        "h": 10,
+        "w": 12,
         "x": 0,
         "y": 0
       },
-      "id": 2,
-      "panels": [
-
-      ],
-      "repeat": null,
-      "repeatIteration": null,
-      "repeatRowId": null,
-      "showTitle": true,
-      "title": "gitaly deployment",
-      "titleSize": "h6",
-      "type": "row"
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 8
-      },
-      "id": 3,
+      "id": 3168042924,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -150,11 +93,20 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": [
+          {
+            "targetBlank": true,
+            "title": "ElasticSearch: Rails logs",
+            "url": "https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.status,json.method,json.meta.caller_id,json.meta.feature_category,json.path,json.request_urgency,json.duration_s,json.target_duration_s),filters:!((meta:(index:'7092c4e2-4eb5-46f2-8305-a7da2edad090',key:json.subcomponent,negate:!t,params:graphql_json,type:phrase),query:(match:(json.subcomponent:(query:graphql_json,type:phrase)))),(meta:(index:'7092c4e2-4eb5-46f2-8305-a7da2edad090',key:json.type.keyword,params:'$type',type:phrase),query:(match:(json.type.keyword:(query:'$type',type:phrase)))),(meta:(index:'7092c4e2-4eb5-46f2-8305-a7da2edad090',key:json.controller.keyword,params:'$controller',type:phrase),query:(match:(json.controller.keyword:(query:'$controller',type:phrase))))),index:'7092c4e2-4eb5-46f2-8305-a7da2edad090',query:(language:kuery,query:'json.action.keyword:${action:lucene}'))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}'))"
+          }
+        ]
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -164,15 +116,16 @@
 
       ],
       "spaceLength": 10,
+      "stableId": "request-rate",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      deployment=\"gitaly\",type=\"ops-gitlab-net\"\n    }[$__rate_interval]\n  )\n)\n",
+          "expr": "sum by (controller, action) (avg_over_time(controller_action:gitlab_transaction_duration_seconds_count:rate1m{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval]))",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{ cluster }}",
+          "legendFormat": "{{ action }}",
           "refId": "A"
         }
       ],
@@ -181,7 +134,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "gitaly Deployment: CPU",
+      "title": "Request Rate",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -199,8 +152,8 @@
       },
       "yaxes": [
         {
-          "format": "short",
-          "label": "",
+          "format": "ops",
+          "label": "Requests per Second",
           "logBase": 1,
           "max": null,
           "min": 0,
@@ -228,12 +181,157 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 8
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2021894936,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": [
+          {
+            "targetBlank": true,
+            "title": "ElasticSearch: Rails logs",
+            "url": "https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.status,json.method,json.meta.caller_id,json.meta.feature_category,json.path,json.request_urgency,json.duration_s,json.target_duration_s),filters:!((meta:(index:'7092c4e2-4eb5-46f2-8305-a7da2edad090',key:json.subcomponent,negate:!t,params:graphql_json,type:phrase),query:(match:(json.subcomponent:(query:graphql_json,type:phrase)))),(meta:(index:'7092c4e2-4eb5-46f2-8305-a7da2edad090',key:json.type.keyword,params:'$type',type:phrase),query:(match:(json.type.keyword:(query:'$type',type:phrase)))),(meta:(index:'7092c4e2-4eb5-46f2-8305-a7da2edad090',key:json.controller.keyword,params:'$controller',type:phrase),query:(match:(json.controller.keyword:(query:'$controller',type:phrase))))),index:'7092c4e2-4eb5-46f2-8305-a7da2edad090',query:(language:kuery,query:'json.action.keyword:${action:lucene}'))&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}'))"
+          }
+        ]
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stableId": "latency",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "avg by (controller, action) (avg_over_time(controller_action:gitlab_transaction_duration_seconds:p99{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval]))",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{ action }} - p99",
+          "refId": "A"
+        },
+        {
+          "expr": "avg by (controller, action) (avg_over_time(controller_action:gitlab_transaction_duration_seconds:p95{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval]))",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{ action }} - p95",
+          "refId": "B"
+        },
+        {
+          "expr": "sum by (controller, action) (avg_over_time(controller_action:gitlab_transaction_duration_seconds_sum:rate1m{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval]))\n/\nsum by (controller, action) (avg_over_time(controller_action:gitlab_transaction_duration_seconds_count:rate1m{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval]))\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{ action }} - mean",
+          "refId": "C"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Latency",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "s",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "collapse": false,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 201
       },
       "id": 4,
+      "panels": [
+
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "SQL",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 1,
+      "description": "",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 0,
+        "y": 202
+      },
+      "id": 1266521010,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -248,7 +346,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -262,16 +360,33 @@
 
       ],
       "spaceLength": 10,
+      "stableId": "total-sql-queries-rate",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    deployment=\"gitaly\",type=\"ops-gitlab-net\"\n  }\n)\n",
+          "expr": "sum by (action) (\n  rate(\n    gitlab_transaction_db_count_total{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval]\n  )\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{ cluster }}",
+          "legendFormat": "Total - {{ action }}",
           "refId": "A"
+        },
+        {
+          "expr": "sum by (action) (\n  rate(\n    gitlab_transaction_db_primary_count_total{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval]\n  )\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "Primary - {{ action }}",
+          "refId": "B"
+        },
+        {
+          "expr": "sum by (action) (\n  rate(\n    gitlab_transaction_db_replica_count_total{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval]\n  )\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "Replica - {{ action }}",
+          "refId": "C"
         }
       ],
       "thresholds": [
@@ -279,7 +394,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "gitaly Deployment: Memory",
+      "title": "Total SQL Queries Rate",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -297,7 +412,7 @@
       },
       "yaxes": [
         {
-          "format": "bytes",
+          "format": "ops",
           "label": "",
           "logBase": 1,
           "max": null,
@@ -321,19 +436,19 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "Network utilization",
+      "decimals": 1,
+      "description": "",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 8
+        "h": 10,
+        "w": 6,
+        "x": 6,
+        "y": 202
       },
-      "id": 5,
+      "id": 2155933118,
       "legend": {
-        "alignAsTable": false,
+        "alignAsTable": true,
         "avg": true,
         "current": true,
         "hideEmpty": true,
@@ -343,10 +458,10 @@
         "show": true,
         "sideWidth": null,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -357,30 +472,20 @@
       "renderer": "flot",
       "repeat": null,
       "seriesOverrides": [
-        {
-          "alias": "/receive .*/",
-          "transform": "negative-Y"
-        }
+
       ],
       "spaceLength": 10,
+      "stableId": "sql-requests-per-controller-request",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_transmit_bytes_total:labeled{\n      deployment=\"gitaly\",type=\"ops-gitlab-net\"\n    }[$__rate_interval]\n  )\n)\n",
+          "expr": "sum by (action) (\n  rate(gitlab_sql_duration_seconds_count{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval])\n)\n/\nsum by (action) (\n  avg_over_time(\n    controller_action:gitlab_transaction_duration_seconds_count:rate1m{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval]\n  )\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "send {{ cluster }}",
+          "legendFormat": "{{ action }}",
           "refId": "A"
-        },
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_receive_bytes_total:labeled{\n      deployment=\"gitaly\",type=\"ops-gitlab-net\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "receive {{ cluster }}",
-          "refId": "B"
         }
       ],
       "thresholds": [
@@ -388,7 +493,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "gitaly Deployment: Network IO",
+      "title": "SQL Requests per Controller Request",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -406,11 +511,209 @@
       },
       "yaxes": [
         {
-          "format": "Bps",
-          "label": "Network utilization",
+          "format": "short",
+          "label": "",
           "logBase": 1,
           "max": null,
-          "min": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 12,
+        "y": 202
+      },
+      "id": 1618528745,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stableId": "sql-latency-per-controller-request",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by (controller, action) (avg_over_time(controller_action:gitlab_sql_duration_seconds_sum:rate1m{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval]))\n/\nsum by (controller, action) (avg_over_time(controller_action:gitlab_transaction_duration_seconds_count:rate1m{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval]))\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{ action }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "SQL Latency per Controller Request",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "s",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 18,
+        "y": 202
+      },
+      "id": 3735068459,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stableId": "sql-latency-per-sql-request",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by (action) (\n  rate(gitlab_sql_duration_seconds_sum{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval])\n)\n/\nsum by (action) (\n  rate(gitlab_sql_duration_seconds_count{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval])\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{ action }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "SQL Latency per SQL Request",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "s",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
           "show": true
         },
         {
@@ -427,338 +730,12 @@
       "collapse": false,
       "collapsed": false,
       "gridPos": {
-        "h": 8,
+        "h": 1,
         "w": 24,
         "x": 0,
-        "y": 16
-      },
-      "id": 6,
-      "panels": [
-
-      ],
-      "repeat": null,
-      "repeatIteration": null,
-      "repeatRowId": null,
-      "showTitle": true,
-      "title": "kas deployment",
-      "titleSize": "h6",
-      "type": "row"
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 24
-      },
-      "id": 7,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      deployment=\"kas\",type=\"ops-gitlab-net\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "{{ cluster }}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "kas Deployment: CPU",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 24
-      },
-      "id": 8,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    deployment=\"kas\",type=\"ops-gitlab-net\"\n  }\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "{{ cluster }}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "kas Deployment: Memory",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "bytes",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "Network utilization",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 24
+        "y": 301
       },
       "id": 9,
-      "legend": {
-        "alignAsTable": false,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-        {
-          "alias": "/receive .*/",
-          "transform": "negative-Y"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_transmit_bytes_total:labeled{\n      deployment=\"kas\",type=\"ops-gitlab-net\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "send {{ cluster }}",
-          "refId": "A"
-        },
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_receive_bytes_total:labeled{\n      deployment=\"kas\",type=\"ops-gitlab-net\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "receive {{ cluster }}",
-          "refId": "B"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "kas Deployment: Network IO",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "Bps",
-          "label": "Network utilization",
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "collapse": false,
-      "collapsed": false,
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 32
-      },
-      "id": 10,
       "panels": [
 
       ],
@@ -766,7 +743,7 @@
       "repeatIteration": null,
       "repeatRowId": null,
       "showTitle": true,
-      "title": "registry deployment",
+      "title": "SQL Transaction",
       "titleSize": "h6",
       "type": "row"
     },
@@ -777,17 +754,17 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
+      "decimals": 1,
       "description": "",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
-        "w": 8,
+        "h": 10,
+        "w": 12,
         "x": 0,
-        "y": 40
+        "y": 302
       },
-      "id": 11,
+      "id": 3519794113,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -802,7 +779,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -816,15 +793,16 @@
 
       ],
       "spaceLength": 10,
+      "stableId": "sql-transaction-per-controller-request",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      deployment=\"registry\",type=\"ops-gitlab-net\"\n    }[$__rate_interval]\n  )\n)\n",
+          "expr": "sum by (action) (\n  rate(gitlab_database_transaction_seconds_count{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval])\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{ cluster }}",
+          "legendFormat": "{{ action }}",
           "refId": "A"
         }
       ],
@@ -833,7 +811,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "registry Deployment: CPU",
+      "title": "SQL Transactions per Controller Request",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -880,12 +858,12 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 40
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 302
       },
-      "id": 12,
+      "id": 4153233807,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -900,7 +878,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -914,15 +892,16 @@
 
       ],
       "spaceLength": 10,
+      "stableId": "avg-duration-per-sql-transaction",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    deployment=\"registry\",type=\"ops-gitlab-net\"\n  }\n)\n",
+          "expr": "sum(rate(gitlab_database_transaction_seconds_sum{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval])) by (action)\n/\nsum(rate(gitlab_database_transaction_seconds_count{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval])) by (action)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{ cluster }}",
+          "legendFormat": "{{ action }}",
           "refId": "A"
         }
       ],
@@ -931,7 +910,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "registry Deployment: Memory",
+      "title": "Average Duration per SQL Transaction",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -949,120 +928,11 @@
       },
       "yaxes": [
         {
-          "format": "bytes",
+          "format": "s",
           "label": "",
           "logBase": 1,
           "max": null,
           "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "Network utilization",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 40
-      },
-      "id": 13,
-      "legend": {
-        "alignAsTable": false,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-        {
-          "alias": "/receive .*/",
-          "transform": "negative-Y"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_transmit_bytes_total:labeled{\n      deployment=\"registry\",type=\"ops-gitlab-net\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "send {{ cluster }}",
-          "refId": "A"
-        },
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_receive_bytes_total:labeled{\n      deployment=\"registry\",type=\"ops-gitlab-net\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "receive {{ cluster }}",
-          "refId": "B"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "registry Deployment: Network IO",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "Bps",
-          "label": "Network utilization",
-          "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
@@ -1079,10 +949,130 @@
       "collapse": false,
       "collapsed": false,
       "gridPos": {
-        "h": 8,
+        "h": 1,
         "w": 24,
         "x": 0,
-        "y": 48
+        "y": 401
+      },
+      "id": 12,
+      "panels": [
+
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "Cache",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 1,
+      "description": "",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 402
+      },
+      "id": 162987554,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stableId": "cache-operations",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by (action, operation) (\n  rate(gitlab_cache_operations_total{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval])\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{ action }} - {{ operation }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Cache Operations",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "collapse": false,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 501
       },
       "id": 14,
       "panels": [
@@ -1092,7 +1082,7 @@
       "repeatIteration": null,
       "repeatRowId": null,
       "showTitle": true,
-      "title": "sidekiq deployment",
+      "title": "Elasticsearch",
       "titleSize": "h6",
       "type": "row"
     },
@@ -1103,15 +1093,15 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
+      "decimals": 2,
       "description": "",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
-        "w": 8,
+        "h": 10,
+        "w": 24,
         "x": 0,
-        "y": 56
+        "y": 502
       },
       "id": 15,
       "legend": {
@@ -1128,7 +1118,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -1146,219 +1136,36 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      deployment=\"sidekiq\",type=\"ops-gitlab-net\"\n    }[$__rate_interval]\n  )\n)\n",
+          "expr": "histogram_quantile(0.5, sum by (controller, action, le) (\n  rate(http_elasticsearch_requests_duration_seconds_bucket{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval])\n))\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{ cluster }}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "sidekiq Deployment: CPU",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 56
-      },
-      "id": 16,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    deployment=\"sidekiq\",type=\"ops-gitlab-net\"\n  }\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "{{ cluster }}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "sidekiq Deployment: Memory",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "bytes",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "Network utilization",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 56
-      },
-      "id": 17,
-      "legend": {
-        "alignAsTable": false,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-        {
-          "alias": "/receive .*/",
-          "transform": "negative-Y"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_transmit_bytes_total:labeled{\n      deployment=\"sidekiq\",type=\"ops-gitlab-net\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "send {{ cluster }}",
+          "legendFormat": "{{ action }} p50",
           "refId": "A"
         },
         {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_receive_bytes_total:labeled{\n      deployment=\"sidekiq\",type=\"ops-gitlab-net\"\n    }[$__rate_interval]\n  )\n)\n",
+          "expr": "histogram_quantile(0.9, sum by (controller, action, le) (\n  rate(http_elasticsearch_requests_duration_seconds_bucket{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval])\n))\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "receive {{ cluster }}",
+          "legendFormat": "{{ action }} p90",
           "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum by (controller, action, le) (\n  rate(http_elasticsearch_requests_duration_seconds_bucket{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval])\n))\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{ action }} p95",
+          "refId": "C"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum by (controller, action, le) (\n  rate(http_elasticsearch_requests_duration_seconds_bucket{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval])\n))\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{ action }} p99",
+          "refId": "D"
         }
       ],
       "thresholds": [
@@ -1366,7 +1173,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "sidekiq Deployment: Network IO",
+      "title": "Elasticsearch Time",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1384,11 +1191,11 @@
       },
       "yaxes": [
         {
-          "format": "Bps",
-          "label": "Network utilization",
+          "format": "s",
+          "label": "Duration",
           "logBase": 1,
           "max": null,
-          "min": null,
+          "min": 0,
           "show": true
         },
         {
@@ -1405,12 +1212,12 @@
       "collapse": false,
       "collapsed": false,
       "gridPos": {
-        "h": 8,
+        "h": 1,
         "w": 24,
         "x": 0,
-        "y": 64
+        "y": 601
       },
-      "id": 18,
+      "id": 16,
       "panels": [
 
       ],
@@ -1418,7 +1225,7 @@
       "repeatIteration": null,
       "repeatRowId": null,
       "showTitle": true,
-      "title": "webservice deployment",
+      "title": "External HTTP",
       "titleSize": "h6",
       "type": "row"
     },
@@ -1429,17 +1236,17 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
+      "decimals": 1,
       "description": "",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 8,
         "x": 0,
-        "y": 72
+        "y": 602
       },
-      "id": 19,
+      "id": 3239630680,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1454,7 +1261,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -1468,15 +1275,16 @@
 
       ],
       "spaceLength": 10,
+      "stableId": "external-http",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      deployment=\"webservice\",type=\"ops-gitlab-net\"\n    }[$__rate_interval]\n  )\n)\n",
+          "expr": "sum by (controller, action, code) (\nrate(gitlab_external_http_total{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[$__interval])\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{ cluster }}",
+          "legendFormat": "{{ action }} - {{ code }}",
           "refId": "A"
         }
       ],
@@ -1485,7 +1293,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "webservice Deployment: CPU",
+      "title": "External HTTP calls",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1503,7 +1311,7 @@
       },
       "yaxes": [
         {
-          "format": "short",
+          "format": "ops",
           "label": "",
           "logBase": 1,
           "max": null,
@@ -1532,12 +1340,12 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 8,
         "x": 8,
-        "y": 72
+        "y": 602
       },
-      "id": 20,
+      "id": 3995046926,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1552,7 +1360,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -1566,16 +1374,33 @@
 
       ],
       "spaceLength": 10,
+      "stableId": "external-http-latency",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    deployment=\"webservice\",type=\"ops-gitlab-net\"\n  }\n)\n",
+          "expr": "histogram_quantile(\n  0.5,\n  sum(\n    rate(\n      gitlab_external_http_duration_seconds_bucket{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[5m]\n    )\n  ) by (action, le)\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{ cluster }}",
+          "legendFormat": "{{ action }} - p50",
           "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(\n  0.9,\n  sum(\n    rate(\n      gitlab_external_http_duration_seconds_bucket{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[5m]\n    )\n  ) by (action, le)\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{ action }} - p90",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(\n  0.99,\n  sum(\n    rate(\n      gitlab_external_http_duration_seconds_bucket{action=~\"$action\",controller=\"$controller\",environment=\"$environment\",stage=\"$stage\",type=\"$type\"}[5m]\n    )\n  ) by (action, le)\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{ action }} - p99",
+          "refId": "C"
         }
       ],
       "thresholds": [
@@ -1583,7 +1408,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "webservice Deployment: Memory",
+      "title": "External HTTP Latency per call",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1601,7 +1426,7 @@
       },
       "yaxes": [
         {
-          "format": "bytes",
+          "format": "s",
           "label": "",
           "logBase": 1,
           "max": null,
@@ -1619,113 +1444,18 @@
       ]
     },
     {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "Network utilization",
-      "fill": 0,
-      "fillGradient": 0,
+      "content": "The metrics displayed in this row indicate all the network requests made inside a Rails process via the HTTP protocol. The requests may be triggered by Gitlab::HTTP utility inside the application code base or by any 3rd-party gems. We don't differentiate the destinations. So, the metrics include both internal/external dependencies.\n* [📖 Kibana: External HTTP logs](https://log.gprd.gitlab.net/app/kibana#/discover?_a=(columns:!(json.status,json.method,json.meta.caller_id,json.meta.feature_category,json.path,json.request_urgency,json.duration_s,json.target_duration_s),filters:!((meta:(index:'7092c4e2-4eb5-46f2-8305-a7da2edad090',key:json.subcomponent,negate:!t,params:graphql_json,type:phrase),query:(match:(json.subcomponent:(query:graphql_json,type:phrase)))),(meta:(index:'7092c4e2-4eb5-46f2-8305-a7da2edad090',key:json.type,params:'$type',type:phrase),query:(match:(json.type:(query:'$type',type:phrase)))),(meta:(index:'7092c4e2-4eb5-46f2-8305-a7da2edad090',key:exists,type:json.external_http_count,value:exists),query:(exists:(field:json.external_http_count)))),index:'7092c4e2-4eb5-46f2-8305-a7da2edad090')&_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}')))\n",
+      "datasource": null,
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 8,
         "x": 16,
-        "y": 72
+        "y": 602
       },
-      "id": 21,
-      "legend": {
-        "alignAsTable": false,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-        {
-          "alias": "/receive .*/",
-          "transform": "negative-Y"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_transmit_bytes_total:labeled{\n      deployment=\"webservice\",type=\"ops-gitlab-net\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "send {{ cluster }}",
-          "refId": "A"
-        },
-        {
-          "expr": "sum by(cluster) (\n  rate(\n    container_network_receive_bytes_total:labeled{\n      deployment=\"webservice\",type=\"ops-gitlab-net\"\n    }[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "receive {{ cluster }}",
-          "refId": "B"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "webservice Deployment: Network IO",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "Bps",
-          "label": "Network utilization",
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
+      "id": 19,
+      "mode": "markdown",
+      "title": "Extra links",
+      "type": "text"
     },
     {
       "content": "Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards)\n",
@@ -1736,7 +1466,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 22,
+      "id": 20,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -1750,11 +1480,8 @@
   "style": "light",
   "tags": [
     "managed",
-    "ops-gitlab-net",
-    "ops-gitlab-net",
-    "type:ops-gitlab-net",
-    "kube",
-    "kube detail"
+    "general",
+    "detail"
   ],
   "templating": {
     "list": [
@@ -1773,6 +1500,143 @@
         "refresh": 1,
         "regex": "",
         "type": "datasource"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "gprd",
+          "value": "gprd"
+        },
+        "datasource": "$PROMETHEUS_DS",
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "environment",
+        "options": [
+
+        ],
+        "query": "label_values(gitlab_service_ops:rate, environment)",
+        "refresh": 1,
+        "regex": "",
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [
+
+        ],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "web",
+          "value": "web"
+        },
+        "datasource": "$PROMETHEUS_DS",
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "type",
+        "options": [
+
+        ],
+        "query": "label_values(gitlab_component_service:mapping{component=\"rails_request\", environment=\"$environment\"}, type)",
+        "refresh": 1,
+        "regex": "",
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [
+
+        ],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "main",
+          "value": "main"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "stage",
+        "options": [
+          {
+            "text": "main",
+            "value": "main"
+          },
+          {
+            "text": "cny",
+            "value": "cny"
+          },
+          {
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "main,cny,",
+        "refresh": 0,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "Grape",
+          "value": "Grape"
+        },
+        "datasource": "$PROMETHEUS_DS",
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "controller",
+        "options": [
+
+        ],
+        "query": "label_values(controller_action:gitlab_transaction_duration_seconds_count:rate1m{environment=\"$environment\", type=\"$type\"}, controller)",
+        "refresh": 1,
+        "regex": "",
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [
+
+        ],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "GET /api/projects",
+          "value": "GET /api/projects"
+        },
+        "datasource": "$PROMETHEUS_DS",
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "action",
+        "options": [
+
+        ],
+        "query": "label_values(controller_action:gitlab_transaction_duration_seconds_count:rate1m{environment=\"$environment\", type=\"$type\", controller=\"$controller\"}, action)",
+        "refresh": 1,
+        "regex": "",
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [
+
+        ],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       }
     ]
   },
@@ -1801,7 +1665,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "ops-gitlab-net: Kube Deployment Detail",
-  "uid": "ops-gitlab-net-kube-deployments",
-  "version": 406
+  "title": "test general: Rails Controller",
+  "uid": "test-general-rails-controller",
+  "version": 1
 }
