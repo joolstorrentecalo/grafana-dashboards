@@ -513,6 +513,10 @@
       }
     },
     {
+      "datasource": {
+        "type": "loki",
+        "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -590,6 +594,18 @@
           "sort": "none"
         }
       },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
+          },
+          "editorMode": "builder",
+          "expr": "sum_over_time({job=\"gitlab/webservice\", env=\"$environment\"} | json | subcomponent = `production_json` | duration_s > 2 | controller != `None` | unwrap controller [5m])",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
       "title": "Panel Title",
       "type": "timeseries"
     },
@@ -597,39 +613,6 @@
       "datasource": {
         "type": "loki",
         "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-
-        ]
       },
       "gridPos": {
         "h": 14,
@@ -639,16 +622,14 @@
       },
       "id": 3,
       "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": false,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
       },
       "pluginVersion": "9.5.1",
       "targets": [
@@ -658,31 +639,20 @@
             "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
           },
           "editorMode": "code",
-          "expr": "{job=\"gitlab/webservice\", env=\"$environment\"}",
+          "expr": "{job=\"gitlab/webservice\", env=\"$environment\"} | json | subcomponent=\"production_json\" | duration_s > 2",
           "queryType": "range",
           "refId": "A"
         }
       ],
       "title": "Panel Title",
       "transformations": [
-        {
-          "id": "extractFields",
-          "options": {
-            "format": "json",
-            "jsonPaths": [
 
-            ],
-            "keepTime": false,
-            "replace": false,
-            "source": "Line"
-          }
-        }
       ],
-      "type": "table"
+      "type": "logs"
     }
   ],
   "refresh": false,
-  "schemaVersion": 39,
+  "schemaVersion": 38,
   "style": "dark",
   "tags": [
     "unmanaged"
@@ -776,6 +746,6 @@
   "timezone": "",
   "title": "Loki Trial Web Overview",
   "uid": "ee756166-a39e-4b12-a3ea-2c829af024b4",
-  "version": 7,
+  "version": 10,
   "weekStart": ""
 }
