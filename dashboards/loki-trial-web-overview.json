@@ -76,6 +76,21 @@
   "liveNow": false,
   "panels": [
     {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 5,
+      "panels": [
+
+      ],
+      "title": "Web Metrics",
+      "type": "row"
+    },
+    {
       "aliasColors": {
       },
       "bars": false,
@@ -106,7 +121,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "hiddenSeries": false,
       "id": 1,
@@ -330,7 +345,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 0
+        "y": 1
       },
       "hiddenSeries": false,
       "id": 2,
@@ -575,19 +590,22 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 24,
+        "w": 12,
         "x": 0,
-        "y": 7
+        "y": 8
       },
-      "id": 4,
+      "id": 11,
       "options": {
         "legend": {
           "calcs": [
-
+            "sum",
+            "max"
           ],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Max",
+          "sortDesc": true
         },
         "tooltip": {
           "mode": "single",
@@ -600,14 +618,385 @@
             "type": "loki",
             "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
           },
-          "editorMode": "builder",
-          "expr": "sum_over_time({job=\"gitlab/webservice\", env=\"$environment\"} | json | subcomponent = `production_json` | duration_s > 2 | controller != `None` | unwrap controller [5m])",
+          "editorMode": "code",
+          "expr": "topk (6, sum by (route) (count_over_time({job=\"$Job\", env=\"$environment\"} | json | __error__!=\"JSONParserErr\" | cluster=\"gprd-us-east1-d\" | duration_s > 2 [5m])))",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "Panel Title",
+      "title": "Slow routes over time",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 12,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "sortBy": "Max",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
+          },
+          "editorMode": "code",
+          "expr": "topk (6, sum by (controller) (count_over_time({job=\"$Job\", env=\"$environment\"} | json | __error__!=\"JSONParserErr\" | cluster=\"gprd-us-east1-d\" | duration_s > 2 [5m])))",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Slow controllers",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 9,
+      "panels": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [
+
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 25
+          },
+          "id": 10,
+          "options": {
+            "displayMode": "gradient",
+            "minVizHeight": 10,
+            "minVizWidth": 0,
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "valueMode": "color"
+          },
+          "pluginVersion": "9.5.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
+              },
+              "editorMode": "code",
+              "expr": "topk (6, sum by (route) (count_over_time({job=\"$Job\", env=\"$environment\"} | json | __error__!=\"JSONParserErr\" | cluster=\"gprd-us-east1-d\" | duration_s > 2 [5m])))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Top 6 by slow Route duration > 2s",
+          "type": "bargauge"
+        }
+      ],
+      "title": "Slow routes",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 6,
+      "panels": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [
+
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": [
+
+            ]
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 26
+          },
+          "id": 4,
+          "options": {
+            "displayMode": "gradient",
+            "minVizHeight": 10,
+            "minVizWidth": 0,
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "valueMode": "color"
+          },
+          "pluginVersion": "9.5.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
+              },
+              "editorMode": "code",
+              "expr": "sum by (controller) (count_over_time({job=\"$Job\", env=\"$environment\"} | json | __error__!=\"JSONParserErr\" | cluster=\"gprd-us-east1-d\" | duration_s > 5 [5m]))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "count of controllers with >5s duration",
+          "type": "bargauge"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
+          },
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [
+
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+
+            ]
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 12,
+            "y": 26
+          },
+          "id": 8,
+          "options": {
+            "displayMode": "gradient",
+            "minVizHeight": 10,
+            "minVizWidth": 0,
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "valueMode": "color"
+          },
+          "pluginVersion": "9.5.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
+              },
+              "editorMode": "code",
+              "expr": "topk (6, sum by (controller) (count_over_time({job=\"$Job\", env=\"$environment\"} | json | __error__!=\"JSONParserErr\" | cluster=\"gprd-us-east1-d\" | duration_s > 5 [5m])))",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Top 10 Slow controllers over 5s duration",
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": ".*=\"(.+)\"}",
+                "renamePattern": "$1"
+              }
+            },
+            {
+              "id": "sortBy",
+              "options": {
+                "fields": {
+                },
+                "sort": [
+                  {
+                    "desc": true,
+                    "field": "{}"
+                  }
+                ]
+              }
+            }
+          ],
+          "type": "bargauge"
+        }
+      ],
+      "title": "Slow Controllers (duration > 5s)",
+      "type": "row"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 7,
+      "panels": [
+
+      ],
+      "title": "Raw Logs",
+      "type": "row"
     },
     {
       "datasource": {
@@ -618,7 +1007,7 @@
         "h": 14,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 19
       },
       "id": 3,
       "options": {
@@ -639,14 +1028,18 @@
             "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
           },
           "editorMode": "code",
-          "expr": "{job=\"gitlab/webservice\", env=\"$environment\"} | json | subcomponent=\"production_json\" | duration_s > 2",
+          "expr": "{job=\"gitlab/webservice\", env=\"$environment\"} | json | subcomponent=\"production_json\" | duration_s > 5",
           "queryType": "range",
           "refId": "A"
         }
       ],
       "title": "Panel Title",
       "transformations": [
-
+        {
+          "id": "extractFields",
+          "options": {
+          }
+        }
       ],
       "type": "logs"
     }
@@ -734,6 +1127,37 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "gitlab/webservice",
+          "value": "gitlab/webservice"
+        },
+        "datasource": {
+          "type": "loki",
+          "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": false,
+        "label": "job",
+        "multi": false,
+        "name": "Job",
+        "options": [
+
+        ],
+        "query": {
+          "label": "job",
+          "refId": "LokiVariableQueryEditor-VariableQuery",
+          "stream": "",
+          "type": 1
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -746,6 +1170,6 @@
   "timezone": "",
   "title": "Loki Trial Web Overview",
   "uid": "ee756166-a39e-4b12-a3ea-2c829af024b4",
-  "version": 10,
+  "version": 14,
   "weekStart": ""
 }
