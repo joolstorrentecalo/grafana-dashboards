@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5072359789 at Tue Sep 12 22:04:44 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5073994466 at Wed Sep 13 04:54:27 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -755,6 +755,124 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
+      "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 21
+      },
+      "id": 4035616449,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "cloudsql RPS",
+          "color": "#E7D551",
+          "zindex": 3
+        },
+        {
+          "alias": "last week",
+          "color": "#dddddd80",
+          "dashLength": 4,
+          "dashes": true,
+          "fill": 0,
+          "legend": true,
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "spaceLength": 2,
+          "zindex": -3
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "sli-cloudsql-ops-rate",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "avg_over_time(gitlab_component_ops:rate_5m{component=\"cloudsql\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"packagecloud\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "cloudsql RPS",
+          "refId": "A"
+        },
+        {
+          "expr": "gitlab_component_ops:rate_5m{component=\"cloudsql\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"packagecloud\"} offset 1w\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "last week",
+          "refId": "B"
+        }
+      ],
+      "title": "cloudsql SLI RPS - Requests per Second",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Operations per Second",
+          "logBase": 1,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "content": "### Description\n\nPackagecloud uses a GCP CloudSQL MySQL instance. This SLI represents SQL queries executed by the server.\n\n\n\n### Observability Tools\n\n* [Cloud SQL](https://console.cloud.google.com/sql/instances/gitlab-ops:packagecloud-f05c90f5/overview?project=gitlab-production)\n* [Stackdriver Logs: Cloud SQL gitlab-ops:packagecloud-f05c90f5](https://console.cloud.google.com/logs/query;query=resource%2Elabels%2Edatabase%5Fid%3D%22gitlab%2Dproduction%3Agitlab%2Dops%3Apackagecloud%2Df05c90f5%22%0Aresource%2Elabels%2Eproject%5Fid%3D%22gitlab%2Dproduction%22%0Aresource%2Etype%3D%22cloudsql%5Fdatabase%22;timeRange=PT30M?project=gitlab-production)\n\n",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 21
+      },
+      "id": 9,
+      "mode": "markdown",
+      "title": "Details",
+      "type": "text"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
       "description": "Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
       "fill": 0,
       "fillGradient": 0,
@@ -762,7 +880,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 21
+        "y": 31
       },
       "id": 3255520955,
       "legend": {
@@ -1089,9 +1207,9 @@
         "h": 1,
         "w": 8,
         "x": 0,
-        "y": 28
+        "y": 38
       },
-      "id": 9,
+      "id": 11,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -1135,7 +1253,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 21
+        "y": 31
       },
       "id": 138982496,
       "legend": {
@@ -1233,9 +1351,9 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 21
+        "y": 31
       },
-      "id": 11,
+      "id": 13,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -1253,7 +1371,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 31
+        "y": 41
       },
       "id": 332297442,
       "legend": {
@@ -1580,9 +1698,9 @@
         "h": 1,
         "w": 8,
         "x": 0,
-        "y": 38
+        "y": 48
       },
-      "id": 13,
+      "id": 15,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -1626,7 +1744,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 31
+        "y": 41
       },
       "id": 3303613160,
       "legend": {
@@ -1724,9 +1842,9 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 31
+        "y": 41
       },
-      "id": 15,
+      "id": 17,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -1740,7 +1858,179 @@
         "x": 0,
         "y": 200
       },
-      "id": 16,
+      "id": 18,
+      "panels": [
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 0
+          },
+          "id": 19,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by () (\n  avg_over_time(stackdriver_cloudsql_database_cloudsql_googleapis_com_database_mysql_queries{database_id=~\".+:packagecloud-.+\",env=\"$environment\",environment=\"$environment\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "overall",
+              "refId": "A"
+            }
+          ],
+          "title": "cloudsql RPS - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 10
+          },
+          "id": 20,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (database_id) (\n  avg_over_time(stackdriver_cloudsql_database_cloudsql_googleapis_com_database_mysql_queries{database_id!=\"\",env=\"$environment\",environment=\"$environment\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{database_id}}",
+              "refId": "A"
+            }
+          ],
+          "title": "cloudsql RPS - per database_id",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "🔬 SLI Detail: cloudsql",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "collapse": true,
+      "collapsed": true,
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 210
+      },
+      "id": 21,
       "panels": [
         {
           "bars": false,
@@ -1757,7 +2047,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 17,
+          "id": 22,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -1833,7 +2123,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 18,
+          "id": 23,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -1909,7 +2199,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 19,
+          "id": 24,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -1985,7 +2275,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 20,
+          "id": 25,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2061,7 +2351,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 21,
+          "id": 26,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2137,7 +2427,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 22,
+          "id": 27,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2214,9 +2504,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 210
+        "y": 220
       },
-      "id": 23,
+      "id": 28,
       "panels": [
         {
           "bars": false,
@@ -2233,7 +2523,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 24,
+          "id": 29,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2309,7 +2599,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 25,
+          "id": 30,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2385,7 +2675,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 26,
+          "id": 31,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2461,7 +2751,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 27,
+          "id": 32,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2537,7 +2827,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 28,
+          "id": 33,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2613,7 +2903,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 29,
+          "id": 34,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2692,7 +2982,7 @@
         "x": 0,
         "y": 400
       },
-      "id": 30,
+      "id": 35,
       "panels": [
         {
           "aliasColors": {
@@ -2711,7 +3001,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 31,
+          "id": 36,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2751,7 +3041,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      deployment=\"rainbows\",env=\"$environment\",environment=\"$environment\",type=\"packagecloud\"\n    }[$__rate_interval]\n  )\n)\n",
+              "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      container!=\"\",container!=\"POD\",deployment=\"rainbows\",env=\"$environment\",environment=\"$environment\",type=\"packagecloud\"\n    }[$__rate_interval]\n  )\n)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -2816,7 +3106,7 @@
             "x": 8,
             "y": 1
           },
-          "id": 32,
+          "id": 37,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2856,7 +3146,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    deployment=\"rainbows\",env=\"$environment\",environment=\"$environment\",type=\"packagecloud\"\n  }\n)\n",
+              "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    container!=\"\",container!=\"POD\",deployment=\"rainbows\",env=\"$environment\",environment=\"$environment\",type=\"packagecloud\"\n  }\n)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -2921,7 +3211,7 @@
             "x": 16,
             "y": 1
           },
-          "id": 33,
+          "id": 38,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -3037,7 +3327,7 @@
             "x": 0,
             "y": 9
           },
-          "id": 34,
+          "id": 39,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3077,7 +3367,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      deployment=\"resque\",env=\"$environment\",environment=\"$environment\",type=\"packagecloud\"\n    }[$__rate_interval]\n  )\n)\n",
+              "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      container!=\"\",container!=\"POD\",deployment=\"resque\",env=\"$environment\",environment=\"$environment\",type=\"packagecloud\"\n    }[$__rate_interval]\n  )\n)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -3142,7 +3432,7 @@
             "x": 8,
             "y": 9
           },
-          "id": 35,
+          "id": 40,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3182,7 +3472,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    deployment=\"resque\",env=\"$environment\",environment=\"$environment\",type=\"packagecloud\"\n  }\n)\n",
+              "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    container!=\"\",container!=\"POD\",deployment=\"resque\",env=\"$environment\",environment=\"$environment\",type=\"packagecloud\"\n  }\n)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -3247,7 +3537,7 @@
             "x": 16,
             "y": 9
           },
-          "id": 36,
+          "id": 41,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -3363,7 +3653,7 @@
             "x": 0,
             "y": 17
           },
-          "id": 37,
+          "id": 42,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3403,7 +3693,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      deployment=\"sql-proxy\",env=\"$environment\",environment=\"$environment\",type=\"packagecloud\"\n    }[$__rate_interval]\n  )\n)\n",
+              "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      container!=\"\",container!=\"POD\",deployment=\"sql-proxy\",env=\"$environment\",environment=\"$environment\",type=\"packagecloud\"\n    }[$__rate_interval]\n  )\n)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -3468,7 +3758,7 @@
             "x": 8,
             "y": 17
           },
-          "id": 38,
+          "id": 43,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3508,7 +3798,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    deployment=\"sql-proxy\",env=\"$environment\",environment=\"$environment\",type=\"packagecloud\"\n  }\n)\n",
+              "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    container!=\"\",container!=\"POD\",deployment=\"sql-proxy\",env=\"$environment\",environment=\"$environment\",type=\"packagecloud\"\n  }\n)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -3573,7 +3863,7 @@
             "x": 16,
             "y": 17
           },
-          "id": 39,
+          "id": 44,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -3689,7 +3979,7 @@
             "x": 0,
             "y": 25
           },
-          "id": 40,
+          "id": 45,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3729,7 +4019,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      deployment=\"toolbox\",env=\"$environment\",environment=\"$environment\",type=\"packagecloud\"\n    }[$__rate_interval]\n  )\n)\n",
+              "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      container!=\"\",container!=\"POD\",deployment=\"toolbox\",env=\"$environment\",environment=\"$environment\",type=\"packagecloud\"\n    }[$__rate_interval]\n  )\n)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -3794,7 +4084,7 @@
             "x": 8,
             "y": 25
           },
-          "id": 41,
+          "id": 46,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3834,7 +4124,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    deployment=\"toolbox\",env=\"$environment\",environment=\"$environment\",type=\"packagecloud\"\n  }\n)\n",
+              "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    container!=\"\",container!=\"POD\",deployment=\"toolbox\",env=\"$environment\",environment=\"$environment\",type=\"packagecloud\"\n  }\n)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -3899,7 +4189,7 @@
             "x": 16,
             "y": 25
           },
-          "id": 42,
+          "id": 47,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -4015,7 +4305,7 @@
             "x": 0,
             "y": 33
           },
-          "id": 43,
+          "id": 48,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4055,7 +4345,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      deployment=\"web\",env=\"$environment\",environment=\"$environment\",type=\"packagecloud\"\n    }[$__rate_interval]\n  )\n)\n",
+              "expr": "sum by(cluster) (\n  rate(\n    container_cpu_usage_seconds_total:labeled{\n      container!=\"\",container!=\"POD\",deployment=\"web\",env=\"$environment\",environment=\"$environment\",type=\"packagecloud\"\n    }[$__rate_interval]\n  )\n)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -4120,7 +4410,7 @@
             "x": 8,
             "y": 33
           },
-          "id": 44,
+          "id": 49,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4160,7 +4450,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    deployment=\"web\",env=\"$environment\",environment=\"$environment\",type=\"packagecloud\"\n  }\n)\n",
+              "expr": "sum by(cluster) (\n  container_memory_working_set_bytes:labeled{\n    container!=\"\",container!=\"POD\",deployment=\"web\",env=\"$environment\",environment=\"$environment\",type=\"packagecloud\"\n  }\n)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -4225,7 +4515,7 @@
             "x": 16,
             "y": 33
           },
-          "id": 45,
+          "id": 50,
           "legend": {
             "alignAsTable": false,
             "avg": true,
@@ -4342,7 +4632,7 @@
         "x": 0,
         "y": 500
       },
-      "id": 46,
+      "id": 51,
       "panels": [
         {
           "aliasColors": {
@@ -5720,7 +6010,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 54,
+      "id": 59,
       "panels": [
         {
           "aliasColors": {
@@ -5739,7 +6029,7 @@
             "x": 0,
             "y": 1000
           },
-          "id": 55,
+          "id": 60,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5837,7 +6127,7 @@
             "x": 6,
             "y": 1000
           },
-          "id": 56,
+          "id": 61,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -5935,7 +6225,7 @@
             "x": 12,
             "y": 1000
           },
-          "id": 57,
+          "id": 62,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -6032,7 +6322,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 58,
+      "id": 63,
       "panels": [
         {
           "colors": [
@@ -6053,7 +6343,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 59,
+          "id": 64,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -6166,7 +6456,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 60,
+          "id": 65,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -6277,7 +6567,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 61,
+          "id": 66,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -6382,7 +6672,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 62,
+      "id": 67,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -6476,5 +6766,5 @@
   "timezone": "utc",
   "title": "packagecloud: Overview",
   "uid": "packagecloud-main",
-  "version": 4
+  "version": 6
 }
