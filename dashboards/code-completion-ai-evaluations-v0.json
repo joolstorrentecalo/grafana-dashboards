@@ -1,0 +1,2308 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [
+
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 20,
+      "options": {
+        "code": {
+          "language": "html",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "### 16.3 Initial Draft for Movel Evals of Code Completion for Google Models\n#### Error and data analysis is in progress to confirm accuracy / insights/ recommendations\n\n##### Insights Summary:\n\n1. In the current state, the first iteration comprises 3450 distinct prompts curated from 11 open-source GitLab projects spanning 8 languages (Python, Golang, Ruby, TypeScript, JavaScript, Rust, C#, C).\n\n2. A significant portion of null values exists, which will be subject to further investigation and curation specifically for the next iteration focused on `text-bison`. Some of these null values are genuinely missing, while others represent errors. Our error analysis and investigation have been ongoing for only 2 days, and we intend to continue this process over the next two weeks, providing weekly updates.\n\n3. Despite the presence of null values as a separate category, `code-gecko` remains superior for code completion across 8 languages, serving as the base model.\n\n4. Upon inspecting the high-similarity bucket and selectively testing in the Web IDE, we gain insight into the proxy for opportunity: pinpointing the cursor location that should trigger a suggestion. This approach holds the potential to significantly enhance acceptance. For specific prompts and languages, the segments (chunks) serve as the proxy for identifying when a suggestion should be presented, closely mirroring developer-written code. This phenomenon is observable in the base model without employing any prompt transformation. \n\n5. We have also conducted testing on the prompt transformations applied in a production setting to assess their impact. Additional details can be found in the experiment panel.\n\n6. For similarity scores falling between `0.16` and `0.65` for `code-gecko`, optimization opportunities have emerged, particularly related to function declarations in JavaScript and Golang, and function definitions in Python.\n\n7. Our error analysis is still in its early stages, and we anticipate incorporating more recommendations iteratively within the experiment panel over the next 2 weeks.\n\n8. Furthermore, the panel structure consists of an overview section, followed by a developer investigation tab that facilitates language and model filtering. Subsequently, an experiments panel is available to document hypotheses and recommendations regarding prompt engineering. \n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "9.5.1",
+      "title": "Summary",
+      "type": "text"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 11
+      },
+      "id": 6,
+      "panels": [
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [
+
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+
+            ]
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 5,
+            "x": 0,
+            "y": 12
+          },
+          "id": 21,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.5.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "doitintl-bigquery-datasource",
+                "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+              },
+              "format": "table",
+              "group": [
+
+              ],
+              "metricColumn": "none",
+              "orderByCol": "1",
+              "orderBySort": "1",
+              "rawQuery": true,
+              "rawSql": "SELECT COUNT(DISTINCT(project.id)) AS `Distinct Prompt Count`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\nWHERE score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)",
+              "refId": "A",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "-- value --"
+                    ],
+                    "type": "column"
+                  }
+                ]
+              ],
+              "timeColumn": "-- time --",
+              "timeColumnType": "TIMESTAMP",
+              "where": [
+                {
+                  "name": "$__timeFilter",
+                  "params": [
+
+                  ],
+                  "type": "macro"
+                }
+              ]
+            }
+          ],
+          "title": "Project Count",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [
+
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": [
+
+            ]
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 5,
+            "x": 5,
+            "y": 12
+          },
+          "id": 16,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.5.1",
+          "targets": [
+            {
+              "convertToUTC": false,
+              "datasource": {
+                "type": "doitintl-bigquery-datasource",
+                "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+              },
+              "format": "table",
+              "group": [
+
+              ],
+              "metricColumn": "none",
+              "orderByCol": "2",
+              "orderBySort": "1",
+              "rawQuery": true,
+              "rawSql": "SELECT\n  AVG(score) AS mean,\nFROM\n  `gl_gitlab_codebase.scores_v4_combined`\nORDER BY\n  mean DESC",
+              "refId": "A",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "-- value --"
+                    ],
+                    "type": "column"
+                  }
+                ]
+              ],
+              "timeColumn": "-- time --",
+              "timeColumnType": "TIMESTAMP",
+              "where": [
+                {
+                  "name": "$__timeFilter",
+                  "params": [
+
+                  ],
+                  "type": "macro"
+                }
+              ]
+            }
+          ],
+          "title": "Mean Similarity Score",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "fillOpacity": 80,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineWidth": 1
+              },
+              "mappings": [
+
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 7,
+            "x": 10,
+            "y": 12
+          },
+          "id": 12,
+          "options": {
+            "bucketOffset": 0,
+            "legend": {
+              "calcs": [
+
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": false
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "doitintl-bigquery-datasource",
+                "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+              },
+              "format": "table",
+              "group": [
+
+              ],
+              "metricColumn": "none",
+              "orderByCol": "2",
+              "orderBySort": "1",
+              "rawQuery": true,
+              "rawSql": "SELECT\n  score\nFROM\n  `gl_gitlab_codebase.scores_v4_combined`",
+              "refId": "A",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "-- value --"
+                    ],
+                    "type": "column"
+                  }
+                ]
+              ],
+              "timeColumn": "-- time --",
+              "timeColumnType": "TIMESTAMP",
+              "where": [
+                {
+                  "name": "$__timeFilter",
+                  "params": [
+
+                  ],
+                  "type": "macro"
+                }
+              ]
+            }
+          ],
+          "title": "Similarity Score Distribution",
+          "type": "histogram"
+        },
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "fillOpacity": 80,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineWidth": 1,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [
+
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 7,
+            "x": 17,
+            "y": 12
+          },
+          "id": 4,
+          "options": {
+            "barRadius": 0,
+            "barWidth": 0.85,
+            "fullHighlight": false,
+            "groupWidth": 0.7,
+            "legend": {
+              "calcs": [
+
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": false
+            },
+            "orientation": "horizontal",
+            "showValue": "auto",
+            "stacking": "none",
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            },
+            "xTickLabelRotation": 0,
+            "xTickLabelSpacing": 0
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "doitintl-bigquery-datasource",
+                "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+              },
+              "format": "table",
+              "group": [
+
+              ],
+              "metricColumn": "none",
+              "orderByCol": "1",
+              "orderBySort": "1",
+              "rawQuery": true,
+              "rawSql": "SELECT lang_id, COUNT(*) AS `Prompt Count`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\nWHERE score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)\nGROUP BY lang_id\nORDER BY `Prompt Count` DESC",
+              "refId": "A",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "-- value --"
+                    ],
+                    "type": "column"
+                  }
+                ]
+              ],
+              "timeColumn": "-- time --",
+              "timeColumnType": "TIMESTAMP",
+              "where": [
+                {
+                  "name": "$__timeFilter",
+                  "params": [
+
+                  ],
+                  "type": "macro"
+                }
+              ]
+            }
+          ],
+          "title": "Prompt Count By Language",
+          "type": "barchart"
+        },
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [
+
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+
+            ]
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 5,
+            "x": 0,
+            "y": 15
+          },
+          "id": 1,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.5.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "doitintl-bigquery-datasource",
+                "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+              },
+              "format": "table",
+              "group": [
+
+              ],
+              "metricColumn": "none",
+              "orderByCol": "1",
+              "orderBySort": "1",
+              "rawQuery": true,
+              "rawSql": "SELECT COUNT(*) AS `Prompt Count`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\nWHERE score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)",
+              "refId": "A",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "-- value --"
+                    ],
+                    "type": "column"
+                  }
+                ]
+              ],
+              "timeColumn": "-- time --",
+              "timeColumnType": "TIMESTAMP",
+              "where": [
+                {
+                  "name": "$__timeFilter",
+                  "params": [
+
+                  ],
+                  "type": "macro"
+                }
+              ]
+            }
+          ],
+          "title": "Prompt Count",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [
+
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": [
+
+            ]
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 5,
+            "x": 5,
+            "y": 15
+          },
+          "id": 14,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.5.1",
+          "targets": [
+            {
+              "convertToUTC": false,
+              "datasource": {
+                "type": "doitintl-bigquery-datasource",
+                "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+              },
+              "format": "table",
+              "group": [
+
+              ],
+              "metricColumn": "none",
+              "orderByCol": "2",
+              "orderBySort": "1",
+              "rawQuery": true,
+              "rawSql": "SELECT\n  MAX(percentile95) AS percentile95,\nFROM (\n  SELECT\n    PERCENTILE_CONT(score, 0.95) OVER() AS percentile95,\n  FROM\n    `gl_gitlab_codebase.scores_v4_combined`)\nORDER BY\n  percentile95 DESC\n",
+              "refId": "A",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "-- value --"
+                    ],
+                    "type": "column"
+                  }
+                ]
+              ],
+              "timeColumn": "-- time --",
+              "timeColumnType": "TIMESTAMP",
+              "where": [
+                {
+                  "name": "$__timeFilter",
+                  "params": [
+
+                  ],
+                  "type": "macro"
+                }
+              ]
+            }
+          ],
+          "title": "95 Pct Similarity Score",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "continuous-YlRd"
+              },
+              "mappings": [
+
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "#E24D42",
+                    "value": 9
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": [
+
+            ]
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 5,
+            "x": 0,
+            "y": 18
+          },
+          "id": 2,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.5.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "doitintl-bigquery-datasource",
+                "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+              },
+              "format": "table",
+              "group": [
+
+              ],
+              "metricColumn": "none",
+              "orderByCol": "2",
+              "orderBySort": "1",
+              "rawQuery": true,
+              "rawSql": "SELECT 100 * SUM(CASE\n    WHEN score=0 THEN 1\n    ELSE 0 \n    END) / COUNT(*) `Percentage Zero`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`",
+              "refId": "A",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "-- value --"
+                    ],
+                    "type": "column"
+                  }
+                ]
+              ],
+              "timeColumn": "-- time --",
+              "timeColumnType": "TIMESTAMP",
+              "where": [
+                {
+                  "name": "$__timeFilter",
+                  "params": [
+
+                  ],
+                  "type": "macro"
+                }
+              ]
+            }
+          ],
+          "title": "Prompts with Score = 0 (%)",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [
+
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": [
+
+            ]
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 5,
+            "x": 5,
+            "y": 18
+          },
+          "id": 15,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.5.1",
+          "targets": [
+            {
+              "convertToUTC": false,
+              "datasource": {
+                "type": "doitintl-bigquery-datasource",
+                "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+              },
+              "format": "table",
+              "group": [
+
+              ],
+              "metricColumn": "none",
+              "orderByCol": "2",
+              "orderBySort": "1",
+              "rawQuery": true,
+              "rawSql": "SELECT\n  MAX(median) AS median,\nFROM (\n  SELECT\n    PERCENTILE_CONT(score, 0.5) OVER() AS median,\n  FROM\n    `gl_gitlab_codebase.scores_v4_combined`)\nORDER BY\n  median DESC\n",
+              "refId": "A",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "-- value --"
+                    ],
+                    "type": "column"
+                  }
+                ]
+              ],
+              "timeColumn": "-- time --",
+              "timeColumnType": "TIMESTAMP",
+              "where": [
+                {
+                  "name": "$__timeFilter",
+                  "params": [
+
+                  ],
+                  "type": "macro"
+                }
+              ]
+            }
+          ],
+          "title": "Median Similarity Score",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              },
+              "mappings": [
+
+              ],
+              "unit": "none"
+            },
+            "overrides": [
+              {
+                "__systemRef": "hideSeriesFrom",
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exclude",
+                    "names": [
+                      "Count"
+                    ],
+                    "prefix": "All except:",
+                    "readOnly": true
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "custom.hideFrom",
+                    "value": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": true
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 14,
+            "w": 9,
+            "x": 0,
+            "y": 21
+          },
+          "id": 25,
+          "options": {
+            "displayLabels": [
+              "percent"
+            ],
+            "legend": {
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "values": [
+                "value"
+              ]
+            },
+            "pieType": "donut",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "limit": 5,
+              "values": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "doitintl-bigquery-datasource",
+                "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+              },
+              "format": "table",
+              "group": [
+
+              ],
+              "metricColumn": "none",
+              "orderByCol": "1",
+              "orderBySort": "1",
+              "rawQuery": true,
+              "rawSql": "SELECT\n  count(*) as `Count`,\n  CASE\n    WHEN score >= 0.95 THEN 'High'\n    WHEN score >= 0.85 THEN 'Medium'\n    WHEN score = 0 THEN 'Zero'\n    ELSE \"Low\"\n  END AS accept_likelihood,\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\nGROUP BY accept_likelihood",
+              "refId": "A",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "-- value --"
+                    ],
+                    "type": "column"
+                  }
+                ]
+              ],
+              "timeColumn": "-- time --",
+              "timeColumnType": "TIMESTAMP",
+              "where": [
+                {
+                  "name": "$__timeFilter",
+                  "params": [
+
+                  ],
+                  "type": "macro"
+                }
+              ]
+            }
+          ],
+          "title": "Volume of Similarity Bucket (% of total prompts) ",
+          "transformations": [
+
+          ],
+          "type": "piechart"
+        },
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "mode": "basic",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
+                },
+                "inspect": false
+              },
+              "mappings": [
+
+              ],
+              "max": 1,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": null
+                  },
+                  {
+                    "color": "#EAB839",
+                    "value": 0.85
+                  },
+                  {
+                    "color": "green",
+                    "value": 0.95
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": [
+
+            ]
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 15,
+            "x": 9,
+            "y": 21
+          },
+          "id": 3,
+          "options": {
+            "cellHeight": "lg",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "9.5.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "doitintl-bigquery-datasource",
+                "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+              },
+              "format": "table",
+              "group": [
+
+              ],
+              "hide": false,
+              "metricColumn": "none",
+              "orderByCol": "1",
+              "orderBySort": "1",
+              "rawQuery": true,
+              "rawSql": "WITH groupedData as (\n  SELECT 'All' as lang_id, model, AVG(score) as avg_score\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\n  WHERE score != 0\n  GROUP BY model\n  UNION All\n  SELECT lang_id, model, AVG(score) AS avg_score\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\n  WHERE score != 0\n  GROUP BY lang_id, model\n)\n\nSELECT\n  lang_id,\n  model,\n  avg_score as `Average Score`\nFROM\n  groupedData",
+              "refId": "B",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "-- value --"
+                    ],
+                    "type": "column"
+                  }
+                ]
+              ],
+              "timeColumn": "-- time --",
+              "timeColumnType": "TIMESTAMP",
+              "where": [
+                {
+                  "name": "$__timeFilter",
+                  "params": [
+
+                  ],
+                  "type": "macro"
+                }
+              ]
+            }
+          ],
+          "title": "Similarity Scores by Model and Language",
+          "transformations": [
+            {
+              "id": "groupingToMatrix",
+              "options": {
+                "columnField": "lang_id",
+                "rowField": "model",
+                "valueField": "Average Score"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                },
+                "indexByName": {
+                  "All": 1,
+                  "c_sharp": 3,
+                  "go": 8,
+                  "javascript": 7,
+                  "model\\lang_id": 0,
+                  "python": 6,
+                  "ruby": 5,
+                  "rust": 2,
+                  "typescript": 4
+                },
+                "renameByName": {
+                  "All": "",
+                  "model\\lang_id": "Model / Language"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "mode": "basic",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
+                },
+                "inspect": false
+              },
+              "mappings": [
+
+              ],
+              "max": 1,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": null
+                  },
+                  {
+                    "color": "#EAB839",
+                    "value": 0.85
+                  },
+                  {
+                    "color": "green",
+                    "value": 0.95
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": [
+
+            ]
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 15,
+            "x": 9,
+            "y": 28
+          },
+          "id": 13,
+          "options": {
+            "cellHeight": "lg",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "9.5.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "doitintl-bigquery-datasource",
+                "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+              },
+              "format": "table",
+              "group": [
+
+              ],
+              "hide": false,
+              "metricColumn": "none",
+              "orderByCol": "1",
+              "orderBySort": "1",
+              "rawQuery": true,
+              "rawSql": "WITH groupedData as (\n  SELECT 'All' as lang_id, chunking_method, AVG(score) as avg_score\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\n  WHERE score != 0\n  GROUP BY chunking_method\n  UNION All\n  SELECT lang_id, chunking_method, AVG(score) AS avg_score\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\n  WHERE score != 0\n  GROUP BY lang_id, chunking_method\n)\n\nSELECT\n  lang_id,\n  chunking_method as `Chunking Method`,\n  avg_score as `Average Score`\nFROM\n  groupedData",
+              "refId": "A",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "-- value --"
+                    ],
+                    "type": "column"
+                  }
+                ]
+              ],
+              "timeColumn": "-- time --",
+              "timeColumnType": "TIMESTAMP",
+              "where": [
+                {
+                  "name": "$__timeFilter",
+                  "params": [
+
+                  ],
+                  "type": "macro"
+                }
+              ]
+            }
+          ],
+          "title": "Similarity Scores by Chunking Method and Language",
+          "transformations": [
+            {
+              "id": "groupingToMatrix",
+              "options": {
+                "columnField": "lang_id",
+                "rowField": "Chunking Method",
+                "valueField": "Average Score"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                },
+                "indexByName": {
+                  "All": 1,
+                  "Chunking Method\\lang_id": 0,
+                  "c_sharp": 3,
+                  "go": 5,
+                  "javascript": 6,
+                  "python": 8,
+                  "ruby": 7,
+                  "rust": 2,
+                  "typescript": 4
+                },
+                "renameByName": {
+                  "Chunking Method\\lang_id": "Method / Language",
+                  "model\\lang_id": "Model / Language"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "mode": "basic",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
+                },
+                "inspect": false,
+                "minWidth": 100
+              },
+              "mappings": [
+
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": [
+
+            ]
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 35
+          },
+          "id": 24,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "9.5.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "doitintl-bigquery-datasource",
+                "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+              },
+              "format": "table",
+              "group": [
+
+              ],
+              "metricColumn": "none",
+              "orderByCol": "2",
+              "orderBySort": "1",
+              "rawQuery": true,
+              "rawSql": "SELECT\n  lang_id,\n  SUM(symbol.function_item) AS function_item,\n  SUM(symbol.method_definition) AS method_definition,\n  SUM(symbol.declaration) AS declaration,\n  SUM(symbol.import_static) AS import_static,\n  SUM(symbol.using_directive) AS using_directive,\n  SUM(symbol.function_definition) AS function_definition,\n  SUM(symbol.class_declaration) AS class_declaration,\n  SUM(symbol.method_declaration) AS method_declaration,\n  SUM(symbol.decorated_definition) AS decorated_definition,\n  SUM(symbol.class) AS class,\n  SUM(symbol.namespace_use_declaration) AS namespace_use_declaration,\n  SUM(symbol.function_declaration) AS function_declaration,\n  SUM(symbol.import_statement) AS import_statement,\n  SUM(symbol.preproc_include) AS preproc_include,\n  SUM(symbol.import_from_statement) AS import_from_statement,\n  SUM(symbol.struct_item) AS struct_item,\n  SUM(symbol.type_declaration) AS type_declaration,\n  SUM(symbol.method) AS method,\n  SUM(symbol.call) AS call,\n  SUM(symbol.import_declaration) AS import_declaration,\n  SUM(symbol.use_declaration) AS use_declaration,\n  SUM(symbol.class_definition) AS class_definition,\n  SUM(symbol.struct_specifier) AS struct_specifier,\n  SUM(symbol.trait_item) AS trait_item\nFROM\n  `gl_gitlab_codebase.scores_v4_combined`\nGROUP BY lang_id\n",
+              "refId": "A",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "-- value --"
+                    ],
+                    "type": "column"
+                  }
+                ]
+              ],
+              "timeColumn": "-- time --",
+              "timeColumnType": "TIMESTAMP",
+              "where": [
+                {
+                  "name": "$__timeFilter",
+                  "params": [
+
+                  ],
+                  "type": "macro"
+                }
+              ]
+            }
+          ],
+          "title": "Symbol Counts by Language",
+          "transformations": [
+            {
+              "id": "filterByValue",
+              "options": {
+                "filters": [
+
+                ],
+                "match": "all",
+                "type": "exclude"
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "inspect": false
+              },
+              "mappings": [
+
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+
+            ]
+          },
+          "gridPos": {
+            "h": 22,
+            "w": 24,
+            "x": 0,
+            "y": 45
+          },
+          "id": 5,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "9.5.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "doitintl-bigquery-datasource",
+                "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+              },
+              "format": "table",
+              "group": [
+
+              ],
+              "metricColumn": "none",
+              "orderByCol": "1",
+              "orderBySort": "1",
+              "rawQuery": true,
+              "rawSql": "SELECT\n  lang_id,\n  project.name AS `Project Name`,\n  model,\n  chunk.code_before AS `Prompt Input`,\n  chunk.code_after AS `Developer Completion`,\n  completion.value AS `Model Completion`,\n  chunking_method AS `Chunking Method`,\n  score AS `Average Score`,\n  CASE\n    WHEN score >= 0.95 THEN 'high'\n    WHEN score >= 0.85 THEN 'medium'\n    ELSE 'low'\n  END AS `Similarity Bucket`,\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4`\nWHERE score != 0 and score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)",
+              "refId": "A",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "-- value --"
+                    ],
+                    "type": "column"
+                  }
+                ]
+              ],
+              "timeColumn": "-- time --",
+              "timeColumnType": "TIMESTAMP",
+              "where": [
+                {
+                  "name": "$__timeFilter",
+                  "params": [
+
+                  ],
+                  "type": "macro"
+                }
+              ]
+            }
+          ],
+          "title": "Prompt Library",
+          "type": "table"
+        }
+      ],
+      "title": "General ( Overview) ",
+      "type": "row"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 12
+      },
+      "id": 7,
+      "panels": [
+
+      ],
+      "title": "Analysis tool  with filters ($programming_language & $model)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "doitintl-bigquery-datasource",
+        "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 5,
+        "x": 0,
+        "y": 13
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "format": "table",
+          "group": [
+
+          ],
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) AS `Prompt Count`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\nWHERE lang_id IN UNNEST([$programming_language]) AND model IN UNNEST([$model]) and score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "-- time --",
+          "timeColumnType": "TIMESTAMP",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [
+
+              ],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Prompt Count ($programming_language)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "doitintl-bigquery-datasource",
+        "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": true,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "hidden",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 7,
+        "x": 5,
+        "y": 13
+      },
+      "id": 23,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.8,
+        "fullHighlight": false,
+        "groupWidth": 1,
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "vertical",
+        "showValue": "always",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "9.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "format": "table",
+          "group": [
+
+          ],
+          "metricColumn": "none",
+          "orderByCol": "2",
+          "orderBySort": "1",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  lang_id,\n  SUM(symbol.function_item) AS function_item,\n  SUM(symbol.method_definition) AS method_definition,\n  SUM(symbol.declaration) AS declaration,\n  SUM(symbol.import_static) AS import_static,\n  SUM(symbol.using_directive) AS using_directive,\n  SUM(symbol.function_definition) AS function_definition,\n  SUM(symbol.class_declaration) AS class_declaration,\n  SUM(symbol.method_declaration) AS method_declaration,\n  SUM(symbol.decorated_definition) AS decorated_definition,\n  SUM(symbol.class) AS class,\n  SUM(symbol.namespace_use_declaration) AS namespace_use_declaration,\n  SUM(symbol.function_declaration) AS function_declaration,\n  SUM(symbol.import_statement) AS import_statement,\n  SUM(symbol.preproc_include) AS preproc_include,\n  SUM(symbol.import_from_statement) AS import_from_statement,\n  SUM(symbol.struct_item) AS struct_item,\n  SUM(symbol.type_declaration) AS type_declaration,\n  SUM(symbol.method) AS method,\n  SUM(symbol.call) AS call,\n  SUM(symbol.import_declaration) AS import_declaration,\n  SUM(symbol.use_declaration) AS use_declaration,\n  SUM(symbol.class_definition) AS class_definition,\n  SUM(symbol.struct_specifier) AS struct_specifier,\n  SUM(symbol.trait_item) AS trait_item\nFROM\n  `gl_gitlab_codebase.scores_v4_combined`\nWHERE lang_id IN UNNEST([$programming_language])\nGROUP BY lang_id\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "-- time --",
+          "timeColumnType": "TIMESTAMP",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [
+
+              ],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Symbol Counts ($programming_language)",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "lang_id": {
+                "aggregations": [
+
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "doitintl-bigquery-datasource",
+        "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 13
+      },
+      "id": 10,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "format": "table",
+          "group": [
+
+          ],
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "rawQuery": true,
+          "rawSql": "WITH info AS (\n  SELECT lang_id, chunking_method, model, AVG(score) as avg_score,\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\n  WHERE score != 0\n  GROUP BY  lang_id, chunking_method, model\n)\n\nSELECT\n  model,\n  chunking_method AS `Chunking Method`,\n  lang_id AS `Language`,\n  avg_score AS `Average Score`,\n  CASE\n    WHEN avg_score >= 0.95 THEN 'high'\n    WHEN avg_score >= 0.85 THEN 'medium'\n    ELSE 'low'\n  END AS `Acceptance Likelihood`,\nFROM\n  info\nWHERE lang_id IN UNNEST([$programming_language]) AND model IN UNNEST([$model])\nORDER BY model, `Acceptance Likelihood` DESC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "-- time --",
+          "timeColumnType": "TIMESTAMP",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [
+
+              ],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Model, Chunking Method  by Average Score ($programming_language)",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "doitintl-bigquery-datasource",
+        "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 5,
+        "x": 0,
+        "y": 19
+      },
+      "id": 9,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "format": "table",
+          "group": [
+
+          ],
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "rawQuery": true,
+          "rawSql": "SELECT 100 * SUM(CASE\n    WHEN score=0 THEN 1\n    ELSE 0 \n    END) / COUNT(*) `Percentage Zero`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\nWHERE lang_id IN UNNEST([$programming_language]) AND model IN UNNEST([$model])",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "-- time --",
+          "timeColumnType": "TIMESTAMP",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [
+
+              ],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "% Prompts with Score = 0 ($programming_language)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "doitintl-bigquery-datasource",
+        "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 19
+      },
+      "id": 19,
+      "options": {
+        "bucketOffset": 0,
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "format": "table",
+          "group": [
+
+          ],
+          "metricColumn": "none",
+          "orderByCol": "2",
+          "orderBySort": "1",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  score\nFROM\n  `gl_gitlab_codebase.scores_v4_combined`\nWHERE lang_id IN UNNEST([$programming_language]) AND model IN UNNEST([$model])",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "-- time --",
+          "timeColumnType": "TIMESTAMP",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [
+
+              ],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Similarity Score Distribution ($programming_language)",
+      "type": "histogram"
+    },
+    {
+      "datasource": {
+        "type": "doitintl-bigquery-datasource",
+        "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 22,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      },
+      "id": 11,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Prompt Input"
+          }
+        ]
+      },
+      "pluginVersion": "9.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+          },
+          "format": "table",
+          "group": [
+
+          ],
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  lang_id,\n  model,\n  chunk.prompt_id AS `Prompt ID`,\n  chunk.code_before AS `Prompt Input`,\n  chunk.code_after AS `Developer Completion`,\n  completion.value AS `Model Completion`,\n  chunking_method AS `Chunking Method`,\n  score AS `Average Score`,\n  CASE\n    WHEN score >= 0.95 THEN 'high'\n    WHEN score >= 0.85 THEN 'medium'\n    ELSE 'low'\n  END AS `Acceptance Likelihood`,\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\nWHERE score != 0 AND lang_id IN UNNEST([$programming_language]) AND model IN UNNEST([$model]) AND score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "-- time --",
+          "timeColumnType": "TIMESTAMP",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [
+
+              ],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Prompt Library ($programming_language)",
+      "type": "table"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 47
+      },
+      "id": 18,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "gridPos": {
+            "h": 19,
+            "w": 12,
+            "x": 0,
+            "y": 14
+          },
+          "id": 17,
+          "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
+            "content": "| Iteration | Model            | Language      | Hypothesis/Recommendation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Action                                                                                                                                                                                                                 | Example Prompt Id                                                                                                |\n| --------- | ---------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |\n| 16.3      | code-gecko       | Python        | We have noticed that code lacking string context yields a lower similarity score. After implementing [this transformation](https://gitlab.com/gitlab-org/modelops/applied-ml/code-suggestions/ai-assist/-/blob/main/codesuggestions/suggestions/processing/completions.py#L150) in the production environment, which was tested through the prompt library, there was a 3.58% increase in the similarity score                                                                                                                                            | Hypothesis to be pushed for all languages in production as [here](https://gitlab.com/gitlab-org/modelops/applied-ml/code-suggestions/ai-assist/-/blob/main/codesuggestions/suggestions/processing/completions.py#L150) | TBD                                                                                                              |\n| 16.3      | code-gecko       | All Languages | At times, we encounter low similarity scores due to the model producing excessive noise. For instance, there are instances where the model has already successfully completed the current function but proceeds to suggest a new function. Such occurrences can introduce noise and potentially frustrate the user.                                                                                                                                                                                                                                       | Postprocess and cleanup the response to stop at new blocks (such as a new function, new class etc.). Hypothesis to be implemented in Production                                                                        | dcb4a241-e66d-5ce6-bb02-2caa510ea2d8-1620-current_block , 7ce60202-6092-5de7-92f6-9423da63cf12-406-current_block |\n| 16.3      | code-gecko       | All Languages | We saw a noticeable increase in similarity score when including filepath irrespective of language                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Hypothesis to be implemented in production                                                                                                                                                                             | TBD                                                                                                              |\n| 16.3      | Model Comparison | All languages | Based on [Analysis here](https://colab.research.google.com/drive/1l2XeXmDnelqNHY6mU544A32Qmj13Jjl7?usp=sharing) after conducting an analysis on various prompts, it's evident that there is room for improvement in the opportunity metric. The question arises: where should the cursor be positioned to receive more meaningful recommendations and ensure that the model's output closely resembles that of a developer's? We particular dive into similarity_bucket of High to understand where the cursor should be for what kind of recommendations | Explore how to use the segment logic on the client side to help with acceptance rate and run A/B test in production                                                                                                    | c6a3dc03-ffa0-56fd-811e-beb165e6d17e-424- , 580bb6c9-60cb-53f6-96aa-44e2349f1554-31-                             |\n| 16.3      | Model Comparison | All languages | Taking the null value out , we consistently see `code-gecko` perform superior in reference to `code-bison` and `text-bison`                                                                                                                                                                                                                                                                                                                                                                                                                               | Keep code-gecko in production while we further investigate more date the optimal use-cases where text-bison / code-bison outperforms for code completion                                                               | NA                                                                                                               |",
+            "mode": "markdown"
+          },
+          "pluginVersion": "9.5.1",
+          "title": "Prompt Transformation Experiment List",
+          "type": "text"
+        }
+      ],
+      "title": "Experiments/ Hypothesis/Recommendation",
+      "type": "row"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [
+    "protected",
+    "unmanaged"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "typescript",
+          "value": "typescript"
+        },
+        "datasource": {
+          "type": "doitintl-bigquery-datasource",
+          "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+        },
+        "definition": "  SELECT DISTINCT(lang_id)\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\n  GROUP BY  lang_id",
+        "description": "Programming language options that are available in `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4`",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Programming Language",
+        "multi": true,
+        "name": "programming_language",
+        "options": [
+
+        ],
+        "query": "  SELECT DISTINCT(lang_id)\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\n  GROUP BY  lang_id",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "code-gecko@001",
+          "value": "code-gecko@001"
+        },
+        "datasource": {
+          "type": "doitintl-bigquery-datasource",
+          "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+        },
+        "definition": "SELECT DISTINCT(model)\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`",
+        "description": "Model name",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Model",
+        "multi": true,
+        "name": "model",
+        "options": [
+
+        ],
+        "query": "SELECT DISTINCT(model)\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "0",
+          "value": "0"
+        },
+        "datasource": {
+          "type": "doitintl-bigquery-datasource",
+          "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+        },
+        "definition": "SELECT score\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\nWHERE score > low_score",
+        "description": "test",
+        "hide": 0,
+        "includeAll": false,
+        "label": "low_score",
+        "multi": false,
+        "name": "low_score",
+        "options": [
+
+        ],
+        "query": "SELECT score\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\nWHERE score > low_score",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        },
+        "datasource": {
+          "type": "doitintl-bigquery-datasource",
+          "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
+        },
+        "definition": "SELECT score\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\nWHERE score < high_score",
+        "description": "test",
+        "hide": 0,
+        "includeAll": false,
+        "label": "high_score",
+        "multi": false,
+        "name": "high_score",
+        "options": [
+
+        ],
+        "query": "SELECT score\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined`\nWHERE score < high_score",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+  },
+  "timezone": "",
+  "title": "Code Completion AI Evaluations v0",
+  "uid": "fecc5b69-8e38-4b4e-9fed-1c837f9c2b7f",
+  "version": 69,
+  "weekStart": ""
+}
