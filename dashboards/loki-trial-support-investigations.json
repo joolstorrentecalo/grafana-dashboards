@@ -299,6 +299,15 @@
               },
               {
                 "path": "correlation_id"
+              },
+              {
+                "path": "username"
+              },
+              {
+                "path": "ua"
+              },
+              {
+                "path": "subcomponent"
               }
             ],
             "keepTime": true,
@@ -310,7 +319,7 @@
       "type": "table"
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -319,100 +328,101 @@
       },
       "id": 3,
       "panels": [
+
+      ],
+      "title": "Raw logs",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 4,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.5.1",
+      "targets": [
         {
           "datasource": {
             "type": "loki",
             "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
           },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "custom": {
-                "align": "auto",
-                "cellOptions": {
-                  "type": "auto"
-                },
-                "inspect": false
-              },
-              "mappings": [
-
-              ],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": [
-
-            ]
-          },
-          "gridPos": {
-            "h": 12,
-            "w": 24,
-            "x": 0,
-            "y": 18
-          },
-          "id": 4,
-          "options": {
-            "cellHeight": "sm",
-            "footer": {
-              "countRows": false,
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": false
-            },
-            "showHeader": true
-          },
-          "pluginVersion": "9.5.1",
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
-              },
-              "editorMode": "code",
-              "expr": "{app=\"$app\"} | json | correlation_id = \"$Correlation_id\"",
-              "queryType": "range",
-              "refId": "A"
-            }
-          ],
-          "title": "Raw logs (filer by Correlation_id)",
-          "transformations": [
-            {
-              "id": "extractFields",
-              "options": {
-                "format": "json",
-                "jsonPaths": [
-
-                ],
-                "keepTime": true,
-                "replace": true,
-                "source": "Line"
-              }
-            }
-          ],
-          "type": "table"
+          "editorMode": "code",
+          "expr": "{app=\"$app\"} | json | correlation_id =~ \"$Correlation_id\" | username =~ \"$username\"",
+          "queryType": "range",
+          "refId": "A"
         }
       ],
-      "title": "Raw logs",
-      "type": "row"
+      "title": "Raw logs (filer by Correlation_id)",
+      "transformations": [
+        {
+          "id": "extractFields",
+          "options": {
+            "format": "json",
+            "jsonPaths": [
+
+            ],
+            "keepTime": true,
+            "replace": true,
+            "source": "Line"
+          }
+        }
+      ],
+      "type": "table"
     }
   ],
-  "refresh": false,
-  "schemaVersion": 39,
+  "refresh": "",
+  "schemaVersion": 38,
   "style": "dark",
   "tags": [
     "unmanaged"
@@ -479,7 +489,26 @@
         "name": "Correlation_id",
         "options": [
           {
-            "selected": true,
+            "selected": false,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "skipUrlSync": false,
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "",
+          "value": ""
+        },
+        "hide": 0,
+        "name": "username",
+        "options": [
+          {
+            "selected": false,
             "text": "",
             "value": ""
           }
@@ -499,6 +528,6 @@
   "timezone": "utc",
   "title": "Loki Trial - Support Investigations",
   "uid": "b26b3d2a-2a3b-401e-a09d-261dcf83c3e1",
-  "version": 13,
+  "version": 14,
   "weekStart": ""
 }

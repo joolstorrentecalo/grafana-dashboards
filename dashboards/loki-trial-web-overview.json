@@ -619,7 +619,7 @@
             "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
           },
           "editorMode": "code",
-          "expr": "topk (6, sum by (route) (count_over_time({job=\"$Job\", env=\"$environment\"} | json | __error__!=\"JSONParserErr\" | cluster=\"gprd-us-east1-d\" | duration_s > 2 [5m])))",
+          "expr": "topk (6, sum by (route) (count_over_time({job=\"$job\", env=\"$environment\"} | json | __error__!=\"JSONParserErr\" | cluster=\"gprd-us-east1-d\" | duration_s > 2 [5m])))",
           "queryType": "range",
           "refId": "A"
         }
@@ -719,7 +719,7 @@
             "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
           },
           "editorMode": "code",
-          "expr": "topk (6, sum by (controller) (count_over_time({job=\"$Job\", env=\"$environment\"} | json | __error__!=\"JSONParserErr\" | cluster=\"gprd-us-east1-d\" | duration_s > 2 [5m])))",
+          "expr": "topk (6, sum by (controller) (count_over_time({job=\"$job\", env=\"$environment\"} | json | __error__!=\"JSONParserErr\" | cluster=\"gprd-us-east1-d\" | duration_s > 2 [5m])))",
           "queryType": "range",
           "refId": "A"
         }
@@ -803,13 +803,122 @@
             "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
           },
           "editorMode": "code",
-          "expr": "sort_desc(topk (6, sum by (route) (count_over_time({job=\"$Job\", env=\"$environment\"} | json | __error__!=\"JSONParserErr\" | cluster=\"gprd-us-east1-d\" | controller=~\".+\"  | duration_s > 2 [5m]))))",
+          "expr": "sort_desc (topk (6, sum by (route) (count_over_time({job=\"$job\", env=\"$environment\"} | json | __error__!=\"JSONParserErr\" | route=~\".+\" | cluster=\"gprd-us-east1-d\" | duration_s > 2 [5m]))))",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "title": "Top 6 by slow Route duration > 5s",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": ".*=\"(.+)\"}",
+            "renamePattern": "$1"
+          }
+        }
+      ],
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 17
+      },
+      "id": 13,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "sortBy": "Max",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
+          },
+          "editorMode": "code",
+          "expr": "sum by (username) (count_over_time({job=\"$job\", env=\"$environment\"} | json | __error__!=\"JSONParserErr\" | route=~\".+\" | cluster=\"gprd-us-east1-d\" | db_duration_s > 4 [5m]))",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "Top 6 by slow Route duration > 2s",
-      "type": "bargauge"
+      "title": "User Requests with >4s DB",
+      "type": "timeseries"
     },
     {
       "collapsed": false,
@@ -875,7 +984,7 @@
             "lastNotNull"
           ],
           "fields": "",
-          "values": false
+          "values": true
         },
         "showUnfilled": true,
         "valueMode": "color"
@@ -888,8 +997,8 @@
             "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
           },
           "editorMode": "code",
-          "expr": "sort_desc(topk(6, sum by (controller) (count_over_time({job=\"$Job\", env=\"$environment\"} | json | __error__!=\"JSONParserErr\" | cluster=\"gprd-us-east1-d\" | controller=~\".+\" | duration_s > 5 [5m] ))))",
-          "queryType": "range",
+          "expr": "sort_desc(topk(6, sum by (controller) (count_over_time({job=\"$job\", env=\"$environment\"} | json | __error__!=\"JSONParserErr\" | cluster=\"gprd-us-east1-d\" | controller=~\".+\" | duration_s > 5 [5m] ))))",
+          "queryType": "instant",
           "refId": "A"
         }
       ],
@@ -945,7 +1054,7 @@
             "lastNotNull"
           ],
           "fields": "",
-          "values": false
+          "values": true
         },
         "showUnfilled": true,
         "valueMode": "color"
@@ -958,8 +1067,8 @@
             "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
           },
           "editorMode": "code",
-          "expr": "topk (6, sum by (controller) (count_over_time({job=\"$Job\", env=\"$environment\"} | json | __error__!=\"JSONParserErr\" | cluster=\"gprd-us-east1-d\" | duration_s > 5 [5m])))",
-          "queryType": "range",
+          "expr": "topk (6, sum by (controller) (count_over_time({job=\"$job\", env=\"$environment\"} | json | __error__!=\"JSONParserErr\" | cluster=\"gprd-us-east1-d\" | duration_s > 5 [5m])))",
+          "queryType": "instant",
           "refId": "A"
         }
       ],
@@ -1148,7 +1257,7 @@
         "includeAll": false,
         "label": "job",
         "multi": false,
-        "name": "Job",
+        "name": "job",
         "options": [
 
         ],
@@ -1175,6 +1284,6 @@
   "timezone": "",
   "title": "Loki Trial Web Overview",
   "uid": "ee756166-a39e-4b12-a3ea-2c829af024b4",
-  "version": 16,
+  "version": 19,
   "weekStart": ""
 }
