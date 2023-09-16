@@ -42,7 +42,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "### 16.4 Initial Draft for Movel Evals of Code Completion for Google Models\n#### Error and data analysis is in progress to confirm accuracy / insights/ recommendations\n\n##### Insights Summary:\n\n1. In the current state, the first iteration comprises 3450 distinct prompts curated from 11 open-source GitLab projects spanning 8 languages (Python, Golang, Ruby, TypeScript, JavaScript, Rust, C#, C).\n\n2. A significant portion of null values exists, which will be subject to further investigation and curation specifically for the next iteration focused on `text-bison`. Some of these null values are genuinely missing, while others represent errors. Our error analysis and investigation have been ongoing for only 2 days, and we intend to continue this process over the next two weeks, providing weekly updates.\n\n3. Despite the presence of null values as a separate category, `code-gecko` remains superior for code completion across 8 languages, serving as the base model.\n\n4. Upon inspecting the high-similarity bucket and selectively testing in the Web IDE, we gain insight into the proxy for opportunity: pinpointing the cursor location that should trigger a suggestion. This approach holds the potential to significantly enhance acceptance. For specific prompts and languages, the segments (chunks) serve as the proxy for identifying when a suggestion should be presented, closely mirroring developer-written code. This phenomenon is observable in the base model without employing any prompt transformation. \n\n5. We have also conducted testing on the prompt transformations applied in a production setting to assess their impact. Additional details can be found in the experiment panel.\n\n6. For similarity scores falling between `0.16` and `0.65` for `code-gecko`, optimization opportunities have emerged, particularly related to function declarations in JavaScript and Golang, and function definitions in Python.\n\n7. Our error analysis is still in its early stages, and we anticipate incorporating more recommendations iteratively within the experiment panel over the next 2 weeks.\n\n8. Furthermore, the panel structure consists of an overview section, followed by a developer investigation tab that facilitates language and model filtering. Subsequently, an experiments panel is available to document hypotheses and recommendations regarding prompt engineering. \n",
+        "content": "### 16.3 Initial Draft for Movel Evals of Code Completion for Google Models\n#### Error and data analysis is in progress to confirm accuracy / insights/ recommendations\n\n##### Insights Summary:\n\n1. In the current state, the first iteration comprises 3450 distinct prompts curated from 11 open-source GitLab projects spanning 8 languages (Python, Golang, Ruby, TypeScript, JavaScript, Rust, C#, C).\n\n2. A significant portion of null values exists, which will be subject to further investigation and curation specifically for the next iteration focused on `text-bison`. Some of these null values are genuinely missing, while others represent errors. Our error analysis and investigation have been ongoing for only 2 days, and we intend to continue this process over the next two weeks, providing weekly updates.\n\n3. Despite the presence of null values as a separate category, `code-gecko` remains superior for code completion across 8 languages, serving as the base model.\n\n4. Upon inspecting the high-similarity bucket and selectively testing in the Web IDE, we gain insight into the proxy for opportunity: pinpointing the cursor location that should trigger a suggestion. This approach holds the potential to significantly enhance acceptance. For specific prompts and languages, the segments (chunks) serve as the proxy for identifying when a suggestion should be presented, closely mirroring developer-written code. This phenomenon is observable in the base model without employing any prompt transformation. \n\n5. We have also conducted testing on the prompt transformations applied in a production setting to assess their impact. Additional details can be found in the experiment panel.\n\n6. For similarity scores falling between `0.16` and `0.65` for `code-gecko`, optimization opportunities have emerged, particularly related to function declarations in JavaScript and Golang, and function definitions in Python.\n\n7. Our error analysis is still in its early stages, and we anticipate incorporating more recommendations iteratively within the experiment panel over the next 2 weeks.\n\n8. Furthermore, the panel structure consists of an overview section, followed by a developer investigation tab that facilitates language and model filtering. Subsequently, an experiments panel is available to document hypotheses and recommendations regarding prompt engineering. \n",
         "mode": "markdown"
       },
       "pluginVersion": "9.5.1",
@@ -125,7 +125,7 @@
               "orderByCol": "1",
               "orderBySort": "1",
               "rawQuery": true,
-              "rawSql": "SELECT COUNT(DISTINCT(project_id)) AS `Distinct Prompt Count`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined_v1`\nWHERE similarity_score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)",
+              "rawSql": "SELECT COUNT(DISTINCT(project_id)) AS `Distinct Prompt Count`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.output_full_v1`\nWHERE similarity_score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)",
               "refId": "A",
               "select": [
                 [
@@ -442,7 +442,7 @@
               "orderByCol": "1",
               "orderBySort": "1",
               "rawQuery": true,
-              "rawSql": "SELECT lang_id, COUNT(*) AS `Prompt Count`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined_v1`\nWHERE similarity_score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)\nGROUP BY lang_id\nORDER BY `Prompt Count` DESC",
+              "rawSql": "SELECT lang_id, COUNT(*) AS `Prompt Count`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.output_full_v1`\nWHERE similarity_score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)\nGROUP BY lang_id\nORDER BY `Prompt Count` DESC",
               "refId": "A",
               "select": [
                 [
@@ -532,7 +532,7 @@
               "orderByCol": "1",
               "orderBySort": "1",
               "rawQuery": true,
-              "rawSql": "SELECT COUNT(*) AS `Prompt Count`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined_v1`\nWHERE similarity_score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)",
+              "rawSql": "SELECT COUNT(*) AS `Prompt Count`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.output_full_v1`\nWHERE similarity_score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)",
               "refId": "A",
               "select": [
                 [
@@ -726,7 +726,7 @@
               "orderByCol": "2",
               "orderBySort": "1",
               "rawQuery": true,
-              "rawSql": "SELECT 100 * SUM(CASE\n    WHEN similarity_score=0 THEN 1\n    ELSE 0 \n    END) / COUNT(*) `Percentage Zero`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined_v1`",
+              "rawSql": "SELECT 100 * SUM(CASE\n    WHEN similarity_score=0 THEN 1\n    ELSE 0 \n    END) / COUNT(*) `Percentage Zero`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.output_full_v1`",
               "refId": "A",
               "select": [
                 [
@@ -949,7 +949,7 @@
               "orderByCol": "1",
               "orderBySort": "1",
               "rawQuery": true,
-              "rawSql": "SELECT\n  count(*) as `Count`,\n  CASE\n    WHEN similarity_score >= 0.95 THEN 'High'\n    WHEN similarity_score >= 0.85 THEN 'Medium'\n    WHEN similarity_score = 0 THEN 'Zero'\n    ELSE \"Low\"\n  END AS accept_likelihood,\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined_v1`\nGROUP BY accept_likelihood",
+              "rawSql": "SELECT\n  count(*) as `Count`,\n  CASE\n    WHEN similarity_score >= 0.95 THEN 'High'\n    WHEN similarity_score >= 0.85 THEN 'Medium'\n    WHEN similarity_score = 0 THEN 'Zero'\n    ELSE \"Low\"\n  END AS accept_likelihood,\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.output_full_v1`\nGROUP BY accept_likelihood",
               "refId": "A",
               "select": [
                 [
@@ -1062,7 +1062,7 @@
               "orderByCol": "1",
               "orderBySort": "1",
               "rawQuery": true,
-              "rawSql": "WITH groupedData as (\n  SELECT 'All' as lang_id, model, AVG(similarity_score) as avg_score\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined_v1`\n  WHERE similarity_score != 0\n  GROUP BY model\n  UNION All\n  SELECT lang_id, model, AVG(similarity_score) AS avg_score\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined_v1`\n  WHERE similarity_score != 0\n  GROUP BY lang_id, model\n)\n\nSELECT\n  lang_id,\n  model,\n  avg_score as `Average Score`\nFROM\n  groupedData",
+              "rawSql": "WITH groupedData as (\n  SELECT 'All' as lang_id, model, AVG(similarity_score) as avg_score\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.output_full_v1`\n  WHERE similarity_score != 0\n  GROUP BY model\n  UNION All\n  SELECT lang_id, model, AVG(similarity_score) AS avg_score\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.output_full_v1`\n  WHERE similarity_score != 0\n  GROUP BY lang_id, model\n)\n\nSELECT\n  lang_id,\n  model,\n  avg_score as `Average Score`\nFROM\n  groupedData",
               "refId": "B",
               "select": [
                 [
@@ -1204,7 +1204,7 @@
               "orderByCol": "1",
               "orderBySort": "1",
               "rawQuery": true,
-              "rawSql": "WITH groupedData as (\n  SELECT 'All' as lang_id, chunking_method, AVG(similarity_score) as avg_score\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined_v1`\n  WHERE similarity_score != 0\n  GROUP BY chunking_method\n  UNION All\n  SELECT lang_id, chunking_method, AVG(similarity_score) AS avg_score\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined_v1`\n  WHERE similarity_score != 0\n  GROUP BY lang_id, chunking_method\n)\n\nSELECT\n  lang_id,\n  chunking_method as `Chunking Method`,\n  avg_score as `Average Score`\nFROM\n  groupedData",
+              "rawSql": "WITH groupedData as (\n  SELECT 'All' as lang_id, chunking_method, AVG(similarity_score) as avg_score\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.output_full_v1`\n  WHERE similarity_score != 0\n  GROUP BY chunking_method\n  UNION All\n  SELECT lang_id, chunking_method, AVG(similarity_score) AS avg_score\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.output_full_v1`\n  WHERE similarity_score != 0\n  GROUP BY lang_id, chunking_method\n)\n\nSELECT\n  lang_id,\n  chunking_method as `Chunking Method`,\n  avg_score as `Average Score`\nFROM\n  groupedData",
               "refId": "A",
               "select": [
                 [
@@ -1446,7 +1446,7 @@
               "orderByCol": "1",
               "orderBySort": "1",
               "rawQuery": true,
-              "rawSql": "SELECT\n  lang_id,\n  project_name AS `Project Name`,\n  model,\n  prompt_prefix AS `Prompt Input`,\n  prompt_suffix AS `Developer Completion`,\n  model_completion AS `Model Completion`,\n  chunking_method AS `Chunking Method`,\n  similarity_score AS `Average Score`,\n  CASE\n    WHEN similarity_score >= 0.95 THEN 'high'\n    WHEN similarity_score >= 0.85 THEN 'medium'\n    ELSE 'low'\n  END AS `Similarity Bucket`,\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined_v1`\nWHERE similarity_score != 0 and similarity_score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)",
+              "rawSql": "SELECT\n  lang_id,\n  project_name AS `Project Name`,\n  model,\n  prompt_prefix AS `Prompt Input`,\n  prompt_suffix AS `Developer Completion`,\n  model_completion AS `Model Completion`,\n  chunking_method AS `Chunking Method`,\n  similarity_score AS `Average Score`,\n  CASE\n    WHEN similarity_score >= 0.95 THEN 'high'\n    WHEN similarity_score >= 0.85 THEN 'medium'\n    ELSE 'low'\n  END AS `Similarity Bucket`,\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.output_full_v1`\nWHERE similarity_score != 0 and similarity_score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)",
               "refId": "A",
               "select": [
                 [
@@ -1550,7 +1550,7 @@
               "orderByCol": "1",
               "orderBySort": "1",
               "rawQuery": true,
-              "rawSql": "SELECT COUNT(*) AS `Prompt Count`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined_v1`\nWHERE lang_id IN UNNEST([$programming_language]) AND model IN UNNEST([$model]) and similarity_score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)",
+              "rawSql": "SELECT COUNT(*) AS `Prompt Count`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.output_full_v1`\nWHERE lang_id IN UNNEST([$programming_language]) AND model IN UNNEST([$model]) and similarity_score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)",
               "refId": "A",
               "select": [
                 [
@@ -1788,7 +1788,7 @@
               "orderByCol": "1",
               "orderBySort": "1",
               "rawQuery": true,
-              "rawSql": "WITH info AS (\n  SELECT lang_id, chunking_method, model, AVG(similarity_score) as avg_score,\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined_v1`\n  WHERE similarity_score != 0\n  GROUP BY  lang_id, chunking_method, model\n)\n\nSELECT\n  model,\n  chunking_method AS `Chunking Method`,\n  lang_id AS `Language`,\n  avg_score AS `Average Score`,\n  CASE\n    WHEN avg_score >= 0.95 THEN 'high'\n    WHEN avg_score >= 0.85 THEN 'medium'\n    ELSE 'low'\n  END AS `Acceptance Likelihood`,\nFROM\n  info\nWHERE lang_id IN UNNEST([$programming_language]) AND model IN UNNEST([$model])\nORDER BY model, `Acceptance Likelihood` DESC",
+              "rawSql": "WITH info AS (\n  SELECT lang_id, chunking_method, model, AVG(similarity_score) as avg_score,\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.output_full_v1`\n  WHERE similarity_score != 0\n  GROUP BY  lang_id, chunking_method, model\n)\n\nSELECT\n  model,\n  chunking_method AS `Chunking Method`,\n  lang_id AS `Language`,\n  avg_score AS `Average Score`,\n  CASE\n    WHEN avg_score >= 0.95 THEN 'high'\n    WHEN avg_score >= 0.85 THEN 'medium'\n    ELSE 'low'\n  END AS `Acceptance Likelihood`,\nFROM\n  info\nWHERE lang_id IN UNNEST([$programming_language]) AND model IN UNNEST([$model])\nORDER BY model, `Acceptance Likelihood` DESC",
               "refId": "A",
               "select": [
                 [
@@ -1883,7 +1883,7 @@
               "orderByCol": "1",
               "orderBySort": "1",
               "rawQuery": true,
-              "rawSql": "SELECT 100 * SUM(CASE\n    WHEN similarity_score=0 THEN 1\n    ELSE 0 \n    END) / COUNT(*) `Percentage Zero`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined_v1`\nWHERE lang_id IN UNNEST([$programming_language]) AND model IN UNNEST([$model])",
+              "rawSql": "SELECT 100 * SUM(CASE\n    WHEN similarity_score=0 THEN 1\n    ELSE 0 \n    END) / COUNT(*) `Percentage Zero`\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.output_full_v1`\nWHERE lang_id IN UNNEST([$programming_language]) AND model IN UNNEST([$model])",
               "refId": "A",
               "select": [
                 [
@@ -2085,7 +2085,7 @@
               "orderByCol": "1",
               "orderBySort": "1",
               "rawQuery": true,
-              "rawSql": "SELECT\n  lang_id,\n  model,\n  prompt_id AS `Prompt ID`,\n  prompt_prefix AS `Prompt Input`,\n  prompt_suffix AS `Developer Completion`,\n  model_completion AS `Model Completion`,\n  chunking_method AS `Chunking Method`,\n  similarity_score AS `Average Score`,\n  CASE\n    WHEN similarity_score >= 0.95 THEN 'high'\n    WHEN similarity_score >= 0.85 THEN 'medium'\n    ELSE 'low'\n  END AS `Acceptance Likelihood`,\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined_v1`\nWHERE similarity_score != 0 AND lang_id IN UNNEST([$programming_language]) AND model IN UNNEST([$model]) AND similarity_score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)",
+              "rawSql": "SELECT\n  lang_id,\n  model,\n  prompt_id AS `Prompt ID`,\n  prompt_prefix AS `Prompt Input`,\n  prompt_suffix AS `Developer Completion`,\n  model_completion AS `Model Completion`,\n  chunking_method AS `Chunking Method`,\n  similarity_score AS `Average Score`,\n  CASE\n    WHEN similarity_score >= 0.95 THEN 'high'\n    WHEN similarity_score >= 0.85 THEN 'medium'\n    ELSE 'low'\n  END AS `Acceptance Likelihood`,\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.output_full_v1`\nWHERE similarity_score != 0 AND lang_id IN UNNEST([$programming_language]) AND model IN UNNEST([$model]) AND similarity_score BETWEEN ifnull($low_score, 0) and ifnull($high_score, 1.00)",
               "refId": "A",
               "select": [
                 [
@@ -2171,21 +2171,21 @@
         "current": {
           "selected": true,
           "text": [
-            "typescript",
+            "go",
             "c_sharp",
-            "go"
+            "typescript"
           ],
           "value": [
-            "typescript",
+            "go",
             "c_sharp",
-            "go"
+            "typescript"
           ]
         },
         "datasource": {
           "type": "doitintl-bigquery-datasource",
           "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
         },
-        "definition": "  SELECT DISTINCT(lang_id)\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined_v1`\n  GROUP BY  lang_id",
+        "definition": "  SELECT DISTINCT(lang_id)\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.output_full_v1`\n  GROUP BY  lang_id",
         "description": "Programming language options that are available in `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4`",
         "hide": 0,
         "includeAll": false,
@@ -2195,7 +2195,7 @@
         "options": [
 
         ],
-        "query": "  SELECT DISTINCT(lang_id)\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined_v1`\n  GROUP BY  lang_id",
+        "query": "  SELECT DISTINCT(lang_id)\n  FROM `unreview-poc-390200e5.gl_gitlab_codebase.output_full_v1`\n  GROUP BY  lang_id",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2212,7 +2212,7 @@
           "type": "doitintl-bigquery-datasource",
           "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
         },
-        "definition": "SELECT DISTINCT(model)\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined_v1`",
+        "definition": "SELECT DISTINCT(model)\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.output_full_v1`",
         "description": "Model name",
         "hide": 0,
         "includeAll": false,
@@ -2222,7 +2222,7 @@
         "options": [
 
         ],
-        "query": "SELECT DISTINCT(model)\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined_v1`",
+        "query": "SELECT DISTINCT(model)\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.output_full_v1`",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2239,7 +2239,7 @@
           "type": "doitintl-bigquery-datasource",
           "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
         },
-        "definition": "SELECT score\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined_v1`\nWHERE score > low_score",
+        "definition": "SELECT score\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.output_full_v1`\nWHERE score > low_score",
         "description": "test",
         "hide": 0,
         "includeAll": false,
@@ -2249,7 +2249,7 @@
         "options": [
 
         ],
-        "query": "SELECT score\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined_v1`\nWHERE score > low_score",
+        "query": "SELECT score\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.output_full_v1`\nWHERE score > low_score",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2266,7 +2266,7 @@
           "type": "doitintl-bigquery-datasource",
           "uid": "ded9101e-7601-4727-bf7f-c4962ceb3873"
         },
-        "definition": "SELECT score\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined_v1`\nWHERE score < high_score",
+        "definition": "SELECT score\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.output_full_v1`\nWHERE score < high_score",
         "description": "test",
         "hide": 0,
         "includeAll": false,
@@ -2276,7 +2276,7 @@
         "options": [
 
         ],
-        "query": "SELECT score\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.scores_v4_combined_v1`\nWHERE score < high_score",
+        "query": "SELECT score\nFROM `unreview-poc-390200e5.gl_gitlab_codebase.output_full_v1`\nWHERE score < high_score",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2294,6 +2294,6 @@
   "timezone": "",
   "title": "Code Completion AI Evaluations v1",
   "uid": "fecc5b69-8e38-4b4e-9fed-1c837f9c2b7m",
-  "version": 11,
+  "version": 13,
   "weekStart": ""
 }
