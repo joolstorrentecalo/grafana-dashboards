@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5111445186 at Mon Sep 18 13:36:42 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5113612061 at Mon Sep 18 18:15:22 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -4881,11 +4881,11 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn) (\n  clamp_min(\n    clamp_max(\n      sum by(environment, tier, type, stage, shard, fqdn) (avg_over_time(instance:puma_active_connections:sum{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}[1m]))\n      /\n      sum by(environment, tier, type, stage, shard, fqdn) (instance:puma_max_threads:sum{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"})\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, pod) (\n  clamp_min(\n    clamp_max(\n      sum by(environment, tier, type, stage, shard, pod) (avg_over_time(sum without (pid,worker) (puma_active_connections{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"})[1m:]))\n      /\n      sum by(environment, tier, type, stage, shard, pod) (sum without (pid,worker) (puma_max_threads{pid=\"puma_master\", environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}))\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
-              "legendFormat": "{{ fqdn }}",
+              "legendFormat": "{{ pod }}",
               "refId": "A"
             },
             {
@@ -5121,5 +5121,5 @@
   "timezone": "utc",
   "title": "sidekiq: Shard Detail",
   "uid": "sidekiq-shard-detail",
-  "version": 3769
+  "version": 3770
 }
