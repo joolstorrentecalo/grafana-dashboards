@@ -90,7 +90,30 @@
           }
         },
         "overrides": [
-
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "{controller=\"Projects::ProjectMembersController\"}"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
         ]
       },
       "gridPos": {
@@ -133,7 +156,7 @@
       "type": "timeseries"
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -142,123 +165,125 @@
       },
       "id": 3,
       "panels": [
+
+      ],
+      "title": "Raw logs",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 19,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.5.1",
+      "targets": [
         {
           "datasource": {
             "type": "loki",
             "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
           },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "custom": {
-                "align": "auto",
-                "cellOptions": {
-                  "type": "auto"
-                },
-                "inspect": false
-              },
-              "mappings": [
-
-              ],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": [
-
-            ]
-          },
-          "gridPos": {
-            "h": 19,
-            "w": 24,
-            "x": 0,
-            "y": 13
-          },
-          "id": 1,
-          "options": {
-            "cellHeight": "sm",
-            "footer": {
-              "countRows": false,
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": false
-            },
-            "showHeader": true
-          },
-          "pluginVersion": "9.5.1",
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "c24fe71a-946f-4290-a110-c610afbd3aca"
-              },
-              "editorMode": "code",
-              "expr": "{ env=\"$env\", app=\"$app\" } | json | __error__!=\"JSONParserErr\" | subcomponent =~ \"production_json\" | method =~ \"$method\" | path =~ \".*$ProjectPath.*\" | controller =~ \"$controller\"",
-              "queryType": "range",
-              "refId": "A"
-            }
-          ],
-          "title": "Panel Title",
-          "transformations": [
-            {
-              "id": "extractFields",
-              "options": {
-                "format": "json",
-                "jsonPaths": [
-                  {
-                    "path": "path"
-                  },
-                  {
-                    "path": "username"
-                  },
-                  {
-                    "path": "method"
-                  },
-                  {
-                    "path": "controller"
-                  },
-                  {
-                    "path": "ua"
-                  },
-                  {
-                    "path": "remote_ip"
-                  },
-                  {
-                    "path": "subcomponent"
-                  }
-                ],
-                "keepTime": true,
-                "replace": true,
-                "source": "Line"
-              }
-            }
-          ],
-          "type": "table"
+          "editorMode": "code",
+          "expr": "{ env=\"$env\", app=\"$app\" } | json | __error__!=\"JSONParserErr\" | subcomponent =~ \"production_json\" | method =~ \"$method\" | path =~ \".*$ProjectPath.*\" | controller =~ \"$controller\"",
+          "queryType": "range",
+          "refId": "A"
         }
       ],
-      "title": "Raw logs",
-      "type": "row"
+      "title": "Panel Title",
+      "transformations": [
+        {
+          "id": "extractFields",
+          "options": {
+            "format": "json",
+            "jsonPaths": [
+              {
+                "path": "path"
+              },
+              {
+                "path": "username"
+              },
+              {
+                "path": "method"
+              },
+              {
+                "path": "controller"
+              },
+              {
+                "path": "ua"
+              },
+              {
+                "path": "remote_ip"
+              },
+              {
+                "path": "subcomponent"
+              }
+            ],
+            "keepTime": true,
+            "replace": true,
+            "source": "Line"
+          }
+        }
+      ],
+      "type": "table"
     }
   ],
-  "refresh": false,
+  "refresh": "",
   "schemaVersion": 38,
   "style": "dark",
   "tags": [
-    "unmanaged"
+    "unmanaged",
+    "protected"
   ],
   "templating": {
     "list": [
@@ -297,6 +322,10 @@
           "selected": true,
           "text": "gprd",
           "value": "gprd"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PA258B30F88C30650"
         },
         "definition": "label_values(env)",
         "hide": 0,
@@ -394,7 +423,7 @@
         "name": "controller",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": ".*",
             "value": ".*"
           }
@@ -414,6 +443,6 @@
   "timezone": "",
   "title": "Loki Trial who did that",
   "uid": "a712e140-1d47-47ba-bd92-758d532f6f33",
-  "version": 7,
+  "version": 9,
   "weekStart": ""
 }
