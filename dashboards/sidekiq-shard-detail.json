@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5125505448 at Wed Sep 20 04:39:18 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5130481959 at Wed Sep 20 14:58:31 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -4783,7 +4783,7 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "Puma thread utilization per node.\n\nPuma uses a fixed size thread pool to handle HTTP requests. This metric shows how many threads are busy handling requests. When this resource is saturated,\nwe will see puma queuing taking place. Leading to slowdowns across the application.\n\nPuma saturation is usually caused by latency problems in downstream services: usually Gitaly or Postgres, but possibly also Redis.\nPuma saturation can also be caused by traffic spikes.\n Lower is better.",
+          "description": "Puma thread utilization.\n\nPuma uses a fixed size thread pool to handle HTTP requests. This metric shows how many threads are busy handling requests. When this resource is saturated,\nwe will see puma queuing taking place. Leading to slowdowns across the application.\n\nPuma saturation is usually caused by latency problems in downstream services: usually Gitaly or Postgres, but possibly also Redis.\nPuma saturation can also be caused by traffic spikes.\n Lower is better.",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -4876,20 +4876,20 @@
             }
           ],
           "spaceLength": 10,
-          "stableId": "saturation-single_node_puma_workers",
+          "stableId": "saturation-puma_workers",
           "stack": false,
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, pod) (\n  clamp_min(\n    clamp_max(\n      sum by(environment, tier, type, stage, shard, pod) (avg_over_time(sum without (pid,worker) (puma_active_connections{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"})[1m:]))\n      /\n      sum by(environment, tier, type, stage, shard, pod) (sum without (pid,worker) (puma_max_threads{pid=\"puma_master\", environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}))\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard) (\n  clamp_min(\n    clamp_max(\n      sum by(environment, tier, type, stage, shard) (avg_over_time(sum without (pid,worker) (puma_active_connections{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"})[1m:]))\n      /\n      sum by(environment, tier, type, stage, shard) (sum without (pid,worker) (puma_max_threads{pid=\"puma_master\", environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\"}))\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
-              "legendFormat": "{{ pod }}",
+              "legendFormat": "{{ type }}",
               "refId": "A"
             },
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"single_node_puma_workers\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"puma_workers\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -4897,7 +4897,7 @@
               "refId": "B"
             },
             {
-              "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"single_node_puma_workers\"}\n)\n",
+              "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"puma_workers\"}\n)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -4905,7 +4905,7 @@
               "refId": "C"
             },
             {
-              "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"single_node_puma_workers\"}\n)\n",
+              "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{environment=\"$environment\",shard=~\"$shard\",stage=\"$stage\",type=\"sidekiq\", component=\"puma_workers\"}\n)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -4913,7 +4913,7 @@
               "refId": "D"
             },
             {
-              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"single_node_puma_workers\"}) by (component)\n",
+              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"puma_workers\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -4921,7 +4921,7 @@
               "refId": "E"
             },
             {
-              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"single_node_puma_workers\"}) by (component)\n",
+              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"puma_workers\"}) by (component)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -4934,7 +4934,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "single_node_puma_workers component saturation: Puma Worker Saturation per Node",
+          "title": "puma_workers component saturation: Puma Worker Saturation",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -5121,5 +5121,5 @@
   "timezone": "utc",
   "title": "sidekiq: Shard Detail",
   "uid": "sidekiq-shard-detail",
-  "version": 3776
+  "version": 3780
 }

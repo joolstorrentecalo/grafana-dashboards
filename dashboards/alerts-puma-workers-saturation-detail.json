@@ -126,7 +126,7 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
-      "description": "Redis Secondary CPU Utilization per Node.\n\nRedis is single-threaded. A single Redis server is only able to scale as far as a single CPU on a single host.\nCPU saturation on a secondary is not as serious as critical as saturation on a primary, but could lead to\nreplication delays.\n Lower is better.",
+      "description": "Puma thread utilization.\n\nPuma uses a fixed size thread pool to handle HTTP requests. This metric shows how many threads are busy handling requests. When this resource is saturated,\nwe will see puma queuing taking place. Leading to slowdowns across the application.\n\nPuma saturation is usually caused by latency problems in downstream services: usually Gitaly or Postgres, but possibly also Redis.\nPuma saturation can also be caused by traffic spikes.\n Lower is better.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -135,7 +135,7 @@
         "x": 0,
         "y": 0
       },
-      "id": 577905942,
+      "id": 3062464720,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -219,20 +219,20 @@
         }
       ],
       "spaceLength": 10,
-      "stableId": "saturation-redis_secondary_cpu",
+      "stableId": "saturation-puma_workers",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn, instance, shard) (\n  clamp_min(\n    clamp_max(\n      (\n        rate(redis_cpu_user_seconds_total{env=\"$environment\",stage=\"$stage\",type=\"$type\"}[5m])\n        +\n        rate(redis_cpu_sys_seconds_total{env=\"$environment\",stage=\"$stage\",type=\"$type\"}[5m])\n      )\n      and on (instance) redis_instance_info{role!=\"master\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard) (\n  clamp_min(\n    clamp_max(\n      sum by(environment, tier, type, stage, shard) (avg_over_time(sum without (pid,worker) (puma_active_connections{env=\"$environment\",stage=\"$stage\",type=\"$type\"})[1m:]))\n      /\n      sum by(environment, tier, type, stage, shard) (sum without (pid,worker) (puma_max_threads{pid=\"puma_master\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}))\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{ fqdn }} {{ instance }} {{ shard }}",
+          "legendFormat": "{{ type }}",
           "refId": "A"
         },
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"redis_secondary_cpu\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"puma_workers\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -240,7 +240,7 @@
           "refId": "B"
         },
         {
-          "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"redis_secondary_cpu\"}\n)\n",
+          "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"puma_workers\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -248,7 +248,7 @@
           "refId": "C"
         },
         {
-          "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"redis_secondary_cpu\"}\n)\n",
+          "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"puma_workers\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -256,7 +256,7 @@
           "refId": "D"
         },
         {
-          "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"redis_secondary_cpu\"}) by (component)\n",
+          "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"puma_workers\"}) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -264,7 +264,7 @@
           "refId": "E"
         },
         {
-          "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"redis_secondary_cpu\"}) by (component)\n",
+          "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"puma_workers\"}) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -277,7 +277,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "redis_secondary_cpu component saturation: Redis Secondary CPU Utilization per Node",
+      "title": "puma_workers component saturation: Puma Worker Saturation",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -313,7 +313,7 @@
       ]
     },
     {
-      "content": "## Redis Secondary CPU Utilization per Node\n\nRedis Secondary CPU Utilization per Node.\n\nRedis is single-threaded. A single Redis server is only able to scale as far as a single CPU on a single host.\nCPU saturation on a secondary is not as serious as critical as saturation on a primary, but could lead to\nreplication delays.\n\n\n## What to do from here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=redis_secondary_cpu)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+redis_secondary_cpu&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
+      "content": "## Puma Worker Saturation\n\nPuma thread utilization.\n\nPuma uses a fixed size thread pool to handle HTTP requests. This metric shows how many threads are busy handling requests. When this resource is saturated,\nwe will see puma queuing taking place. Leading to slowdowns across the application.\n\nPuma saturation is usually caused by latency problems in downstream services: usually Gitaly or Postgres, but possibly also Redis.\nPuma saturation can also be caused by traffic spikes.\n\n\n## What to do from here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=puma_workers)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+puma_workers&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
       "datasource": null,
       "gridPos": {
         "h": 14,
@@ -468,8 +468,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "redis-cluster-cache",
-          "value": "redis-cluster-cache"
+          "text": "ai-assisted",
+          "value": "ai-assisted"
         },
         "datasource": "$PROMETHEUS_DS",
         "hide": 0,
@@ -548,7 +548,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "alerts: redis secondary cpu: Saturation Detail",
-  "uid": "alerts-sat_redis_secondary_cpu",
-  "version": 3583
+  "title": "alerts: puma workers: Saturation Detail",
+  "uid": "alerts-sat_puma_workers",
+  "version": 1
 }
