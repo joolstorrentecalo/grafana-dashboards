@@ -81,8 +81,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -179,8 +178,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "#EAB839",
@@ -272,6 +270,7 @@
     },
     {
       "datasource": {
+        "type": "prometheus",
         "uid": "$datasource"
       },
       "description": "Shows rate of incoming requests.",
@@ -436,10 +435,12 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "sum by (job, handler, code) (rate(http_requests_total{job=~\"$job\", handler=\"receive\"}[$interval]))",
+          "editorMode": "code",
+          "expr": "sum by (job, handler, code) (rate(http_requests_total{job=~\"$job\", namespace=\"$namespace\", handler=\"receive\"}[$interval]))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{job}} {{handler}} {{code}}",
+          "range": true,
           "refId": "A",
           "step": 10
         }
@@ -449,6 +450,7 @@
     },
     {
       "datasource": {
+        "type": "prometheus",
         "uid": "$datasource"
       },
       "description": "Shows ratio of errors compared to the total number of handled incoming requests.",
@@ -555,9 +557,11 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "sum by (job, code) (rate(http_requests_total{job=~\"$job\", handler=\"receive\",code=~\"5..\"}[$interval])) / ignoring (code) group_left() sum by (job) (rate(http_requests_total{job=~\"$job\", handler=\"receive\"}[$interval]))",
+          "editorMode": "code",
+          "expr": "sum by (job, code) (rate(http_requests_total{job=~\"$job\", namespace=\"$namespace\", handler=\"receive\",code=~\"5..\"}[$interval])) / ignoring (code) group_left() sum by (job) (rate(http_requests_total{job=~\"$job\", namespace=\"$namespace\", handler=\"receive\"}[$interval]))",
           "format": "time_series",
           "intervalFactor": 2,
+          "range": true,
           "refId": "A",
           "step": 10
         }
@@ -568,6 +572,7 @@
     },
     {
       "datasource": {
+        "type": "prometheus",
         "uid": "$datasource"
       },
       "description": "Shows how long has it taken to handle incoming requests in quantiles.",
@@ -723,11 +728,13 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.50, sum by (job, le) (rate(http_request_duration_seconds_bucket{job=~\"$job\", handler=\"receive\"}[$interval]))) * 1",
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.50, sum by (job, le) (rate(http_request_duration_seconds_bucket{job=~\"$job\", namespace=\"$namespace\", handler=\"receive\"}[$interval]))) * 1",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "p50 {{job}}",
           "logBase": 10,
+          "range": true,
           "refId": "A",
           "step": 10
         },
@@ -735,11 +742,13 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.90, sum by (job, le) (rate(http_request_duration_seconds_bucket{job=~\"$job\", handler=\"receive\"}[$interval]))) * 1",
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.90, sum by (job, le) (rate(http_request_duration_seconds_bucket{job=~\"$job\", namespace=\"$namespace\", handler=\"receive\"}[$interval]))) * 1",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "p90 {{job}}",
           "logBase": 10,
+          "range": true,
           "refId": "B",
           "step": 10
         },
@@ -747,11 +756,13 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.99, sum by (job, le) (rate(http_request_duration_seconds_bucket{job=~\"$job\", handler=\"receive\"}[$interval]))) * 1",
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.99, sum by (job, le) (rate(http_request_duration_seconds_bucket{job=~\"$job\", namespace=\"$namespace\", handler=\"receive\"}[$interval]))) * 1",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "p99 {{job}}",
           "logBase": 10,
+          "range": true,
           "refId": "C",
           "step": 10
         }
@@ -4861,6 +4872,6 @@
   "timezone": "UTC",
   "title": "thanos: Thanos / Receive",
   "uid": "916a852b00ccc5ed81056644718fa4fb",
-  "version": 7,
+  "version": 8,
   "weekStart": ""
 }
