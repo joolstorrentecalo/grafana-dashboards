@@ -29,6 +29,78 @@
         "type": "loki",
         "uid": "R8ugoM-Vk"
       },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 7,
+        "x": 0,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+
+          ],
+          "fields": "",
+          "values": true
+        },
+        "text": {
+        },
+        "textMode": "value_and_name"
+      },
+      "pluginVersion": "9.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "R8ugoM-Vk"
+          },
+          "editorMode": "code",
+          "expr": "sum by (package_type) (count_over_time({namespace=\"packagecloud\", component=\"packagecloud-rainbows\", environment=\"ops\"} | json | __error__!=\"JSONParserErr\" | subcomponent=~`(deb|rpm)_indexjob` | line_format \"{{.message}}\" | pattern `<_> Enqueuing <package_type>::IndexJob for <_> <repo> <_> <distro>` | label_format package_type=\"{{ .package_type | lower }}\" [$__range]))",
+          "legendFormat": "",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "title": "Total number of packages uploaded by package type",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "R8ugoM-Vk"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -50,8 +122,11 @@
               "viz": false
             },
             "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
             "lineWidth": 1,
-            "pointSize": 5,
+            "pointSize": 1,
             "scaleDistribution": {
               "type": "linear"
             },
@@ -64,6 +139,103 @@
             "thresholdsStyle": {
               "mode": "off"
             }
+          },
+          "mappings": [
+
+          ],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 17,
+        "x": 7,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "R8ugoM-Vk"
+          },
+          "editorMode": "code",
+          "expr": "sum by (package_type) (count_over_time({namespace=\"packagecloud\", component=\"packagecloud-rainbows\", environment=\"$environment\"} | json | __error__!=\"JSONParserErr\" | subcomponent=~`(deb|rpm)_indexjob` | line_format \"{{.message}}\" | pattern `<_> Enqueuing <package_type>::IndexJob for <_> <repo> <_> <distro>` | label_format package_type=\"{{ .package_type | lower }}\" [1m]))",
+          "hide": false,
+          "key": "Q-3aeaf3f7-cdc7-4828-981f-68979bd9021b-2",
+          "queryType": "range",
+          "refId": "package type"
+        }
+      ],
+      "title": "Package Indexing Jobs by package type",
+      "transformations": [
+        {
+          "disabled": true,
+          "id": "reduce",
+          "options": {
+            "reducers": [
+              "last"
+            ]
+          }
+        },
+        {
+          "disabled": true,
+          "id": "extractFields",
+          "options": {
+            "keepTime": false,
+            "replace": false,
+            "source": "Value"
+          }
+        },
+        {
+          "disabled": true,
+          "id": "groupingToMatrix",
+          "options": {
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "R8ugoM-Vk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
           },
           "mappings": [
 
@@ -87,25 +259,27 @@
         ]
       },
       "gridPos": {
-        "h": 11,
-        "w": 9,
+        "h": 10,
+        "w": 7,
         "x": 0,
-        "y": 0
+        "y": 9
       },
-      "id": 2,
+      "id": 5,
       "options": {
-        "legend": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
           "calcs": [
-            "max"
+
           ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
+          "fields": "",
+          "values": true
         },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
+        "text": {
+        },
+        "textMode": "value_and_name"
       },
       "pluginVersion": "9.5.1",
       "targets": [
@@ -115,18 +289,14 @@
             "uid": "R8ugoM-Vk"
           },
           "editorMode": "code",
-          "expr": "sum by (package_type) (count_over_time({namespace=\"packagecloud\", component=\"packagecloud-rainbows\", environment=\"$environment\"} | json | __error__!=\"JSONParserErr\" | subcomponent=~`(deb|rpm)_indexjob` | line_format \"{{.message}}\" | pattern `<_> Enqueuing <package_type>::IndexJob for <_> <repo> <_> <distro>` | label_format package_type=\"{{ .package_type | lower }}\" [$__range]))",
-          "hide": false,
-          "key": "Q-3aeaf3f7-cdc7-4828-981f-68979bd9021b-2",
-          "queryType": "range",
-          "refId": "C"
+          "expr": "sum by (repo) (count_over_time({namespace=\"packagecloud\", component=\"packagecloud-rainbows\", environment=\"ops\"} | json | __error__!=\"JSONParserErr\" | subcomponent=~`(deb|rpm)_indexjob` | line_format \"{{.message}}\" | pattern `<_> Enqueuing <package_type>::IndexJob for <_> <repo> <_> <distro>` | label_format package_type=\"{{ .package_type | lower }}\" [$__range]))",
+          "legendFormat": "",
+          "queryType": "instant",
+          "refId": "A"
         }
       ],
-      "title": "Package Indexing Jobs by package type",
-      "transformations": [
-
-      ],
-      "type": "timeseries"
+      "title": "Total number of packages uploaded by repository",
+      "type": "stat"
     },
     {
       "datasource": {
@@ -172,6 +342,7 @@
           "mappings": [
 
           ],
+          "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -191,16 +362,16 @@
         ]
       },
       "gridPos": {
-        "h": 11,
-        "w": 8,
-        "x": 9,
-        "y": 0
+        "h": 10,
+        "w": 17,
+        "x": 7,
+        "y": 9
       },
-      "id": 1,
+      "id": 3,
       "options": {
         "legend": {
           "calcs": [
-            "max"
+
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -219,7 +390,183 @@
             "uid": "R8ugoM-Vk"
           },
           "editorMode": "code",
-          "expr": "sum by (package_type, distro) (count_over_time({namespace=\"packagecloud\", component=\"packagecloud-rainbows\", environment=\"$environment\"} | json | __error__!=\"JSONParserErr\" | subcomponent=~`(deb|rpm)_indexjob` | line_format \"{{.message}}\" | pattern `<_> Enqueuing <package_type>::IndexJob for <_> <repo> <_> <distro>` | label_format package_type=\"{{ .package_type | lower }}\" [$__range]))",
+          "expr": "sum by (repo) (count_over_time({namespace=\"packagecloud\", component=\"packagecloud-rainbows\", environment=\"$environment\"} | json | __error__!=\"JSONParserErr\" | subcomponent=~`(deb|rpm)_indexjob` | line_format \"{{.message}}\" | pattern `<_> Enqueuing <package_type>::IndexJob for <_> <repo> <_> <distro>` | label_format package_type=\"{{ .package_type | lower }}\" [1m]))",
+          "hide": false,
+          "key": "Q-3aeaf3f7-cdc7-4828-981f-68979bd9021b-2",
+          "queryType": "range",
+          "refId": "C"
+        }
+      ],
+      "title": "Package Indexing Jobs by repository",
+      "transformations": [
+
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "R8ugoM-Vk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 7,
+        "x": 0,
+        "y": 19
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+
+          ],
+          "fields": "",
+          "values": true
+        },
+        "text": {
+        },
+        "textMode": "value_and_name"
+      },
+      "pluginVersion": "9.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "R8ugoM-Vk"
+          },
+          "editorMode": "code",
+          "expr": "sum by (package_type, distro) (count_over_time({namespace=\"packagecloud\", component=\"packagecloud-rainbows\", environment=\"ops\"} | json | __error__!=\"JSONParserErr\" | subcomponent=~`(deb|rpm)_indexjob` | line_format \"{{.message}}\" | pattern `<_> Enqueuing <package_type>::IndexJob for <_> <repo> <_> <distro>` | label_format package_type=\"{{ .package_type | lower }}\" [$__range]))",
+          "legendFormat": "",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "title": "Total number of packages uploaded by package type / distro",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "R8ugoM-Vk"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 17,
+        "x": 7,
+        "y": 19
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "R8ugoM-Vk"
+          },
+          "editorMode": "code",
+          "expr": "sum by (package_type, distro) (count_over_time({namespace=\"packagecloud\", component=\"packagecloud-rainbows\", environment=\"$environment\"} | json | __error__!=\"JSONParserErr\" | subcomponent=~`(deb|rpm)_indexjob` | line_format \"{{.message}}\" | pattern `<_> Enqueuing <package_type>::IndexJob for <_> <repo> <_> <distro>` | label_format package_type=\"{{ .package_type | lower }}\" [1m]))",
           "hide": false,
           "key": "Q-3aeaf3f7-cdc7-4828-981f-68979bd9021b-2",
           "queryType": "range",
@@ -237,85 +584,23 @@
         "type": "loki",
         "uid": "R8ugoM-Vk"
       },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-
-        ]
-      },
       "gridPos": {
-        "h": 11,
-        "w": 7,
-        "x": 17,
-        "y": 0
+        "h": 15,
+        "w": 24,
+        "x": 0,
+        "y": 29
       },
-      "id": 3,
+      "id": 7,
       "options": {
-        "legend": {
-          "calcs": [
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": false,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
       },
-      "pluginVersion": "9.5.1",
       "targets": [
         {
           "datasource": {
@@ -323,22 +608,17 @@
             "uid": "R8ugoM-Vk"
           },
           "editorMode": "code",
-          "expr": "sum by (repo) (count_over_time({namespace=\"packagecloud\", component=\"packagecloud-rainbows\", environment=\"$environment\"} | json | __error__!=\"JSONParserErr\" | subcomponent=~`(deb|rpm)_indexjob` | line_format \"{{.message}}\" | pattern `<_> Enqueuing <package_type>::IndexJob for <_> <repo> <_> <distro>` | label_format package_type=\"{{ .package_type | lower }}\" [$__range]))",
-          "hide": false,
-          "key": "Q-3aeaf3f7-cdc7-4828-981f-68979bd9021b-2",
+          "expr": "{namespace=\"packagecloud\", component=\"packagecloud-rainbows\", environment=\"ops\"} | json | __error__!=\"JSONParserErr\" | subcomponent=~`(deb|rpm)_indexjob` | line_format \"{{.message}}\" | pattern `<_> Enqueuing <package_type>::IndexJob for <_> <repo> <_> <distro>` | label_format package_type=\"{{ .package_type | lower }}\"",
           "queryType": "range",
-          "refId": "C"
+          "refId": "A"
         }
       ],
-      "title": "Package Indexing Jobs by repository",
-      "transformations": [
-
-      ],
-      "type": "timeseries"
+      "title": "Raw Logs",
+      "type": "logs"
     }
   ],
-  "refresh": "",
-  "schemaVersion": 39,
+  "refresh": false,
+  "schemaVersion": 38,
   "style": "dark",
   "tags": [
     "unmanaged"
@@ -386,6 +666,6 @@
   "timezone": "",
   "title": "packages.gitlab.com",
   "uid": "eb90a76d-764e-48da-98c3-631459858c04",
-  "version": 10,
+  "version": 16,
   "weekStart": ""
 }

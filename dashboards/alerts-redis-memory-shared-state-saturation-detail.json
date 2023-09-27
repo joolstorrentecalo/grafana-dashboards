@@ -126,7 +126,7 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
-      "description": "Kubernetes containers are allocated a share of CPU. When this is exhausted, the container may be thottled.\n Lower is better.",
+      "description": "Redis maxmemory utilization per node\n\nOn the SharedState Redis we have maxmemory and a `noeviction` eviction policy.\nKeys will not be evicted in this policy. If the memory utilization reaches maxmemory,\nwrite requests will fail, so we want to be alerted some timne before that happens.\n Lower is better.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -135,7 +135,7 @@
         "x": 0,
         "y": 0
       },
-      "id": 2713861591,
+      "id": 2731369815,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -219,20 +219,20 @@
         }
       ],
       "spaceLength": 10,
-      "stableId": "saturation-kube_container_cpu",
+      "stableId": "saturation-redis_memory_shared_state",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, pod, container) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, tier, type, stage, shard, pod, container) (\n        rate(container_cpu_usage_seconds_total:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}[5m])\n      )\n      /\n      sum by(environment, tier, type, stage, shard, pod, container) (\n        container_spec_cpu_quota:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n        /\n        container_spec_cpu_period:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn, instance, shard) (\n  clamp_min(\n    clamp_max(\n      (\n        max by (environment, tier, type, stage, shard, fqdn, instance, shard) (\n          redis_memory_used_bytes{env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n        )\n        /\n        avg by (environment, tier, type, stage, shard, fqdn, instance, shard) (\n          redis_memory_max_bytes{env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n        )\n      ) and on (fqdn) redis_memory_max_bytes{env=\"$environment\",stage=\"$stage\",type=\"$type\"} != 0\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{ pod }} {{ container }}",
+          "legendFormat": "{{ fqdn }} {{ instance }} {{ shard }}",
           "refId": "A"
         },
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"kube_container_cpu\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"redis_memory_shared_state\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -240,7 +240,7 @@
           "refId": "B"
         },
         {
-          "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"kube_container_cpu\"}\n)\n",
+          "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"redis_memory_shared_state\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -248,7 +248,7 @@
           "refId": "C"
         },
         {
-          "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"kube_container_cpu\"}\n)\n",
+          "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"redis_memory_shared_state\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -256,7 +256,7 @@
           "refId": "D"
         },
         {
-          "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"kube_container_cpu\"}) by (component)\n",
+          "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"redis_memory_shared_state\"}) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -264,7 +264,7 @@
           "refId": "E"
         },
         {
-          "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"kube_container_cpu\"}) by (component)\n",
+          "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"redis_memory_shared_state\"}) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -277,7 +277,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "kube_container_cpu component saturation: Kube Container CPU Utilization",
+      "title": "redis_memory_shared_state component saturation: Redis Memory Utilization of Max Memory",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -313,7 +313,7 @@
       ]
     },
     {
-      "content": "## Kube Container CPU Utilization\n\nKubernetes containers are allocated a share of CPU. When this is exhausted, the container may be thottled.\n\n\n## What to do from here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=kube_container_cpu)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+kube_container_cpu&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
+      "content": "## Redis Memory Utilization of Max Memory\n\nRedis maxmemory utilization per node\n\nOn the SharedState Redis we have maxmemory and a `noeviction` eviction policy.\nKeys will not be evicted in this policy. If the memory utilization reaches maxmemory,\nwrite requests will fail, so we want to be alerted some timne before that happens.\n\n\n## What to do from here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=redis_memory_shared_state)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+redis_memory_shared_state&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
       "datasource": null,
       "gridPos": {
         "h": 14,
@@ -468,8 +468,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "web",
-          "value": "web"
+          "text": "redis-cluster-shared-state",
+          "value": "redis-cluster-shared-state"
         },
         "datasource": "$PROMETHEUS_DS",
         "hide": 0,
@@ -548,7 +548,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "alerts: kube container cpu: Saturation Detail",
-  "uid": "alerts-sat_kube_container_cpu",
-  "version": 3137
+  "title": "alerts: redis memory shared state: Saturation Detail",
+  "uid": "alerts-sat_redis_memory_shared_state",
+  "version": 1
 }

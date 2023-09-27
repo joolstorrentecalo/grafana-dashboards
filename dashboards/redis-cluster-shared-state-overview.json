@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5170766555 at Tue Sep 26 21:26:13 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5173102052 at Wed Sep 27 07:16:13 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -8123,7 +8123,7 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "Redis Secondary CPU Utilization per Node.\n\nRedis is single-threaded. A single Redis server is only able to scale as far as a single CPU on a single host.\nCPU saturation on a secondary is not as serious as critical as saturation on a primary, but could lead to\nreplication delays.\n Lower is better.",
+          "description": "Redis maxmemory utilization per node\n\nOn the SharedState Redis we have maxmemory and a `noeviction` eviction policy.\nKeys will not be evicted in this policy. If the memory utilization reaches maxmemory,\nwrite requests will fail, so we want to be alerted some timne before that happens.\n Lower is better.",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -8131,6 +8131,200 @@
             "w": 12,
             "x": 12,
             "y": 70
+          },
+          "id": 2731369815,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "sideWidth": null,
+            "sort": "max",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [
+            {
+              "alias": "/^Soft SLO/",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^Hard SLO/",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            },
+            {
+              "alias": "/aggregated /",
+              "color": "#E7D551",
+              "linewidth": 2,
+              "zindex": 3
+            },
+            {
+              "alias": "/^95th quantile for week/",
+              "color": "#37872D",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 1,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^99th quantile for week/",
+              "color": "#56A64B",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "saturation-redis_memory_shared_state",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn, instance, shard) (\n  clamp_min(\n    clamp_max(\n      (\n        max by (environment, tier, type, stage, shard, fqdn, instance, shard) (\n          redis_memory_used_bytes{env=\"$environment\",environment=\"$environment\",type=\"redis-cluster-shared-state\"}\n        )\n        /\n        avg by (environment, tier, type, stage, shard, fqdn, instance, shard) (\n          redis_memory_max_bytes{env=\"$environment\",environment=\"$environment\",type=\"redis-cluster-shared-state\"}\n        )\n      ) and on (fqdn) redis_memory_max_bytes{env=\"$environment\",environment=\"$environment\",type=\"redis-cluster-shared-state\"} != 0\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{ fqdn }} {{ instance }} {{ shard }}",
+              "refId": "A"
+            },
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",type=\"redis-cluster-shared-state\", component=\"redis_memory_shared_state\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "aggregated {{ component }}",
+              "refId": "B"
+            },
+            {
+              "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",type=\"redis-cluster-shared-state\", component=\"redis_memory_shared_state\"}\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "95th quantile for week {{ component }}",
+              "refId": "C"
+            },
+            {
+              "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",type=\"redis-cluster-shared-state\", component=\"redis_memory_shared_state\"}\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "99th quantile for week {{ component }}",
+              "refId": "D"
+            },
+            {
+              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"redis_memory_shared_state\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "Soft SLO: {{ component }}",
+              "refId": "E"
+            },
+            {
+              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"redis_memory_shared_state\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "Hard SLO: {{ component }}",
+              "refId": "F"
+            }
+          ],
+          "thresholds": [
+
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "redis_memory_shared_state component saturation: Redis Memory Utilization of Max Memory",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Saturation %",
+              "logBase": 1,
+              "max": 1,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Redis Secondary CPU Utilization per Node.\n\nRedis is single-threaded. A single Redis server is only able to scale as far as a single CPU on a single host.\nCPU saturation on a secondary is not as serious as critical as saturation on a primary, but could lead to\nreplication delays.\n Lower is better.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 80
           },
           "id": 577905942,
           "legend": {
@@ -8323,7 +8517,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 80
           },
           "id": 1472933476,
@@ -8517,8 +8711,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 80
+            "x": 0,
+            "y": 90
           },
           "id": 3372411356,
           "legend": {
@@ -8715,7 +8909,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 74,
+      "id": 75,
       "panels": [
 
       ],
@@ -8744,7 +8938,7 @@
         "x": 0,
         "y": 1001
       },
-      "id": 75,
+      "id": 76,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -8842,7 +9036,7 @@
         "x": 12,
         "y": 1001
       },
-      "id": 76,
+      "id": 77,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -8940,7 +9134,7 @@
         "x": 0,
         "y": 1011
       },
-      "id": 77,
+      "id": 78,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9030,7 +9224,7 @@
         "x": 0,
         "y": 2000
       },
-      "id": 78,
+      "id": 79,
       "panels": [
 
       ],
@@ -9059,7 +9253,7 @@
         "x": 0,
         "y": 2001
       },
-      "id": 79,
+      "id": 80,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9157,7 +9351,7 @@
         "x": 12,
         "y": 2001
       },
-      "id": 80,
+      "id": 81,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9255,7 +9449,7 @@
         "x": 0,
         "y": 2011
       },
-      "id": 81,
+      "id": 82,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9351,7 +9545,7 @@
         "x": 12,
         "y": 2011
       },
-      "id": 82,
+      "id": 83,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9447,7 +9641,7 @@
         "x": 0,
         "y": 2021
       },
-      "id": 83,
+      "id": 84,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9545,7 +9739,7 @@
         "x": 12,
         "y": 2021
       },
-      "id": 84,
+      "id": 85,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9643,7 +9837,7 @@
         "x": 0,
         "y": 2031
       },
-      "id": 85,
+      "id": 86,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9741,7 +9935,7 @@
         "x": 12,
         "y": 2031
       },
-      "id": 86,
+      "id": 87,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9839,7 +10033,7 @@
         "x": 0,
         "y": 2041
       },
-      "id": 87,
+      "id": 88,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9937,7 +10131,7 @@
         "x": 12,
         "y": 2041
       },
-      "id": 88,
+      "id": 89,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10035,7 +10229,7 @@
         "x": 0,
         "y": 2051
       },
-      "id": 89,
+      "id": 90,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10133,7 +10327,7 @@
         "x": 12,
         "y": 2051
       },
-      "id": 90,
+      "id": 91,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10231,7 +10425,7 @@
         "x": 0,
         "y": 2061
       },
-      "id": 91,
+      "id": 92,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10329,7 +10523,7 @@
         "x": 12,
         "y": 2061
       },
-      "id": 92,
+      "id": 93,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10427,7 +10621,7 @@
         "x": 0,
         "y": 2071
       },
-      "id": 93,
+      "id": 94,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10525,7 +10719,7 @@
         "x": 12,
         "y": 2071
       },
-      "id": 94,
+      "id": 95,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10615,7 +10809,7 @@
         "x": 0,
         "y": 3000
       },
-      "id": 95,
+      "id": 96,
       "panels": [
 
       ],
@@ -10644,7 +10838,7 @@
         "x": 0,
         "y": 3001
       },
-      "id": 96,
+      "id": 97,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10779,7 +10973,7 @@
         "x": 12,
         "y": 3001
       },
-      "id": 97,
+      "id": 98,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10877,7 +11071,7 @@
         "x": 0,
         "y": 3011
       },
-      "id": 98,
+      "id": 99,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10975,7 +11169,7 @@
         "x": 12,
         "y": 3011
       },
-      "id": 99,
+      "id": 100,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11073,7 +11267,7 @@
         "x": 0,
         "y": 3021
       },
-      "id": 100,
+      "id": 101,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11171,7 +11365,7 @@
         "x": 12,
         "y": 3021
       },
-      "id": 101,
+      "id": 102,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11269,7 +11463,7 @@
         "x": 0,
         "y": 3031
       },
-      "id": 102,
+      "id": 103,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11367,7 +11561,7 @@
         "x": 12,
         "y": 3031
       },
-      "id": 103,
+      "id": 104,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11457,7 +11651,7 @@
         "x": 0,
         "y": 4000
       },
-      "id": 104,
+      "id": 105,
       "panels": [
 
       ],
@@ -11486,7 +11680,7 @@
         "x": 0,
         "y": 4001
       },
-      "id": 105,
+      "id": 106,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11584,7 +11778,7 @@
         "x": 12,
         "y": 4001
       },
-      "id": 106,
+      "id": 107,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11682,7 +11876,7 @@
         "x": 0,
         "y": 4011
       },
-      "id": 107,
+      "id": 108,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11772,7 +11966,7 @@
         "x": 0,
         "y": 5000
       },
-      "id": 108,
+      "id": 109,
       "panels": [
 
       ],
@@ -11815,7 +12009,7 @@
         "x": 0,
         "y": 5000
       },
-      "id": 109,
+      "id": 110,
       "links": [
 
       ],
@@ -11883,7 +12077,7 @@
         "x": 4,
         "y": 5000
       },
-      "id": 110,
+      "id": 111,
       "links": [
 
       ],
@@ -11951,7 +12145,7 @@
         "x": 8,
         "y": 5000
       },
-      "id": 111,
+      "id": 112,
       "links": [
 
       ],
@@ -12019,7 +12213,7 @@
         "x": 12,
         "y": 5000
       },
-      "id": 112,
+      "id": 113,
       "links": [
 
       ],
@@ -12087,7 +12281,7 @@
         "x": 16,
         "y": 5000
       },
-      "id": 113,
+      "id": 114,
       "links": [
 
       ],
@@ -12155,7 +12349,7 @@
         "x": 20,
         "y": 5000
       },
-      "id": 114,
+      "id": 115,
       "links": [
 
       ],
@@ -12223,7 +12417,7 @@
         "x": 0,
         "y": 5004
       },
-      "id": 115,
+      "id": 116,
       "links": [
 
       ],
@@ -12277,7 +12471,7 @@
         "x": 0,
         "y": 5008
       },
-      "id": 116,
+      "id": 117,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12365,7 +12559,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 117,
+      "id": 118,
       "panels": [
         {
           "colors": [
@@ -12386,7 +12580,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 118,
+          "id": 119,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -12499,7 +12693,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 119,
+          "id": 120,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -12610,7 +12804,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 120,
+          "id": 121,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -12715,7 +12909,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 121,
+      "id": 122,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -12836,5 +13030,5 @@
   "timezone": "utc",
   "title": "redis-cluster-shared-state: Overview",
   "uid": "redis-cluster-shared-state-main",
-  "version": 100
+  "version": 102
 }
