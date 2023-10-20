@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5335162718 at Fri Oct 20 03:46:52 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5337988080 at Fri Oct 20 11:20:20 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -446,9 +446,7 @@
         {
           "alias": "80% Threshold",
           "color": "red",
-          "dashLength": 2,
           "dashes": true,
-          "spaceLength": 1,
           "stack": true
         }
       ],
@@ -740,7 +738,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": "2",
+      "decimals": 0,
       "description": "",
       "fill": 0,
       "fillGradient": 0,
@@ -776,20 +774,32 @@
       "renderer": "flot",
       "repeat": null,
       "seriesOverrides": [
-
+        {
+          "alias": "Memory Map Limit",
+          "color": "red",
+          "dashes": true
+        }
       ],
       "spaceLength": 10,
-      "stableId": "gitlab-zoekt-memory usage",
+      "stableId": "gitlab-zoekt-memory map usage",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(sum(go_memstats_heap_sys_bytes{pod=~\"gitlab-gitlab-zoekt.*\", container=~\"zoekt.*\", env=\"$environment\"}) by (container, pod)\n/ sum(go_memstats_heap_alloc_bytes{pod=~\"gitlab-gitlab-zoekt.*\", container=~\"zoekt.*\", env=\"$environment\"}) by (container, pod)) / 100\n",
+          "expr": "sum(proc_metrics_memory_map_current_count{pod=~\"gitlab-gitlab-zoekt.*\", container=~\"zoekt.*\", env=\"$environment\"}) by (container, pod)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
           "legendFormat": "",
           "refId": "A"
+        },
+        {
+          "expr": "min(proc_metrics_memory_map_max_limit{pod=~\"gitlab-gitlab-zoekt.*\", container=~\"zoekt.*\", env=\"$environment\"})\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "Memory Map Limit",
+          "refId": "B"
         }
       ],
       "thresholds": [
@@ -797,7 +807,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Memory Usage",
+      "title": "Memory Map Usage",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1029,6 +1039,41 @@
           "show": false
         }
       ]
+    },
+    {
+      "collapse": false,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 40
+      },
+      "id": 14,
+      "panels": [
+
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "Additional Resources",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "content": "\n### Zoekt Rollout Epic\n\nSee https://gitlab.com/groups/gitlab-org/-/epics/9404\n\n### Helpful Links\n\n- [Memory Usage](https://dashboards.gitlab.net/d/kubernetes-resources-pod/kubernetes-compute-resources-pod?orgId=1&var-datasource=default&var-cluster=gprd-gitlab-gke&var-namespace=gitlab&var-pod=gitlab-gitlab-zoekt-0&from=now-6h&to=now)\n- [Sourcegraph Observability Documentation](https://docs.sourcegraph.com/admin/observability/dashboards)\n",
+      "datasource": null,
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 41
+      },
+      "id": 15,
+      "mode": "markdown",
+      "title": "",
+      "type": "text"
     }
   ],
   "refresh": "",
@@ -1117,5 +1162,5 @@
   "timezone": "utc",
   "title": "search: Zoekt Info",
   "uid": "search-zoekt",
-  "version": 357
+  "version": 360
 }
