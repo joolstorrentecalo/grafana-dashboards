@@ -96,7 +96,7 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "sum(prometheus_tsdb_head_series{env=\"$environment\", cluster=\"$cluster\"})",
+          "expr": "sum(prometheus_tsdb_head_series{env=\"$env\", cluster=\"$cluster\"}) ",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -162,7 +162,7 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "sum(rate(prometheus_tsdb_head_samples_appended_total{env=\"$environment\"}}[$__rate_interval])) ",
+          "expr": "sum(rate(prometheus_tsdb_head_samples_appended_total{env=\"$env\", cluster=\"$cluster\"}[$__rate_interval])) ",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -228,7 +228,7 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "sum(kubelet_volume_stats_capacity_bytes{env=\"$environment\", persistentvolumeclaim=~\".*prometheus.*\"})",
+          "expr": "sum(kubelet_volume_stats_capacity_bytes{env=\"$env\", cluster=\"$cluster\", persistentvolumeclaim=~\".*prometheus.*\"})",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -295,7 +295,7 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "avg((100 - ((kubelet_volume_stats_available_bytes{env=\"$environment\", persistentvolumeclaim=~\".*prometheus-.*\"} * 100) / kubelet_volume_stats_capacity_bytes{env=\"$environment\", persistentvolumeclaim=~\".*prometheus-.*\"} )))",
+          "expr": "avg((100 - ((kubelet_volume_stats_available_bytes{env=\"$env\", cluster=\"$cluster\", persistentvolumeclaim=~\".*prometheus-.*\"} * 100) / kubelet_volume_stats_capacity_bytes{env=\"$env\", cluster=\"$cluster\", persistentvolumeclaim=~\".*prometheus-.*\"} )))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -305,15 +305,182 @@
       "type": "stat"
     },
     {
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
         "y": 6
       },
-      "id": 2,
-      "title": "Storage",
+      "id": 8,
+      "panels": [
+
+      ],
+      "title": "Resources",
       "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "requests"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "limits"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 12,
+        "x": 0,
+        "y": 7
+      },
+      "id": 9,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "rate(container_cpu_usage_seconds_total{env=\"$env\", cluster=\"$cluster\", job=\"kubelet\", namespace=\"monitoring\", pod=~\"prometheus-gitlab-monitoring-promethe-prometheus-.*\", container=~\"$container\"}[$__rate_interval])",
+          "legendFormat": "{{container}}/{{pod}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "kube_pod_container_resource_requests{env=\"$env\", cluster=\"$cluster\", job=\"kube-state-metrics\", namespace=\"monitoring\", pod=~\"prometheus-gitlab-monitoring-promethe-prometheus-.*\", container=~\"$container\", unit=\"core\"}\n",
+          "hide": false,
+          "legendFormat": "requests",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "kube_pod_container_resource_limits{env=\"$env\", cluster=\"$cluster\", job=\"kube-state-metrics\", namespace=\"monitoring\", pod=~\"prometheus-gitlab-monitoring-promethe-prometheus-.*\", container=~\"$container\", unit=\"core\"}",
+          "hide": false,
+          "legendFormat": "limits",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "title": "CPU Usage",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -364,48 +531,22 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
-          }
+          },
+          "unit": "bytes"
         },
         "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "{__name__=\"prometheus_tsdb_head_series\", cluster=\"ai-assist\", container=\"prometheus\", endpoint=\"http-web\", env=\"gprd\", environment=\"gprd\", instance=\"10.4.2.16:9090\", job=\"prometheus-kube-prometheus-prometheus\", monitor=\"default\", namespace=\"monitoring\", node=\"gke-ai-assist-node-pool-n2-cpu-cd7b49b3-uuoi\", pod=\"prometheus-prometheus-kube-prometheus-prometheus-0\", prometheus=\"monitoring/prometheus-kube-prometheus-prometheus\", prometheus_replica=\"prometheus-prometheus-kube-prometheus-prometheus-0\", provider=\"gcp\", receive=\"true\", receive_cluster=\"receive-default\", receive_hashring=\"receive-default\", receive_ingester=\"true\", receive_region=\"us-east1\", region=\"us-central1\", service=\"prometheus-kube-prometheus-prometheus\", stage=\"main\", tenant_id=\"code_suggestions\", tier=\"inf\", type=\"monitoring\"}"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
+
         ]
       },
       "gridPos": {
         "h": 13,
-        "w": 23,
-        "x": 0,
+        "w": 12,
+        "x": 12,
         "y": 7
       },
-      "id": 3,
+      "id": 10,
       "options": {
         "legend": {
           "calcs": [
@@ -427,14 +568,1306 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "prometheus_tsdb_head_series{env=\"$environment\", cluster=\"$cluster\"}",
-          "legendFormat": "__auto",
+          "expr": "container_memory_working_set_bytes{env=\"$env\", cluster=\"$cluster\", job=\"kubelet\", namespace=\"monitoring\", pod=~\"prometheus-gitlab-monitoring-promethe-prometheus-.*\", container=~\"$container\"}",
+          "legendFormat": "{{container}}/{{pod}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "kube_pod_container_resource_requests{env=\"$env\", cluster=\"$cluster\", job=\"kube-state-metrics\", namespace=\"monitoring\", pod=~\"prometheus-gitlab-monitoring-promethe-prometheus-.*\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n",
+          "hide": false,
+          "legendFormat": "requests",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "kube_pod_container_resource_limits{env=\"$env\", cluster=\"$cluster\", job=\"kube-state-metrics\", namespace=\"monitoring\", pod=~\"prometheus-gitlab-monitoring-promethe-prometheus-.*\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n",
+          "hide": false,
+          "legendFormat": "limits",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "title": "Memory Usage",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "green",
+            "mode": "fixed"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0.25
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "requests"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "limits"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 20
+      },
+      "id": 22,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "sum by (container) (increase(container_cpu_cfs_throttled_periods_total{env=\"$env\", cluster=\"$cluster\", job=\"kubelet\", namespace=\"monitoring\", pod=~\"prometheus-gitlab-monitoring-promethe-prometheus-.*\", container=~\"$container\"}[$__rate_interval]))\n/\n\nsum by (container) (increase(container_cpu_cfs_periods_total{env=\"$env\", cluster=\"$cluster\", job=\"kubelet\", namespace=\"monitoring\", pod=~\"prometheus-gitlab-monitoring-promethe-prometheus-.*\", container=~\"$container\"}[$__rate_interval]))",
+          "legendFormat": "{{container}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Panel Title",
+      "title": "CPU Throttling",
       "type": "timeseries"
+    },
+    {
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 30
+      },
+      "id": 2,
+      "title": "Storage",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "A time series is considered active if Prometheus scraped new data for it recently. Prometheus provides prometheus_tsdb_head_series metric, which shows the number of active time series. \n\nPrometheus holds recently added samples for active time series in RAM, so its RAM usage highly depends on the number of active time series.  \n\nThe number of active time series is connected to cardinality via churn rate",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 31
+      },
+      "id": 11,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "prometheus_tsdb_head_series{env=\"$env\", cluster=\"$cluster\", container=\"prometheus\"}",
+          "legendFormat": "{{pod}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Active time series  ",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 31
+      },
+      "id": 13,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "prometheus_tsdb_head_chunks{env=\"$env\", cluster=\"$cluster\", container=\"prometheus\"}",
+          "legendFormat": "{{pod}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Head Chunks",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 39
+      },
+      "id": 20,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "rate(prometheus_tsdb_compactions_failed_total{env=\"$env\", cluster=\"$cluster\", container=\"prometheus\"}[2h])",
+          "legendFormat": "Failed {{pod}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "rate(prometheus_tsdb_compactions_skipped_total{env=\"$env\", cluster=\"$cluster\", container=\"prometheus\"}[2h])",
+          "hide": false,
+          "legendFormat": "Skipped {{pod}}",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "TSDB Compactions Failed / Skipped",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 39
+      },
+      "id": 21,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "sum by (pod) (rate(prometheus_tsdb_compaction_chunk_size_bytes_sum{env=\"$env\", cluster=\"$cluster\", container=\"prometheus\"}[1d]))\n/\nsum by (pod) (rate(prometheus_tsdb_compaction_chunk_samples_sum{env=\"$env\", cluster=\"$cluster\", container=\"prometheus\"}[1d]))\n",
+          "legendFormat": "Failed {{pod}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Average byte size of each sample ingested",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 47
+      },
+      "id": 14,
+      "panels": [
+
+      ],
+      "title": "Retrieval",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "prometheus_tsdb_head_samples_appended_total\nThe rate of this metric indicates the ingestion rate of every instance.\n",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 48
+      },
+      "id": 12,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "rate(prometheus_tsdb_head_samples_appended_total{env=\"$env\", cluster=\"$cluster\", container=\"prometheus\",  job=\"gitlab-monitoring-promethe-prometheus\", exported_type=\"float\"}[$__rate_interval])",
+          "legendFormat": "{{pod}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Samples ingest/s",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 48
+      },
+      "id": 15,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "rate(prometheus_target_interval_length_seconds_sum{env=\"$env\", cluster=\"$cluster\", container=\"prometheus\",  job=\"gitlab-monitoring-promethe-prometheus\"}[$__rate_interval])\n\n/ \nrate(prometheus_target_interval_length_seconds_count{env=\"$env\", cluster=\"$cluster\", container=\"prometheus\",  job=\"gitlab-monitoring-promethe-prometheus\"}[$__rate_interval])",
+          "legendFormat": "{{pod}} / {{interval}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Average Scrape Interval Duration",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 56
+      },
+      "id": 16,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "sum by (pod) (prometheus_sd_discovered_targets{env=\"$env\", cluster=\"$cluster\", container=\"prometheus\",  job=\"gitlab-monitoring-promethe-prometheus\"})",
+          "legendFormat": "{{pod}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Targets",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 56
+      },
+      "id": 17,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "sum by () (prometheus_target_scrapes_exceeded_body_size_limit_total{env=\"$env\", cluster=\"$cluster\",  job=\"gitlab-monitoring-promethe-prometheus\"})",
+          "legendFormat": "exceeded body size limit: {{job}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "sum by () (prometheus_target_scrapes_exceeded_sample_limit_total{env=\"$env\", cluster=\"$cluster\",  job=\"gitlab-monitoring-promethe-prometheus\"})",
+          "hide": false,
+          "legendFormat": "exceeded sample limit: {{job}}",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "sum by () (prometheus_target_scrapes_sample_duplicate_timestamp_total{env=\"$env\", cluster=\"$cluster\",  job=\"gitlab-monitoring-promethe-prometheus\"})",
+          "hide": false,
+          "legendFormat": "duplicate timestamp: {{job}}",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "sum by () (prometheus_target_scrapes_sample_out_of_bounds_total{env=\"$env\", cluster=\"$cluster\",  job=\"gitlab-monitoring-promethe-prometheus\"})",
+          "hide": false,
+          "legendFormat": "out of bounds: {{job}}",
+          "range": true,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "sum by () (prometheus_target_scrapes_sample_out_of_order_total{env=\"$env\", cluster=\"$cluster\",  job=\"gitlab-monitoring-promethe-prometheus\"})",
+          "hide": false,
+          "legendFormat": "out of order: {{job}}",
+          "range": true,
+          "refId": "E"
+        }
+      ],
+      "title": "Scrape failures",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 64
+      },
+      "id": 18,
+      "panels": [
+
+      ],
+      "title": "Query",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 65
+      },
+      "id": 19,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by (pod, slice) (rate(prometheus_engine_query_duration_seconds_count{env=\"$env\", cluster=\"$cluster\", container=\"prometheus\",  job=\"gitlab-monitoring-promethe-prometheus\", slice=\"inner_eval\"}[$__rate_interval]))\n",
+          "instant": false,
+          "legendFormat": "{{pod}} / {{slice}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Query Rate",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 73
+      },
+      "id": 23,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "left",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "inspect": false
+              },
+              "mappings": [
+
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+
+            ]
+          },
+          "gridPos": {
+            "h": 16,
+            "w": 24,
+            "x": 0,
+            "y": 74
+          },
+          "id": 24,
+          "options": {
+            "cellHeight": "md",
+            "footer": {
+              "countRows": false,
+              "enablePagination": true,
+              "fields": [
+                "Value"
+              ],
+              "reducer": [
+                "sum"
+              ],
+              "show": true
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "9.5.13",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "PA258B30F88C30650"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "sum by (env, cluster, version) (prometheus_build_info)",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "range": false,
+              "refId": "A"
+            }
+          ],
+          "title": "Version Matrix",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true
+                },
+                "indexByName": {
+                  "Time": 0,
+                  "Value": 4,
+                  "cluster": 2,
+                  "env": 1,
+                  "version": 3
+                },
+                "renameByName": {
+                  "Value": "Instances"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Info",
+      "type": "row"
     }
   ],
   "refresh": "",
@@ -447,7 +1880,7 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "Global",
           "value": "Global"
         },
@@ -479,7 +1912,7 @@
         "hide": 0,
         "includeAll": false,
         "multi": false,
-        "name": "environment",
+        "name": "env",
         "options": [
 
         ],
@@ -503,7 +1936,7 @@
           "type": "prometheus",
           "uid": "${PROMETHEUS_DS}"
         },
-        "definition": "label_values(prometheus_build_info{env=\"$environment\"},cluster)",
+        "definition": "label_values(prometheus_build_info{env=\"$env\"},cluster)",
         "hide": 0,
         "includeAll": false,
         "multi": false,
@@ -512,10 +1945,39 @@
 
         ],
         "query": {
-          "query": "label_values(prometheus_build_info{env=\"$environment\"},cluster)",
+          "query": "label_values(prometheus_build_info{env=\"$env\"},cluster)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": false,
+          "text": "prometheus",
+          "value": "prometheus"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PA258B30F88C30650"
+        },
+        "definition": "label_values(container_cpu_usage_seconds_total{env=\"$env\", cluster=\"$cluster\", job=\"kubelet\", namespace=\"monitoring\", pod=~\"prometheus-gitlab-monitoring-promethe-prometheus-.*\"},container)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": false,
+        "name": "container",
+        "options": [
+
+        ],
+        "query": {
+          "query": "label_values(container_cpu_usage_seconds_total{env=\"$env\", cluster=\"$cluster\", job=\"kubelet\", namespace=\"monitoring\", pod=~\"prometheus-gitlab-monitoring-promethe-prometheus-.*\"},container)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -529,9 +1991,9 @@
   },
   "timepicker": {
   },
-  "timezone": "",
+  "timezone": "utc",
   "title": "rnaveiras - Prometheus",
   "uid": "dba6df5b-5d53-431e-94c0-3008491fe08c",
-  "version": 5,
+  "version": 17,
   "weekStart": ""
 }
