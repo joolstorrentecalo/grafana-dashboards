@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5362500892 at Tue Oct 24 13:08:36 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5369293175 at Wed Oct 25 07:17:51 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -126,7 +126,7 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
-      "description": "Kubernetes containers are allocated a share of CPU. When this is exhausted, the container may be thottled.\n Lower is better.",
+      "description": "Kubernetes containers are allocated a share of CPU. Configured using resource requests.\nWhen this is exhausted, the container may be thottled.\n Lower is better.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -224,7 +224,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, pod, container) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, tier, type, stage, shard, pod, container) (\n        rate(container_cpu_usage_seconds_total:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}[5m])\n      )\n      /\n      sum by(environment, tier, type, stage, shard, pod, container) (\n        container_spec_cpu_quota:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n        /\n        container_spec_cpu_period:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    quantile by(environment, tier, type, stage, shard, pod, container) (\n  0.99,\n  clamp_min(\n    clamp_max(\n      sum by (environment, tier, type, stage, pod, container) (\n        rate(container_cpu_usage_seconds_total:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}[1h])\n      )\n      /\n      sum by(environment, tier, type, stage, pod, container) (\n        kube_pod_container_resource_requests:labeled{container!=\"\", container!=\"POD\", resource=\"cpu\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -313,7 +313,7 @@
       ]
     },
     {
-      "content": "## Kube Container CPU Utilization\n\nKubernetes containers are allocated a share of CPU. When this is exhausted, the container may be thottled.\n\n\n## What to do from here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=kube_container_cpu)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+kube_container_cpu&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
+      "content": "## Kube Container CPU Utilization\n\nKubernetes containers are allocated a share of CPU. Configured using resource requests.\nWhen this is exhausted, the container may be thottled.\n\n\n## What to do from here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=kube_container_cpu)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+kube_container_cpu&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
       "datasource": null,
       "gridPos": {
         "h": 14,
@@ -550,5 +550,5 @@
   "timezone": "utc",
   "title": "alerts: kube container cpu: Saturation Detail",
   "uid": "alerts-sat_kube_container_cpu",
-  "version": 3226
+  "version": 3227
 }

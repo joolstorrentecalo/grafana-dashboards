@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5362500892 at Tue Oct 24 13:08:45 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5369293175 at Wed Oct 25 07:17:59 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -717,6 +717,10 @@
         {
           "title": "logging Service | kube_container_cpu resource Dashboard",
           "url": "https://dashboards.gitlab.net/d/alerts-sat_kube_container_cpu/?var-environment=gprd&var-type=logging&var-stage=main&var-component=kube_container_cpu"
+        },
+        {
+          "title": "logging Service | kube_container_cpu_limit resource Dashboard",
+          "url": "https://dashboards.gitlab.net/d/alerts-sat_kube_container_cpu_limit/?var-environment=gprd&var-type=logging&var-stage=main&var-component=kube_container_cpu_limit"
         },
         {
           "title": "logging Service | kube_container_memory resource Dashboard",
@@ -8039,7 +8043,7 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "Kubernetes containers are allocated a share of CPU. When this is exhausted, the container may be thottled.\n Lower is better.",
+          "description": "Kubernetes containers are allocated a share of CPU. Configured using resource requests.\nWhen this is exhausted, the container may be thottled.\n Lower is better.",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -8137,7 +8141,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, pod, container) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, tier, type, stage, shard, pod, container) (\n        rate(container_cpu_usage_seconds_total:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",type=\"logging\"}[5m])\n      )\n      /\n      sum by(environment, tier, type, stage, shard, pod, container) (\n        container_spec_cpu_quota:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",type=\"logging\"}\n        /\n        container_spec_cpu_period:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",type=\"logging\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    quantile by(environment, tier, type, stage, shard, pod, container) (\n  0.99,\n  clamp_min(\n    clamp_max(\n      sum by (environment, tier, type, stage, pod, container) (\n        rate(container_cpu_usage_seconds_total:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",type=\"logging\"}[1h])\n      )\n      /\n      sum by(environment, tier, type, stage, pod, container) (\n        kube_pod_container_resource_requests:labeled{container!=\"\", container!=\"POD\", resource=\"cpu\", env=\"$environment\",environment=\"$environment\",type=\"logging\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8233,7 +8237,7 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "This uses the working set size from cAdvisor for the cgroup's memory usage. That may\nnot be a good measure as it includes filesystem cache pages that are not necessarily\nattributable to the application inside the cgroup, and are permitted to be evicted\ninstead of being OOM killed.\n Lower is better.",
+          "description": "Kubernetes containers can have a limit configured on how much CPU they can consume in\na burst. If we are at this limit, exceeding the allocated requested resources, we\nshould consider revisting the container's HPA configuration\n Lower is better.",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -8241,6 +8245,200 @@
             "w": 12,
             "x": 12,
             "y": 30
+          },
+          "id": 1262336683,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "sideWidth": null,
+            "sort": "max",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [
+            {
+              "alias": "/^Soft SLO/",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^Hard SLO/",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            },
+            {
+              "alias": "/aggregated /",
+              "color": "#E7D551",
+              "linewidth": 2,
+              "zindex": 3
+            },
+            {
+              "alias": "/^95th quantile for week/",
+              "color": "#37872D",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 1,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^99th quantile for week/",
+              "color": "#56A64B",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "saturation-kube_container_cpu_limit",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, pod, container) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, tier, type, stage, shard, pod, container) (\n        rate(container_cpu_usage_seconds_total:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",type=\"logging\"}[5m])\n      )\n      /\n      sum by(environment, tier, type, stage, shard, pod, container) (\n        container_spec_cpu_quota:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",type=\"logging\"}\n        /\n        container_spec_cpu_period:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",environment=\"$environment\",type=\"logging\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{ pod }} {{ container }}",
+              "refId": "A"
+            },
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",type=\"logging\", component=\"kube_container_cpu_limit\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "aggregated {{ component }}",
+              "refId": "B"
+            },
+            {
+              "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",type=\"logging\", component=\"kube_container_cpu_limit\"}\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "95th quantile for week {{ component }}",
+              "refId": "C"
+            },
+            {
+              "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",type=\"logging\", component=\"kube_container_cpu_limit\"}\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "99th quantile for week {{ component }}",
+              "refId": "D"
+            },
+            {
+              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"kube_container_cpu_limit\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "Soft SLO: {{ component }}",
+              "refId": "E"
+            },
+            {
+              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"kube_container_cpu_limit\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "Hard SLO: {{ component }}",
+              "refId": "F"
+            }
+          ],
+          "thresholds": [
+
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "kube_container_cpu_limit component saturation: Kube Container CPU over-utilization",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Saturation %",
+              "logBase": 1,
+              "max": 1,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "This uses the working set size from cAdvisor for the cgroup's memory usage. That may\nnot be a good measure as it includes filesystem cache pages that are not necessarily\nattributable to the application inside the cgroup, and are permitted to be evicted\ninstead of being OOM killed.\n Lower is better.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 40
           },
           "id": 172578411,
           "legend": {
@@ -8433,7 +8631,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 40
           },
           "id": 351198712,
@@ -8627,8 +8825,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 40
+            "x": 0,
+            "y": 50
           },
           "id": 1001792825,
           "legend": {
@@ -8823,7 +9021,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 98,
+      "id": 99,
       "panels": [
         {
           "colors": [
@@ -8844,7 +9042,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 99,
+          "id": 100,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -8957,7 +9155,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 100,
+          "id": 101,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -9068,7 +9266,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 101,
+          "id": 102,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -9173,7 +9371,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 102,
+      "id": 103,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -9187,7 +9385,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 103,
+      "id": 104,
       "panels": [
         {
           "aliasColors": {
@@ -9205,7 +9403,7 @@
             "x": 0,
             "y": 1000
           },
-          "id": 104,
+          "id": 105,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9304,7 +9502,7 @@
             "x": 8,
             "y": 1000
           },
-          "id": 105,
+          "id": 106,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9402,7 +9600,7 @@
             "x": 16,
             "y": 1000
           },
-          "id": 106,
+          "id": 107,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9501,7 +9699,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 107,
+      "id": 108,
       "panels": [
         {
           "aliasColors": {
@@ -9520,7 +9718,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 108,
+          "id": 109,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9618,7 +9816,7 @@
             "x": 12,
             "y": 1
           },
-          "id": 109,
+          "id": 110,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9716,7 +9914,7 @@
             "x": 0,
             "y": 11
           },
-          "id": 110,
+          "id": 111,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9814,7 +10012,7 @@
             "x": 12,
             "y": 11
           },
-          "id": 111,
+          "id": 112,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9912,7 +10110,7 @@
             "x": 0,
             "y": 21
           },
-          "id": 112,
+          "id": 113,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10091,5 +10289,5 @@
   "timezone": "utc",
   "title": "logging: Overview",
   "uid": "logging-main",
-  "version": 4047
+  "version": 4048
 }

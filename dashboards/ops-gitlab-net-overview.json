@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5362500892 at Tue Oct 24 13:09:01 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5369293175 at Wed Oct 25 07:18:15 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -1093,6 +1093,10 @@
         {
           "title": "ops-gitlab-net Service | kube_container_cpu resource Dashboard",
           "url": "https://dashboards.gitlab.net/d/alerts-sat_kube_container_cpu/?var-environment=gprd&var-type=ops-gitlab-net&var-stage=main&var-component=kube_container_cpu"
+        },
+        {
+          "title": "ops-gitlab-net Service | kube_container_cpu_limit resource Dashboard",
+          "url": "https://dashboards.gitlab.net/d/alerts-sat_kube_container_cpu_limit/?var-environment=gprd&var-type=ops-gitlab-net&var-stage=main&var-component=kube_container_cpu_limit"
         },
         {
           "title": "ops-gitlab-net Service | kube_container_rss resource Dashboard",
@@ -13020,7 +13024,7 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "Kubernetes containers are allocated a share of CPU. When this is exhausted, the container may be thottled.\n Lower is better.",
+          "description": "Kubernetes containers are allocated a share of CPU. Configured using resource requests.\nWhen this is exhausted, the container may be thottled.\n Lower is better.",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -13118,7 +13122,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, pod, container) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, tier, type, stage, shard, pod, container) (\n        rate(container_cpu_usage_seconds_total:labeled{container!=\"\", container!=\"POD\", type=\"ops-gitlab-net\"}[5m])\n      )\n      /\n      sum by(environment, tier, type, stage, shard, pod, container) (\n        container_spec_cpu_quota:labeled{container!=\"\", container!=\"POD\", type=\"ops-gitlab-net\"}\n        /\n        container_spec_cpu_period:labeled{container!=\"\", container!=\"POD\", type=\"ops-gitlab-net\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    quantile by(environment, tier, type, stage, shard, pod, container) (\n  0.99,\n  clamp_min(\n    clamp_max(\n      sum by (environment, tier, type, stage, pod, container) (\n        rate(container_cpu_usage_seconds_total:labeled{container!=\"\", container!=\"POD\", type=\"ops-gitlab-net\"}[1h])\n      )\n      /\n      sum by(environment, tier, type, stage, pod, container) (\n        kube_pod_container_resource_requests:labeled{container!=\"\", container!=\"POD\", resource=\"cpu\", type=\"ops-gitlab-net\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -13214,13 +13218,207 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "Records the total anonymous (unevictable) memory utilization for containers for this\nservice, as a percentage of the memory limit as configured through Kubernetes.\n\nThis is computed using the container's resident set size (RSS), as opposed to\nkube_container_memory which uses the working set size. For our purposes, RSS is the\nbetter metric as cAdvisor's working set calculation includes pages from the\nfilesystem cache that can (and will) be evicted before the OOM killer kills the\ncgroup.\n\nA container's RSS (anonymous memory usage) is still not precisely what the OOM\nkiller will use, but it's a better approximation of what the container's workload is\nactually using. RSS metrics can, however, be dramatically inflated if a process in\nthe container uses MADV_FREE (lazy-free) memory. RSS will include the memory that is\navailable to be reclaimed without a page fault, but not currently in use.\n\nThe most common case of OOM kills is for anonymous memory demand to overwhelm the\ncontainer's memory limit. On swapless hosts, anonymous memory cannot be evicted from\nthe page cache, so when a container's memory usage is mostly anonymous pages, the\nonly remaining option to relieve memory pressure may be the OOM killer.\n\nAs container RSS approaches container memory limit, OOM kills become much more\nlikely. Consequently, this ratio is a good leading indicator of memory saturation\nand OOM risk.\n Lower is better.",
+          "description": "Kubernetes containers can have a limit configured on how much CPU they can consume in\na burst. If we are at this limit, exceeding the allocated requested resources, we\nshould consider revisting the container's HPA configuration\n Lower is better.",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
             "w": 12,
             "x": 0,
+            "y": 20
+          },
+          "id": 1262336683,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "sideWidth": null,
+            "sort": "max",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [
+            {
+              "alias": "/^Soft SLO/",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^Hard SLO/",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            },
+            {
+              "alias": "/aggregated /",
+              "color": "#E7D551",
+              "linewidth": 2,
+              "zindex": 3
+            },
+            {
+              "alias": "/^95th quantile for week/",
+              "color": "#37872D",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 1,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^99th quantile for week/",
+              "color": "#56A64B",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "saturation-kube_container_cpu_limit",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, pod, container) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, tier, type, stage, shard, pod, container) (\n        rate(container_cpu_usage_seconds_total:labeled{container!=\"\", container!=\"POD\", type=\"ops-gitlab-net\"}[5m])\n      )\n      /\n      sum by(environment, tier, type, stage, shard, pod, container) (\n        container_spec_cpu_quota:labeled{container!=\"\", container!=\"POD\", type=\"ops-gitlab-net\"}\n        /\n        container_spec_cpu_period:labeled{container!=\"\", container!=\"POD\", type=\"ops-gitlab-net\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{ pod }} {{ container }}",
+              "refId": "A"
+            },
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{type=\"ops-gitlab-net\", component=\"kube_container_cpu_limit\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "aggregated {{ component }}",
+              "refId": "B"
+            },
+            {
+              "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{type=\"ops-gitlab-net\", component=\"kube_container_cpu_limit\"}\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "95th quantile for week {{ component }}",
+              "refId": "C"
+            },
+            {
+              "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{type=\"ops-gitlab-net\", component=\"kube_container_cpu_limit\"}\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "99th quantile for week {{ component }}",
+              "refId": "D"
+            },
+            {
+              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"kube_container_cpu_limit\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "Soft SLO: {{ component }}",
+              "refId": "E"
+            },
+            {
+              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"kube_container_cpu_limit\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "Hard SLO: {{ component }}",
+              "refId": "F"
+            }
+          ],
+          "thresholds": [
+
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "kube_container_cpu_limit component saturation: Kube Container CPU over-utilization",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Saturation %",
+              "logBase": 1,
+              "max": 1,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Records the total anonymous (unevictable) memory utilization for containers for this\nservice, as a percentage of the memory limit as configured through Kubernetes.\n\nThis is computed using the container's resident set size (RSS), as opposed to\nkube_container_memory which uses the working set size. For our purposes, RSS is the\nbetter metric as cAdvisor's working set calculation includes pages from the\nfilesystem cache that can (and will) be evicted before the OOM killer kills the\ncgroup.\n\nA container's RSS (anonymous memory usage) is still not precisely what the OOM\nkiller will use, but it's a better approximation of what the container's workload is\nactually using. RSS metrics can, however, be dramatically inflated if a process in\nthe container uses MADV_FREE (lazy-free) memory. RSS will include the memory that is\navailable to be reclaimed without a page fault, but not currently in use.\n\nThe most common case of OOM kills is for anonymous memory demand to overwhelm the\ncontainer's memory limit. On swapless hosts, anonymous memory cannot be evicted from\nthe page cache, so when a container's memory usage is mostly anonymous pages, the\nonly remaining option to relieve memory pressure may be the OOM killer.\n\nAs container RSS approaches container memory limit, OOM kills become much more\nlikely. Consequently, this ratio is a good leading indicator of memory saturation\nand OOM risk.\n Lower is better.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
             "y": 20
           },
           "id": 2875690100,
@@ -13414,8 +13612,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 20
+            "x": 0,
+            "y": 30
           },
           "id": 4163523952,
           "legend": {
@@ -13608,7 +13806,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 30
           },
           "id": 351198712,
@@ -13802,8 +14000,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 30
+            "x": 0,
+            "y": 40
           },
           "id": 1001792825,
           "legend": {
@@ -13996,7 +14194,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 40
           },
           "id": 2359646072,
@@ -14194,7 +14392,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 131,
+      "id": 132,
       "panels": [
         {
           "aliasColors": {
@@ -14213,7 +14411,7 @@
             "x": 0,
             "y": 1000
           },
-          "id": 132,
+          "id": 133,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14311,7 +14509,7 @@
             "x": 6,
             "y": 1000
           },
-          "id": 133,
+          "id": 134,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14409,7 +14607,7 @@
             "x": 12,
             "y": 1000
           },
-          "id": 134,
+          "id": 135,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14507,7 +14705,7 @@
             "x": 18,
             "y": 1000
           },
-          "id": 135,
+          "id": 136,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14606,7 +14804,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 136,
+      "id": 137,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -14673,5 +14871,5 @@
   "timezone": "utc",
   "title": "ops-gitlab-net: Overview",
   "uid": "ops-gitlab-net-main",
-  "version": 599
+  "version": 600
 }
