@@ -25,6 +25,17 @@
   "liveNow": false,
   "panels": [
     {
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 4,
+      "title": "thanos-gprd-storegateway-.*",
+      "type": "row"
+    },
+    {
       "datasource": {
         "type": "prometheus",
         "uid": "PA258B30F88C30650"
@@ -49,6 +60,159 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Request"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": ""
+            },
+            "properties": [
+
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 15,
+        "w": 12,
+        "x": 0,
+        "y": 1
+      },
+      "hideTimeOverride": false,
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "rate(container_cpu_usage_seconds_total{env=\"ops\", cluster=\"ops-gitlab-gke\", namespace=\"thanos\", container=\"storegateway\",pod=~\"thanos-gprd-storegateway-.*\"}[$__rate_interval])",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{pod}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "kube_pod_container_resource_requests{env=\"ops\", cluster=\"ops-gitlab-gke\", namespace=\"thanos\", container=\"storegateway\",pod=~\"thanos-gprd-storegateway-.*\", unit=\"core\", resource=\"cpu\"}\n",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Request",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "kube_pod_container_resource_limits{env=\"ops\", cluster=\"ops-gitlab-gke\", namespace=\"thanos\", container=\"storegateway\",pod=~\"thanos-gprd-storegateway-.*\", unit=\"core\", resource=\"cpu\"}\n",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Limit",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "title": "CPU Usage",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 4,
@@ -88,21 +252,21 @@
         ]
       },
       "gridPos": {
-        "h": 13,
-        "w": 11,
-        "x": 0,
-        "y": 0
+        "h": 15,
+        "w": 12,
+        "x": 12,
+        "y": 1
       },
       "hideTimeOverride": false,
       "id": 1,
       "options": {
         "legend": {
           "calcs": [
-            "lastNotNull"
+
           ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single",
@@ -116,12 +280,325 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "container_memory_working_set_bytes{env=\"ops\", cluster=\"ops-gitlab-gke\", namespace=\"thanos\", pod=~\"receive-gitlab-thanos-receive-.*\"}",
+          "expr": "container_memory_working_set_bytes{env=\"ops\", cluster=\"ops-gitlab-gke\", namespace=\"thanos\", container=\"storegateway\",pod=~\"thanos-gprd-storegateway-.*\"}",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{pod}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "kube_pod_container_resource_requests{env=\"ops\", cluster=\"ops-gitlab-gke\", job=\"kube-state-metrics\", namespace=\"thanos\", pod=~\"thanos-gprd-storegateway-.*\", container=\"storegateway\", resource=\"memory\", unit=\"byte\"}\n",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Memory Request",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "kube_pod_container_resource_limits{env=\"ops\", cluster=\"ops-gitlab-gke\", job=\"kube-state-metrics\", namespace=\"thanos\", pod=~\"thanos-gprd-storegateway-.*\", container=\"storegateway\", resource=\"memory\", unit=\"byte\"}\n",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Memory Limit",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "title": "Memory usage",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 5,
+      "panels": [
+
+      ],
+      "title": "thanos-query",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 15,
+        "w": 12,
+        "x": 0,
+        "y": 17
+      },
+      "hideTimeOverride": false,
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "rate(container_cpu_usage_seconds_total{env=\"ops\", cluster=\"ops-gitlab-gke\", namespace=\"thanos\", container=\"query\", pod=~\"thanos-query-.*\"}[$__rate_interval])",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{pod}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "kube_pod_container_resource_requests{env=\"ops\", cluster=\"ops-gitlab-gke\", namespace=\"thanos\", container=\"query\", pod=~\"thanos-query-.*\", unit=\"core\", resource=\"cpu\"}\n",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "CPU Request",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "kube_pod_container_resource_limits{env=\"ops\", cluster=\"ops-gitlab-gke\", namespace=\"thanos\", container=\"query\", pod=~\"thanos-query-.*\", unit=\"core\", resource=\"cpu\"}\n",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "CPU Limit",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "title": "CPU Usage",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 4,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 15,
+        "w": 12,
+        "x": 12,
+        "y": 17
+      },
+      "hideTimeOverride": false,
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "container_memory_working_set_bytes{env=\"ops\", cluster=\"ops-gitlab-gke\", namespace=\"thanos\", container=\"query\", pod=~\"thanos-query-.*\"}",
           "format": "time_series",
           "interval": "",
           "legendFormat": "{{pod}}",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "kube_pod_container_resource_requests{env=\"ops\", cluster=\"ops-gitlab-gke\", job=\"kube-state-metrics\", namespace=\"thanos\", container=\"query\", pod=~\"thanos-query-.*\", resource=\"memory\", unit=\"byte\"}\n",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Memory request",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "kube_pod_container_resource_limits{env=\"ops\", cluster=\"ops-gitlab-gke\", job=\"kube-state-metrics\", namespace=\"thanos\", container=\"query\", pod=~\"thanos-query-.*\", resource=\"memory\", unit=\"byte\"}\n",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Memory Limit",
+          "range": true,
+          "refId": "C"
         }
       ],
       "title": "Memory usage",
@@ -152,6 +629,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -192,9 +670,9 @@
       },
       "gridPos": {
         "h": 13,
-        "w": 13,
-        "x": 11,
-        "y": 0
+        "w": 12,
+        "x": 0,
+        "y": 32
       },
       "hideTimeOverride": false,
       "id": 3,
@@ -229,109 +707,6 @@
       ],
       "title": "Active time series",
       "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PA258B30F88C30650"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 13,
-        "w": 11,
-        "x": 0,
-        "y": 13
-      },
-      "hideTimeOverride": false,
-      "id": 2,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PA258B30F88C30650"
-          },
-          "editorMode": "code",
-          "expr": "rate(container_cpu_usage_seconds_total{env=\"ops\", cluster=\"ops-gitlab-gke\", namespace=\"thanos\", pod=~\"receive-gitlab-thanos-receive-.*\"}[$__rate_interval])",
-          "format": "time_series",
-          "interval": "",
-          "legendFormat": "{{pod}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "CPU Usage",
-      "type": "timeseries"
     }
   ],
   "refresh": "",
@@ -339,7 +714,8 @@
   "style": "dark",
   "tags": [
     "protected",
-    "unmanaged"
+    "unmanaged",
+    "thanos"
   ],
   "templating": {
     "list": [
@@ -362,6 +738,6 @@
   "timezone": "utc",
   "title": "rnaveiras - thanos memory usage",
   "uid": "d726192d-dcce-42db-9b90-fb85a2a3457d",
-  "version": 6,
+  "version": 9,
   "weekStart": "monday"
 }
