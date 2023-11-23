@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5600965742 at Thu Nov 23 06:50:32 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5604893373 at Thu Nov 23 15:05:44 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -1577,7 +1577,7 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
-        "w": 8,
+        "w": 6,
         "x": 0,
         "y": 3000
       },
@@ -1670,16 +1670,131 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 0,
+      "description": "Shows what percentages of instances are in the idle or acquired state. There is no golden rule here and the metric\nshould be analyzed together with raw numbers showing the different instance states, but in a very generlized view:\nthe higher number the better, more than 50% is what we aim to if there is a constant number of jobs in the\nincoming queue for a shard. For shards that have times with no jobs in the queue, having the efficiency dropped\nbelow 50% is something normal, but in that case we aim to have a small raw number of idle instances.\n",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 6,
+        "y": 3000
+      },
+      "id": 15,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "1 - (\n  sum by(shard) (\n    gitlab_runner_autoscaling_machine_states{environment=~\"$environment\", stage=~\"$stage\", executor=\"docker+machine\", instance=~\"${runner_manager:pipe}\", state=~\"idle|acquired\"}\n  )\n  /\n  sum by(shard) (\n    gitlab_runner_autoscaling_machine_states{environment=~\"$environment\", stage=~\"$stage\", executor=\"docker+machine\", instance=~\"${runner_manager:pipe}\"}\n  )\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{shard}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "custom",
+          "fill": true,
+          "fillColor": "rgba(242, 73, 92, 0.25)",
+          "line": false,
+          "op": "lt",
+          "value": 0.5,
+          "yaxis": "left"
+        },
+        {
+          "colorMode": "custom",
+          "fill": true,
+          "fillColor": "rgba(86, 166, 75, 0.25)",
+          "line": false,
+          "op": "gt",
+          "value": 0.5,
+          "yaxis": "left"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Idle efficiency",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
       "description": "",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 8,
+        "w": 6,
+        "x": 12,
         "y": 3000
       },
-      "id": 15,
+      "id": 16,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1776,15 +1891,15 @@
       "datasource": "$PROMETHEUS_DS",
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 16,
+        "w": 6,
+        "x": 18,
         "y": 3000
       },
       "heatmap": {
       },
       "hideZeroBuckets": false,
       "highlightCards": true,
-      "id": 16,
+      "id": 17,
       "legend": {
         "show": true
       },
@@ -1867,7 +1982,7 @@
         "x": 0,
         "y": 4000
       },
-      "id": 17,
+      "id": 18,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -2004,7 +2119,7 @@
         "x": 12,
         "y": 4000
       },
-      "id": 18,
+      "id": 19,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -2382,5 +2497,5 @@
   "timezone": "utc",
   "title": "ci-runners: Incident Support: autoscaling",
   "uid": "ci-runners-incident-autoscaling",
-  "version": 2991
+  "version": 2992
 }
