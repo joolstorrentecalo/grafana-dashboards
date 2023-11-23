@@ -893,10 +893,12 @@
             "type": "prometheus",
             "uid": "PA258B30F88C30650"
           },
-          "expr": "topk(5,namedprocess_namegroup_memory_bytes{groupname=\"osqueryd\",environment=\"$environment\"})",
+          "editorMode": "code",
+          "expr": "topk(5,namedprocess_namegroup_memory_bytes{groupname=\"osqueryd\",memtype=\"resident\",environment=\"$environment\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{fqdn}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -935,13 +937,124 @@
       "yaxis": {
         "align": false
       }
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+
+          ]
+        },
+        "overrides": [
+
+        ]
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 18
+      },
+      "hiddenSeries": false,
+      "id": 11,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "paceLength": 10,
+      "percentage": false,
+      "pluginVersion": "10.1.5",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "topk(5,namedprocess_namegroup_memory_bytes{groupname=\"osqueryd\",memtype=\"resident\",environment=\"$environment\",fqdn=\"$node\"})",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{fqdn}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeRegions": [
+
+      ],
+      "title": "Memory Host",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "bytes",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
     }
   ],
   "refresh": "5m",
   "schemaVersion": 38,
   "style": "dark",
   "tags": [
-    "unmanaged"
+    "Host"
   ],
   "templating": {
     "list": [
@@ -957,19 +1070,49 @@
         "name": "environment",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "gprd",
             "value": "gprd"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "gstg",
             "value": "gstg"
           }
         ],
         "query": "gprd, gstg",
+        "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "console-ro-01-sv-gprd.c.gitlab-production.internal",
+          "value": "console-ro-01-sv-gprd.c.gitlab-production.internal"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PA258B30F88C30650"
+        },
+        "definition": "label_values(namedprocess_namegroup_memory_bytes{groupname=\"osqueryd\", env=\"$environment\"},fqdn)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Host",
+        "multi": false,
+        "name": "node",
+        "options": [
+
+        ],
+        "query": {
+          "query": "label_values(namedprocess_namegroup_memory_bytes{groupname=\"osqueryd\", env=\"$environment\"},fqdn)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -1005,6 +1148,6 @@
   "timezone": "",
   "title": "OSQuery",
   "uid": "fjSLYzRWz",
-  "version": 25,
+  "version": 31,
   "weekStart": ""
 }
