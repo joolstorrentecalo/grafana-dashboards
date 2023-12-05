@@ -114,7 +114,7 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "topk(5,rate(container_cpu_usage_seconds_total{env='$environment', container='wiz-sensor'}[$__rate_interval]))",
+          "expr": "topk(5,sum by (pod,cluster) (rate(container_cpu_usage_seconds_total{env='$environment', container='wiz-sensor'}[$__rate_interval])))",
           "instant": false,
           "legendFormat": "{cluster=\"{{cluster}}\",pod={{pod}}}",
           "range": true,
@@ -184,7 +184,7 @@
             "uid": "$PROMETHEUS_DS"
           },
           "editorMode": "code",
-          "expr": "topk(5,sum by(pod) (\n  rate(\n    container_network_transmit_bytes_total{\n      env=\"$environment\",namespace=\"wiz-sensor\"\n    }[$__rate_interval]\n  )\n))\n",
+          "expr": "topk(5,sum by(pod,cluster) (\n  rate(\n    container_network_transmit_bytes_total{\n      env=\"$environment\",namespace=\"wiz-sensor\"\n    }[$__rate_interval]\n  )\n))\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
@@ -197,7 +197,7 @@
             "uid": "$PROMETHEUS_DS"
           },
           "editorMode": "code",
-          "expr": "topk(5,\n  rate(\n    container_network_receive_bytes_total{\n      env=\"$environment\",namespace=\"wiz-sensor\"\n    }[$__rate_interval]\n  )\n)\n",
+          "expr": "topk(5, sum by (pod,cluster) (\n  rate(\n    container_network_receive_bytes_total{\n      env=\"$environment\",namespace=\"wiz-sensor\"\n    }[$__rate_interval]\n  ))\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
@@ -338,7 +338,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "topk(5,container_oom_events_total{env='$environment', container='wiz-sensor'})",
+          "expr": "topk(5,sum by (pod,cluster) (container_oom_events_total{env='$environment', container='wiz-sensor'}))",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -411,7 +411,30 @@
           "unit": "bytes"
         },
         "overrides": [
-
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "{cluster=\"pre-gitlab-gke\",pod=wiz-sensor-9xg2n}"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
         ]
       },
       "gridPos": {
@@ -443,7 +466,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "topk(5,container_memory_usage_bytes{env='$environment', container='wiz-sensor'})",
+          "expr": "topk(5,sum by (pod,cluster) (container_memory_usage_bytes{env='$environment', container='wiz-sensor'}))",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -457,7 +480,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "",
+  "refresh": false,
   "schemaVersion": 38,
   "style": "dark",
   "tags": [
@@ -505,6 +528,6 @@
   "timezone": "",
   "title": "Wiz Sensor Global Stats",
   "uid": "b8a4bde1-bcfe-4913-a771-b1e2cddf2b8c",
-  "version": 16,
+  "version": 18,
   "weekStart": ""
 }
