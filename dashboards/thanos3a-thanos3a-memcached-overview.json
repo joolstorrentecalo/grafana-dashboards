@@ -4,7 +4,7 @@
 
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5721603225 at Mon Dec 11 04:07:18 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5722590111 at Mon Dec 11 08:29:05 UTC 2023",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
@@ -58,10 +58,8 @@
             {
               "expr": "sum(rate(memcached_commands_total{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\", command=\"get\", status=\"hit\"}[$__rate_interval])) / sum(rate(memcached_commands_total{cluster=~\"$cluster\", job=~\"$job\", command=\"get\"}[$__rate_interval]))",
               "format": "time_series",
-              "intervalFactor": 2,
               "legendFormat": "Hit Rate",
-              "legendLink": null,
-              "step": 10
+              "legendLink": null
             }
           ],
           "thresholds": [
@@ -143,10 +141,8 @@
             {
               "expr": "topk(20,\n  max by (cluster, job, instance) (\n    memcached_current_connections{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\"} / memcached_max_connections{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\"}\n))\n",
               "format": "time_series",
-              "intervalFactor": 2,
               "legendFormat": "{{ cluster }} / {{ job }} / {{ instance }}",
-              "legendLink": null,
-              "step": 10
+              "legendLink": null
             }
           ],
           "thresholds": [
@@ -240,10 +236,8 @@
             {
               "expr": "sum by(command, status) (rate(memcached_commands_total{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\"}[$__rate_interval]))",
               "format": "time_series",
-              "intervalFactor": 2,
               "legendFormat": "{{command}} {{status}}",
-              "legendLink": null,
-              "step": 10
+              "legendLink": null
             }
           ],
           "thresholds": [
@@ -325,10 +319,8 @@
             {
               "expr": "sum by(instance) (rate(memcached_items_evicted_total{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\"}[$__rate_interval]))",
               "format": "time_series",
-              "intervalFactor": 2,
               "legendFormat": "{{instance}}",
-              "legendLink": null,
-              "step": 10
+              "legendLink": null
             }
           ],
           "thresholds": [
@@ -410,10 +402,8 @@
             {
               "expr": "sum by(instance) (rate(memcached_items_total{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\"}[$__rate_interval]))",
               "format": "time_series",
-              "intervalFactor": 2,
               "legendFormat": "{{instance}}",
-              "legendLink": null,
-              "step": 10
+              "legendLink": null
             }
           ],
           "thresholds": [
@@ -500,17 +490,98 @@
 
           ],
           "spaceLength": 10,
-          "span": 6,
+          "span": 4,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (instance) (\n  rate(memcached_process_user_cpu_seconds_total{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\"}[$__rate_interval]) +\n  rate(memcached_process_system_cpu_seconds_total{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\"}[$__rate_interval])\n)\n",
+              "format": "time_series",
+              "legendFormat": "{{instance}}",
+              "legendLink": null
+            }
+          ],
+          "thresholds": [
+
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "CPU",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$datasource",
+          "fill": 10,
+          "id": 7,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 0,
+          "links": [
+
+          ],
+          "nullPointMode": "null as zero",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+
+          ],
+          "spaceLength": 10,
+          "span": 4,
           "stack": true,
           "steppedLine": false,
           "targets": [
             {
               "expr": "sum by(instance) (memcached_current_bytes{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\"})",
               "format": "time_series",
-              "intervalFactor": 2,
               "legendFormat": "{{instance}}",
-              "legendLink": null,
-              "step": 10
+              "legendLink": null
             }
           ],
           "thresholds": [
@@ -561,7 +632,7 @@
           "dashes": false,
           "datasource": "$datasource",
           "fill": 10,
-          "id": 7,
+          "id": 8,
           "legend": {
             "avg": false,
             "current": false,
@@ -585,17 +656,15 @@
 
           ],
           "spaceLength": 10,
-          "span": 6,
+          "span": 4,
           "stack": true,
           "steppedLine": false,
           "targets": [
             {
               "expr": "sum by(instance) (memcached_current_items{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\"})",
               "format": "time_series",
-              "intervalFactor": 2,
               "legendFormat": "{{instance}}",
-              "legendLink": null,
-              "step": 10
+              "legendLink": null
             }
           ],
           "thresholds": [
@@ -643,106 +712,13 @@
       "repeatIteration": null,
       "repeatRowId": null,
       "showTitle": true,
-      "title": "Memory",
+      "title": "Resources",
       "titleSize": "h6"
     },
     {
       "collapse": false,
       "height": "250px",
       "panels": [
-        {
-          "aliasColors": {
-          },
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$datasource",
-          "fill": 1,
-          "id": 8,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [
-
-          ],
-          "nullPointMode": "null as zero",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-
-          ],
-          "spaceLength": 10,
-          "span": 3,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum by(instance) (memcached_current_connections{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\"})",
-              "format": "time_series",
-              "intervalFactor": 2,
-              "legendFormat": "{{instance}}",
-              "legendLink": null,
-              "step": 10
-            },
-            {
-              "expr": "min(memcached_max_connections{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\"})",
-              "format": "time_series",
-              "intervalFactor": 2,
-              "legendFormat": "Max Connections (min setting across all instances)",
-              "legendLink": null,
-              "step": 10
-            }
-          ],
-          "thresholds": [
-
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Current Connections",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": [
-
-            ]
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": 0,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ]
-        },
         {
           "aliasColors": {
           },
@@ -780,12 +756,16 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by(instance) (rate(memcached_connections_total{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\"}[$__rate_interval]))",
+              "expr": "sum by(instance) (memcached_current_connections{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\"})",
               "format": "time_series",
-              "intervalFactor": 2,
               "legendFormat": "{{instance}}",
-              "legendLink": null,
-              "step": 10
+              "legendLink": null
+            },
+            {
+              "expr": "min(memcached_max_connections{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\"})",
+              "format": "time_series",
+              "legendFormat": "Max Connections (min setting across all instances)",
+              "legendLink": null
             }
           ],
           "thresholds": [
@@ -793,7 +773,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Connections / sec",
+          "title": "Current Connections",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -865,12 +845,10 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by(instance) (rate(memcached_read_bytes_total{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\"}[$__rate_interval]))",
+              "expr": "sum by(instance) (rate(memcached_connections_total{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\"}[$__rate_interval]))",
               "format": "time_series",
-              "intervalFactor": 2,
               "legendFormat": "{{instance}}",
-              "legendLink": null,
-              "step": 10
+              "legendLink": null
             }
           ],
           "thresholds": [
@@ -878,7 +856,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Bytes received",
+          "title": "Connections / sec",
           "tooltip": {
             "shared": true,
             "sort": 2,
@@ -896,7 +874,7 @@
           },
           "yaxes": [
             {
-              "format": "Bps",
+              "format": "short",
               "label": null,
               "logBase": 1,
               "max": null,
@@ -950,12 +928,93 @@
           "steppedLine": false,
           "targets": [
             {
+              "expr": "sum by(instance) (rate(memcached_read_bytes_total{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\"}[$__rate_interval]))",
+              "format": "time_series",
+              "legendFormat": "{{instance}}",
+              "legendLink": null
+            }
+          ],
+          "thresholds": [
+
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Bytes received",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "Bps",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$datasource",
+          "fill": 1,
+          "id": 12,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null as zero",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+
+          ],
+          "spaceLength": 10,
+          "span": 3,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
               "expr": "sum by(instance) (rate(memcached_written_bytes_total{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\"}[$__rate_interval]))",
               "format": "time_series",
-              "intervalFactor": 2,
               "legendFormat": "{{instance}}",
-              "legendLink": null,
-              "step": 10
+              "legendLink": null
             }
           ],
           "thresholds": [
@@ -1018,7 +1077,7 @@
           "dashes": false,
           "datasource": "$datasource",
           "fill": 1,
-          "id": 12,
+          "id": 13,
           "legend": {
             "avg": false,
             "current": false,
@@ -1168,19 +1227,15 @@
               "expr": "count by (job, instance, version) (memcached_version{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\"})",
               "format": "table",
               "instant": true,
-              "intervalFactor": 2,
               "legendFormat": "",
-              "refId": "A",
-              "step": 10
+              "refId": "A"
             },
             {
               "expr": "max by (job, instance) (memcached_uptime_seconds{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\"})",
               "format": "table",
               "instant": true,
-              "intervalFactor": 2,
               "legendFormat": "",
-              "refId": "B",
-              "step": 10
+              "refId": "B"
             }
           ],
           "thresholds": [
@@ -1375,5 +1430,5 @@
   "timezone": "utc",
   "title": "thanos: Thanos: Memcached Overview",
   "uid": "thanos-memcached-overview",
-  "version": 1105
+  "version": 1106
 }
