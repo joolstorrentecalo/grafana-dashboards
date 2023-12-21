@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5799364375 at Thu Dec 21 03:43:09 UTC 2023",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/5803407873 at Thu Dec 21 14:50:34 UTC 2023",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -1084,6 +1084,10 @@
         {
           "title": "ai-gateway Service | gcp_quota_limit_vertex_ai resource Dashboard",
           "url": "https://dashboards.gitlab.net/d/alerts-sat_gcp_quota_limit_vertex_ai/?var-environment=gprd&var-type=ai-gateway&var-stage=main&var-component=gcp_quota_limit_vertex_ai"
+        },
+        {
+          "title": "ai-gateway Service | max_concurrent_inferences resource Dashboard",
+          "url": "https://dashboards.gitlab.net/d/alerts-max_concurrent_inferences/?var-environment=gprd&var-type=ai-gateway&var-stage=main&var-component=max_concurrent_inferences"
         },
         {
           "title": "ai-gateway Service | open_fds resource Dashboard",
@@ -7528,13 +7532,207 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "Open file descriptor utilization per instance.\n\nSaturation on file descriptor limits may indicate a resource-descriptor leak in the application.\n\nAs a temporary fix, you may want to consider restarting the affected process.\n Lower is better.",
+          "description": "The maximum number of inferences (requests) we can concurrently make to a\nsingle LLM.\n\nAnthropic is enforcing different concurrency limits per model they provide.\nWhen we make a new request when we already have the maximum number of concurrent\nrequests in flight, Anthropic responds with a 429. The client-library in the\nAI-gateway is set to retry once on errors.\n\nWhen Anthropic rejects the requests, this leads to a 500 error in the AI-gateway\nand Workhorse. This results in clients not getting a response (code suggestion).\n\nTo fix this, we need to request a larger concurrency to Anthropic.\nCurrently in the `#ext-anthropic` slack channel.\n\nBear in mind that this metric is sampled at scrape time. So it is only an\napproximation of the actual number of requests in flight. We should assume the\nactual utilization is higher and request increases sooner.\n Lower is better.",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
             "w": 12,
             "x": 0,
+            "y": 10
+          },
+          "id": 621984338,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "sideWidth": null,
+            "sort": "max",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [
+            {
+              "alias": "/^Soft SLO/",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^Hard SLO/",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            },
+            {
+              "alias": "/aggregated /",
+              "color": "#E7D551",
+              "linewidth": 2,
+              "zindex": 3
+            },
+            {
+              "alias": "/^95th quantile for week/",
+              "color": "#37872D",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 1,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^99th quantile for week/",
+              "color": "#56A64B",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "saturation-max_concurrent_inferences",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, model_engine, model_name) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, tier, type, stage, shard, model_engine, model_name)(max_over_time(model_inferences_in_flight{env=\"$environment\",environment=\"$environment\",type=\"ai-gateway\"}[10m]))\n      /\n      min by (environment, tier, type, stage, shard, model_engine, model_name)(min_over_time(model_inferences_max_concurrent{env=\"$environment\",environment=\"$environment\",type=\"ai-gateway\"}[10m]))\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{ model_engine }} {{ model_name }}",
+              "refId": "A"
+            },
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",type=\"ai-gateway\", component=\"max_concurrent_inferences\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "aggregated {{ component }}",
+              "refId": "B"
+            },
+            {
+              "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",type=\"ai-gateway\", component=\"max_concurrent_inferences\"}\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "95th quantile for week {{ component }}",
+              "refId": "C"
+            },
+            {
+              "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",type=\"ai-gateway\", component=\"max_concurrent_inferences\"}\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "99th quantile for week {{ component }}",
+              "refId": "D"
+            },
+            {
+              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"max_concurrent_inferences\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "Soft SLO: {{ component }}",
+              "refId": "E"
+            },
+            {
+              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"max_concurrent_inferences\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "Hard SLO: {{ component }}",
+              "refId": "F"
+            }
+          ],
+          "thresholds": [
+
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "max_concurrent_inferences component saturation: Maximum number of concurrent inferences to a large language model",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Saturation %",
+              "logBase": 1,
+              "max": 1,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Open file descriptor utilization per instance.\n\nSaturation on file descriptor limits may indicate a resource-descriptor leak in the application.\n\nAs a temporary fix, you may want to consider restarting the affected process.\n Lower is better.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
             "y": 10
           },
           "id": 1001792825,
@@ -7728,8 +7926,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 10
+            "x": 0,
+            "y": 20
           },
           "id": 1050857443,
           "legend": {
@@ -7922,7 +8120,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 20
           },
           "id": 1738137433,
@@ -8116,8 +8314,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 20
+            "x": 0,
+            "y": 30
           },
           "id": 4285373877,
           "legend": {
@@ -8310,7 +8508,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 30
           },
           "id": 377718254,
@@ -8506,7 +8704,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 80,
+      "id": 81,
       "panels": [
         {
           "colors": [
@@ -8527,7 +8725,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 81,
+          "id": 82,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -8640,7 +8838,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 82,
+          "id": 83,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -8751,7 +8949,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 83,
+          "id": 84,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -8856,7 +9054,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 84,
+      "id": 85,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -8950,5 +9148,5 @@
   "timezone": "utc",
   "title": "ai-gateway: Overview",
   "uid": "ai-gateway-main",
-  "version": 422
+  "version": 423
 }
