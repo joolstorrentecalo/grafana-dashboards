@@ -126,7 +126,7 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
-      "description": "Redis memory utilization per node.\n\nAs Redis memory saturates node memory, the likelyhood of OOM kills, possibly to the Redis process,\nbecome more likely.\n\nTrace chunks should be extremely transient (written to redis, then offloaded to objectstorage nearly immediately)\nso any uncontrolled growth in memory saturation implies a potentially significant problem.  Short term mitigation\nis usually to upsize the instances to have more memory while the underlying problem is identified, but low\nthresholds give us more time to investigate first\n\nThis threshold is kept deliberately very low; because we use C2 instances we are generally overprovisioned\nfor RAM, and because of the transient nature of the data here, it is advantageous to know early if there is any\nnon-trivial storage occurring\n Lower is better.",
+      "description": "The maximum number of inferences (requests) we can concurrently make to a\nall models for a single provider (engine).\n\nAnthropic is enforcing different concurrency limits per model they provide.\nBut across all models, we can not exceed the global limit that is equal to\nthe largest allowed limit.\n\nWhen Anthropic rejects the requests, this leads to a 500 error in the AI-gateway\nand Workhorse. This results in clients not getting a response (code suggestion).\n\nTo fix this, we need to request a larger concurrency to Anthropic.\nCurrently in the `#ext-anthropic` slack channel.\n\nBear in mind that this metric is sampled at scrape time. So it is only an\napproximation of the actual number of requests in flight. We should assume the\nactual utilization is higher and request increases sooner.\n Lower is better.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -135,7 +135,7 @@
         "x": 0,
         "y": 0
       },
-      "id": 3185191014,
+      "id": 2029158470,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -219,20 +219,20 @@
         }
       ],
       "spaceLength": 10,
-      "stableId": "saturation-redis_memory_tracechunks",
+      "stableId": "saturation-max_concurrent_inferences_per_engine",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn, instance, shard) (\n  clamp_min(\n    clamp_max(\n      max by (environment, tier, type, stage, shard, fqdn, instance, shard) (\n        label_replace(redis_memory_used_rss_bytes{env=\"$environment\",stage=\"$stage\",type=\"$type\"}, \"memtype\", \"rss\",\"\",\"\")\n        or\n        label_replace(redis_memory_used_bytes{env=\"$environment\",stage=\"$stage\",type=\"$type\"}, \"memtype\", \"used\",\"\",\"\")\n      )\n      /\n      avg by (environment, tier, type, stage, shard, fqdn, instance, shard) (\n        node_memory_MemTotal_bytes{env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, model_engine) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, tier, type, stage, shard, model_engine)(max_over_time(model_inferences_in_flight{env=\"$environment\",stage=\"$stage\",type=\"$type\"}[10m]))\n      /\n      max by (environment, tier, type, stage, shard, model_engine)(min_over_time(model_inferences_max_concurrent{env=\"$environment\",stage=\"$stage\",type=\"$type\"}[10m]))\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{ fqdn }} {{ instance }} {{ shard }}",
+          "legendFormat": "{{ model_engine }}",
           "refId": "A"
         },
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"redis_memory_tracechunks\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"max_concurrent_inferences_per_engine\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -240,7 +240,7 @@
           "refId": "B"
         },
         {
-          "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"redis_memory_tracechunks\"}\n)\n",
+          "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"max_concurrent_inferences_per_engine\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -248,7 +248,7 @@
           "refId": "C"
         },
         {
-          "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"redis_memory_tracechunks\"}\n)\n",
+          "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"max_concurrent_inferences_per_engine\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -256,7 +256,7 @@
           "refId": "D"
         },
         {
-          "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"redis_memory_tracechunks\"}) by (component)\n",
+          "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"max_concurrent_inferences_per_engine\"}) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -264,7 +264,7 @@
           "refId": "E"
         },
         {
-          "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"redis_memory_tracechunks\"}) by (component)\n",
+          "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"max_concurrent_inferences_per_engine\"}) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -277,7 +277,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "redis_memory_tracechunks component saturation: Redis Memory Utilization per Node",
+      "title": "max_concurrent_inferences_per_engine component saturation: Maximum number of concurrent inferences to a large language model",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -313,7 +313,7 @@
       ]
     },
     {
-      "content": "## Redis Memory Utilization per Node\n\nRedis memory utilization per node.\n\nAs Redis memory saturates node memory, the likelyhood of OOM kills, possibly to the Redis process,\nbecome more likely.\n\nTrace chunks should be extremely transient (written to redis, then offloaded to objectstorage nearly immediately)\nso any uncontrolled growth in memory saturation implies a potentially significant problem.  Short term mitigation\nis usually to upsize the instances to have more memory while the underlying problem is identified, but low\nthresholds give us more time to investigate first\n\nThis threshold is kept deliberately very low; because we use C2 instances we are generally overprovisioned\nfor RAM, and because of the transient nature of the data here, it is advantageous to know early if there is any\nnon-trivial storage occurring\n\n\n## What to do from here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=redis_memory_tracechunks)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+redis_memory_tracechunks&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
+      "content": "## Maximum number of concurrent inferences to a large language model\n\nThe maximum number of inferences (requests) we can concurrently make to a\nall models for a single provider (engine).\n\nAnthropic is enforcing different concurrency limits per model they provide.\nBut across all models, we can not exceed the global limit that is equal to\nthe largest allowed limit.\n\nWhen Anthropic rejects the requests, this leads to a 500 error in the AI-gateway\nand Workhorse. This results in clients not getting a response (code suggestion).\n\nTo fix this, we need to request a larger concurrency to Anthropic.\nCurrently in the `#ext-anthropic` slack channel.\n\nBear in mind that this metric is sampled at scrape time. So it is only an\napproximation of the actual number of requests in flight. We should assume the\nactual utilization is higher and request increases sooner.\n\n\n## What to do from here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=max_concurrent_inferences_per_engine)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+max_concurrent_inferences_per_engine&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
       "datasource": null,
       "gridPos": {
         "h": 14,
@@ -468,8 +468,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "redis-tracechunks",
-          "value": "redis-tracechunks"
+          "text": "ai-gateway",
+          "value": "ai-gateway"
         },
         "datasource": "$PROMETHEUS_DS",
         "hide": 0,
@@ -548,7 +548,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "alerts: redis memory tracechunks: Saturation Detail",
-  "uid": "alerts-sat_redis_memory_tracechunks",
-  "version": 2746
+  "title": "alerts: max concurrent inferences per engine: Saturation Detail",
+  "uid": "alerts-max_inferences_per_engine",
+  "version": 1
 }
