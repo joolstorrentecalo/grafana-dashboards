@@ -126,7 +126,7 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
-      "description": "Kubernetes containers are allocated a share of CPU. Configured using resource requests.\n\nThis is the amount of CPU that a container should always have available,\nthough it can briefly utilize more. However, if a lot of pods on the same\nhost exceed their requested CPU the container could be throttled earlier.\n\nThis monitors utilization/allocated requests over a 1 hour period, and takes\nthe 99th quantile of that utilization percentage in that period.\nWe want the worst case to be around 80%-90% utilization,\nmeaning we've sized the container correctly. If utilization is much higher than that\nthe container could already be throttled because the host is overused, if it\nis much lower, then we could be underutilizing a host.\n\nThis saturation point is only used for capacity planning.\nThe burst utilization of a CPU is monitored and alerted upon using the\n`kube_container_cpu_limit` saturation point.\n Lower is better.",
+      "description": "Kube container throttling\n\nA container will be throttled if it reaches the configured cpu limit for the\nhorizontal pod autoscaler. Or when other containers on the node are overutilizing\nthe the CPU.\n\nTo get around this, consider increasing the limit for this workload, taking\ninto consideration the requested resources.\n Lower is better.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -135,7 +135,7 @@
         "x": 0,
         "y": 0
       },
-      "id": 2713861591,
+      "id": 54512634,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -219,12 +219,12 @@
         }
       ],
       "spaceLength": 10,
-      "stableId": "saturation-kube_container_cpu",
+      "stableId": "saturation-kube_container_throttling",
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(\n  clamp_max(\n    quantile by(environment, tier, type, stage, shard, pod, container) (\n  0.99,\n  clamp_min(\n    clamp_max(\n      sum by (environment, tier, type, stage, shard, pod, container) (\n        rate(container_cpu_usage_seconds_total:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}[1h])\n      )\n      /\n      sum by(environment, tier, type, stage, shard, pod, container) (\n        kube_pod_container_resource_requests:labeled{container!=\"\", container!=\"POD\", resource=\"cpu\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    quantile by(environment, tier, type, stage, shard, pod, container) (\n  0.99,\n  clamp_min(\n    clamp_max(\n      avg by (environment, tier, type, stage, shard, pod, container)(\n        rate(container_cpu_cfs_throttled_periods_total:labeled{container!=\"\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}[5m])\n        /\n        rate(container_cpu_cfs_periods_total:labeled{container!=\"\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}[5m])\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -232,7 +232,7 @@
           "refId": "A"
         },
         {
-          "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"kube_container_cpu\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"kube_container_throttling\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -240,7 +240,7 @@
           "refId": "B"
         },
         {
-          "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"kube_container_cpu\"}\n)\n",
+          "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"kube_container_throttling\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -248,7 +248,7 @@
           "refId": "C"
         },
         {
-          "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"kube_container_cpu\"}\n)\n",
+          "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",stage=\"$stage\",type=\"$type\", component=\"kube_container_throttling\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -256,7 +256,7 @@
           "refId": "D"
         },
         {
-          "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"kube_container_cpu\"}) by (component)\n",
+          "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"kube_container_throttling\"}) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -264,7 +264,7 @@
           "refId": "E"
         },
         {
-          "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"kube_container_cpu\"}) by (component)\n",
+          "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"kube_container_throttling\"}) by (component)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -277,7 +277,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "kube_container_cpu component saturation: Kube Container CPU Utilization",
+      "title": "kube_container_throttling component saturation: Kube container throttling",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -313,7 +313,7 @@
       ]
     },
     {
-      "content": "## Kube Container CPU Utilization\n\nKubernetes containers are allocated a share of CPU. Configured using resource requests.\n\nThis is the amount of CPU that a container should always have available,\nthough it can briefly utilize more. However, if a lot of pods on the same\nhost exceed their requested CPU the container could be throttled earlier.\n\nThis monitors utilization/allocated requests over a 1 hour period, and takes\nthe 99th quantile of that utilization percentage in that period.\nWe want the worst case to be around 80%-90% utilization,\nmeaning we've sized the container correctly. If utilization is much higher than that\nthe container could already be throttled because the host is overused, if it\nis much lower, then we could be underutilizing a host.\n\nThis saturation point is only used for capacity planning.\nThe burst utilization of a CPU is monitored and alerted upon using the\n`kube_container_cpu_limit` saturation point.\n\n\n## What to do from here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=kube_container_cpu)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+kube_container_cpu&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
+      "content": "## Kube container throttling\n\nKube container throttling\n\nA container will be throttled if it reaches the configured cpu limit for the\nhorizontal pod autoscaler. Or when other containers on the node are overutilizing\nthe the CPU.\n\nTo get around this, consider increasing the limit for this workload, taking\ninto consideration the requested resources.\n\n\n## What to do from here?\n\n* Check the ${type} service overview dashboard (accessible from the menu above)\n* [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&state=all&label_name[]=GitLab.com+Resource+Saturation&search=kube_container_throttling)\n* [Create an issue in the Infrastructure Tracker](https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/new?issue[title]=Resource+Saturation:+kube_container_throttling&issue[description]=/label+~\"GitLab.com+Resource+Saturation\")\n\nKeep in mind that this is a **causal alert**. This means that this may not neccessarily\nbe leading to user impact. Check the alert list below for active symptom based\nalerts incidating potential user impact.\n",
       "datasource": null,
       "gridPos": {
         "h": 14,
@@ -548,7 +548,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "alerts: kube container cpu: Saturation Detail",
-  "uid": "alerts-sat_kube_container_cpu",
-  "version": 3484
+  "title": "alerts: kube container throttling: Saturation Detail",
+  "uid": "alerts-kube_container_throttling",
+  "version": 4
 }

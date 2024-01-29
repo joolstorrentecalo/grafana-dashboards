@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6040291945 at Mon Jan 29 07:32:22 UTC 2024",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6043896316 at Mon Jan 29 14:24:52 UTC 2024",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -1089,6 +1089,10 @@
         {
           "title": "redis-cluster-chat-cache Service | kube_container_memory resource Dashboard",
           "url": "https://dashboards.gitlab.net/d/alerts-sat_kube_container_memory/?var-environment=gprd&var-type=redis-cluster-chat-cache&var-stage=main&var-component=kube_container_memory"
+        },
+        {
+          "title": "redis-cluster-chat-cache Service | kube_container_throttling resource Dashboard",
+          "url": "https://dashboards.gitlab.net/d/alerts-kube_container_throttling/?var-environment=gprd&var-type=redis-cluster-chat-cache&var-stage=main&var-component=kube_container_throttling"
         },
         {
           "title": "redis-cluster-chat-cache Service | kube_horizontalpodautoscaler_desired_replicas resource Dashboard",
@@ -6463,13 +6467,207 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "The [Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)\nautomatically scales the number of Pods in a deployment based on metrics.\n\nThe Horizontal Pod Autoscaler has a configured upper maximum. When this\nlimit is reached, the HPA will not increase the number of pods and other\nresource saturation (eg, CPU, memory) may occur.\n Lower is better.",
+          "description": "Kube container throttling\n\nA container will be throttled if it reaches the configured cpu limit for the\nhorizontal pod autoscaler. Or when other containers on the node are overutilizing\nthe the CPU.\n\nTo get around this, consider increasing the limit for this workload, taking\ninto consideration the requested resources.\n Lower is better.",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
             "w": 12,
             "x": 0,
+            "y": 30
+          },
+          "id": 54512634,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "sideWidth": null,
+            "sort": "max",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [
+            {
+              "alias": "/^Soft SLO/",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^Hard SLO/",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            },
+            {
+              "alias": "/aggregated /",
+              "color": "#E7D551",
+              "linewidth": 2,
+              "zindex": 3
+            },
+            {
+              "alias": "/^95th quantile for week/",
+              "color": "#37872D",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 1,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^99th quantile for week/",
+              "color": "#56A64B",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "saturation-kube_container_throttling",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    quantile by(environment, tier, type, stage, shard, pod, container) (\n  0.99,\n  clamp_min(\n    clamp_max(\n      avg by (environment, tier, type, stage, shard, pod, container)(\n        rate(container_cpu_cfs_throttled_periods_total:labeled{container!=\"\", env=\"$environment\",environment=\"$environment\",type=\"redis-cluster-chat-cache\"}[5m])\n        /\n        rate(container_cpu_cfs_periods_total:labeled{container!=\"\", env=\"$environment\",environment=\"$environment\",type=\"redis-cluster-chat-cache\"}[5m])\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{ pod }} {{ container }}",
+              "refId": "A"
+            },
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",type=\"redis-cluster-chat-cache\", component=\"kube_container_throttling\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "aggregated {{ component }}",
+              "refId": "B"
+            },
+            {
+              "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",type=\"redis-cluster-chat-cache\", component=\"kube_container_throttling\"}\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "95th quantile for week {{ component }}",
+              "refId": "C"
+            },
+            {
+              "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",type=\"redis-cluster-chat-cache\", component=\"kube_container_throttling\"}\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "99th quantile for week {{ component }}",
+              "refId": "D"
+            },
+            {
+              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"kube_container_throttling\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "Soft SLO: {{ component }}",
+              "refId": "E"
+            },
+            {
+              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"kube_container_throttling\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "Hard SLO: {{ component }}",
+              "refId": "F"
+            }
+          ],
+          "thresholds": [
+
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "kube_container_throttling component saturation: Kube container throttling",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Saturation %",
+              "logBase": 1,
+              "max": 1,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "The [Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)\nautomatically scales the number of Pods in a deployment based on metrics.\n\nThe Horizontal Pod Autoscaler has a configured upper maximum. When this\nlimit is reached, the HPA will not increase the number of pods and other\nresource saturation (eg, CPU, memory) may occur.\n Lower is better.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
             "y": 30
           },
           "id": 351198712,
@@ -6663,8 +6861,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 30
+            "x": 0,
+            "y": 40
           },
           "id": 1839360107,
           "legend": {
@@ -6857,7 +7055,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 40
           },
           "id": 1686893332,
@@ -7051,8 +7249,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 40
+            "x": 0,
+            "y": 50
           },
           "id": 1955556769,
           "legend": {
@@ -7245,7 +7443,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 50
           },
           "id": 503581002,
@@ -7439,8 +7637,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 50
+            "x": 0,
+            "y": 60
           },
           "id": 1415313189,
           "legend": {
@@ -7633,7 +7831,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 60
           },
           "id": 1001792825,
@@ -7827,8 +8025,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 60
+            "x": 0,
+            "y": 70
           },
           "id": 797649961,
           "legend": {
@@ -8021,7 +8219,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 70
           },
           "id": 2636709328,
@@ -8215,8 +8413,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 70
+            "x": 0,
+            "y": 80
           },
           "id": 2575624819,
           "legend": {
@@ -8409,7 +8607,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 80
           },
           "id": 577905942,
@@ -8603,8 +8801,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 80
+            "x": 0,
+            "y": 90
           },
           "id": 1472933476,
           "legend": {
@@ -8797,7 +8995,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 90
           },
           "id": 3372411356,
@@ -8995,7 +9193,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 75,
+      "id": 76,
       "panels": [
 
       ],
@@ -9024,7 +9222,7 @@
         "x": 0,
         "y": 1001
       },
-      "id": 76,
+      "id": 77,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9122,7 +9320,7 @@
         "x": 12,
         "y": 1001
       },
-      "id": 77,
+      "id": 78,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9220,7 +9418,7 @@
         "x": 0,
         "y": 1011
       },
-      "id": 78,
+      "id": 79,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9310,7 +9508,7 @@
         "x": 0,
         "y": 2000
       },
-      "id": 79,
+      "id": 80,
       "panels": [
 
       ],
@@ -9339,7 +9537,7 @@
         "x": 0,
         "y": 2001
       },
-      "id": 80,
+      "id": 81,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9437,7 +9635,7 @@
         "x": 12,
         "y": 2001
       },
-      "id": 81,
+      "id": 82,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9535,7 +9733,7 @@
         "x": 0,
         "y": 2011
       },
-      "id": 82,
+      "id": 83,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9631,7 +9829,7 @@
         "x": 12,
         "y": 2011
       },
-      "id": 83,
+      "id": 84,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9727,7 +9925,7 @@
         "x": 0,
         "y": 2021
       },
-      "id": 84,
+      "id": 85,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9825,7 +10023,7 @@
         "x": 12,
         "y": 2021
       },
-      "id": 85,
+      "id": 86,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9923,7 +10121,7 @@
         "x": 0,
         "y": 2031
       },
-      "id": 86,
+      "id": 87,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10021,7 +10219,7 @@
         "x": 12,
         "y": 2031
       },
-      "id": 87,
+      "id": 88,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10119,7 +10317,7 @@
         "x": 0,
         "y": 2041
       },
-      "id": 88,
+      "id": 89,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10217,7 +10415,7 @@
         "x": 12,
         "y": 2041
       },
-      "id": 89,
+      "id": 90,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10315,7 +10513,7 @@
         "x": 0,
         "y": 2051
       },
-      "id": 90,
+      "id": 91,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10413,7 +10611,7 @@
         "x": 12,
         "y": 2051
       },
-      "id": 91,
+      "id": 92,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10511,7 +10709,7 @@
         "x": 0,
         "y": 2061
       },
-      "id": 92,
+      "id": 93,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10609,7 +10807,7 @@
         "x": 12,
         "y": 2061
       },
-      "id": 93,
+      "id": 94,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10707,7 +10905,7 @@
         "x": 0,
         "y": 2071
       },
-      "id": 94,
+      "id": 95,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10805,7 +11003,7 @@
         "x": 12,
         "y": 2071
       },
-      "id": 95,
+      "id": 96,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10895,7 +11093,7 @@
         "x": 0,
         "y": 3000
       },
-      "id": 96,
+      "id": 97,
       "panels": [
 
       ],
@@ -10924,7 +11122,7 @@
         "x": 0,
         "y": 3001
       },
-      "id": 97,
+      "id": 98,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11059,7 +11257,7 @@
         "x": 12,
         "y": 3001
       },
-      "id": 98,
+      "id": 99,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11157,7 +11355,7 @@
         "x": 0,
         "y": 3011
       },
-      "id": 99,
+      "id": 100,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11255,7 +11453,7 @@
         "x": 12,
         "y": 3011
       },
-      "id": 100,
+      "id": 101,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11353,7 +11551,7 @@
         "x": 0,
         "y": 3021
       },
-      "id": 101,
+      "id": 102,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11451,7 +11649,7 @@
         "x": 12,
         "y": 3021
       },
-      "id": 102,
+      "id": 103,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11549,7 +11747,7 @@
         "x": 0,
         "y": 3031
       },
-      "id": 103,
+      "id": 104,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11639,7 +11837,7 @@
         "x": 0,
         "y": 4000
       },
-      "id": 104,
+      "id": 105,
       "panels": [
 
       ],
@@ -11668,7 +11866,7 @@
         "x": 0,
         "y": 4001
       },
-      "id": 105,
+      "id": 106,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11766,7 +11964,7 @@
         "x": 12,
         "y": 4001
       },
-      "id": 106,
+      "id": 107,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11864,7 +12062,7 @@
         "x": 0,
         "y": 4011
       },
-      "id": 107,
+      "id": 108,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11954,7 +12152,7 @@
         "x": 0,
         "y": 5000
       },
-      "id": 108,
+      "id": 109,
       "panels": [
 
       ],
@@ -11997,7 +12195,7 @@
         "x": 0,
         "y": 5000
       },
-      "id": 109,
+      "id": 110,
       "links": [
 
       ],
@@ -12065,7 +12263,7 @@
         "x": 4,
         "y": 5000
       },
-      "id": 110,
+      "id": 111,
       "links": [
 
       ],
@@ -12133,7 +12331,7 @@
         "x": 8,
         "y": 5000
       },
-      "id": 111,
+      "id": 112,
       "links": [
 
       ],
@@ -12201,7 +12399,7 @@
         "x": 12,
         "y": 5000
       },
-      "id": 112,
+      "id": 113,
       "links": [
 
       ],
@@ -12269,7 +12467,7 @@
         "x": 16,
         "y": 5000
       },
-      "id": 113,
+      "id": 114,
       "links": [
 
       ],
@@ -12337,7 +12535,7 @@
         "x": 20,
         "y": 5000
       },
-      "id": 114,
+      "id": 115,
       "links": [
 
       ],
@@ -12405,7 +12603,7 @@
         "x": 0,
         "y": 5004
       },
-      "id": 115,
+      "id": 116,
       "links": [
 
       ],
@@ -12459,7 +12657,7 @@
         "x": 0,
         "y": 5008
       },
-      "id": 116,
+      "id": 117,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12547,7 +12745,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 117,
+      "id": 118,
       "panels": [
         {
           "colors": [
@@ -12568,7 +12766,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 118,
+          "id": 119,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -12681,7 +12879,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 119,
+          "id": 120,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -12792,7 +12990,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 120,
+          "id": 121,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -12897,7 +13095,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 121,
+      "id": 122,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -13018,5 +13216,5 @@
   "timezone": "utc",
   "title": "redis-cluster-chat-cache: Overview",
   "uid": "redis-cluster-chat-cache-main",
-  "version": 857
+  "version": 861
 }

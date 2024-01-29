@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6040291945 at Mon Jan 29 07:33:12 UTC 2024",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6043896316 at Mon Jan 29 14:24:56 UTC 2024",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -1081,6 +1081,10 @@
         {
           "title": "sidekiq Service | kube_container_rss resource Dashboard",
           "url": "https://dashboards.gitlab.net/d/alerts-sat_kube_container_rss/?var-environment=gprd&var-type=sidekiq&var-stage=main&var-component=kube_container_rss"
+        },
+        {
+          "title": "sidekiq Service | kube_container_throttling resource Dashboard",
+          "url": "https://dashboards.gitlab.net/d/alerts-kube_container_throttling/?var-environment=gprd&var-type=sidekiq&var-stage=main&var-component=kube_container_throttling"
         },
         {
           "title": "sidekiq Service | kube_horizontalpodautoscaler_desired_replicas resource Dashboard",
@@ -11466,13 +11470,207 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "The [Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)\nautomatically scales the number of Pods in a deployment based on metrics.\n\nThe Horizontal Pod Autoscaler has a configured upper maximum. When this\nlimit is reached, the HPA will not increase the number of pods and other\nresource saturation (eg, CPU, memory) may occur.\n Lower is better.",
+          "description": "Kube container throttling\n\nA container will be throttled if it reaches the configured cpu limit for the\nhorizontal pod autoscaler. Or when other containers on the node are overutilizing\nthe the CPU.\n\nTo get around this, consider increasing the limit for this workload, taking\ninto consideration the requested resources.\n Lower is better.",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
             "w": 12,
             "x": 0,
+            "y": 20
+          },
+          "id": 54512634,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "sideWidth": null,
+            "sort": "max",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [
+            {
+              "alias": "/^Soft SLO/",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^Hard SLO/",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            },
+            {
+              "alias": "/aggregated /",
+              "color": "#E7D551",
+              "linewidth": 2,
+              "zindex": 3
+            },
+            {
+              "alias": "/^95th quantile for week/",
+              "color": "#37872D",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 1,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^99th quantile for week/",
+              "color": "#56A64B",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "saturation-kube_container_throttling",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    quantile by(environment, tier, type, stage, shard, pod, container) (\n  0.99,\n  clamp_min(\n    clamp_max(\n      avg by (environment, tier, type, stage, shard, pod, container)(\n        rate(container_cpu_cfs_throttled_periods_total:labeled{container!=\"\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"sidekiq\"}[5m])\n        /\n        rate(container_cpu_cfs_periods_total:labeled{container!=\"\", env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"sidekiq\"}[5m])\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{ pod }} {{ container }}",
+              "refId": "A"
+            },
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"sidekiq\", component=\"kube_container_throttling\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "aggregated {{ component }}",
+              "refId": "B"
+            },
+            {
+              "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"sidekiq\", component=\"kube_container_throttling\"}\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "95th quantile for week {{ component }}",
+              "refId": "C"
+            },
+            {
+              "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",stage=\"$stage\",type=\"sidekiq\", component=\"kube_container_throttling\"}\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "99th quantile for week {{ component }}",
+              "refId": "D"
+            },
+            {
+              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"kube_container_throttling\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "Soft SLO: {{ component }}",
+              "refId": "E"
+            },
+            {
+              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"kube_container_throttling\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "Hard SLO: {{ component }}",
+              "refId": "F"
+            }
+          ],
+          "thresholds": [
+
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "kube_container_throttling component saturation: Kube container throttling",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Saturation %",
+              "logBase": 1,
+              "max": 1,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "The [Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)\nautomatically scales the number of Pods in a deployment based on metrics.\n\nThe Horizontal Pod Autoscaler has a configured upper maximum. When this\nlimit is reached, the HPA will not increase the number of pods and other\nresource saturation (eg, CPU, memory) may occur.\n Lower is better.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
             "y": 20
           },
           "id": 351198712,
@@ -11666,8 +11864,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 20
+            "x": 0,
+            "y": 30
           },
           "id": 1001792825,
           "legend": {
@@ -11860,7 +12058,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 30
           },
           "id": 391047339,
@@ -12054,8 +12252,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 30
+            "x": 0,
+            "y": 40
           },
           "id": 836813313,
           "legend": {
@@ -12248,7 +12446,7 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 0,
+            "x": 12,
             "y": 40
           },
           "id": 2783215903,
@@ -12446,7 +12644,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 133,
+      "id": 134,
       "panels": [
 
       ],
@@ -12475,7 +12673,7 @@
         "x": 0,
         "y": 1001
       },
-      "id": 134,
+      "id": 135,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12573,7 +12771,7 @@
         "x": 12,
         "y": 1001
       },
-      "id": 135,
+      "id": 136,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12671,7 +12869,7 @@
         "x": 0,
         "y": 1011
       },
-      "id": 136,
+      "id": 137,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12769,7 +12967,7 @@
         "x": 12,
         "y": 1011
       },
-      "id": 137,
+      "id": 138,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12859,7 +13057,7 @@
         "x": 0,
         "y": 1500
       },
-      "id": 138,
+      "id": 139,
       "panels": [
         {
           "aliasColors": {
@@ -12878,7 +13076,7 @@
             "x": 0,
             "y": 1501
           },
-          "id": 139,
+          "id": 140,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12992,7 +13190,7 @@
             "x": 12,
             "y": 1501
           },
-          "id": 140,
+          "id": 141,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13106,7 +13304,7 @@
             "x": 0,
             "y": 1511
           },
-          "id": 141,
+          "id": 142,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13221,7 +13419,7 @@
         "x": 0,
         "y": 2000
       },
-      "id": 142,
+      "id": 143,
       "panels": [
 
       ],
@@ -13250,7 +13448,7 @@
         "x": 0,
         "y": 2001
       },
-      "id": 143,
+      "id": 144,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -13348,7 +13546,7 @@
         "x": 12,
         "y": 2001
       },
-      "id": 144,
+      "id": 145,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -13446,7 +13644,7 @@
         "x": 0,
         "y": 2011
       },
-      "id": 145,
+      "id": 146,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -13544,7 +13742,7 @@
         "x": 12,
         "y": 2011
       },
-      "id": 146,
+      "id": 147,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -13634,7 +13832,7 @@
         "x": 0,
         "y": 2500
       },
-      "id": 147,
+      "id": 148,
       "panels": [
 
       ],
@@ -13663,7 +13861,7 @@
         "x": 0,
         "y": 2501
       },
-      "id": 148,
+      "id": 149,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -13761,7 +13959,7 @@
         "x": 12,
         "y": 2501
       },
-      "id": 149,
+      "id": 150,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -13867,7 +14065,7 @@
         "x": 0,
         "y": 2511
       },
-      "id": 150,
+      "id": 151,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -13965,7 +14163,7 @@
         "x": 12,
         "y": 2511
       },
-      "id": 151,
+      "id": 152,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -14071,7 +14269,7 @@
         "x": 0,
         "y": 2521
       },
-      "id": 152,
+      "id": 153,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -14169,7 +14367,7 @@
         "x": 12,
         "y": 2521
       },
-      "id": 153,
+      "id": 154,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -14267,7 +14465,7 @@
         "x": 0,
         "y": 2531
       },
-      "id": 154,
+      "id": 155,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -14366,7 +14564,7 @@
         "x": 12,
         "y": 2531
       },
-      "id": 155,
+      "id": 156,
       "mode": "markdown",
       "title": "Sidekiq Job Latency per shard",
       "type": "text"
@@ -14380,7 +14578,7 @@
         "x": 0,
         "y": 3000
       },
-      "id": 156,
+      "id": 157,
       "panels": [
 
       ],
@@ -14409,7 +14607,7 @@
         "x": 0,
         "y": 3001
       },
-      "id": 157,
+      "id": 158,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -14513,7 +14711,7 @@
         "x": 12,
         "y": 3001
       },
-      "id": 158,
+      "id": 159,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -14617,7 +14815,7 @@
         "x": 0,
         "y": 3011
       },
-      "id": 159,
+      "id": 160,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -14721,7 +14919,7 @@
         "x": 12,
         "y": 3011
       },
-      "id": 160,
+      "id": 161,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -14817,7 +15015,7 @@
         "x": 0,
         "y": 5000
       },
-      "id": 161,
+      "id": 162,
       "panels": [
         {
           "aliasColors": {
@@ -14836,7 +15034,7 @@
             "x": 0,
             "y": 1
           },
-          "id": 162,
+          "id": 163,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14948,7 +15146,7 @@
             "x": 12,
             "y": 1
           },
-          "id": 163,
+          "id": 164,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15060,7 +15258,7 @@
             "x": 0,
             "y": 11
           },
-          "id": 164,
+          "id": 165,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15172,7 +15370,7 @@
             "x": 12,
             "y": 11
           },
-          "id": 165,
+          "id": 166,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15284,7 +15482,7 @@
             "x": 0,
             "y": 21
           },
-          "id": 166,
+          "id": 167,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15396,7 +15594,7 @@
             "x": 12,
             "y": 21
           },
-          "id": 167,
+          "id": 168,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15508,7 +15706,7 @@
             "x": 0,
             "y": 31
           },
-          "id": 168,
+          "id": 169,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15619,7 +15817,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 169,
+      "id": 170,
       "panels": [
         {
           "colors": [
@@ -15640,7 +15838,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 170,
+          "id": 171,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -15753,7 +15951,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 171,
+          "id": 172,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -15864,7 +16062,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 172,
+          "id": 173,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -15969,7 +16167,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 173,
+      "id": 174,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -16119,5 +16317,5 @@
   "timezone": "utc",
   "title": "sidekiq: Overview",
   "uid": "sidekiq-main",
-  "version": 5052
+  "version": 5056
 }
