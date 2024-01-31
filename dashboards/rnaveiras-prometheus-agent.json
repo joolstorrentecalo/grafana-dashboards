@@ -911,6 +911,77 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${PROMETHEUS_DS}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 2
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 4,
+        "x": 12,
+        "y": 16
+      },
+      "id": 59,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.1.5",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${PROMETHEUS_DS}"
+          },
+          "editorMode": "code",
+          "expr": "sum(prometheus_ready{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\", container=\"prometheus\"})",
+          "legendFormat": "{{pod}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Prometheus Ready",
+      "type": "stat"
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
@@ -928,7 +999,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "description": "",
       "fieldConfig": {
@@ -1014,7 +1085,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "prometheus_agent_active_series{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\", container=\"prometheus\"}",
@@ -1029,7 +1100,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "description": "",
       "fieldConfig": {
@@ -1115,7 +1186,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "rate(prometheus_agent_samples_appended_total{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\", container=\"prometheus\"}[$__rate_interval])",
@@ -1130,7 +1201,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "description": "shows the current WAL segment file that each remote write instance is currently reading from",
       "fieldConfig": {
@@ -1216,7 +1287,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "prometheus_wal_watcher_current_segment{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\", container=\"prometheus\"}",
@@ -1231,7 +1302,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "description": "is the WAL segment file that Prometheus is currently writing new data to",
       "fieldConfig": {
@@ -1317,7 +1388,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "prometheus_tsdb_wal_segment_current{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\", container=\"prometheus\"}",
@@ -1332,7 +1403,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "description": "",
       "fieldConfig": {
@@ -1418,10 +1489,10 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
-          "expr": "\n                max_over_time(prometheus_remote_storage_highest_timestamp_in_seconds{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\", container=\"prometheus\"}[5m])\n              - ignoring(remote_name, url) group_right\n                max_over_time(prometheus_remote_storage_queue_highest_sent_timestamp_seconds{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\", container=\"prometheus\"}[5m])\n              ",
+          "expr": "\nmax_over_time(prometheus_remote_storage_highest_timestamp_in_seconds{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\", container=\"prometheus\"}[$__rate_interval])\n- ignoring(remote_name, url) group_right\nmax_over_time(prometheus_remote_storage_queue_highest_sent_timestamp_seconds{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\", container=\"prometheus\"}[$__rate_interval])\n              ",
           "legendFormat": "{{pod}}",
           "range": true,
           "refId": "A"
@@ -1433,7 +1504,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "description": "",
       "fieldConfig": {
@@ -1519,7 +1590,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "max_over_time(prometheus_remote_storage_shards_desired{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\", container=\"prometheus\"}[$__rate_interval])\n\n              \n              ",
@@ -1530,7 +1601,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "max_over_time(prometheus_remote_storage_shards_max{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\", container=\"prometheus\"}[$__rate_interval])\n              \n              ",
@@ -1546,7 +1617,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "description": "Total number of samples which failed on send to remote storage, non-recoverable errors.",
       "fieldConfig": {
@@ -1632,7 +1703,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "rate(prometheus_remote_storage_samples_failed_total{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\", container=\"prometheus\"}[$__rate_interval])\n              \n              ",
@@ -1647,7 +1718,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "description": "Total number of exemplars which failed on send to remote storage but were retried because the send error was recoverable.",
       "fieldConfig": {
@@ -1733,7 +1804,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "rate(prometheus_remote_storage_samples_retried_total{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\", container=\"prometheus\"}[$__rate_interval])\n              \n              ",
@@ -1748,7 +1819,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "description": "Total number of samples which were dropped after being read from the WAL before being sent via remote write, either via relabelling, due to being too old or unintentionally because of an unknown reference ID",
       "fieldConfig": {
@@ -1834,7 +1905,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "rate(prometheus_remote_storage_samples_dropped_total{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\", container=\"prometheus\"}[$__rate_interval])\n              \n              ",
@@ -1849,7 +1920,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "description": "",
       "fieldConfig": {
@@ -1935,7 +2006,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "rate(prometheus_remote_storage_samples_total{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\", container=\"prometheus\"}[$__rate_interval])\n              \n              ",
@@ -1950,7 +2021,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "description": "Total number of times enqueue has failed because a shards queue was full.",
       "fieldConfig": {
@@ -2036,7 +2107,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "rate(prometheus_remote_storage_enqueue_retries_total{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\", container=\"prometheus\"}[$__rate_interval])\n              \n              ",
@@ -2051,7 +2122,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "description": "The number of samples pending in the queues shards to be sent to the remote storage.",
       "fieldConfig": {
@@ -2137,7 +2208,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "max_over_time(prometheus_remote_storage_samples_pending{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\", container=\"prometheus\"}[$__rate_interval])\n              \n              ",
@@ -2152,7 +2223,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "description": "he capacity of each shard of the queue used for parallel sending to the remote storage",
       "fieldConfig": {
@@ -2198,7 +2269,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2237,7 +2309,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "max_over_time(prometheus_remote_storage_shard_capacity{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\", container=\"prometheus\"}[$__rate_interval])\n              \n              ",
@@ -2252,7 +2324,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "description": "The total number of bytes of data (not metadata) sent by the queue after compression. Note that when exemplars over remote write is enabled the exemplars included in a remote write request count towards this metric.",
       "fieldConfig": {
@@ -2298,7 +2370,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2337,7 +2410,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "rate(prometheus_remote_storage_bytes_total{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\", container=\"prometheus\"}[$__rate_interval])\n              \n              ",
@@ -2352,7 +2425,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "description": "The maximum number of samples to be sent, in a single request, to the remote storage. Note that, when sending of exemplars over remote write is enabled, exemplars count towards this limt.",
       "fieldConfig": {
@@ -2398,7 +2471,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2437,7 +2511,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "max_over_time(prometheus_remote_storage_max_samples_per_send{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\", container=\"prometheus\"}[$__rate_interval])\n              \n              ",
@@ -2467,7 +2541,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "description": "",
       "fieldConfig": {
@@ -2513,7 +2587,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2552,7 +2627,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "sum by (name, config) (prometheus_sd_discovered_targets{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\"})",
@@ -2567,7 +2642,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "description": "",
       "fieldConfig": {
@@ -2613,7 +2688,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2652,7 +2728,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "rate(prometheus_target_interval_length_seconds_sum{env=\"$env\", cluster=\"$cluster\", container=\"prometheus\",  pod=~\"$pod\", job=\"$job\"}[$__rate_interval])\n\n/ \nrate(prometheus_target_interval_length_seconds_count{env=\"$env\", cluster=\"$cluster\", container=\"prometheus\", pod=~\"$pod\",  job=\"$job\"}[$__rate_interval])",
@@ -2667,7 +2743,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "description": "",
       "fieldConfig": {
@@ -2716,7 +2792,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2755,7 +2832,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "sum by () (prometheus_target_scrapes_exceeded_body_size_limit_total{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\"})",
@@ -2766,7 +2843,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "sum by () (prometheus_target_scrapes_exceeded_sample_limit_total{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\"})",
@@ -2778,7 +2855,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "sum by () (prometheus_target_scrapes_sample_duplicate_timestamp_total{env=\"$env\", cluster=\"$cluster\", job=\"$job\",  pod=~\"$pod\"})",
@@ -2790,7 +2867,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "sum by () (prometheus_target_scrapes_sample_out_of_bounds_total{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\"})",
@@ -2802,7 +2879,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "sum by () (prometheus_target_scrapes_sample_out_of_order_total{env=\"$env\", cluster=\"$cluster\", job=\"$job\", pod=~\"$pod\"})",
@@ -2818,7 +2895,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "description": "",
       "fieldConfig": {
@@ -2864,7 +2941,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2903,7 +2981,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "disableTextWrap": false,
           "editorMode": "code",
@@ -2939,7 +3017,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -2988,7 +3066,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3072,7 +3151,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "\n\nincrease(kube_pod_container_status_restarts_total{job=\"kube-state-metrics\", env=\"$env\", cluster=\"$cluster\", namespace=\"monitoring\", pod=~\"$pod\", container=\"$container\"}[$__rate_interval])\n",
@@ -3087,7 +3166,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -3136,7 +3215,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3220,10 +3300,10 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
-          "expr": "sum_over_time by (reason) (kube_pod_container_status_last_terminated_reason{job=\"kube-state-metrics\", env=\"$env\", cluster=\"$cluster\", namespace=\"monitoring\", container=\"$container\", pod=~\"$pod\"}[$__rate_interval])\n",
+          "expr": "sum by(reason) (kube_pod_container_status_last_terminated_reason{job=\"kube-state-metrics\", env=\"$env\", cluster=\"$cluster\", namespace=\"monitoring\", container=\"$container\", pod=~\"$pod\"})\n",
           "legendFormat": "{{pod}} / {{reason}}",
           "range": true,
           "refId": "A"
@@ -3235,7 +3315,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -3284,7 +3364,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3368,7 +3449,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "increase(container_oom_events_total{job=\"kubelet\", env=\"$env\", cluster=\"$cluster\", namespace=\"monitoring\", pod=~\"$pod\", container=\"$container\"}[$__rate_interval])\n",
@@ -3383,7 +3464,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PA258B30F88C30650"
+        "uid": "${PROMETHEUS_DS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -3433,7 +3514,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3517,7 +3599,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PA258B30F88C30650"
+            "uid": "${PROMETHEUS_DS}"
           },
           "editorMode": "code",
           "expr": "\nkubelet_volume_stats_used_bytes{job=\"kubelet\", env=\"$env\", cluster=\"$cluster\", namespace=\"monitoring\", persistentvolumeclaim=~\".*$job.*\"}\n/ kubelet_volume_stats_capacity_bytes{job=\"kubelet\", env=\"$env\", cluster=\"$cluster\", namespace=\"monitoring\", persistentvolumeclaim=~\".*$job.*\"}\n",
@@ -3858,6 +3940,6 @@
   "timezone": "utc",
   "title": "rnaveiras - Prometheus Agent",
   "uid": "a3ef3232-bbba-45d9-be34-c4c4017c9db4",
-  "version": 7,
+  "version": 13,
   "weekStart": ""
 }
