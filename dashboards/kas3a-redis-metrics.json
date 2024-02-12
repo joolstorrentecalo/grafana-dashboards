@@ -62,110 +62,25 @@
   ],
   "panels": [
     {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "How long it took for the worker to finish running. Higher is worse.",
-      "fill": 0,
-      "fillGradient": 0,
+      "collapse": false,
+      "collapsed": false,
       "gridPos": {
-        "h": 10,
-        "w": 12,
+        "h": 1,
+        "w": 24,
         "x": 0,
-        "y": 1
+        "y": 0
       },
       "id": 2,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [
+      "panels": [
 
       ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
       "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum(rate(sidekiq_jobs_completion_seconds_sum{env=\"$environment\",worker=\"LooseForeignKeys::CleanupWorker\"}[$__interval]))",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "Total runtime",
-          "refId": "A"
-        },
-        {
-          "expr": "sum(rate(sidekiq_jobs_db_seconds_sum{env=\"$environment\",worker=\"LooseForeignKeys::CleanupWorker\"}[$__interval]))",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "DB runtime",
-          "refId": "B"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "LooseForeignKeys::CleanupWorker runtime",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": "Duration (seconds)",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "Rueidis metrics",
+      "titleSize": "h6",
+      "type": "row"
     },
     {
       "aliasColors": {
@@ -175,14 +90,14 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 0,
-      "description": "How many deleted parents were processed over a time range by parent table. Higher means many deletes were occurring and being processed by the worker. A spike in this could be caused by a surge of deletes from a user.",
+      "description": "Rueidis dial latency in seconds",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
         "w": 12,
-        "x": 12,
-        "y": 1
+        "x": 0,
+        "y": 1000
       },
       "id": 3,
       "legend": {
@@ -217,12 +132,36 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(loose_foreign_key_processed_deleted_records{env=\"$environment\"}[$__interval])) by (table)",
+          "expr": "histogram_quantile(0.5, sum by (le) (\nrate(rueidis_dial_latency_seconds_bucket{env=\"$environment\",stage=\"$stage\",type=\"kas\"}[$__rate_interval]))\n)\n",
           "format": "time_series",
           "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "{{ table }}",
+          "intervalFactor": 2,
+          "legendFormat": "p50",
           "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.9, sum by (le) (\nrate(rueidis_dial_latency_seconds_bucket{env=\"$environment\",stage=\"$stage\",type=\"kas\"}[$__rate_interval]))\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 2,
+          "legendFormat": "p90",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum by (le) (\nrate(rueidis_dial_latency_seconds_bucket{env=\"$environment\",stage=\"$stage\",type=\"kas\"}[$__rate_interval]))\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 2,
+          "legendFormat": "p95",
+          "refId": "C"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum by (le) (\nrate(rueidis_dial_latency_seconds_bucket{env=\"$environment\",stage=\"$stage\",type=\"kas\"}[$__rate_interval]))\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 2,
+          "legendFormat": "p99",
+          "refId": "D"
         }
       ],
       "thresholds": [
@@ -230,7 +169,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Processed deleted parent rows by table",
+      "title": "Dial Latency",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -248,7 +187,7 @@
       },
       "yaxes": [
         {
-          "format": "short",
+          "format": "s",
           "label": "",
           "logBase": 1,
           "max": null,
@@ -273,14 +212,14 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 0,
-      "description": "How many child records were deleted over a time range by child table. Higher means many deletes were occurring and being processed by the worker. A spike in this could be caused by a surge of parent deletions from a user or a small number of deletes that cascaded to many child deletions.",
+      "description": "Rueidis number of connections",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
         "w": 12,
-        "x": 0,
-        "y": 11
+        "x": 12,
+        "y": 1000
       },
       "id": 4,
       "legend": {
@@ -291,7 +230,7 @@
         "max": true,
         "min": true,
         "rightSide": false,
-        "show": true,
+        "show": false,
         "sideWidth": null,
         "total": false,
         "values": true
@@ -315,11 +254,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(loose_foreign_key_deletions{env=\"$environment\"}[$__interval])) by (table)",
+          "expr": "sum (\n  rueidis_dial_conns{env=\"$environment\",stage=\"$stage\",type=\"kas\"}\n)\n",
           "format": "time_series",
           "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "{{ table }}",
+          "intervalFactor": 2,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -328,7 +267,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Processed deleted child rows by table",
+      "title": "Number of connections",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -371,14 +310,14 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 0,
-      "description": "How many child records were updated (nullified) over a time range by child table. Higher means many updates were occurring and being processed by the worker. A spike in this could be caused by a surge of parent deletions from a user or a small number of deletes that cascaded to many child updates.",
+      "description": "Rueidis total number of dial attempts and dial successes",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
         "w": 12,
-        "x": 12,
-        "y": 11
+        "x": 0,
+        "y": 1010
       },
       "id": 5,
       "legend": {
@@ -413,11 +352,117 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(loose_foreign_key_updates{env=\"$environment\"}[$__interval])) by (table)",
+          "expr": "sum (\n  increase(rueidis_dial_attempt_total{env=\"$environment\",stage=\"$stage\",type=\"kas\"}[$__rate_interval])\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{ table }}",
+          "legendFormat": "Attempts",
+          "refId": "A"
+        },
+        {
+          "expr": "sum (\n  increase(rueidis_dial_success_total{env=\"$environment\",stage=\"$stage\",type=\"kas\"}[$__rate_interval])\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "Success",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Total dial attemps and dial successes",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "Rueidis total number of dial failures, calculated by `attempts - success`.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 1010
+      },
+      "id": 6,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": false,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum (\n  increase(rueidis_dial_attempt_total{env=\"$environment\",stage=\"$stage\",type=\"kas\"}[$__rate_interval])\n)\n-\nsum (\n  increase(rueidis_dial_success_total{env=\"$environment\",stage=\"$stage\",type=\"kas\"}[$__rate_interval])\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 2,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -426,7 +471,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Processed updated child rows by table",
+      "title": "Total dial failures",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -470,9 +515,8 @@
   "style": "light",
   "tags": [
     "managed",
-    "sidekiq",
-    "sidekiq",
-    "stage_group:Sharding"
+    "kas",
+    "kas"
   ],
   "templating": {
     "list": [
@@ -518,6 +562,35 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "main",
+          "value": "main"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "stage",
+        "options": [
+          {
+            "text": "main",
+            "value": "main"
+          },
+          {
+            "text": "cny",
+            "value": "cny"
+          },
+          {
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "main,cny,",
+        "refresh": 0,
+        "type": "custom"
       }
     ]
   },
@@ -546,7 +619,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "sidekiq: Loose Foreign Keys Processing",
-  "uid": "sidekiq-loose-foreign-keys",
-  "version": 2100
+  "title": "kas: Redis metrics",
+  "uid": "kas-redis",
+  "version": 1
 }
