@@ -1,0 +1,248 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [
+
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "(1-(\n    ceil(\n  (\n    sum by (stage) (\n      label_replace(\n        sum by (stage)(\n          sum by (stage)(\n            sum_over_time(\n              gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range]\n            ) -\n            # Request with satisfactory apdex\n            sum_over_time(\n              gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range]\n            )\n          ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n        ),\n        'violation_type', 'apdex' , '', ''\n      )\n      or\n      label_replace(\n        sum by (stage)(\n          sum by (stage)(\n            sum_over_time(\n              gitlab:component:stage_group:execution:error:rate_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range]\n            )\n          ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n        ),\n        'violation_type', 'error' , '', ''\n      )\n    ) > 0\n  ) * 60\n))/(ceil(\n  (\n    sum by (stage) (\n      label_replace(\n        sum by (stage)(\n          sum by (stage)(\n            sum_over_time(\n              gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range]\n            )\n          ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n        ),\n        'violation_type', 'apdex' , '', ''\n      )\n      or\n      label_replace(\n        sum by (stage)(\n          sum by (stage)(\n            sum_over_time(\n              gitlab:component:stage_group:execution:ops:rate_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range]\n            )\n            and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range])\n          ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n        ),\n        'violation_type', 'error' , '', ''\n      )\n    ) > 0\n  ) * 60\n)))*100",
+          "instant": true,
+          "key": "Q-0bb208c0-7599-4cde-9ae1-9c0eb6b5fabf-2",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "title": "Overall apdex",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "(1-(\n    ceil(\n  (\n    sum by (component,type,violation_type) (\n      label_replace(\n        sum by (component,type)(\n          sum by (component,stage_group,type)(\n            sum_over_time(\n              gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range]\n            ) -\n            # Request with satisfactory apdex\n            sum_over_time(\n              gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range]\n            )\n          ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n        ),\n        'violation_type', 'apdex' , '', ''\n      )\n      or\n      label_replace(\n        sum by (component,type)(\n          sum by (component,stage_group,type)(\n            sum_over_time(\n              gitlab:component:stage_group:execution:error:rate_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range]\n            )\n          ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n        ),\n        'violation_type', 'error' , '', ''\n      )\n    ) > 0\n  ) * 60\n))/(ceil(\n  (\n    sum by (component,type,violation_type) (\n      label_replace(\n        sum by (component,type)(\n          sum by (component,stage_group,type)(\n            sum_over_time(\n              gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range]\n            )\n          ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n        ),\n        'violation_type', 'apdex' , '', ''\n      )\n      or\n      label_replace(\n        sum by (component,type)(\n          sum by (component,stage_group,type)(\n            sum_over_time(\n              gitlab:component:stage_group:execution:ops:rate_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range]\n            )\n            and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range])\n          ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n        ),\n        'violation_type', 'error' , '', ''\n      )\n    ) > 0\n  ) * 60\n)))*100",
+          "instant": true,
+          "key": "Q-0bb208c0-7599-4cde-9ae1-9c0eb6b5fabf-2",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "title": "Apdex per component",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [
+
+  ],
+  "templating": {
+    "list": [
+
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+  },
+  "timezone": "",
+  "title": "Global Search apdex",
+  "uid": "c7716311-3d8a-4ea6-b10b-9b2da3ae8272",
+  "version": 4,
+  "weekStart": ""
+}
