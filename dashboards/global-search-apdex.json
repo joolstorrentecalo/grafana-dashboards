@@ -326,6 +326,160 @@
       "fieldConfig": {
         "defaults": {
           "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 3,
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "transparent",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 99
+              },
+              {
+                "color": "green",
+                "value": 99.95
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.1.5",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "clamp_max(\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range]\n        ), 'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range]\n        )\n        -\n        sum_over_time(\n          gitlab:component:stage_group:execution:error:rate_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range]\n        ), 'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  )\n  /\n  sum by ()(\n    sum by (stage_group,component) (\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range]\n        ),\n        'sli_kind', 'apdex', '', ''\n      )\n      or\n      label_replace(\n        sum_over_time(\n          gitlab:component:stage_group:execution:ops:rate_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range]\n        )\n        and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range]),\n        'sli_kind', 'error', '', ''\n      )\n    ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n  ),\n1)*100\n",
+          "format": "table",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Apdex",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 2,
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 99.5
+              },
+              {
+                "color": "green",
+                "value": 99.95
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": false,
+        "text": {
+          "titleSize": 6
+        }
+      },
+      "pluginVersion": "10.1.5",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "(1-(\n    ceil(\n  (\n    sum by (component,type,violation_type) (\n      label_replace(\n        sum by (component,type)(\n          sum by (component,stage_group,type)(\n            sum_over_time(\n              gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range]\n            ) -\n            # Request with satisfactory apdex\n            sum_over_time(\n              gitlab:component:stage_group:execution:apdex:success:rate_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range]\n            )\n          ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n        ),\n        'violation_type', 'apdex' , '', ''\n      )\n      or\n      label_replace(\n        sum by (component,type)(\n          sum by (component,stage_group,type)(\n            sum_over_time(\n              gitlab:component:stage_group:execution:error:rate_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range]\n            )\n          ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n        ),\n        'violation_type', 'error' , '', ''\n      )\n    ) > 0\n  ) * 60\n))/(ceil(\n  (\n    sum by (component,type,violation_type) (\n      label_replace(\n        sum by (component,type)(\n          sum by (component,stage_group,type)(\n            sum_over_time(\n              gitlab:component:stage_group:execution:apdex:weight:score_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range]\n            )\n          ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n        ),\n        'violation_type', 'apdex' , '', ''\n      )\n      or\n      label_replace(\n        sum by (component,type)(\n          sum by (component,stage_group,type)(\n            sum_over_time(\n              gitlab:component:stage_group:execution:ops:rate_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range]\n            )\n            and sum_over_time(gitlab:component:stage_group:execution:error:rate_1h{environment=\"gprd\",monitor=\"global\",stage=\"main\",stage_group=\"global_search\"}[$__range])\n          ) unless on (stage_group,component) gitlab:ignored_component:stage_group\n        ),\n        'violation_type', 'error' , '', ''\n      )\n    ) > 0\n  ) * 60\n)))*100",
+          "format": "table",
+          "instant": true,
+          "interval": "$__range",
+          "key": "Q-0bb208c0-7599-4cde-9ae1-9c0eb6b5fabf-2",
+          "legendFormat": "",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "title": "Apdex per component",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
             "mode": "palette-classic"
           },
           "custom": {
@@ -384,7 +538,7 @@
         "h": 16,
         "w": 12,
         "x": 0,
-        "y": 8
+        "y": 19
       },
       "id": 1,
       "options": {
@@ -440,6 +594,6 @@
   "timezone": "",
   "title": "Global Search apdex",
   "uid": "c7716311-3d8a-4ea6-b10b-9b2da3ae8272",
-  "version": 10,
+  "version": 11,
   "weekStart": ""
 }
