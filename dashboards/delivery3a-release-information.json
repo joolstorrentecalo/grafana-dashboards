@@ -1,0 +1,513 @@
+{
+  "__inputs": [
+
+  ],
+  "__requires": [
+
+  ],
+  "annotations": {
+    "list": [
+
+    ]
+  },
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6316496602 at Mon Mar  4 23:22:19 UTC 2024",
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 1,
+  "hideControls": false,
+  "id": null,
+  "links": [
+
+  ],
+  "panels": [
+    {
+      "collapse": false,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "panels": [
+
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "Monthly Release Information",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "content": "# Active Monthly Release\n\nGitLab releases a new self-managed release on the third Thursday of every month.\n\nThis release is a semver versioned package containing changes from many successful deployments on GitLab.com.\n\nThe following panels contain information about the active monthly release.\n\nLinks:\n- [Monthly release schedule](https://about.gitlab.com/releases/)\n- [Overview of the process](https://handbook.gitlab.com/handbook/engineering/deployments-and-releases/)\n- [How can I determine if my MR will make it into the monthly release](https://handbook.gitlab.com/handbook/engineering/releases/#how-can-i-determine-if-my-merge-request-will-make-it-into-the-monthly-release)\n\nFor inquiries about the monthly release, please ask in the [`#releases` slack channel](https://gitlab.enterprise.slack.com/archives/C0XM5UU6B).\n",
+      "datasource": null,
+      "gridPos": {
+        "h": 10,
+        "w": 16,
+        "x": 0,
+        "y": 1
+      },
+      "id": 3,
+      "mode": "markdown",
+      "title": "",
+      "type": "text"
+    },
+    {
+      "content": "# Release Status\n\nThe panel below shows the current status of the active monthly release.\n\nThe following are what the statuses signify for engineers:\n\n* Open: Engineers can create MRs, and any commit that reached production is expected to be released with the active monthly release.\n* Announced: Guaranteed SHA has been announced in `#releases` slack channel. Signals that the RC tagging date is getting closer.\n* RC Tagged: The stable branch has been created, and the release candidate has been tagged. No more commits will be included in the release.\n",
+      "datasource": null,
+      "gridPos": {
+        "h": 10,
+        "w": 8,
+        "x": 16,
+        "y": 1
+      },
+      "id": 4,
+      "mode": "markdown",
+      "title": "",
+      "type": "text"
+    },
+    {
+      "datasource": null,
+      "description": "This is the active monthly release version that will be published on the next third Thursday of the month.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "",
+          "links": [
+
+          ],
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "white",
+                "value": null
+              }
+            ]
+          },
+          "unit": ""
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 11
+      },
+      "id": 5,
+      "links": [
+
+      ],
+      "options": {
+        "colorMode": "thresholds",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^version$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "max_over_time(delivery_release_monthly_status[30d])",
+          "format": "table",
+          "instant": false,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Release Version",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "release_date": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "version": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {
+            },
+            "sort": [
+              {
+                "field": "version"
+              }
+            ]
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "mode": "reduceFields",
+            "reducers": [
+              "first"
+            ]
+          }
+        }
+      ],
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "description": "This is the release date for the active monthly release.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "",
+          "links": [
+
+          ],
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "white",
+                "value": null
+              }
+            ]
+          },
+          "unit": ""
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 11
+      },
+      "id": 6,
+      "links": [
+
+      ],
+      "options": {
+        "colorMode": "thresholds",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^release_date$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "max_over_time(delivery_release_monthly_status[30d])",
+          "format": "table",
+          "instant": false,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Release Date",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "release_date": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "version": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {
+            },
+            "sort": [
+              {
+                "field": "version"
+              }
+            ]
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "mode": "reduceFields",
+            "reducers": [
+              "first"
+            ]
+          }
+        }
+      ],
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "description": "Current status of the monthly release. More information about the statuses in the text panel above.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "",
+          "links": [
+
+          ],
+          "mappings": [
+            {
+              "id": 0,
+              "text": "Open",
+              "type": 1,
+              "value": "1"
+            },
+            {
+              "id": 1,
+              "text": "Announced",
+              "type": 1,
+              "value": "2"
+            },
+            {
+              "id": 2,
+              "text": "RC Tagged",
+              "type": 1,
+              "value": "3"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 1
+              },
+              {
+                "color": "yellow",
+                "value": 2
+              },
+              {
+                "color": "red",
+                "value": 3
+              }
+            ]
+          },
+          "unit": ""
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 11
+      },
+      "id": 7,
+      "links": [
+
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "max_over_time(delivery_release_monthly_status[30d])",
+          "format": "table",
+          "instant": false,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Current Release Status",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "release_date": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "version": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {
+            },
+            "sort": [
+              {
+                "field": "version"
+              }
+            ]
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "mode": "reduceFields",
+            "reducers": [
+              "first"
+            ]
+          }
+        }
+      ],
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "content": "Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards)\n",
+      "datasource": null,
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 110000
+      },
+      "id": 8,
+      "mode": "markdown",
+      "title": "Source",
+      "type": "text"
+    }
+  ],
+  "refresh": "",
+  "rows": [
+
+  ],
+  "schemaVersion": 16,
+  "style": "light",
+  "tags": [
+    "managed",
+    "delivery",
+    "release"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "Global",
+          "value": "Global"
+        },
+        "hide": 0,
+        "label": null,
+        "name": "PROMETHEUS_DS",
+        "options": [
+
+        ],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "type": "datasource"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-3d",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "1m",
+      "5m",
+      "10m",
+      "15m",
+      "30m"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "utc",
+  "title": "delivery: Release Information",
+  "uid": "delivery-release_info",
+  "version": 1
+}
