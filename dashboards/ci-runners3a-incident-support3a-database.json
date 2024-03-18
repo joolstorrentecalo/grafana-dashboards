@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6409211809 at Sat Mar 16 14:57:44 UTC 2024",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6414276897 at Mon Mar 18 07:28:15 UTC 2024",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -1376,6 +1376,7 @@
       },
       "dataFormat": "tsbuckets",
       "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "gridPos": {
         "h": 7,
         "w": 4.8,
@@ -2949,127 +2950,277 @@
       ]
     },
     {
-      "aliasColors": {
+      "cards": {
+        "cardPadding": 1,
+        "cardRound": 2
       },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
+      "color": {
+        "cardColor": "#FA6400",
+        "colorScale": "sqrt",
+        "colorScheme": "Purples",
+        "exponent": 0.5,
+        "mode": "spectrum"
+      },
+      "dataFormat": "tsbuckets",
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "",
-      "fill": 0,
-      "fillGradient": 0,
+      "description": "The \"big query SQL\" is the SQL query GitLab uses to retrieve the jobs queue from the database. That query\nis used to add initial filtering and sorting of the queue. It's the core of jobs scheduling mechanism.\n\nWith more and more of jobs in the ci_pending_builds table it's getting longer. At some level it may start\naffecting the whole system. The direct consequences will be seen as jobs queuing duration getting longer\n(which affects Runner's apdex) and general database slowness for the CI database.\n\nTherefore, observing the trend of our \"big query SQL\" duration is important.\n",
       "gridPos": {
         "h": 8,
-        "w": 24,
+        "w": 8,
         "x": 0,
         "y": 4000
       },
+      "heatmap": {
+      },
+      "hideZeroBuckets": false,
+      "highlightCards": true,
       "id": 23,
       "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
+        "show": true
       },
-      "lines": true,
-      "linewidth": 2,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stableId": "builds-queue-big-query-duration",
-      "stack": false,
-      "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(\n  0.50,\n  sum by (le, runner_type) (\n    rate(\n      gitlab_ci_queue_retrieval_duration_seconds_bucket{\n        environment=\"$environment\",\n        stage=\"$stage\",\n        runner_type=~\"${runner_type:pipe}\"\n      }[$__interval]\n    )\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
+          "dsType": "influxdb",
+          "expr": "sum by (le) (\n  increase(\n    gitlab_ci_queue_retrieval_duration_seconds_bucket{\n      environment=~\"$environment\",\n      stage=~\"$stage\",\n      runner_type=~\"instance_type\"\n    }[$__rate_interval]\n  )\n)\n",
+          "format": "heatmap",
+          "groupBy": [
+            {
+              "params": [
+                "$__rate_interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "interval": "$__rate_interval",
           "intervalFactor": 1,
-          "legendFormat": "{{ runner_type }} - p50",
-          "refId": "A"
-        },
-        {
-          "expr": "histogram_quantile(\n  0.90,\n  sum by (le, runner_type) (\n    rate(\n      gitlab_ci_queue_retrieval_duration_seconds_bucket{\n        environment=\"$environment\",\n        stage=\"$stage\",\n        runner_type=~\"${runner_type:pipe}\"\n      }[$__interval]\n    )\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "{{ runner_type }} - p90",
-          "refId": "B"
-        },
-        {
-          "expr": "histogram_quantile(\n  0.95,\n  sum by (le, runner_type) (\n    rate(\n      gitlab_ci_queue_retrieval_duration_seconds_bucket{\n        environment=\"$environment\",\n        stage=\"$stage\",\n        runner_type=~\"${runner_type:pipe}\"\n      }[$__interval]\n    )\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "{{ runner_type }} - p95",
-          "refId": "C"
-        },
-        {
-          "expr": "histogram_quantile(\n  0.99,\n  sum by (le, runner_type) (\n    rate(\n      gitlab_ci_queue_retrieval_duration_seconds_bucket{\n        environment=\"$environment\",\n        stage=\"$stage\",\n        runner_type=~\"${runner_type:pipe}\"\n      }[$__interval]\n    )\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "{{ runner_type }} - p99",
-          "refId": "D"
+          "legendFormat": "{{le}}",
+          "orderByTime": "ASC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+
+                ],
+                "type": "mean"
+              }
+            ]
+          ]
         }
       ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Duration of the builds queue retrieval using the big query SQL",
+      "title": "instance_type - duration of the builds queue retrieval SQL query",
       "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
         "show": true,
-        "values": [
-
-        ]
+        "showHistogram": true
       },
-      "yaxes": [
+      "tooltipDecimals": 3,
+      "type": "heatmap",
+      "xAxis": {
+        "show": true
+      },
+      "xBucketNumber": null,
+      "xBucketSize": null,
+      "yAxis": {
+        "decimals": 2,
+        "format": "s",
+        "show": true,
+        "splitFactor": null
+      },
+      "yBucketBound": "auto"
+    },
+    {
+      "cards": {
+        "cardPadding": 1,
+        "cardRound": 2
+      },
+      "color": {
+        "cardColor": "#FA6400",
+        "colorScale": "sqrt",
+        "colorScheme": "Purples",
+        "exponent": 0.5,
+        "mode": "spectrum"
+      },
+      "dataFormat": "tsbuckets",
+      "datasource": "$PROMETHEUS_DS",
+      "description": "The \"big query SQL\" is the SQL query GitLab uses to retrieve the jobs queue from the database. That query\nis used to add initial filtering and sorting of the queue. It's the core of jobs scheduling mechanism.\n\nWith more and more of jobs in the ci_pending_builds table it's getting longer. At some level it may start\naffecting the whole system. The direct consequences will be seen as jobs queuing duration getting longer\n(which affects Runner's apdex) and general database slowness for the CI database.\n\nTherefore, observing the trend of our \"big query SQL\" duration is important.\n",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 4000
+      },
+      "heatmap": {
+      },
+      "hideZeroBuckets": false,
+      "highlightCards": true,
+      "id": 24,
+      "legend": {
+        "show": true
+      },
+      "targets": [
         {
-          "format": "s",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
+          "dsType": "influxdb",
+          "expr": "sum by (le) (\n  increase(\n    gitlab_ci_queue_retrieval_duration_seconds_bucket{\n      environment=~\"$environment\",\n      stage=~\"$stage\",\n      runner_type=~\"group_type\"\n    }[$__rate_interval]\n  )\n)\n",
+          "format": "heatmap",
+          "groupBy": [
+            {
+              "params": [
+                "$__rate_interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "interval": "$__rate_interval",
+          "intervalFactor": 1,
+          "legendFormat": "{{le}}",
+          "orderByTime": "ASC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+
+                ],
+                "type": "mean"
+              }
+            ]
+          ]
         }
-      ]
+      ],
+      "title": "group_type - duration of the builds queue retrieval SQL query",
+      "tooltip": {
+        "show": true,
+        "showHistogram": true
+      },
+      "tooltipDecimals": 3,
+      "type": "heatmap",
+      "xAxis": {
+        "show": true
+      },
+      "xBucketNumber": null,
+      "xBucketSize": null,
+      "yAxis": {
+        "decimals": 2,
+        "format": "s",
+        "show": true,
+        "splitFactor": null
+      },
+      "yBucketBound": "auto"
+    },
+    {
+      "cards": {
+        "cardPadding": 1,
+        "cardRound": 2
+      },
+      "color": {
+        "cardColor": "#FA6400",
+        "colorScale": "sqrt",
+        "colorScheme": "Purples",
+        "exponent": 0.5,
+        "mode": "spectrum"
+      },
+      "dataFormat": "tsbuckets",
+      "datasource": "$PROMETHEUS_DS",
+      "description": "The \"big query SQL\" is the SQL query GitLab uses to retrieve the jobs queue from the database. That query\nis used to add initial filtering and sorting of the queue. It's the core of jobs scheduling mechanism.\n\nWith more and more of jobs in the ci_pending_builds table it's getting longer. At some level it may start\naffecting the whole system. The direct consequences will be seen as jobs queuing duration getting longer\n(which affects Runner's apdex) and general database slowness for the CI database.\n\nTherefore, observing the trend of our \"big query SQL\" duration is important.\n",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 4000
+      },
+      "heatmap": {
+      },
+      "hideZeroBuckets": false,
+      "highlightCards": true,
+      "id": 25,
+      "legend": {
+        "show": true
+      },
+      "targets": [
+        {
+          "dsType": "influxdb",
+          "expr": "sum by (le) (\n  increase(\n    gitlab_ci_queue_retrieval_duration_seconds_bucket{\n      environment=~\"$environment\",\n      stage=~\"$stage\",\n      runner_type=~\"project_type\"\n    }[$__rate_interval]\n  )\n)\n",
+          "format": "heatmap",
+          "groupBy": [
+            {
+              "params": [
+                "$__rate_interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "interval": "$__rate_interval",
+          "intervalFactor": 1,
+          "legendFormat": "{{le}}",
+          "orderByTime": "ASC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+
+                ],
+                "type": "mean"
+              }
+            ]
+          ]
+        }
+      ],
+      "title": "project_type - duration of the builds queue retrieval SQL query",
+      "tooltip": {
+        "show": true,
+        "showHistogram": true
+      },
+      "tooltipDecimals": 3,
+      "type": "heatmap",
+      "xAxis": {
+        "show": true
+      },
+      "xBucketNumber": null,
+      "xBucketSize": null,
+      "yAxis": {
+        "decimals": 2,
+        "format": "s",
+        "show": true,
+        "splitFactor": null
+      },
+      "yBucketBound": "auto"
     }
   ],
   "refresh": "",
@@ -3418,5 +3569,5 @@
   "timezone": "utc",
   "title": "ci-runners: Incident Support: database",
   "uid": "ci-runners-incident-database",
-  "version": 3326
+  "version": 3328
 }
