@@ -29,20 +29,41 @@
         "type": "prometheus",
         "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
       },
-      "description": "Status of the certificates. Values are True, False or Unknown.",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "text",
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
           "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
             },
-            "filterable": false,
-            "inspect": false
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "mappings": [
 
@@ -51,113 +72,41 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text",
+                "color": "green",
                 "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Time till expiry"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "s"
               },
               {
-                "id": "custom.cellOptions",
-                "value": {
-                  "type": "color-text"
-                }
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "light-red",
-                      "value": null
-                    },
-                    {
-                      "color": "light-orange",
-                      "value": 604800
-                    },
-                    {
-                      "color": "light-green",
-                      "value": 1209600
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Time till renewal"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "s"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Certificate"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 360
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Ready Status"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 117
+                "color": "red",
+                "value": 80
               }
             ]
           }
+        },
+        "overrides": [
+
         ]
       },
       "gridPos": {
-        "h": 9,
+        "h": 8,
         "w": 12,
         "x": 0,
         "y": 0
       },
-      "id": 11,
+      "id": 13,
       "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": [
+        "legend": {
+          "calcs": [
 
-        ]
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
       },
-      "pluginVersion": "10.1.5",
       "targets": [
         {
           "datasource": {
@@ -165,120 +114,15 @@
             "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
           },
           "editorMode": "code",
-          "expr": "label_join(avg by (name, namespace, condition, exported_namespace) (certmanager_certificate_ready_status{cluster=\"$dashboardCluster\"} == 1), \"namespaced_name\", \"-\", \"namespace\", \"exported_namespace\", \"name\")",
-          "format": "table",
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
+          "expr": "sum(kafka_consumergroup_lag{cluster=\"$dashboardCluster\"}) by (consumergroup, topic) ",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
-          },
-          "editorMode": "code",
-          "expr": "label_join(avg by (name, namespace, exported_namespace) (certmanager_certificate_renewal_timestamp_seconds{cluster=\"$dashboardCluster\"} - time()), \"namespaced_name\", \"-\", \"namespace\", \"exported_namespace\", \"name\")",
-          "format": "table",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "",
-          "range": true,
-          "refId": "C"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
-          },
-          "editorMode": "code",
-          "expr": "label_join(avg by (name, namespace, exported_namespace) (certmanager_certificate_expiration_timestamp_seconds{cluster=\"$dashboardCluster\"} - time()), \"namespaced_name\", \"-\", \"namespace\", \"exported_namespace\", \"name\")",
-          "format": "table",
-          "hide": false,
-          "instant": false,
-          "interval": "",
-          "legendFormat": "",
-          "range": true,
-          "refId": "B"
         }
       ],
-      "title": "Certificates",
-      "transformations": [
-        {
-          "id": "seriesToColumns",
-          "options": {
-            "byField": "namespaced_name",
-            "mode": "outer"
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Time": true,
-              "Time 1": true,
-              "Time 2": true,
-              "Time 3": true,
-              "Value": false,
-              "Value #A": true,
-              "Value #B": false,
-              "exported_namespace": false,
-              "exported_namespace 1": false,
-              "exported_namespace 2": true,
-              "name 1": true,
-              "name 2": false,
-              "name 3": true,
-              "namespace 1": true,
-              "namespace 2": true,
-              "namespace 3": true,
-              "namespaced_name": true
-            },
-            "indexByName": {
-              "Time 1": 7,
-              "Time 2": 9,
-              "Time 3": 11,
-              "Value #A": 5,
-              "Value #B": 4,
-              "Value #C": 3,
-              "condition": 2,
-              "name 1": 8,
-              "name 2": 1,
-              "name 3": 12,
-              "namespace 1": 0,
-              "namespace 2": 10,
-              "namespace 3": 13,
-              "namespaced_name": 6
-            },
-            "renameByName": {
-              "Time 1": "",
-              "Value #B": "Time till expiry",
-              "Value #C": "Time till renewal",
-              "condition": "Ready Status",
-              "exported_namespace": "Certificate Namespace",
-              "exported_namespace 1": "Certificate Namespace",
-              "exported_namespace 2": "",
-              "name": "Certificate",
-              "name 2": "Certificate",
-              "namespace": "Namespace",
-              "namespace 1": "Namespace",
-              "namespaced_name": ""
-            }
-          }
-        },
-        {
-          "id": "sortBy",
-          "options": {
-            "fields": {
-            },
-            "sort": [
-              {
-                "field": "Time till expiry"
-              }
-            ]
-          }
-        }
-      ],
-      "type": "table"
+      "title": "Kafka consumer group lag",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -433,41 +277,20 @@
         "type": "prometheus",
         "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
       },
+      "description": "Status of the certificates. Values are True, False or Unknown.",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "fixedColor": "text",
+            "mode": "thresholds"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
             },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "filterable": false,
+            "inspect": false
           },
           "mappings": [
 
@@ -476,62 +299,234 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "text",
                 "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time till expiry"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
               },
               {
-                "color": "red",
-                "value": 80
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "light-red",
+                      "value": null
+                    },
+                    {
+                      "color": "light-orange",
+                      "value": 604800
+                    },
+                    {
+                      "color": "light-green",
+                      "value": 1209600
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time till renewal"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Certificate"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 360
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Ready Status"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 117
               }
             ]
           }
-        },
-        "overrides": [
-
         ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 9,
         "w": 12,
         "x": 0,
-        "y": 9
+        "y": 8
       },
-      "id": 8,
+      "id": 11,
       "options": {
-        "legend": {
-          "calcs": [
-
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
           ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+          "show": false
         },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
+        "showHeader": true,
+        "sortBy": [
+
+        ]
       },
+      "pluginVersion": "10.1.5",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
           },
-          "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "ClickHouse_NumberOfDatabases{cluster=\"$dashboardCluster\"}",
-          "fullMetaSearch": false,
+          "expr": "label_join(avg by (name, namespace, condition, exported_namespace) (certmanager_certificate_ready_status{cluster=\"$dashboardCluster\"} == 1), \"namespaced_name\", \"-\", \"namespace\", \"exported_namespace\", \"name\")",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
+          },
+          "editorMode": "code",
+          "expr": "label_join(avg by (name, namespace, exported_namespace) (certmanager_certificate_renewal_timestamp_seconds{cluster=\"$dashboardCluster\"} - time()), \"namespaced_name\", \"-\", \"namespace\", \"exported_namespace\", \"name\")",
+          "format": "table",
           "hide": false,
-          "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "{{hostname}}",
+          "legendFormat": "",
           "range": true,
-          "refId": "B",
-          "useBackend": false
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
+          },
+          "editorMode": "code",
+          "expr": "label_join(avg by (name, namespace, exported_namespace) (certmanager_certificate_expiration_timestamp_seconds{cluster=\"$dashboardCluster\"} - time()), \"namespaced_name\", \"-\", \"namespace\", \"exported_namespace\", \"name\")",
+          "format": "table",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "",
+          "range": true,
+          "refId": "B"
         }
       ],
-      "title": "ClickHouse Database Count",
-      "type": "timeseries"
+      "title": "Certificates",
+      "transformations": [
+        {
+          "id": "seriesToColumns",
+          "options": {
+            "byField": "namespaced_name",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Time 1": true,
+              "Time 2": true,
+              "Time 3": true,
+              "Value": false,
+              "Value #A": true,
+              "Value #B": false,
+              "exported_namespace": false,
+              "exported_namespace 1": false,
+              "exported_namespace 2": true,
+              "name 1": true,
+              "name 2": false,
+              "name 3": true,
+              "namespace 1": true,
+              "namespace 2": true,
+              "namespace 3": true,
+              "namespaced_name": true
+            },
+            "indexByName": {
+              "Time 1": 7,
+              "Time 2": 9,
+              "Time 3": 11,
+              "Value #A": 5,
+              "Value #B": 4,
+              "Value #C": 3,
+              "condition": 2,
+              "name 1": 8,
+              "name 2": 1,
+              "name 3": 12,
+              "namespace 1": 0,
+              "namespace 2": 10,
+              "namespace 3": 13,
+              "namespaced_name": 6
+            },
+            "renameByName": {
+              "Time 1": "",
+              "Value #B": "Time till expiry",
+              "Value #C": "Time till renewal",
+              "condition": "Ready Status",
+              "exported_namespace": "Certificate Namespace",
+              "exported_namespace 1": "Certificate Namespace",
+              "exported_namespace 2": "",
+              "name": "Certificate",
+              "name 2": "Certificate",
+              "namespace": "Namespace",
+              "namespace 1": "Namespace",
+              "namespaced_name": ""
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {
+            },
+            "sort": [
+              {
+                "field": "Time till expiry"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "table"
     },
     {
       "datasource": {
@@ -701,7 +696,7 @@
         "x": 0,
         "y": 17
       },
-      "id": 12,
+      "id": 8,
       "options": {
         "legend": {
           "calcs": [
@@ -722,15 +717,20 @@
             "type": "prometheus",
             "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
           },
+          "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "stackdriver_k_8_s_container_logging_googleapis_com_user_vector_errors{cluster=\"$dashboardCluster\"}",
+          "expr": "ClickHouse_NumberOfDatabases{cluster=\"$dashboardCluster\"}",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "{{pod_name}}",
+          "legendFormat": "{{hostname}}",
           "range": true,
-          "refId": "A"
+          "refId": "B",
+          "useBackend": false
         }
       ],
-      "title": "Vector errors from log-based metrics ",
+      "title": "ClickHouse Database Count",
       "type": "timeseries"
     },
     {
@@ -924,7 +924,7 @@
         "x": 0,
         "y": 25
       },
-      "id": 7,
+      "id": 12,
       "options": {
         "legend": {
           "calcs": [
@@ -946,14 +946,14 @@
             "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
           },
           "editorMode": "code",
-          "expr": "rate(vector_component_sent_events_total{component_id=\"clickhouse_bad_events\",host=~`^$dashboardCluster\\-.*$`}[$__interval])",
+          "expr": "stackdriver_k_8_s_container_logging_googleapis_com_user_vector_errors{cluster=\"$dashboardCluster\"}",
           "instant": false,
-          "legendFormat": "{{host}}",
+          "legendFormat": "{{pod_name}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Vector Bad Events Sent",
+      "title": "Vector errors from log-based metrics ",
       "type": "timeseries"
     },
     {
@@ -1058,6 +1058,106 @@
     },
     {
       "datasource": {
+        "type": "prometheus",
+        "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 33
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
+          },
+          "editorMode": "code",
+          "expr": "rate(vector_component_sent_events_total{component_id=\"clickhouse_bad_events\",host=~`^$dashboardCluster\\-.*$`}[$__interval])",
+          "instant": false,
+          "legendFormat": "{{host}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Vector Bad Events Sent",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
         "type": "loki",
         "uid": "${dashboardLokiDataSource}"
       },
@@ -1065,7 +1165,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 33
+        "y": 41
       },
       "id": 2,
       "options": {
@@ -1161,7 +1261,7 @@
         "h": 11,
         "w": 12,
         "x": 0,
-        "y": 43
+        "y": 51
       },
       "id": 3,
       "options": {
@@ -1203,7 +1303,7 @@
         "h": 11,
         "w": 12,
         "x": 12,
-        "y": 43
+        "y": 51
       },
       "id": 4,
       "options": {
@@ -1241,7 +1341,7 @@
         "h": 11,
         "w": 12,
         "x": 0,
-        "y": 54
+        "y": 62
       },
       "id": 6,
       "options": {
@@ -1270,7 +1370,7 @@
       "type": "logs"
     }
   ],
-  "refresh": "5m",
+  "refresh": false,
   "schemaVersion": 38,
   "style": "dark",
   "tags": [
@@ -1342,6 +1442,6 @@
   "timezone": "",
   "title": "Product Analytics Service Health",
   "uid": "da6cf9ea-d593-41ed-91c5-8536fd15c2fa",
-  "version": 20,
+  "version": 21,
   "weekStart": ""
 }
