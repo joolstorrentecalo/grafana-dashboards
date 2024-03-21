@@ -66,7 +66,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6438223346 at Wed Mar 20 14:36:07 UTC 2024",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6441669128 at Wed Mar 20 21:46:11 UTC 2024",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -2958,6 +2958,334 @@
               "show": false
             }
           ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 0,
+            "y": 30
+          },
+          "id": 28,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,region) (\n    avg_over_time(stackdriver_cloud_run_revision_run_googleapis_com_request_latencies_bucket{env=\"$environment\",environment=\"$environment\",region!=\"\",response_code_class!~\"4xx|5xx\",type=\"glgo\"}[$__interval])\n  )\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "p95 {{region}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.5)",
+              "line": false,
+              "op": "gt",
+              "yaxis": "left"
+            },
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.25)",
+              "line": false,
+              "op": "gt",
+              "value": "1024",
+              "yaxis": "left"
+            }
+          ],
+          "title": "Estimated p95 runway_ingress Latency - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "ms",
+              "label": "Duration",
+              "logBase": 10,
+              "min": 0.01,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 6,
+            "y": 30
+          },
+          "id": 29,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (region) (\n  avg_over_time(stackdriver_cloud_run_revision_run_googleapis_com_request_latencies_bucket{env=\"$environment\",environment=\"$environment\",le=\"+Inf\",region!=\"\",response_code_class!~\"4xx|5xx\",type=\"glgo\"}[$__interval])\n)\n\n    -\n    (\n      sum by (region) (\n  avg_over_time(stackdriver_cloud_run_revision_run_googleapis_com_request_latencies_bucket{env=\"$environment\",environment=\"$environment\",le=\"1024\",region!=\"\",response_code_class!~\"4xx|5xx\",type=\"glgo\"}[$__interval])\n)\n\n    )\n  )\n  / ignoring(region) group_left()\n  (\n    sum by () (\n  avg_over_time(stackdriver_cloud_run_revision_run_googleapis_com_request_latencies_bucket{env=\"$environment\",environment=\"$environment\",le=\"+Inf\",region!=\"\",response_code_class!~\"4xx|5xx\",type=\"glgo\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for runway_ingress Latency - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 12,
+            "y": 30
+          },
+          "id": 30,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (region) (\n  avg_over_time(stackdriver_cloud_run_revision_run_googleapis_com_request_count{env=\"$environment\",environment=\"$environment\",region!=\"\",response_code_class=\"5xx\",type=\"glgo\"}[$__interval]) / 60\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "runway_ingress Errors - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 18,
+            "y": 30
+          },
+          "id": 31,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (region) (\n  avg_over_time(stackdriver_cloud_run_revision_run_googleapis_com_request_count{env=\"$environment\",environment=\"$environment\",region!=\"\",type=\"glgo\"}[$__interval]) / 60\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "runway_ingress RPS - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
         }
       ],
       "repeat": null,
@@ -2977,7 +3305,7 @@
         "x": 0,
         "y": 500
       },
-      "id": 28,
+      "id": 32,
       "panels": [
         {
           "aliasColors": {
@@ -3279,11 +3607,11 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, type, shard, revision_name) (\n  clamp_min(\n    clamp_max(\n      histogram_quantile(0.9999, sum by(le, environment, type, shard, revision_name)\n        (\n          avg_over_time(\n            stackdriver_cloud_run_revision_run_googleapis_com_container_cpu_utilizations_bucket{job=\"runway-exporter\",env=\"$environment\",environment=\"$environment\",type=\"glgo\"}[30m]\n          )\n        )\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, type, shard, revision_name, region) (\n  clamp_min(\n    clamp_max(\n      histogram_quantile(0.9999, sum by(le, environment, type, shard, revision_name, region)\n        (\n          avg_over_time(\n            stackdriver_cloud_run_revision_run_googleapis_com_container_cpu_utilizations_bucket{job=\"runway-exporter\",env=\"$environment\",environment=\"$environment\",type=\"glgo\"}[30m]\n          )\n        )\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
-              "legendFormat": "{{ revision_name }}",
+              "legendFormat": "{{ revision_name }} {{ region }}",
               "refId": "A"
             },
             {
@@ -3473,11 +3801,11 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, type, shard, revision_name) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, type, shard, revision_name) (\n        stackdriver_cloud_run_revision_run_googleapis_com_container_instance_count{job=\"runway-exporter\",state=\"active\",env=\"$environment\",environment=\"$environment\",type=\"glgo\"}\n      )\n      /\n      100\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, type, shard, revision_name, region) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, type, shard, revision_name, region) (\n        stackdriver_cloud_run_revision_run_googleapis_com_container_instance_count{job=\"runway-exporter\",state=\"active\",env=\"$environment\",environment=\"$environment\",type=\"glgo\"}\n      )\n      /\n      100\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
-              "legendFormat": "{{ revision_name }}",
+              "legendFormat": "{{ revision_name }} {{ region }}",
               "refId": "A"
             },
             {
@@ -3667,11 +3995,11 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, type, shard, revision_name) (\n  clamp_min(\n    clamp_max(\n      histogram_quantile(0.9999, sum by(le, environment, type, shard, revision_name)\n        (\n          rate(\n            stackdriver_cloud_run_revision_run_googleapis_com_container_max_request_concurrencies_bucket{job=\"runway-exporter\",state=\"active\",env=\"$environment\",environment=\"$environment\",type=\"glgo\"}[30m]\n          )\n        )\n      ) / 100\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, type, shard, revision_name, region) (\n  clamp_min(\n    clamp_max(\n      histogram_quantile(0.9999, sum by(le, environment, type, shard, revision_name, region)\n        (\n          rate(\n            stackdriver_cloud_run_revision_run_googleapis_com_container_max_request_concurrencies_bucket{job=\"runway-exporter\",state=\"active\",env=\"$environment\",environment=\"$environment\",type=\"glgo\"}[30m]\n          )\n        )\n      ) / 100\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
-              "legendFormat": "{{ revision_name }}",
+              "legendFormat": "{{ revision_name }} {{ region }}",
               "refId": "A"
             },
             {
@@ -3861,11 +4189,11 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, type, shard, revision_name) (\n  clamp_min(\n    clamp_max(\n      histogram_quantile(0.9999, sum by(le, environment, type, shard, revision_name)\n        (\n          avg_over_time(\n            stackdriver_cloud_run_revision_run_googleapis_com_container_memory_utilizations_bucket{job=\"runway-exporter\",env=\"$environment\",environment=\"$environment\",type=\"glgo\"}[30m]\n          )\n        )\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, type, shard, revision_name, region) (\n  clamp_min(\n    clamp_max(\n      histogram_quantile(0.9999, sum by(le, environment, type, shard, revision_name, region)\n        (\n          avg_over_time(\n            stackdriver_cloud_run_revision_run_googleapis_com_container_memory_utilizations_bucket{job=\"runway-exporter\",env=\"$environment\",environment=\"$environment\",type=\"glgo\"}[30m]\n          )\n        )\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
-              "legendFormat": "{{ revision_name }}",
+              "legendFormat": "{{ revision_name }} {{ region }}",
               "refId": "A"
             },
             {
@@ -3965,7 +4293,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 34,
+      "id": 38,
       "panels": [
         {
           "colors": [
@@ -3986,7 +4314,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 35,
+          "id": 39,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -4099,7 +4427,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 36,
+          "id": 40,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -4210,7 +4538,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 37,
+          "id": 41,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -4315,7 +4643,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 38,
+      "id": 42,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -4409,5 +4737,5 @@
   "timezone": "utc",
   "title": "glgo: Overview",
   "uid": "glgo-main",
-  "version": 149
+  "version": 151
 }

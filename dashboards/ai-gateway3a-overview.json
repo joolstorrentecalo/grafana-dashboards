@@ -66,7 +66,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6438223346 at Wed Mar 20 14:36:49 UTC 2024",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6441669128 at Wed Mar 20 21:55:19 UTC 2024",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -8143,6 +8143,259 @@
               "show": false
             }
           ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 30
+          },
+          "id": 63,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,region) (\n    rate(code_suggestions_inference_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",region!=\"\",type=\"ai-gateway\"}[$__interval])\n  )\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "p95 {{region}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.5)",
+              "line": false,
+              "op": "gt",
+              "value": 40,
+              "yaxis": "left"
+            },
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.25)",
+              "line": false,
+              "op": "gt",
+              "value": 30,
+              "yaxis": "left"
+            }
+          ],
+          "title": "Estimated p95 inference Latency - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": "Duration",
+              "logBase": 10,
+              "min": 0.01,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 8,
+            "y": 30
+          },
+          "id": 64,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (region) (\n  rate(code_suggestions_inference_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"+Inf\",region!=\"\",type=\"ai-gateway\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (region) (\n    rate(code_suggestions_inference_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=~\"30|30\\\\.0\",region!=\"\",type=\"ai-gateway\"}[$__interval])\n  )\n  +\n  sum by (region) (\n    rate(code_suggestions_inference_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=~\"40|40\\\\.0\",region!=\"\",type=\"ai-gateway\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(region) group_left()\n  (\n    sum by () (\n  rate(code_suggestions_inference_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",le=\"+Inf\",region!=\"\",type=\"ai-gateway\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for inference Latency - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 16,
+            "y": 30
+          },
+          "id": 65,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (region) (\n  rate(code_suggestions_inference_requests_total{env=\"$environment\",environment=\"$environment\",region!=\"\",type=\"ai-gateway\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "inference RPS - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
         }
       ],
       "repeat": null,
@@ -8162,7 +8415,7 @@
         "x": 0,
         "y": 210
       },
-      "id": 63,
+      "id": 66,
       "panels": [
         {
           "bars": false,
@@ -8179,7 +8432,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 64,
+          "id": 67,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8274,7 +8527,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 65,
+          "id": 68,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8350,7 +8603,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 66,
+          "id": 69,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8426,7 +8679,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 67,
+          "id": 70,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8521,7 +8774,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 68,
+          "id": 71,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8602,7 +8855,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 69,
+          "id": 72,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8678,7 +8931,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 70,
+          "id": 73,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8754,7 +9007,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 71,
+          "id": 74,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8849,7 +9102,7 @@
             "x": 6,
             "y": 20
           },
-          "id": 72,
+          "id": 75,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8930,7 +9183,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 73,
+          "id": 76,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9006,7 +9259,7 @@
             "x": 18,
             "y": 20
           },
-          "id": 74,
+          "id": 77,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9066,6 +9319,334 @@
               "show": false
             }
           ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 0,
+            "y": 30
+          },
+          "id": 78,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,region) (\n    avg_over_time(stackdriver_cloud_run_revision_run_googleapis_com_request_latencies_bucket{env=\"$environment\",environment=\"$environment\",region!=\"\",response_code_class!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n  )\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "p95 {{region}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.5)",
+              "line": false,
+              "op": "gt",
+              "yaxis": "left"
+            },
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.25)",
+              "line": false,
+              "op": "gt",
+              "value": "32989.690295920576",
+              "yaxis": "left"
+            }
+          ],
+          "title": "Estimated p95 runway_ingress Latency - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "ms",
+              "label": "Duration",
+              "logBase": 10,
+              "min": 0.01,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 6,
+            "y": 30
+          },
+          "id": 79,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (region) (\n  avg_over_time(stackdriver_cloud_run_revision_run_googleapis_com_request_latencies_bucket{env=\"$environment\",environment=\"$environment\",le=\"+Inf\",region!=\"\",response_code_class!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n)\n\n    -\n    (\n      sum by (region) (\n  avg_over_time(stackdriver_cloud_run_revision_run_googleapis_com_request_latencies_bucket{env=\"$environment\",environment=\"$environment\",le=\"32989.690295920576\",region!=\"\",response_code_class!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n)\n\n    )\n  )\n  / ignoring(region) group_left()\n  (\n    sum by () (\n  avg_over_time(stackdriver_cloud_run_revision_run_googleapis_com_request_latencies_bucket{env=\"$environment\",environment=\"$environment\",le=\"+Inf\",region!=\"\",response_code_class!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for runway_ingress Latency - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 12,
+            "y": 30
+          },
+          "id": 80,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (region) (\n  avg_over_time(stackdriver_cloud_run_revision_run_googleapis_com_request_count{env=\"$environment\",environment=\"$environment\",region!=\"\",response_code_class=\"5xx\",type=\"ai-gateway\"}[$__interval]) / 60\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "runway_ingress Errors - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 18,
+            "y": 30
+          },
+          "id": 81,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (region) (\n  avg_over_time(stackdriver_cloud_run_revision_run_googleapis_com_request_count{env=\"$environment\",environment=\"$environment\",region!=\"\",type=\"ai-gateway\"}[$__interval]) / 60\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "runway_ingress RPS - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
         }
       ],
       "repeat": null,
@@ -9085,7 +9666,7 @@
         "x": 0,
         "y": 220
       },
-      "id": 75,
+      "id": 82,
       "panels": [
         {
           "bars": false,
@@ -9102,7 +9683,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 76,
+          "id": 83,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9198,7 +9779,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 77,
+          "id": 84,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9274,7 +9855,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 78,
+          "id": 85,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9350,7 +9931,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 79,
+          "id": 86,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9446,7 +10027,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 80,
+          "id": 87,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9527,7 +10108,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 81,
+          "id": 88,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9603,7 +10184,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 82,
+          "id": 89,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9679,7 +10260,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 83,
+          "id": 90,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9775,7 +10356,7 @@
             "x": 6,
             "y": 20
           },
-          "id": 84,
+          "id": 91,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9856,7 +10437,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 85,
+          "id": 92,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9932,7 +10513,7 @@
             "x": 18,
             "y": 20
           },
-          "id": 86,
+          "id": 93,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10008,7 +10589,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 87,
+          "id": 94,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10104,7 +10685,7 @@
             "x": 6,
             "y": 30
           },
-          "id": 88,
+          "id": 95,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10185,7 +10766,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 89,
+          "id": 96,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10261,7 +10842,7 @@
             "x": 18,
             "y": 30
           },
-          "id": 90,
+          "id": 97,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10321,6 +10902,335 @@
               "show": false
             }
           ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 0,
+            "y": 40
+          },
+          "id": 98,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,region) (\n    rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler!~\"/v1/chat/agent|/v1/x-ray/libraries|/v2/code/completions|/v2/code/generations|/v2/completions\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n  )\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "p95 {{region}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.5)",
+              "line": false,
+              "op": "gt",
+              "value": 10,
+              "yaxis": "left"
+            },
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.25)",
+              "line": false,
+              "op": "gt",
+              "value": 5,
+              "yaxis": "left"
+            }
+          ],
+          "title": "Estimated p95 server Latency - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": "Duration",
+              "logBase": 10,
+              "min": 0.01,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 6,
+            "y": 40
+          },
+          "id": 99,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (region) (\n  rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler!~\"/v1/chat/agent|/v1/x-ray/libraries|/v2/code/completions|/v2/code/generations|/v2/completions\",le=\"+Inf\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (region) (\n    rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler!~\"/v1/chat/agent|/v1/x-ray/libraries|/v2/code/completions|/v2/code/generations|/v2/completions\",le=~\"5|5\\\\.0\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n  )\n  +\n  sum by (region) (\n    rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler!~\"/v1/chat/agent|/v1/x-ray/libraries|/v2/code/completions|/v2/code/generations|/v2/completions\",le=~\"10|10\\\\.0\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(region) group_left()\n  (\n    sum by () (\n  rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler!~\"/v1/chat/agent|/v1/x-ray/libraries|/v2/code/completions|/v2/code/generations|/v2/completions\",le=\"+Inf\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for server Latency - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 12,
+            "y": 40
+          },
+          "id": 100,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (region) (\n  rate(http_request_duration_seconds_count{env=\"$environment\",environment=\"$environment\",handler!~\"/v1/chat/agent|/v1/x-ray/libraries|/v2/code/completions|/v2/code/generations|/v2/completions\",region!=\"\",status=\"5xx\",type=\"ai-gateway\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "server Errors - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 18,
+            "y": 40
+          },
+          "id": 101,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (region) (\n  rate(http_request_duration_seconds_count{env=\"$environment\",environment=\"$environment\",handler!~\"/v1/chat/agent|/v1/x-ray/libraries|/v2/code/completions|/v2/code/generations|/v2/completions\",region!=\"\",type=\"ai-gateway\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "server RPS - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
         }
       ],
       "repeat": null,
@@ -10340,7 +11250,7 @@
         "x": 0,
         "y": 230
       },
-      "id": 91,
+      "id": 102,
       "panels": [
         {
           "bars": false,
@@ -10357,7 +11267,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 92,
+          "id": 103,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10453,7 +11363,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 93,
+          "id": 104,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10529,7 +11439,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 94,
+          "id": 105,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10605,7 +11515,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 95,
+          "id": 106,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10701,7 +11611,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 96,
+          "id": 107,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10782,7 +11692,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 97,
+          "id": 108,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10858,7 +11768,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 98,
+          "id": 109,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10934,7 +11844,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 99,
+          "id": 110,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11030,7 +11940,7 @@
             "x": 6,
             "y": 20
           },
-          "id": 100,
+          "id": 111,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11111,7 +12021,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 101,
+          "id": 112,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11187,7 +12097,7 @@
             "x": 18,
             "y": 20
           },
-          "id": 102,
+          "id": 113,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11263,7 +12173,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 103,
+          "id": 114,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11359,7 +12269,7 @@
             "x": 6,
             "y": 30
           },
-          "id": 104,
+          "id": 115,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11440,7 +12350,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 105,
+          "id": 116,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11516,7 +12426,7 @@
             "x": 18,
             "y": 30
           },
-          "id": 106,
+          "id": 117,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11576,6 +12486,335 @@
               "show": false
             }
           ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 0,
+            "y": 40
+          },
+          "id": 118,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,region) (\n    rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler=\"/v1/chat/agent\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n  )\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "p95 {{region}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.5)",
+              "line": false,
+              "op": "gt",
+              "value": 40,
+              "yaxis": "left"
+            },
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.25)",
+              "line": false,
+              "op": "gt",
+              "value": 30,
+              "yaxis": "left"
+            }
+          ],
+          "title": "Estimated p95 server_chat Latency - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": "Duration",
+              "logBase": 10,
+              "min": 0.01,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 6,
+            "y": 40
+          },
+          "id": 119,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (region) (\n  rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler=\"/v1/chat/agent\",le=\"+Inf\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (region) (\n    rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler=\"/v1/chat/agent\",le=~\"30|30\\\\.0\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n  )\n  +\n  sum by (region) (\n    rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler=\"/v1/chat/agent\",le=~\"40|40\\\\.0\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(region) group_left()\n  (\n    sum by () (\n  rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler=\"/v1/chat/agent\",le=\"+Inf\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for server_chat Latency - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 12,
+            "y": 40
+          },
+          "id": 120,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (region) (\n  rate(http_request_duration_seconds_count{env=\"$environment\",environment=\"$environment\",handler=\"/v1/chat/agent\",region!=\"\",status=\"5xx\",type=\"ai-gateway\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "server_chat Errors - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 18,
+            "y": 40
+          },
+          "id": 121,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (region) (\n  rate(http_request_duration_seconds_count{env=\"$environment\",environment=\"$environment\",handler=\"/v1/chat/agent\",region!=\"\",type=\"ai-gateway\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "server_chat RPS - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
         }
       ],
       "repeat": null,
@@ -11595,7 +12834,7 @@
         "x": 0,
         "y": 240
       },
-      "id": 107,
+      "id": 122,
       "panels": [
         {
           "bars": false,
@@ -11612,7 +12851,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 108,
+          "id": 123,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11708,7 +12947,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 109,
+          "id": 124,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11784,7 +13023,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 110,
+          "id": 125,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11860,7 +13099,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 111,
+          "id": 126,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11956,7 +13195,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 112,
+          "id": 127,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12037,7 +13276,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 113,
+          "id": 128,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12113,7 +13352,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 114,
+          "id": 129,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12189,7 +13428,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 115,
+          "id": 130,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12285,7 +13524,7 @@
             "x": 6,
             "y": 20
           },
-          "id": 116,
+          "id": 131,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12366,7 +13605,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 117,
+          "id": 132,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12442,7 +13681,7 @@
             "x": 18,
             "y": 20
           },
-          "id": 118,
+          "id": 133,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12518,7 +13757,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 119,
+          "id": 134,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12614,7 +13853,7 @@
             "x": 6,
             "y": 30
           },
-          "id": 120,
+          "id": 135,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12695,7 +13934,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 121,
+          "id": 136,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12771,7 +14010,7 @@
             "x": 18,
             "y": 30
           },
-          "id": 122,
+          "id": 137,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12831,6 +14070,335 @@
               "show": false
             }
           ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 0,
+            "y": 40
+          },
+          "id": 138,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,region) (\n    rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler=~\"/v2/code/completions|/v2/completions\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n  )\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "p95 {{region}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.5)",
+              "line": false,
+              "op": "gt",
+              "value": 10,
+              "yaxis": "left"
+            },
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.25)",
+              "line": false,
+              "op": "gt",
+              "value": 1,
+              "yaxis": "left"
+            }
+          ],
+          "title": "Estimated p95 server_code_completions Latency - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": "Duration",
+              "logBase": 10,
+              "min": 0.01,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 6,
+            "y": 40
+          },
+          "id": 139,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (region) (\n  rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler=~\"/v2/code/completions|/v2/completions\",le=\"+Inf\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (region) (\n    rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler=~\"/v2/code/completions|/v2/completions\",le=~\"1|1\\\\.0\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n  )\n  +\n  sum by (region) (\n    rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler=~\"/v2/code/completions|/v2/completions\",le=~\"10|10\\\\.0\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(region) group_left()\n  (\n    sum by () (\n  rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler=~\"/v2/code/completions|/v2/completions\",le=\"+Inf\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for server_code_completions Latency - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 12,
+            "y": 40
+          },
+          "id": 140,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (region) (\n  rate(http_request_duration_seconds_count{env=\"$environment\",environment=\"$environment\",handler=~\"/v2/code/completions|/v2/completions\",region!=\"\",status=\"5xx\",type=\"ai-gateway\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "server_code_completions Errors - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 18,
+            "y": 40
+          },
+          "id": 141,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (region) (\n  rate(http_request_duration_seconds_count{env=\"$environment\",environment=\"$environment\",handler=~\"/v2/code/completions|/v2/completions\",region!=\"\",type=\"ai-gateway\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "server_code_completions RPS - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
         }
       ],
       "repeat": null,
@@ -12850,7 +14418,7 @@
         "x": 0,
         "y": 250
       },
-      "id": 123,
+      "id": 142,
       "panels": [
         {
           "bars": false,
@@ -12867,7 +14435,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 124,
+          "id": 143,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12963,7 +14531,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 125,
+          "id": 144,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13039,7 +14607,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 126,
+          "id": 145,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13115,7 +14683,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 127,
+          "id": 146,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13211,7 +14779,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 128,
+          "id": 147,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13292,7 +14860,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 129,
+          "id": 148,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13368,7 +14936,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 130,
+          "id": 149,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13444,7 +15012,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 131,
+          "id": 150,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13540,7 +15108,7 @@
             "x": 6,
             "y": 20
           },
-          "id": 132,
+          "id": 151,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13621,7 +15189,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 133,
+          "id": 152,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13697,7 +15265,7 @@
             "x": 18,
             "y": 20
           },
-          "id": 134,
+          "id": 153,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13773,7 +15341,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 135,
+          "id": 154,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13869,7 +15437,7 @@
             "x": 6,
             "y": 30
           },
-          "id": 136,
+          "id": 155,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13950,7 +15518,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 137,
+          "id": 156,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14026,7 +15594,7 @@
             "x": 18,
             "y": 30
           },
-          "id": 138,
+          "id": 157,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14086,6 +15654,335 @@
               "show": false
             }
           ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 0,
+            "y": 40
+          },
+          "id": 158,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,region) (\n    rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler=\"/v2/code/generations\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n  )\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "p95 {{region}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.5)",
+              "line": false,
+              "op": "gt",
+              "value": 30,
+              "yaxis": "left"
+            },
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.25)",
+              "line": false,
+              "op": "gt",
+              "value": 20,
+              "yaxis": "left"
+            }
+          ],
+          "title": "Estimated p95 server_code_generations Latency - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": "Duration",
+              "logBase": 10,
+              "min": 0.01,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 6,
+            "y": 40
+          },
+          "id": 159,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (region) (\n  rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler=\"/v2/code/generations\",le=\"+Inf\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (region) (\n    rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler=\"/v2/code/generations\",le=~\"20|20\\\\.0\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n  )\n  +\n  sum by (region) (\n    rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler=\"/v2/code/generations\",le=~\"30|30\\\\.0\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(region) group_left()\n  (\n    sum by () (\n  rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler=\"/v2/code/generations\",le=\"+Inf\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for server_code_generations Latency - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 12,
+            "y": 40
+          },
+          "id": 160,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (region) (\n  rate(http_request_duration_seconds_count{env=\"$environment\",environment=\"$environment\",handler=\"/v2/code/generations\",region!=\"\",status=\"5xx\",type=\"ai-gateway\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "server_code_generations Errors - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 18,
+            "y": 40
+          },
+          "id": 161,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (region) (\n  rate(http_request_duration_seconds_count{env=\"$environment\",environment=\"$environment\",handler=\"/v2/code/generations\",region!=\"\",type=\"ai-gateway\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "server_code_generations RPS - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
         }
       ],
       "repeat": null,
@@ -14105,7 +16002,7 @@
         "x": 0,
         "y": 260
       },
-      "id": 139,
+      "id": 162,
       "panels": [
         {
           "bars": false,
@@ -14122,7 +16019,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 140,
+          "id": 163,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14218,7 +16115,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 141,
+          "id": 164,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14294,7 +16191,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 142,
+          "id": 165,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14370,7 +16267,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 143,
+          "id": 166,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14466,7 +16363,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 144,
+          "id": 167,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14547,7 +16444,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 145,
+          "id": 168,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14623,7 +16520,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 146,
+          "id": 169,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14699,7 +16596,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 147,
+          "id": 170,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14795,7 +16692,7 @@
             "x": 6,
             "y": 20
           },
-          "id": 148,
+          "id": 171,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14876,7 +16773,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 149,
+          "id": 172,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14952,7 +16849,7 @@
             "x": 18,
             "y": 20
           },
-          "id": 150,
+          "id": 173,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15028,7 +16925,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 151,
+          "id": 174,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15124,7 +17021,7 @@
             "x": 6,
             "y": 30
           },
-          "id": 152,
+          "id": 175,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15205,7 +17102,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 153,
+          "id": 176,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15281,7 +17178,7 @@
             "x": 18,
             "y": 30
           },
-          "id": 154,
+          "id": 177,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15341,6 +17238,335 @@
               "show": false
             }
           ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 0,
+            "y": 40
+          },
+          "id": 178,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,region) (\n    rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler=\"/v1/x-ray/libraries\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n  )\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "p95 {{region}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.5)",
+              "line": false,
+              "op": "gt",
+              "value": 40,
+              "yaxis": "left"
+            },
+            {
+              "colorMode": "custom",
+              "fill": true,
+              "fillColor": "rgba(242, 73, 92, 0.25)",
+              "line": false,
+              "op": "gt",
+              "value": 30,
+              "yaxis": "left"
+            }
+          ],
+          "title": "Estimated p95 server_x_ray Latency - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": "Duration",
+              "logBase": 10,
+              "min": 0.01,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "Attributes apdex downscoring",
+          "fill": 4,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 6,
+            "y": 40
+          },
+          "id": 179,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*/",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (region) (\n  rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler=\"/v1/x-ray/libraries\",le=\"+Inf\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (region) (\n    rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler=\"/v1/x-ray/libraries\",le=~\"30|30\\\\.0\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n  )\n  +\n  sum by (region) (\n    rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler=\"/v1/x-ray/libraries\",le=~\"40|40\\\\.0\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(region) group_left()\n  (\n    sum by () (\n  rate(http_request_duration_seconds_bucket{env=\"$environment\",environment=\"$environment\",handler=\"/v1/x-ray/libraries\",le=\"+Inf\",region!=\"\",status!~\"4xx|5xx\",type=\"ai-gateway\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex attribution for server_x_ray Latency - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Percent",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 12,
+            "y": 40
+          },
+          "id": 180,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (region) (\n  rate(http_request_duration_seconds_count{env=\"$environment\",environment=\"$environment\",handler=\"/v1/x-ray/libraries\",region!=\"\",status=\"5xx\",type=\"ai-gateway\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "server_x_ray Errors - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 6,
+            "x": 18,
+            "y": 40
+          },
+          "id": 181,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (region) (\n  rate(http_request_duration_seconds_count{env=\"$environment\",environment=\"$environment\",handler=\"/v1/x-ray/libraries\",region!=\"\",type=\"ai-gateway\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{region}}",
+              "refId": "A"
+            }
+          ],
+          "title": "server_x_ray RPS - per region",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
         }
       ],
       "repeat": null,
@@ -15360,7 +17586,7 @@
         "x": 0,
         "y": 270
       },
-      "id": 155,
+      "id": 182,
       "panels": [
         {
           "bars": false,
@@ -15377,7 +17603,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 156,
+          "id": 183,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15453,7 +17679,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 157,
+          "id": 184,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15529,7 +17755,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 158,
+          "id": 185,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15605,7 +17831,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 159,
+          "id": 186,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15684,7 +17910,7 @@
         "x": 0,
         "y": 500
       },
-      "id": 160,
+      "id": 187,
       "panels": [
         {
           "aliasColors": {
@@ -15986,11 +18212,11 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, base_model) (\n  clamp_min(\n    clamp_max(\n      (\n        sum without (method) (stackdriver_aiplatform_googleapis_com_location_aiplatform_googleapis_com_quota_online_prediction_requests_per_base_model_usage{env=\"$environment\",environment=\"$environment\",type=\"ai-gateway\"})\n      /\n        stackdriver_aiplatform_googleapis_com_location_aiplatform_googleapis_com_quota_online_prediction_requests_per_base_model_limit{env=\"$environment\",environment=\"$environment\",type=\"ai-gateway\"}\n      ) > 0\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, base_model, region) (\n  clamp_min(\n    clamp_max(\n      (\n        sum without (method) (stackdriver_aiplatform_googleapis_com_location_aiplatform_googleapis_com_quota_online_prediction_requests_per_base_model_usage{env=\"$environment\",environment=\"$environment\",type=\"ai-gateway\"})\n      /\n        stackdriver_aiplatform_googleapis_com_location_aiplatform_googleapis_com_quota_online_prediction_requests_per_base_model_limit{env=\"$environment\",environment=\"$environment\",type=\"ai-gateway\"}\n      ) > 0\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
-              "legendFormat": "{{ base_model }}",
+              "legendFormat": "{{ base_model }} {{ region }}",
               "refId": "A"
             },
             {
@@ -16762,11 +18988,11 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, type, shard, revision_name) (\n  clamp_min(\n    clamp_max(\n      histogram_quantile(0.9999, sum by(le, environment, type, shard, revision_name)\n        (\n          avg_over_time(\n            stackdriver_cloud_run_revision_run_googleapis_com_container_cpu_utilizations_bucket{job=\"runway-exporter\",env=\"$environment\",environment=\"$environment\",type=\"ai-gateway\"}[30m]\n          )\n        )\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, type, shard, revision_name, region) (\n  clamp_min(\n    clamp_max(\n      histogram_quantile(0.9999, sum by(le, environment, type, shard, revision_name, region)\n        (\n          avg_over_time(\n            stackdriver_cloud_run_revision_run_googleapis_com_container_cpu_utilizations_bucket{job=\"runway-exporter\",env=\"$environment\",environment=\"$environment\",type=\"ai-gateway\"}[30m]\n          )\n        )\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
-              "legendFormat": "{{ revision_name }}",
+              "legendFormat": "{{ revision_name }} {{ region }}",
               "refId": "A"
             },
             {
@@ -16956,11 +19182,11 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, type, shard, revision_name) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, type, shard, revision_name) (\n        stackdriver_cloud_run_revision_run_googleapis_com_container_instance_count{job=\"runway-exporter\",state=\"active\",env=\"$environment\",environment=\"$environment\",type=\"ai-gateway\"}\n      )\n      /\n      100\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, type, shard, revision_name, region) (\n  clamp_min(\n    clamp_max(\n      sum by (environment, type, shard, revision_name, region) (\n        stackdriver_cloud_run_revision_run_googleapis_com_container_instance_count{job=\"runway-exporter\",state=\"active\",env=\"$environment\",environment=\"$environment\",type=\"ai-gateway\"}\n      )\n      /\n      100\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
-              "legendFormat": "{{ revision_name }}",
+              "legendFormat": "{{ revision_name }} {{ region }}",
               "refId": "A"
             },
             {
@@ -17150,11 +19376,11 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, type, shard, revision_name) (\n  clamp_min(\n    clamp_max(\n      histogram_quantile(0.9999, sum by(le, environment, type, shard, revision_name)\n        (\n          rate(\n            stackdriver_cloud_run_revision_run_googleapis_com_container_max_request_concurrencies_bucket{job=\"runway-exporter\",state=\"active\",env=\"$environment\",environment=\"$environment\",type=\"ai-gateway\"}[30m]\n          )\n        )\n      ) / 100\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, type, shard, revision_name, region) (\n  clamp_min(\n    clamp_max(\n      histogram_quantile(0.9999, sum by(le, environment, type, shard, revision_name, region)\n        (\n          rate(\n            stackdriver_cloud_run_revision_run_googleapis_com_container_max_request_concurrencies_bucket{job=\"runway-exporter\",state=\"active\",env=\"$environment\",environment=\"$environment\",type=\"ai-gateway\"}[30m]\n          )\n        )\n      ) / 100\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
-              "legendFormat": "{{ revision_name }}",
+              "legendFormat": "{{ revision_name }} {{ region }}",
               "refId": "A"
             },
             {
@@ -17344,11 +19570,11 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, type, shard, revision_name) (\n  clamp_min(\n    clamp_max(\n      histogram_quantile(0.9999, sum by(le, environment, type, shard, revision_name)\n        (\n          avg_over_time(\n            stackdriver_cloud_run_revision_run_googleapis_com_container_memory_utilizations_bucket{job=\"runway-exporter\",env=\"$environment\",environment=\"$environment\",type=\"ai-gateway\"}[30m]\n          )\n        )\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, type, shard, revision_name, region) (\n  clamp_min(\n    clamp_max(\n      histogram_quantile(0.9999, sum by(le, environment, type, shard, revision_name, region)\n        (\n          avg_over_time(\n            stackdriver_cloud_run_revision_run_googleapis_com_container_memory_utilizations_bucket{job=\"runway-exporter\",env=\"$environment\",environment=\"$environment\",type=\"ai-gateway\"}[30m]\n          )\n        )\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
-              "legendFormat": "{{ revision_name }}",
+              "legendFormat": "{{ revision_name }} {{ region }}",
               "refId": "A"
             },
             {
@@ -17448,7 +19674,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 170,
+      "id": 197,
       "panels": [
         {
           "colors": [
@@ -17469,7 +19695,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 171,
+          "id": 198,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -17582,7 +19808,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 172,
+          "id": 199,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -17693,7 +19919,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 173,
+          "id": 200,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -17798,7 +20024,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 174,
+      "id": 201,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -17892,5 +20118,5 @@
   "timezone": "utc",
   "title": "ai-gateway: Overview",
   "uid": "ai-gateway-main",
-  "version": 691
+  "version": 693
 }
