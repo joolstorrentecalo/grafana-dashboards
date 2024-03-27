@@ -551,8 +551,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
+        "type": "loki",
+        "uid": "${dashboardLokiDataSource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -617,7 +617,7 @@
         "x": 12,
         "y": 16
       },
-      "id": 9,
+      "id": 19,
       "options": {
         "legend": {
           "calcs": [
@@ -632,21 +632,23 @@
           "sort": "none"
         }
       },
+      "pluginVersion": "10.1.5",
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
+            "type": "loki",
+            "uid": "${dashboardLokiDataSource}"
           },
           "editorMode": "code",
-          "expr": "rate(ClickHouse_InsertedRows{cluster=\"$dashboardCluster\"}[$__rate_interval])",
-          "instant": false,
-          "legendFormat": "{{hostname}}",
-          "range": true,
+          "expr": "sum by (channel) (\n    sum_over_time({container_name=\"snowplow-enricher\", pod_name=~`^$dashboardCluster\\-.*$`} | regexp  `.*snowplow\\.enrich\\.(?P<channel>\\w+) \\= (?P<value>\\d+)` | channel != \"latency\" | unwrap value [1m])\n    )",
+          "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "ClickHouse Row Inserts",
+      "title": "Snowplow enricher throughput",
+      "transformations": [
+
+      ],
       "type": "timeseries"
     },
     {
@@ -826,7 +828,6 @@
           "mappings": [
 
           ],
-          "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -842,30 +843,7 @@
           }
         },
         "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "prod-1-vector-1"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
+
         ]
       },
       "gridPos": {
@@ -874,7 +852,7 @@
         "x": 12,
         "y": 24
       },
-      "id": 1,
+      "id": 20,
       "options": {
         "legend": {
           "calcs": [
@@ -896,13 +874,12 @@
             "uid": "${dashboardLokiDataSource}"
           },
           "editorMode": "code",
-          "expr": "sum(count_over_time({container_name=\"vector\",severity=\"ERROR\",pod_name=~`^$dashboardCluster\\-.*$`} |~ \"WARN\"[$__interval])) by (pod_name)",
-          "legendFormat": "{{pod_name}}",
+          "expr": "sum by (pod_name) (\n    avg_over_time({container_name=\"snowplow-enricher\", pod_name=~`^$dashboardCluster\\-.*$`} | regexp  `.*snowplow\\.enrich\\.(?P<channel>\\w+) \\= (?P<value>\\d+)` | channel = \"latency\" | unwrap value [1m])\n    )",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "Vector Error Rate",
+      "title": "Snowplow enricher latency",
       "type": "timeseries"
     },
     {
@@ -1121,7 +1098,7 @@
         "x": 12,
         "y": 32
       },
-      "id": 5,
+      "id": 9,
       "options": {
         "legend": {
           "calcs": [
@@ -1143,20 +1120,20 @@
             "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
           },
           "editorMode": "code",
-          "expr": "rate(vector_component_sent_events_total{component_id=\"clickhouse_enriched_events\",host=~`^$dashboardCluster\\-.*$`}[$__interval])",
+          "expr": "rate(ClickHouse_InsertedRows{cluster=\"$dashboardCluster\"}[$__rate_interval])",
           "instant": false,
-          "legendFormat": "{{host}}",
+          "legendFormat": "{{hostname}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Vector Enriched Events Sent",
+      "title": "ClickHouse Row Inserts",
       "type": "timeseries"
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
+        "type": "loki",
+        "uid": "${dashboardLokiDataSource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1197,6 +1174,7 @@
           "mappings": [
 
           ],
+          "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1212,7 +1190,30 @@
           }
         },
         "overrides": [
-
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "prod-1-vector-1"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
         ]
       },
       "gridPos": {
@@ -1221,7 +1222,7 @@
         "x": 12,
         "y": 40
       },
-      "id": 8,
+      "id": 1,
       "options": {
         "legend": {
           "calcs": [
@@ -1239,23 +1240,17 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
+            "type": "loki",
+            "uid": "${dashboardLokiDataSource}"
           },
-          "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "ClickHouse_NumberOfDatabases{cluster=\"$dashboardCluster\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "{{hostname}}",
-          "range": true,
-          "refId": "B",
-          "useBackend": false
+          "expr": "sum(count_over_time({container_name=\"vector\",severity=\"ERROR\",pod_name=~`^$dashboardCluster\\-.*$`} |~ \"WARN\"[$__interval])) by (pod_name)",
+          "legendFormat": "{{pod_name}}",
+          "queryType": "range",
+          "refId": "A"
         }
       ],
-      "title": "ClickHouse Database Count",
+      "title": "Vector Error Rate",
       "type": "timeseries"
     },
     {
@@ -1582,7 +1577,7 @@
         "x": 12,
         "y": 48
       },
-      "id": 12,
+      "id": 5,
       "options": {
         "legend": {
           "calcs": [
@@ -1604,14 +1599,14 @@
             "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
           },
           "editorMode": "code",
-          "expr": "stackdriver_k_8_s_container_logging_googleapis_com_user_vector_errors{cluster=\"$dashboardCluster\"}",
+          "expr": "rate(vector_component_sent_events_total{component_id=\"clickhouse_enriched_events\",host=~`^$dashboardCluster\\-.*$`}[$__interval])",
           "instant": false,
-          "legendFormat": "{{pod_name}}",
+          "legendFormat": "{{host}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Vector errors from log-based metrics ",
+      "title": "Vector Enriched Events Sent",
       "type": "timeseries"
     },
     {
@@ -1716,6 +1711,211 @@
     },
     {
       "datasource": {
+        "type": "prometheus",
+        "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 56
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "ClickHouse_NumberOfDatabases{cluster=\"$dashboardCluster\"}",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "{{hostname}}",
+          "range": true,
+          "refId": "B",
+          "useBackend": false
+        }
+      ],
+      "title": "ClickHouse Database Count",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 64
+      },
+      "id": 12,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
+          },
+          "editorMode": "code",
+          "expr": "stackdriver_k_8_s_container_logging_googleapis_com_user_vector_errors{cluster=\"$dashboardCluster\"}",
+          "instant": false,
+          "legendFormat": "{{pod_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Vector errors from log-based metrics ",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
         "type": "loki",
         "uid": "${dashboardLokiDataSource}"
       },
@@ -1723,7 +1923,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 58
+        "y": 72
       },
       "id": 2,
       "options": {
@@ -1819,7 +2019,7 @@
         "h": 11,
         "w": 12,
         "x": 0,
-        "y": 68
+        "y": 82
       },
       "id": 3,
       "options": {
@@ -1861,7 +2061,7 @@
         "h": 11,
         "w": 12,
         "x": 12,
-        "y": 68
+        "y": 82
       },
       "id": 4,
       "options": {
@@ -1899,7 +2099,7 @@
         "h": 11,
         "w": 12,
         "x": 0,
-        "y": 79
+        "y": 93
       },
       "id": 6,
       "options": {
@@ -2000,6 +2200,6 @@
   "timezone": "",
   "title": "Product Analytics Service Health",
   "uid": "da6cf9ea-d593-41ed-91c5-8536fd15c2fa",
-  "version": 27,
+  "version": 28,
   "weekStart": ""
 }
