@@ -554,8 +554,8 @@
     },
     {
       "datasource": {
-        "type": "loki",
-        "uid": "${dashboardLokiDataSource}"
+        "type": "prometheus",
+        "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
       },
       "description": "\"raw\" can be lower than the sum of other metrics when a single payload includes multiple events.",
       "fieldConfig": {
@@ -621,7 +621,7 @@
         "x": 12,
         "y": 16
       },
-      "id": 19,
+      "id": 22,
       "options": {
         "legend": {
           "calcs": [
@@ -636,23 +636,25 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "10.1.5",
       "targets": [
         {
           "datasource": {
-            "type": "loki",
-            "uid": "${dashboardLokiDataSource}"
+            "type": "prometheus",
+            "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
           },
+          "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by (channel) (\n    sum_over_time({container_name=\"snowplow-enricher\", pod_name=~`^$dashboardCluster\\-.*$`} | regexp  `.*snowplow\\.enrich\\.(?P<channel>\\w+) \\= (?P<value>\\d+)` | channel != \"latency\" | unwrap value [1m]) / 60\n    )",
-          "queryType": "range",
-          "refId": "A"
+          "expr": "sum(\n    rate(label_replace(({__name__=~\"snowplow_enrich_(raw|good|bad|invalid_enriched)\",cluster=\"$dashboardCluster\"}),\"name\",\"$1\",\"__name__\", \"snowplow_enrich_(.*)\")[$__rate_interval:])\n    ) by (name)",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
         }
       ],
       "title": "Snowplow enricher - processed events per second",
-      "transformations": [
-
-      ],
       "type": "timeseries"
     },
     {
@@ -790,8 +792,8 @@
     },
     {
       "datasource": {
-        "type": "loki",
-        "uid": "${dashboardLokiDataSource}"
+        "type": "prometheus",
+        "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
       },
       "description": "The time that passes between collector queuing an event and enricher putting it back into kafka",
       "fieldConfig": {
@@ -858,7 +860,7 @@
         "x": 12,
         "y": 24
       },
-      "id": 20,
+      "id": 21,
       "options": {
         "legend": {
           "calcs": [
@@ -876,13 +878,19 @@
       "targets": [
         {
           "datasource": {
-            "type": "loki",
-            "uid": "${dashboardLokiDataSource}"
+            "type": "prometheus",
+            "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
           },
-          "editorMode": "code",
-          "expr": "sum by (pod_name) (\n    avg_over_time({container_name=\"snowplow-enricher\", pod_name=~`^$dashboardCluster\\-.*$`} | regexp  `.*snowplow\\.enrich\\.(?P<channel>\\w+) \\= (?P<value>\\d+)` | channel = \"latency\" | unwrap value [1m])\n    )",
-          "queryType": "range",
-          "refId": "A"
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "snowplow_enrich_latency{cluster=\"$dashboardCluster\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "latency",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
         }
       ],
       "title": "Snowplow enricher latency",
@@ -1185,7 +1193,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1285,7 +1294,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text"
+                "color": "text",
+                "value": null
               }
             ]
           },
@@ -1314,7 +1324,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "light-red"
+                      "color": "light-red",
+                      "value": null
                     },
                     {
                       "color": "light-orange",
@@ -1560,7 +1571,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1659,7 +1671,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1758,7 +1771,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2198,6 +2212,6 @@
   "timezone": "",
   "title": "Product Analytics Service Health",
   "uid": "da6cf9ea-d593-41ed-91c5-8536fd15c2fa",
-  "version": 30,
+  "version": 31,
   "weekStart": ""
 }
