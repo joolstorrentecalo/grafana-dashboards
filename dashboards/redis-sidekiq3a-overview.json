@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6527573030 at Tue Apr  2 11:37:07 UTC 2024",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6538391049 at Wed Apr  3 13:35:29 UTC 2024",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -1158,11 +1158,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "max(\n  max_over_time(\n    gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",type=\"redis-sidekiq\"}[$__interval]\n  )\n) by (component)\n",
+          "expr": "max(\n  max_over_time(\n    gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",shard=~\"$shard\",type=\"redis-sidekiq\"}[$__interval]\n  )\n) by (component, shard)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "{{ component }} component",
+          "legendFormat": "{{ component }} component - {{ shard }} shard",
           "refId": "A"
         }
       ],
@@ -1256,7 +1256,7 @@
           "color": "#E7D551"
         },
         {
-          "alias": "primary_server RPS",
+          "alias": "primary_server - {{ shard }} shard RPS",
           "color": "#E7D551",
           "zindex": 3
         },
@@ -1280,15 +1280,15 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "avg_over_time(gitlab_component_ops:rate_5m{component=\"primary_server\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"redis-sidekiq\"}[$__interval])\n",
+          "expr": "avg_over_time(gitlab_component_shard_ops:rate_5m{component=\"primary_server\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"}[$__interval])\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "primary_server RPS",
+          "legendFormat": "primary_server - {{ shard }} shard RPS",
           "refId": "A"
         },
         {
-          "expr": "gitlab_component_ops:rate_5m{component=\"primary_server\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"redis-sidekiq\"} offset 1w\n",
+          "expr": "gitlab_component_shard_ops:rate_5m{component=\"primary_server\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"} offset 1w\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1296,7 +1296,7 @@
           "refId": "B"
         }
       ],
-      "title": "primary_server SLI RPS - Requests per Second",
+      "title": "primary_server SLI (By Shard) RPS - Requests per Second",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1372,8 +1372,8 @@
         "dataLinks": [
           {
             "targetBlank": true,
-            "title": "rails_redis_client SLI Apdex SLO Analysis",
-            "url": "/d/alerts-component_slo_apdex?${__url_time_range}&${__all_variables}&var-component=rails_redis_client&var-type=redis-sidekiq"
+            "title": "rails_redis_client SLI (By Shard) Apdex SLO Analysis",
+            "url": "/d/alerts-component_shard_slo_apdex?${__url_time_range}&${__all_variables}&var-component=rails_redis_client&var-type=redis-sidekiq"
           }
         ]
       },
@@ -1411,15 +1411,15 @@
           "color": "#E7D551"
         },
         {
-          "alias": "rails_redis_client apdex",
+          "alias": "rails_redis_client - {{ shard }} shard apdex",
           "color": "#E7D551",
           "zindex": 3
         },
         {
-          "alias": "rails_redis_client apdex avg",
+          "alias": "rails_redis_client - {{ shard }} shard apdex avg",
           "color": "#5794F2",
           "dashLength": 1,
-          "fillBelowTo": "rails_redis_client apdex",
+          "fillBelowTo": "rails_redis_client - {{ shard }} shard apdex",
           "linewidth": 1,
           "spaceLength": 1,
           "zindex": -3
@@ -1444,39 +1444,39 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "min_over_time(gitlab_component_apdex:ratio_5m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"redis-sidekiq\"}[$__interval])\n",
+          "expr": "min_over_time(gitlab_component_shard_apdex:ratio_5m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"}[$__interval])\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "rails_redis_client apdex",
+          "legendFormat": "rails_redis_client - {{ shard }} shard apdex",
           "refId": "A"
         },
         {
-          "expr": "(1 - 6 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"rails_redis_client\",monitor=\"global\",type=\"redis-sidekiq\"})\n))\n",
+          "expr": "(1 - 6 * (1 - (\navg by (shard) (slo:min:events:gitlab_service_apdex:ratio{component=\"rails_redis_client\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"})\nor\navg by (shard) (slo:min:events:gitlab_service_apdex:ratio{component=\"rails_redis_client\",monitor=\"global\",shard=\"\",type=\"redis-sidekiq\"})\n)\n))\n",
           "format": "time_series",
           "interval": "5m",
           "intervalFactor": 1,
-          "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+          "legendFormat": "6h Degradation SLO (5% of monthly error budget) - {{ shard }} shard",
           "refId": "B"
         },
         {
-          "expr": "(1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"rails_redis_client\",monitor=\"global\",type=\"redis-sidekiq\"})\n))\n",
+          "expr": "(1 - 14.4 * (1 - (\navg by (shard) (slo:min:events:gitlab_service_apdex:ratio{component=\"rails_redis_client\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"})\nor\navg by (shard) (slo:min:events:gitlab_service_apdex:ratio{component=\"rails_redis_client\",monitor=\"global\",shard=\"\",type=\"redis-sidekiq\"})\n)\n))\n",
           "format": "time_series",
           "interval": "5m",
           "intervalFactor": 1,
-          "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+          "legendFormat": "1h Outage SLO (2% of monthly error budget) - {{ shard }} shard",
           "refId": "C"
         },
         {
-          "expr": "avg_over_time(gitlab_component_apdex:ratio_5m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"redis-sidekiq\"}[$__interval])\n",
+          "expr": "avg_over_time(gitlab_component_shard_apdex:ratio_5m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"}[$__interval])\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "rails_redis_client apdex avg",
+          "legendFormat": "rails_redis_client - {{ shard }} shard apdex avg",
           "refId": "D"
         },
         {
-          "expr": "clamp_min(\n  gitlab_component_apdex:ratio_5m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"redis-sidekiq\"} offset 1w\n,\n  scalar(min((1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"rails_redis_client\",monitor=\"global\",type=\"redis-sidekiq\"})\n))\n))\n)\n",
+          "expr": "clamp_min(\n  gitlab_component_shard_apdex:ratio_5m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"} offset 1w\n,\n  scalar(min((1 - 14.4 * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{component=\"rails_redis_client\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"})\n))\n))\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1484,7 +1484,7 @@
           "refId": "E"
         }
       ],
-      "title": "rails_redis_client SLI Apdex",
+      "title": "rails_redis_client SLI (By Shard) Apdex",
       "tooltip": {
         "shared": true,
         "sort": 1,
@@ -1700,12 +1700,12 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"redis-sidekiq\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"redis-sidekiq\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rails_redis_client\",monitor=\"global\",type=\"redis-sidekiq\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"redis-sidekiq\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rails_redis_client\",monitor=\"global\",type=\"redis-sidekiq\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"redis-sidekiq\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rails_redis_client\",monitor=\"global\",type=\"redis-sidekiq\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"redis-sidekiq\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rails_redis_client\",monitor=\"global\",type=\"redis-sidekiq\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_shard_apdex:ratio_1h{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_shard_apdex:ratio_5m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rails_redis_client\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_shard_apdex:ratio_1h{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rails_redis_client\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_shard_apdex:ratio_30m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rails_redis_client\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_shard_apdex:ratio_6h{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rails_redis_client\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "rails_redis_client SLI | Latency/Apdex",
+          "legendFormat": "rails_redis_client SLI (By Shard) | Latency/Apdex",
           "refId": "A"
         }
       ],
@@ -1748,8 +1748,8 @@
         "dataLinks": [
           {
             "targetBlank": true,
-            "title": "rails_redis_client SLI Error-Rate SLO Analysis",
-            "url": "/d/alerts-component_slo_error?${__url_time_range}&${__all_variables}&var-component=rails_redis_client&var-type=redis-sidekiq"
+            "title": "rails_redis_client SLI (By Shard) Error-Rate SLO Analysis",
+            "url": "/d/alerts-component_shard_slo_error?${__url_time_range}&${__all_variables}&var-component=rails_redis_client&var-type=redis-sidekiq"
           }
         ]
       },
@@ -1787,13 +1787,13 @@
           "color": "#E7D551"
         },
         {
-          "alias": "rails_redis_client error ratio",
+          "alias": "rails_redis_client - {{ shard }} shard error ratio",
           "color": "#E7D551",
-          "fillBelowTo": "rails_redis_client error ratio avg",
+          "fillBelowTo": "rails_redis_client - {{ shard }} shard error ratio avg",
           "zindex": 3
         },
         {
-          "alias": "rails_redis_client error ratio avg",
+          "alias": "rails_redis_client - {{ shard }} shard error ratio avg",
           "color": "#5794F2",
           "dashLength": 1,
           "fillGradient": 10,
@@ -1821,39 +1821,39 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_max(\n  max_over_time(gitlab_component_errors:ratio_5m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"redis-sidekiq\"}[$__interval])\n,\n  1\n)\n",
+          "expr": "clamp_max(\n  max_over_time(gitlab_component_shard_errors:ratio_5m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"}[$__interval])\n,\n  1\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "rails_redis_client error ratio",
+          "legendFormat": "rails_redis_client - {{ shard }} shard error ratio",
           "refId": "A"
         },
         {
-          "expr": "(6 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"rails_redis_client\",monitor=\"global\",type=\"redis-sidekiq\"})\n)\n",
+          "expr": "(6 * (\navg by (shard) (slo:max:events:gitlab_service_errors:ratio{component=\"rails_redis_client\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"})\nor\navg by (shard) (slo:max:events:gitlab_service_errors:ratio{component=\"rails_redis_client\",monitor=\"global\",shard=\"\",type=\"redis-sidekiq\"})\n)\n)\n",
           "format": "time_series",
           "interval": "5m",
           "intervalFactor": 1,
-          "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+          "legendFormat": "6h Degradation SLO (5% of monthly error budget) - {{ shard }} shard",
           "refId": "B"
         },
         {
-          "expr": "(14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"rails_redis_client\",monitor=\"global\",type=\"redis-sidekiq\"})\n)\n",
+          "expr": "(14.4 * (\navg by (shard) (slo:max:events:gitlab_service_errors:ratio{component=\"rails_redis_client\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"})\nor\navg by (shard) (slo:max:events:gitlab_service_errors:ratio{component=\"rails_redis_client\",monitor=\"global\",shard=\"\",type=\"redis-sidekiq\"})\n)\n)\n",
           "format": "time_series",
           "interval": "5m",
           "intervalFactor": 1,
-          "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+          "legendFormat": "1h Outage SLO (2% of monthly error budget) - {{ shard }} shard",
           "refId": "C"
         },
         {
-          "expr": "clamp_max(\n  avg_over_time(gitlab_component_errors:ratio_5m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"redis-sidekiq\"}[$__interval])\n,\n  1\n)\n",
+          "expr": "clamp_max(\n  avg_over_time(gitlab_component_shard_errors:ratio_5m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"}[$__interval])\n,\n  1\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "rails_redis_client error ratio avg",
+          "legendFormat": "rails_redis_client - {{ shard }} shard error ratio avg",
           "refId": "D"
         },
         {
-          "expr": "clamp_max(\n  gitlab_component_errors:ratio_5m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"redis-sidekiq\"} offset 1w\n,\n  scalar(max((14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"rails_redis_client\",monitor=\"global\",type=\"redis-sidekiq\"})\n)\n))\n)\n",
+          "expr": "clamp_max(\n  gitlab_component_shard_errors:ratio_5m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"} offset 1w\n,\n  scalar(max((14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"rails_redis_client\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"})\n)\n))\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1861,7 +1861,7 @@
           "refId": "E"
         }
       ],
-      "title": "rails_redis_client SLI Error Ratio",
+      "title": "rails_redis_client SLI (By Shard) Error Ratio",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -2077,12 +2077,12 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"redis-sidekiq\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_component_errors:ratio_5m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"redis-sidekiq\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"rails_redis_client\",monitor=\"global\",type=\"redis-sidekiq\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_component_errors:ratio_1h{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"redis-sidekiq\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"rails_redis_client\",monitor=\"global\",type=\"redis-sidekiq\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_component_errors:ratio_30m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"redis-sidekiq\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"rails_redis_client\",monitor=\"global\",type=\"redis-sidekiq\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_component_errors:ratio_6h{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"redis-sidekiq\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"rails_redis_client\",monitor=\"global\",type=\"redis-sidekiq\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_component_shard_errors:ratio_1h{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_component_shard_errors:ratio_5m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"rails_redis_client\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_component_shard_errors:ratio_1h{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"rails_redis_client\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_component_shard_errors:ratio_30m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"rails_redis_client\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_component_shard_errors:ratio_6h{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"rails_redis_client\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "rails_redis_client SLI | Errors",
+          "legendFormat": "rails_redis_client SLI (By Shard) | Errors",
           "refId": "A"
         }
       ],
@@ -2131,7 +2131,7 @@
           "color": "#E7D551"
         },
         {
-          "alias": "rails_redis_client RPS",
+          "alias": "rails_redis_client - {{ shard }} shard RPS",
           "color": "#E7D551",
           "zindex": 3
         },
@@ -2155,15 +2155,15 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "avg_over_time(gitlab_component_ops:rate_5m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"redis-sidekiq\"}[$__interval])\n",
+          "expr": "avg_over_time(gitlab_component_shard_ops:rate_5m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"}[$__interval])\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "rails_redis_client RPS",
+          "legendFormat": "rails_redis_client - {{ shard }} shard RPS",
           "refId": "A"
         },
         {
-          "expr": "gitlab_component_ops:rate_5m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"redis-sidekiq\"} offset 1w\n",
+          "expr": "gitlab_component_shard_ops:rate_5m{component=\"rails_redis_client\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"} offset 1w\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -2171,7 +2171,7 @@
           "refId": "B"
         }
       ],
-      "title": "rails_redis_client SLI RPS - Requests per Second",
+      "title": "rails_redis_client SLI (By Shard) RPS - Requests per Second",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -2253,7 +2253,7 @@
           "color": "#E7D551"
         },
         {
-          "alias": "secondary_servers RPS",
+          "alias": "secondary_servers - {{ shard }} shard RPS",
           "color": "#E7D551",
           "zindex": 3
         },
@@ -2277,15 +2277,15 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "avg_over_time(gitlab_component_ops:rate_5m{component=\"secondary_servers\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"redis-sidekiq\"}[$__interval])\n",
+          "expr": "avg_over_time(gitlab_component_shard_ops:rate_5m{component=\"secondary_servers\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"}[$__interval])\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "secondary_servers RPS",
+          "legendFormat": "secondary_servers - {{ shard }} shard RPS",
           "refId": "A"
         },
         {
-          "expr": "gitlab_component_ops:rate_5m{component=\"secondary_servers\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"redis-sidekiq\"} offset 1w\n",
+          "expr": "gitlab_component_shard_ops:rate_5m{component=\"secondary_servers\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",shard=~\"$shard\",type=\"redis-sidekiq\"} offset 1w\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -2293,7 +2293,7 @@
           "refId": "B"
         }
       ],
-      "title": "secondary_servers SLI RPS - Requests per Second",
+      "title": "secondary_servers SLI (By Shard) RPS - Requests per Second",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -13105,5 +13105,5 @@
   "timezone": "utc",
   "title": "redis-sidekiq: Overview",
   "uid": "redis-sidekiq-main",
-  "version": 5206
+  "version": 5209
 }
