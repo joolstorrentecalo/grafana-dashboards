@@ -122,7 +122,7 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "sum by (pod) (rate(container_cpu_usage_seconds_total{env='$environment', container='wiz-sensor',cluster=\"$cluster\",pod=\"$pod\"}[$__rate_interval]))",
+          "expr": "sum by (pod) (rate(container_cpu_usage_seconds_total{env='$environment', container='wiz-sensor',cluster=\"$cluster\"}[$__rate_interval]))",
           "instant": false,
           "legendFormat": "{{ pod }}",
           "range": true,
@@ -192,7 +192,7 @@
             "uid": "$PROMETHEUS_DS"
           },
           "editorMode": "code",
-          "expr": "sum by (pod) (\n  rate(\n    container_network_transmit_bytes_total{\n      env=\"$environment\",namespace=\"wiz-sensor\",cluster=\"$cluster\",pod=\"$pod\"\n    }[$__rate_interval]\n  ))\n",
+          "expr": "sum by (pod) (\n  rate(\n    container_network_transmit_bytes_total{\n      env=\"$environment\",namespace=\"wiz-sensor\",cluster=\"$cluster\"\n    }[$__rate_interval]\n  ))\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
@@ -205,7 +205,7 @@
             "uid": "$PROMETHEUS_DS"
           },
           "editorMode": "code",
-          "expr": "sum by (pod) (\n  rate(\n    container_network_receive_bytes_total{\n      env=\"$environment\",namespace=\"wiz-sensor\",cluster=\"$cluster\",pod=\"$pod\"\n    }[$__rate_interval]\n  ))\n",
+          "expr": "sum by (pod) (\n  rate(\n    container_network_receive_bytes_total{\n      env=\"$environment\",namespace=\"wiz-sensor\",cluster=\"$cluster\"\n    }[$__rate_interval]\n  ))\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
@@ -347,7 +347,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by (pod) (container_memory_usage_bytes{env=\"$environment\",namespace=\"wiz-sensor\",cluster=\"$cluster\",pod=\"$pod\",container=\"wiz-sensor\"})",
+          "expr": "sum by (pod) (container_memory_usage_bytes{env=\"$environment\",namespace=\"wiz-sensor\",cluster=\"$cluster\",container=\"wiz-sensor\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -451,7 +451,7 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "sum by (pod) (rate(container_fs_reads_total{env=\"$environment\",container=\"wiz-sensor\",cluster=\"$cluster\",pod=\"$pod\"}[$__rate_interval]))",
+          "expr": "sum by (pod) (rate(container_fs_reads_total{env=\"$environment\",container=\"wiz-sensor\",cluster=\"$cluster\"}[$__rate_interval]))",
           "instant": false,
           "legendFormat": "{{pod}}",
           "range": true,
@@ -552,7 +552,7 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "sum by (pod) (rate(container_fs_writes_total{env=\"$environment\",container=\"wiz-sensor\",cluster=\"$cluster\",pod=\"$pod\"}[$__rate_interval]))",
+          "expr": "sum by (pod) (rate(container_fs_writes_total{env=\"$environment\",container=\"wiz-sensor\",cluster=\"$cluster\"}[$__rate_interval]))",
           "instant": false,
           "legendFormat": "{{pod}}",
           "range": true,
@@ -560,6 +560,106 @@
         }
       ],
       "title": "Wiz Sensor: Write IO",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 8
+      },
+      "id": 25,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "rate(container_oom_events_total{env='$environment', container='wiz-sensor',cluster=\"$cluster\"}[$__rate_interval])",
+          "instant": false,
+          "legendFormat": "{{cluster}}-{{pod}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "OOM Kills",
       "type": "timeseries"
     }
   ],
@@ -628,34 +728,6 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
-      },
-      {
-        "current": {
-          "selected": false,
-          "text": "wiz-sensor-fn25q",
-          "value": "wiz-sensor-fn25q"
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "PA258B30F88C30650"
-        },
-        "definition": "label_values(container_memory_usage_bytes{container=\"wiz-sensor\", env=\"$environment\", cluster=\"$cluster\"},pod)",
-        "hide": 0,
-        "includeAll": false,
-        "multi": false,
-        "name": "pod",
-        "options": [
-
-        ],
-        "query": {
-          "query": "label_values(container_memory_usage_bytes{container=\"wiz-sensor\", env=\"$environment\", cluster=\"$cluster\"},pod)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -667,7 +739,7 @@
   },
   "timezone": "",
   "title": "Wiz Sensor Cluster Stats",
-  "uid": "e122d5d2-a1cb-470f-b8af-86460528f865",
-  "version": 2,
+  "uid": "afcdd5cc-14b9-486c-bb22-3f5c3d67839a",
+  "version": 8,
   "weekStart": ""
 }
