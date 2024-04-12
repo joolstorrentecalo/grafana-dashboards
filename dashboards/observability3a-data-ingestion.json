@@ -12,19 +12,46 @@
         "datasource": "-- Grafana --",
         "enable": true,
         "hide": false,
-        "iconColor": "#fda324",
-        "name": "runway-deploy",
+        "iconColor": "#96D98D",
+        "name": "deploy",
         "showIn": 0,
         "tags": [
-          "platform:runway",
-          "service:${type}",
-          "env:${environment}"
+          "deploy",
+          "$environment"
+        ],
+        "type": "tags"
+      },
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": false,
+        "hide": false,
+        "iconColor": "#FFEE52",
+        "name": "canary-deploy",
+        "showIn": 0,
+        "tags": [
+          "deploy",
+          "${environment}-cny"
+        ],
+        "type": "tags"
+      },
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": false,
+        "hide": false,
+        "iconColor": "#CA95E5",
+        "name": "feature-flags",
+        "showIn": 0,
+        "tags": [
+          "feature-flag",
+          "${environment}"
         ],
         "type": "tags"
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6614285360 at Fri Apr 12 15:38:53 UTC 2024",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6614285360 at Fri Apr 12 15:43:48 UTC 2024",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -35,102 +62,25 @@
   ],
   "panels": [
     {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "Number of requests reaching the service.",
-      "fill": 0,
-      "fillGradient": 0,
+      "collapse": false,
+      "collapsed": false,
       "gridPos": {
-        "h": 10,
-        "w": 12,
+        "h": 1,
+        "w": 24,
         "x": 0,
         "y": 0
       },
       "id": 2,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [
+      "panels": [
 
       ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
       "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by (response_code_class, region) (\n  rate(\n    stackdriver_cloud_run_revision_run_googleapis_com_request_count{env=\"$environment\",job=\"runway-exporter\",type=\"$type\"}[$__interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 2,
-          "legendFormat": "{{response_code_class}} {{region}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Runway Service Request Count",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": "Requests per Second",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "Number of events ingested per environment",
+      "titleSize": "h6",
+      "type": "row"
     },
     {
       "aliasColors": {
@@ -139,15 +89,15 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "Distribution of request times reaching the service, in milliseconds.",
-      "fill": 0,
+      "decimals": 0,
+      "description": "",
+      "fill": 5,
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 0
+        "w": 24,
+        "x": 0,
+        "y": 1
       },
       "id": 3,
       "legend": {
@@ -178,15 +128,15 @@
 
       ],
       "spaceLength": 10,
-      "stack": false,
+      "stack": true,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(\n  0.99,\n  sum by (revision_name, region, le) (\n    rate(stackdriver_cloud_run_revision_run_googleapis_com_request_latencies_bucket{env=\"$environment\",job=\"runway-exporter\",type=\"$type\"}[$__interval])\n  )\n)\n",
+          "expr": "sum(analytics_events_total_count{env=\"$environment\"}) by (env)\n",
           "format": "time_series",
           "interval": "1m",
-          "intervalFactor": 2,
-          "legendFormat": "p99 {{revision_name}} {{region}}",
+          "intervalFactor": 1,
+          "legendFormat": "{{feature_name}}",
           "refId": "A"
         }
       ],
@@ -195,7 +145,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Runway Service Request Latency",
+      "title": "Metrics",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -213,8 +163,8 @@
       },
       "yaxes": [
         {
-          "format": "ms",
-          "label": "Duration",
+          "format": "short",
+          "label": "count",
           "logBase": 1,
           "max": null,
           "min": 0,
@@ -231,6 +181,27 @@
       ]
     },
     {
+      "collapse": false,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 100
+      },
+      "id": 4,
+      "panels": [
+
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "Number of events ingested per feature",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
       "aliasColors": {
       },
       "bars": false,
@@ -238,112 +209,14 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 0,
-      "description": "Number of container instances that exist for the service.",
-      "fill": 0,
+      "description": "",
+      "fill": 5,
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 10
-      },
-      "id": 4,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by (revision_name, region) (\n  max_over_time(\n    stackdriver_cloud_run_revision_run_googleapis_com_container_instance_count{env=\"$environment\",job=\"runway-exporter\",type=\"$type\"}[${__interval}]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 2,
-          "legendFormat": "{{revision_name}} {{region}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Runway Service Container Instance Count",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": "Container Instances per Second",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "Billable time aggregated from all container instances.",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 10
+        "y": 101
       },
       "id": 5,
       "legend": {
@@ -374,15 +247,15 @@
 
       ],
       "spaceLength": 10,
-      "stack": false,
+      "stack": true,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (service_name) (\n  rate(\n    stackdriver_cloud_run_revision_run_googleapis_com_container_billable_instance_time{env=\"$environment\",job=\"runway-exporter\",type=\"$type\"}[${__interval}]\n  )\n)\n",
+          "expr": "sum(analytics_events_total_count{feature_name=\"metrics\", env=\"$environment\"}) by (feature_name)\n",
           "format": "time_series",
           "interval": "1m",
-          "intervalFactor": 2,
-          "legendFormat": "{{service_name}}",
+          "intervalFactor": 1,
+          "legendFormat": "{{feature_name}}",
           "refId": "A"
         }
       ],
@@ -391,7 +264,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Runway Service Billable Container Instance Time",
+      "title": "Metrics",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -410,7 +283,7 @@
       "yaxes": [
         {
           "format": "short",
-          "label": "Requests per Second",
+          "label": "count",
           "logBase": 1,
           "max": null,
           "min": 0,
@@ -433,15 +306,15 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "Container CPU utilization distribution across all container instances.",
-      "fill": 0,
+      "decimals": 0,
+      "description": "",
+      "fill": 5,
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
         "w": 12,
-        "x": 0,
-        "y": 20
+        "x": 12,
+        "y": 101
       },
       "id": 6,
       "legend": {
@@ -472,22 +345,24 @@
 
       ],
       "spaceLength": 10,
-      "stack": false,
+      "stack": true,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(clamp_max(histogram_quantile(\n  0.99,\n  sum by (revision_name, region, le) (\n    max_over_time(stackdriver_cloud_run_revision_run_googleapis_com_container_cpu_utilizations_bucket{env=\"$environment\",job=\"runway-exporter\",type=\"$type\"}[$__interval])\n  )\n)\n,1),0)\n",
+          "expr": "sum(analytics_events_total_count{feature_name=\"tracing\", env=\"$environment\"}) by (feature_name)\n",
           "format": "time_series",
-          "interval": "2m",
-          "intervalFactor": 3,
-          "legendFormat": "p99 {{revision_name}} {{region}}",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{feature_name}}",
           "refId": "A"
         }
       ],
-      "thresholds": null,
+      "thresholds": [
+
+      ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Runway Service CPU Utilization",
+      "title": "Traces",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -505,10 +380,10 @@
       },
       "yaxes": [
         {
-          "format": "percentunit",
-          "label": "Percent",
+          "format": "short",
+          "label": "count",
           "logBase": 1,
-          "max": 1,
+          "max": null,
           "min": 0,
           "show": true
         },
@@ -529,15 +404,15 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "Container memory utilization distribution across all container instances.",
-      "fill": 0,
+      "decimals": 0,
+      "description": "",
+      "fill": 5,
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
         "w": 12,
-        "x": 12,
-        "y": 20
+        "x": 0,
+        "y": 111
       },
       "id": 7,
       "legend": {
@@ -568,123 +443,16 @@
 
       ],
       "spaceLength": 10,
-      "stack": false,
+      "stack": true,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(clamp_max(histogram_quantile(\n  0.99,\n  sum by (revision_name, region, le) (\n    max_over_time(stackdriver_cloud_run_revision_run_googleapis_com_container_memory_utilizations_bucket{env=\"$environment\",job=\"runway-exporter\",type=\"$type\"}[$__interval])\n  )\n)\n,1),0)\n",
-          "format": "time_series",
-          "interval": "2m",
-          "intervalFactor": 3,
-          "legendFormat": "p99 {{revision_name}} {{region}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": null,
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Runway Service Memory Utilization",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "percentunit",
-          "label": "Percent",
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "Outgoing socket and HTTP response traffic, in bytes.",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 0,
-        "y": 30
-      },
-      "id": 8,
-      "legend": {
-        "alignAsTable": false,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-        {
-          "alias": "/receive .*/",
-          "transform": "negative-Y"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by (revision_name, region, kind) (\n  rate(\n    stackdriver_cloud_run_revision_run_googleapis_com_container_network_sent_bytes_count{env=\"$environment\",job=\"runway-exporter\",type=\"$type\"}[$__rate_interval]\n  )\n)\n",
+          "expr": "sum(analytics_events_total_count{feature_name=\"logging\", env=\"$environment\"}) by (feature_name)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "send {{kind}} {{revision_name}} {{region}}",
+          "legendFormat": "{{feature_name}}",
           "refId": "A"
-        },
-        {
-          "expr": null,
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "receive {{kind}} {{revision_name}} {{region}}",
-          "refId": "B"
         }
       ],
       "thresholds": [
@@ -692,7 +460,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Runway Service Sent Bytes",
+      "title": "Logs",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -710,11 +478,11 @@
       },
       "yaxes": [
         {
-          "format": "Bps",
-          "label": "Network utilization",
+          "format": "short",
+          "label": "count",
           "logBase": 1,
           "max": null,
-          "min": null,
+          "min": 0,
           "show": true
         },
         {
@@ -734,19 +502,19 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "Incoming socket and HTTP response traffic, in bytes.",
-      "fill": 0,
+      "decimals": 0,
+      "description": "",
+      "fill": 5,
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 30
+        "y": 111
       },
-      "id": 9,
+      "id": 8,
       "legend": {
-        "alignAsTable": false,
+        "alignAsTable": true,
         "avg": true,
         "current": true,
         "hideEmpty": true,
@@ -756,10 +524,10 @@
         "show": true,
         "sideWidth": null,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [
 
       ],
@@ -770,30 +538,19 @@
       "renderer": "flot",
       "repeat": null,
       "seriesOverrides": [
-        {
-          "alias": "/receive .*/",
-          "transform": "negative-Y"
-        }
+
       ],
       "spaceLength": 10,
-      "stack": false,
+      "stack": true,
       "steppedLine": false,
       "targets": [
         {
-          "expr": null,
+          "expr": "sum(analytics_events_total_count{feature_name=\"errortracking\", env=\"$environment\"}) by (feature_name)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "send {{kind}} {{revision_name}} {{region}}",
+          "legendFormat": "{{feature_name}}",
           "refId": "A"
-        },
-        {
-          "expr": "sum by (revision_name, region, kind) (\n  rate(\n    stackdriver_cloud_run_revision_run_googleapis_com_container_network_received_bytes_count{env=\"$environment\",job=\"runway-exporter\",type=\"$type\"}[$__rate_interval]\n  )\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "receive {{kind}} {{revision_name}} {{region}}",
-          "refId": "B"
         }
       ],
       "thresholds": [
@@ -801,7 +558,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Runway Service Received Bytes",
+      "title": "Error Tracking",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -819,11 +576,11 @@
       },
       "yaxes": [
         {
-          "format": "Bps",
-          "label": "Network utilization",
+          "format": "short",
+          "label": "count",
           "logBase": 1,
           "max": null,
-          "min": null,
+          "min": 0,
           "show": true
         },
         {
@@ -837,21 +594,42 @@
       ]
     },
     {
+      "collapse": false,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 200
+      },
+      "id": 9,
+      "panels": [
+
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "Top event producers",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
       "aliasColors": {
       },
       "bars": false,
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "Distribution of the maximum number number of concurrent requests being served by each container instance over a minute.",
-      "fill": 0,
+      "decimals": 0,
+      "description": "",
+      "fill": 5,
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 40
+        "y": 201
       },
       "id": 10,
       "legend": {
@@ -882,22 +660,24 @@
 
       ],
       "spaceLength": 10,
-      "stack": false,
+      "stack": true,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(clamp_max(histogram_quantile(\n  0.99,\n  sum by (revision_name, region, le) (\n    max_over_time(stackdriver_cloud_run_revision_run_googleapis_com_container_max_request_concurrencies_bucket{env=\"$environment\",job=\"runway-exporter\",type=\"$type\"}[$__interval])\n  )\n) / 100\n,1),0)\n",
+          "expr": "topk(10, sum(analytics_events_total_count{env=\"$environment\"}) by (feature_name, namespace_id))\n",
           "format": "time_series",
-          "interval": "2m",
-          "intervalFactor": 3,
-          "legendFormat": "p99 {{revision_name}} {{region}}",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{feature_name}} - {{namespace_id}}",
           "refId": "A"
         }
       ],
-      "thresholds": null,
+      "thresholds": [
+
+      ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Runway Service Max Concurrent Requests",
+      "title": "Top 10 by namespace",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -915,10 +695,10 @@
       },
       "yaxes": [
         {
-          "format": "percentunit",
-          "label": "Percent",
+          "format": "short",
+          "label": "count",
           "logBase": 1,
-          "max": 1,
+          "max": null,
           "min": 0,
           "show": true
         },
@@ -939,15 +719,15 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "Distribution of time spent starting a new container instance, in milliseconds.",
-      "fill": 0,
+      "decimals": 0,
+      "description": "",
+      "fill": 5,
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 40
+        "y": 201
       },
       "id": 11,
       "legend": {
@@ -978,15 +758,15 @@
 
       ],
       "spaceLength": 10,
-      "stack": false,
+      "stack": true,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (revision_name, region) (\n  rate(\n    stackdriver_cloud_run_revision_run_googleapis_com_container_startup_latencies_sum{env=\"$environment\",job=\"runway-exporter\",type=\"$type\"}[$__interval]\n  )\n)\n",
+          "expr": "topk(10, sum(analytics_events_total_count{env=\"$environment\"}) by (feature_name, project_id))\n",
           "format": "time_series",
           "interval": "1m",
-          "intervalFactor": 2,
-          "legendFormat": "{{revision_name}} {{region}}",
+          "intervalFactor": 1,
+          "legendFormat": "{{feature_name}} - {{project_id}}",
           "refId": "A"
         }
       ],
@@ -995,7 +775,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Runway Service Container Startup Latency",
+      "title": "Top 10 by project",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1013,8 +793,8 @@
       },
       "yaxes": [
         {
-          "format": "ms",
-          "label": "Duration",
+          "format": "short",
+          "label": "count",
           "logBase": 1,
           "max": null,
           "min": 0,
@@ -1029,6 +809,27 @@
           "show": false
         }
       ]
+    },
+    {
+      "collapse": false,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 300
+      },
+      "id": 12,
+      "panels": [
+
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "Number of events ingested by project",
+      "titleSize": "h6",
+      "type": "row"
     },
     {
       "aliasColors": {
@@ -1038,112 +839,14 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 0,
-      "description": "Request rate of healthcheck attempts for the ingress container",
-      "fill": 0,
+      "description": "",
+      "fill": 5,
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
-        "w": 12,
+        "w": 6,
         "x": 0,
-        "y": 50
-      },
-      "id": 12,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [
-
-      ],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "seriesOverrides": [
-
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by (revision_name, region, probe_type, is_healthy) (\n  stackdriver_cloud_run_revision_run_googleapis_com_container_completed_probe_attempt_count{env=\"$environment\",job=\"runway-exporter\",type=\"$type\", container_name='ingress'}\n)\n",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 2,
-          "legendFormat": "{{revision_name}} {{region}} {{probe_type}} healthy: {{is_healthy}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Runway Service Container Healthcheck Requests",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": [
-
-        ]
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": 1,
-          "min": 0,
-          "show": false
-        }
-      ]
-    },
-    {
-      "aliasColors": {
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PROMETHEUS_DS",
-      "decimals": 2,
-      "description": "Distribution of time spent probing a container instance, in milliseconds.",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 50
+        "y": 301
       },
       "id": 13,
       "legend": {
@@ -1174,15 +877,15 @@
 
       ],
       "spaceLength": 10,
-      "stack": false,
+      "stack": true,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (revision_name, region, probe_type, is_healthy) (\n  rate(\n    stackdriver_cloud_run_revision_run_googleapis_com_container_probe_attempt_latencies_sum{env=\"$environment\",job=\"runway-exporter\",type=\"$type\", container_name='ingress'}[$__interval]\n  )\n)\n",
+          "expr": "sum(analytics_events_total_count{feature_name=\"metrics\", env=\"$environment\", project_id=\"$project\"}) by (feature_name, project_id)\n",
           "format": "time_series",
           "interval": "1m",
-          "intervalFactor": 2,
-          "legendFormat": "{{revision_name}} {{region}} {{probe_type}} healthy: {{is_healthy}}",
+          "intervalFactor": 1,
+          "legendFormat": "{{project_id}}",
           "refId": "A"
         }
       ],
@@ -1191,7 +894,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Runway Service Container Healthcheck Latency",
+      "title": "Metrics",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1209,8 +912,302 @@
       },
       "yaxes": [
         {
-          "format": "ms",
-          "label": "Duration",
+          "format": "short",
+          "label": "count",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "",
+      "fill": 5,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 6,
+        "y": 301
+      },
+      "id": 14,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(analytics_events_total_count{feature_name=\"tracing\", env=\"$environment\", project_id=\"$project\"}) by (feature_name, project_id)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{project_id}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Traces",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "count",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "",
+      "fill": 5,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 12,
+        "y": 301
+      },
+      "id": 15,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(analytics_events_total_count{feature_name=\"logging\", env=\"$environment\", project_id=\"$project\"}) by (feature_name, project_id)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{project_id}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Logs",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "count",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "",
+      "fill": 5,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 18,
+        "y": 301
+      },
+      "id": 16,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(analytics_events_total_count{feature_name=\"errortracking\", env=\"$environment\", project_id=\"$project\"}) by (feature_name, project_id)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{project_id}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Error Tracking",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "count",
           "logBase": 1,
           "max": null,
           "min": 0,
@@ -1235,9 +1232,8 @@
   "style": "light",
   "tags": [
     "managed",
-    "runway",
-    "runway",
-    "type:runway"
+    "observability",
+    "gitlab-observability"
   ],
   "templating": {
     "list": [
@@ -1287,17 +1283,67 @@
       {
         "allValue": null,
         "current": {
+          "text": "gprd",
+          "value": "gprd"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Environment",
+        "multi": false,
+        "name": "environment",
+        "options": [
+          {
+            "text": "gstg",
+            "value": "gstg"
+          },
+          {
+            "text": "gprd",
+            "value": "gprd"
+          }
+        ],
+        "query": "gstg,gprd",
+        "refresh": 0,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
         },
         "datasource": "$PROMETHEUS_DS",
         "hide": 0,
         "includeAll": false,
-        "label": "service",
+        "label": "Namespace",
         "multi": false,
-        "name": "type",
+        "name": "namespace",
         "options": [
 
         ],
-        "query": "label_values(stackdriver_cloud_run_revision_run_googleapis_com_container_instance_count{job=\"runway-exporter\", env=\"$environment\"}, service_name)",
+        "query": "label_values(analytics_events_total_count{env=\"$environment\", cluster=~\"opstrace-.*\"}, namespace_id)",
+        "refresh": 1,
+        "regex": "",
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [
+
+        ],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+        },
+        "datasource": "$PROMETHEUS_DS",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Project",
+        "multi": false,
+        "name": "project",
+        "options": [
+
+        ],
+        "query": "label_values(analytics_events_total_count{env=\"$environment\", cluster=~\"opstrace-.*\"}, project_id)",
         "refresh": 1,
         "regex": "",
         "sort": 1,
@@ -1336,7 +1382,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "runway: Runway Service Metrics",
-  "uid": "runway-service",
-  "version": 521
+  "title": "observability: Data Ingestion",
+  "uid": "observability-dataingestion",
+  "version": 5
 }
