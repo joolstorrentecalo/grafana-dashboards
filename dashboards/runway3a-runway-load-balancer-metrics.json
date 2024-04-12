@@ -10,7 +10,7 @@
 
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6605077370 at Thu Apr 11 15:51:26 UTC 2024",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6606943469 at Thu Apr 11 20:26:05 UTC 2024",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -28,7 +28,7 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 0,
-      "description": "Number of requests served by backends of external HTTP(S) load balancer.",
+      "description": "Rate of requests served by backends of external HTTP(S) load balancer.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -70,7 +70,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (response_code_class) (\n  rate(\n    stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_backend_request_count{env=\"$environment\",job=\"runway-exporter\",url_map_name=\"$loadbalancer\"}[$__interval]\n  )\n)\n",
+          "expr": "sum by (response_code_class) (\n  rate(\n    stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_backend_request_count{env=\"$environment\",job=\"runway-exporter\",region=~\"$region\",url_map_name=\"$loadbalancer\"}[$__rate_interval]\n  )\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
@@ -83,7 +83,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Runway Load Balancer Request Count",
+      "title": "Request rate",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -168,7 +168,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(\n  0.99,\n  sum by (revision_name, le) (\n    rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_backend_latencies_bucket{env=\"$environment\",job=\"runway-exporter\",url_map_name=\"$loadbalancer\"}[$__interval])\n  )\n)\n",
+          "expr": "histogram_quantile(\n  0.99,\n  sum by (revision_name, le) (\n    rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_backend_latencies_bucket{env=\"$environment\",job=\"runway-exporter\",region=~\"$region\",url_map_name=\"$loadbalancer\"}[$__rate_interval])\n  )\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
@@ -181,7 +181,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Runway Load Balancer Latency",
+      "title": "Request latency",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -287,7 +287,32 @@
         "options": [
 
         ],
-        "query": "label_values(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{job=\"runway-exporter\", env=\"$environment\"}, url_map_name)",
+        "query": "label_values(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_backend_request_count{job=\"runway-exporter\", env=\"$environment\"}, url_map_name)",
+        "refresh": 1,
+        "regex": "",
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [
+
+        ],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": ".+",
+        "current": {
+        },
+        "datasource": "$PROMETHEUS_DS",
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": false,
+        "name": "region",
+        "options": [
+
+        ],
+        "query": "label_values(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_backend_request_count{job=\"runway-exporter\", env=\"$environment\", url_map_name=\"$loadbalancer\"}, region)",
         "refresh": 1,
         "regex": "",
         "sort": 1,
@@ -328,5 +353,5 @@
   "timezone": "utc",
   "title": "runway: Runway Load Balancer Metrics",
   "uid": "runway-loadbalancer",
-  "version": 506
+  "version": 511
 }

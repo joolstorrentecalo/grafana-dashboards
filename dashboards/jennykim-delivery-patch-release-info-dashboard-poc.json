@@ -30,7 +30,7 @@
         "uid": "PA258B30F88C30650"
       },
       "gridPos": {
-        "h": 10,
+        "h": 12,
         "w": 16,
         "x": 0,
         "y": 0
@@ -42,7 +42,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "# Active Monthly Release\n\nGitLab releases a new self-managed release on the third Thursday of every month.\n\nThis release is a semver versioned package containing changes from many successful deployments on GitLab.com.\n\nThe following panels contain information about the active monthly release.\n\nLinks:\n- [Monthly release schedule](https://about.gitlab.com/releases/)\n- [Overview of the process](https://handbook.gitlab.com/handbook/engineering/deployments-and-releases/)\n- [How can I determine if my MR will make it into the monthly release](https://handbook.gitlab.com/handbook/engineering/releases/#how-can-i-determine-if-my-merge-request-will-make-it-into-the-monthly-release)\n\nFor inquiries about the monthly release, please ask in the [`#releases` slack channel](https://gitlab.enterprise.slack.com/archives/C0XM5UU6B).\n",
+        "content": "# Active Patch Release\n\nPatch releases include **bug fixes** for the current stable released version of GitLab and **security fixes** to the previous two monthly releases in addition to the current stable release.\n\nThey are scheduled twice a month on the second and fourth Wednesdays, around the monthly release week. These are best-effort dates and they might be subject to change.\n\nThe [patch release policy](https://docs.gitlab.com/ee/policy/maintenance.html#patch-releases) allows bug fixes to be backported to the current stable released version of GitLab.\n\nThe following panels contain information about the active patch release.\n\nLinks:\n- [Overview of the Patch Release Process](https://handbook.gitlab.com/handbook/engineering/releases/#patch-releases-overview)\n- [Overview of the Security Releases](https://handbook.gitlab.com/handbook/engineering/releases/security-releases/)\n- [Maintenance Policy](https://docs.gitlab.com/ee/policy/maintenance.html)\n- [Backporting to older releases](https://docs.gitlab.com/ee/policy/maintenance.html#backporting-to-older-releases)\n- [Active Patch Release Tracking Issue](https://gitlab.com/gitlab-org/gitlab/-/issues/?sort=created_date&state=opened&label_name%5B%5D=upcoming%20security%20release&first_page_size=20)\n- [Active Patch Release Tasks Issue](https://gitlab.com/gitlab-org/release/tasks/-/issues/?sort=created_date&state=opened&label_name%5B%5D=security&first_page_size=20)\n\nFor inquiries about the patch release, please ask in the [`#releases` slack channel](https://gitlab.enterprise.slack.com/archives/C0XM5UU6B).\n",
         "mode": "markdown"
       },
       "pluginVersion": "10.1.5",
@@ -56,13 +56,476 @@
         }
       ],
       "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 8,
+        "x": 16,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "# Release Status\n\nThe panel below shows the current status of the active patch release.\n\nThe following are what the statuses signify for engineers:\n\n* Open: Bug fixes and MRs associated with security issues labelled `security-target` are expected to be included in the next patch release.\n* Warning: Signals that teams should get bug and security fixes ready to merge.\n* Closed: Default branch MRs have been merged, no further bug or security fixes will be included.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "10.1.5",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "These are the active patch release versions (stable version + 2 backport versions) that will be published. ",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "displayName": "",
+          "links": [
+
+          ],
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "white",
+                "value": null
+              }
+            ]
+          },
+          "unit": ""
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 12
+      },
+      "id": 5,
+      "links": [
+
+      ],
+      "options": {
+        "colorMode": "thresholds",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^versions$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.1.5",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "max_over_time(delivery_release_patch_status[30d])",
+          "format": "table",
+          "instant": false,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Release Versions",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Time": {
+                "aggregations": [
+                  "min"
+                ],
+                "operation": "aggregate"
+              },
+              "Value": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "release_date": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "version": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "versions": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {
+            },
+            "sort": [
+              {
+                "desc": true,
+                "field": "Time (min)"
+              }
+            ]
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "mode": "reduceFields",
+            "reducers": [
+              "first"
+            ]
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "This is the best-effort release date for the active patch release, and might be subject to change. A good place to confirm is the tracking issue's due date.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "",
+          "links": [
+
+          ],
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "white",
+                "value": null
+              }
+            ]
+          },
+          "unit": ""
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 12
+      },
+      "id": 6,
+      "links": [
+
+      ],
+      "options": {
+        "colorMode": "thresholds",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^release_date$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.1.5",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "max_over_time(delivery_release_patch_status[30d])",
+          "format": "table",
+          "instant": false,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Expected Release Date",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Time": {
+                "aggregations": [
+                  "min"
+                ],
+                "operation": "aggregate"
+              },
+              "Value": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "release_date": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "version": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "versions": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {
+            },
+            "sort": [
+              {
+                "desc": true,
+                "field": "Time (min)"
+              }
+            ]
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "mode": "reduceFields",
+            "reducers": [
+              "first"
+            ]
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "Current status of the patch release. More information about the statuses in the text panel above.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "",
+          "links": [
+
+          ],
+          "mappings": [
+            {
+              "options": {
+                "1": {
+                  "index": 2,
+                  "text": "Open"
+                },
+                "2": {
+                  "index": 1,
+                  "text": "Warning"
+                },
+                "3": {
+                  "index": 0,
+                  "text": "Closed"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "noValue": "Open",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 2
+              },
+              {
+                "color": "red",
+                "value": 3
+              }
+            ]
+          },
+          "unit": ""
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 12
+      },
+      "id": 7,
+      "links": [
+
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^Value$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.1.5",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "delivery_release_patch_status",
+          "format": "table",
+          "instant": false,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Current Release Status",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Time": {
+                "aggregations": [
+                  "min"
+                ],
+                "operation": "aggregate"
+              },
+              "Value": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "release_date": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "version": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "versions": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {
+            },
+            "sort": [
+              {
+                "desc": true,
+                "field": "Time (min)"
+              }
+            ]
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "mode": "reduceFields",
+            "reducers": [
+              "first"
+            ]
+          }
+        }
+      ],
+      "type": "stat"
     }
   ],
   "refresh": "",
-  "schemaVersion": 38,
+  "schemaVersion": 39,
   "style": "dark",
   "tags": [
-
+    "unmanaged"
   ],
   "templating": {
     "list": [
@@ -70,7 +533,7 @@
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-30d",
     "to": "now"
   },
   "timepicker": {
@@ -78,6 +541,6 @@
   "timezone": "",
   "title": "jennykim delivery patch release info dashboard PoC",
   "uid": "d2560ea3-093d-45bc-86eb-ac601cac3245",
-  "version": 2,
+  "version": 7,
   "weekStart": ""
 }
