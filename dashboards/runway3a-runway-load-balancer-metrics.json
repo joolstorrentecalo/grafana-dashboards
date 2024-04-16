@@ -10,7 +10,7 @@
 
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6624427764 at Mon Apr 15 08:29:32 UTC 2024",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6631827075 at Mon Apr 15 22:57:53 UTC 2024",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -70,11 +70,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (response_code_class) (\n  rate(\n    stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_backend_request_count{env=\"$environment\",job=\"runway-exporter\",region=~\"$region\",url_map_name=\"$loadbalancer\"}[$__rate_interval]\n  )\n)\n",
+          "expr": "sum by (response_code_class, backend_scope) (\n  rate(\n    stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_backend_request_count{env=\"$environment\",job=\"runway-exporter\",region=~\"$region\",url_map_name=\"$loadbalancer\"}[$__rate_interval]\n  )\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
-          "legendFormat": "{{response_code_class}}",
+          "legendFormat": "{{response_code_class}} {{backend_scope}}",
           "refId": "A"
         }
       ],
@@ -168,11 +168,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(\n  0.99,\n  sum by (revision_name, le) (\n    rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_backend_latencies_bucket{env=\"$environment\",job=\"runway-exporter\",region=~\"$region\",url_map_name=\"$loadbalancer\"}[$__rate_interval])\n  )\n)\n",
+          "expr": "histogram_quantile(\n  0.99,\n  sum by (revision_name, le, backend_scope) (\n    rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_backend_latencies_bucket{env=\"$environment\",job=\"runway-exporter\",region=~\"$region\",url_map_name=\"$loadbalancer\"}[$__rate_interval])\n  )\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
-          "legendFormat": "p99 {{revision_name}}",
+          "legendFormat": "p99 {{revision_name}} {{backend_scope}}",
           "refId": "A"
         }
       ],
@@ -312,7 +312,7 @@
         "options": [
 
         ],
-        "query": "label_values(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_backend_request_count{job=\"runway-exporter\", env=\"$environment\", url_map_name=\"$loadbalancer\"}, region)",
+        "query": "label_values(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_backend_request_count{job=\"runway-exporter\", env=\"$environment\", url_map_name=\"$loadbalancer\"}, backend_scope)",
         "refresh": 1,
         "regex": "",
         "sort": 1,
@@ -353,5 +353,5 @@
   "timezone": "utc",
   "title": "runway: Runway Load Balancer Metrics",
   "uid": "runway-loadbalancer",
-  "version": 535
+  "version": 539
 }
