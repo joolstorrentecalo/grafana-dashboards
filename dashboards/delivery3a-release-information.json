@@ -10,7 +10,7 @@
 
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6691028864 at Tue Apr 23 01:55:18 UTC 2024",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6696765782 at Tue Apr 23 14:32:06 UTC 2024",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
@@ -459,6 +459,444 @@
       "type": "stat"
     },
     {
+      "collapse": false,
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 8,
+      "panels": [
+
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "Patch Release Information",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "content": "# Active Patch Release\n\nPatch releases include bug and security fixes based on the [Maintenance Policy](https://docs.gitlab.com/ee/policy/maintenance.html), they are scheduled twice a month on the second and fourth Wednesdays.\n\nThe following panels contain information about the active patch release.\n\nLinks:\n- [Overview of the Patch Release Process](https://handbook.gitlab.com/handbook/engineering/releases/#patch-releases-overview)\n- [Maintenance Policy](https://docs.gitlab.com/ee/policy/maintenance.html)\n- [Process to include bug fixes](https://gitlab.com/gitlab-org/release/docs/-/blob/master/general/patch/engineers.md)\n- [Process to include security fixes](https://gitlab.com/gitlab-org/release/docs/-/blob/master/general/security/developer.md)\n- [Backporting to older releases](https://docs.gitlab.com/ee/policy/maintenance.html#backporting-to-older-releases)\n- [Security Tracking Issue](https://gitlab.com/gitlab-org/gitlab/-/issues/?sort=created_date&state=opened&label_name%5B%5D=upcoming%20security%20release&first_page_size=20)\n\nFor inquiries about the patch release, please ask in the [`#releases` slack channel](https://gitlab.enterprise.slack.com/archives/C0XM5UU6B).\n",
+      "datasource": null,
+      "gridPos": {
+        "h": 11,
+        "w": 16,
+        "x": 0,
+        "y": 20
+      },
+      "id": 9,
+      "mode": "markdown",
+      "title": "",
+      "type": "text"
+    },
+    {
+      "content": "# Release Status\n\nThe panel below shows the current status of the active patch release.\n\nThe following are what the statuses signify for engineers:\n\n* Open: Bug fixes and MRs associated with security issues labelled `security-target` are expected to be included in the next patch release.\n* Warning: Signals that teams should get bug and security fixes ready to merge.\n* Closed: Default branch MRs have been merged, no further bug or security fixes will be included.\n",
+      "datasource": null,
+      "gridPos": {
+        "h": 11,
+        "w": 8,
+        "x": 16,
+        "y": 20
+      },
+      "id": 10,
+      "mode": "markdown",
+      "title": "",
+      "type": "text"
+    },
+    {
+      "datasource": null,
+      "description": "These are the active patch release versions (stable version + 2 backport versions) that will be published.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "",
+          "links": [
+
+          ],
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "white",
+                "value": null
+              }
+            ]
+          },
+          "unit": ""
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 31
+      },
+      "id": 11,
+      "links": [
+
+      ],
+      "options": {
+        "colorMode": "thresholds",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^versions$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "max_over_time(delivery_release_patch_status[30d])",
+          "format": "table",
+          "instant": false,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Release Versions",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Time": {
+                "aggregations": [
+                  "min"
+                ],
+                "operation": "aggregate"
+              },
+              "Value": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "release_date": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "versions": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {
+            },
+            "sort": [
+              {
+                "desc": true,
+                "field": "Time (min)"
+              }
+            ]
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "mode": "reduceFields",
+            "reducers": [
+              "first"
+            ]
+          }
+        }
+      ],
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "description": "This is the best-effort release date for the active patch release, and might be subject to change. A good place to confirm is the tracking issue's due date.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "",
+          "links": [
+
+          ],
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "white",
+                "value": null
+              }
+            ]
+          },
+          "unit": ""
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 31
+      },
+      "id": 12,
+      "links": [
+
+      ],
+      "options": {
+        "colorMode": "thresholds",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^release_date$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "max_over_time(delivery_release_patch_status[30d])",
+          "format": "table",
+          "instant": false,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Expected Release Date",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Time": {
+                "aggregations": [
+                  "min"
+                ],
+                "operation": "aggregate"
+              },
+              "Value": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "release_date": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "versions": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {
+            },
+            "sort": [
+              {
+                "desc": true,
+                "field": "Time (min)"
+              }
+            ]
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "mode": "reduceFields",
+            "reducers": [
+              "first"
+            ]
+          }
+        }
+      ],
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "description": "Current status of the patch release. More information about the statuses in the text panel above.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "displayName": "",
+          "links": [
+
+          ],
+          "mappings": [
+            {
+              "id": 0,
+              "text": "Open",
+              "type": 1,
+              "value": "1"
+            },
+            {
+              "id": 1,
+              "text": "Warning",
+              "type": 1,
+              "value": "2"
+            },
+            {
+              "id": 2,
+              "text": "Closed",
+              "type": 1,
+              "value": "3"
+            }
+          ],
+          "noValue": "Open",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 2
+              },
+              {
+                "color": "red",
+                "value": 3
+              }
+            ]
+          },
+          "unit": ""
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 31
+      },
+      "id": 13,
+      "links": [
+
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^Value$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "delivery_release_patch_status",
+          "format": "table",
+          "instant": false,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Current Release Status",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Time": {
+                "aggregations": [
+                  "min"
+                ],
+                "operation": "aggregate"
+              },
+              "Value": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "release_date": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "versions": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {
+            },
+            "sort": [
+              {
+                "desc": true,
+                "field": "Time (min)"
+              }
+            ]
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "mode": "reduceFields",
+            "reducers": [
+              "first"
+            ]
+          }
+        }
+      ],
+      "transparent": false,
+      "type": "stat"
+    },
+    {
       "content": "Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards)\n",
       "datasource": null,
       "gridPos": {
@@ -467,7 +905,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 8,
+      "id": 14,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -531,5 +969,5 @@
   "timezone": "utc",
   "title": "delivery: Release Information",
   "uid": "delivery-release_info",
-  "version": 229
+  "version": 232
 }
