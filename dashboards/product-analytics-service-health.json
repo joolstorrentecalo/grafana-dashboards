@@ -898,10 +898,9 @@
     },
     {
       "datasource": {
-        "type": "loki",
-        "uid": "${dashboardLokiDataSource}"
+        "type": "prometheus",
+        "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
       },
-      "description": "SSL errors from Vector, Kafka, or the Snowplow Enricher",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -935,7 +934,7 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "dashed"
+              "mode": "off"
             }
           },
           "mappings": [
@@ -950,45 +949,22 @@
               },
               {
                 "color": "red",
-                "value": 1
+                "value": 80
               }
             ]
           }
         },
         "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "{}"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                }
-              }
-            ]
-          }
+
         ]
       },
       "gridPos": {
-        "h": 9,
+        "h": 8,
         "w": 12,
         "x": 0,
         "y": 32
       },
-      "id": 10,
+      "id": 8,
       "options": {
         "legend": {
           "calcs": [
@@ -1006,42 +982,23 @@
       "targets": [
         {
           "datasource": {
-            "type": "loki",
-            "uid": "${dashboardLokiDataSource}"
+            "type": "prometheus",
+            "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
           },
+          "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum(count_over_time({container_name=\"vector\", pod_name=~`^$dashboardCluster\\-.*$`} |~ `SSL handshake failed` [$__interval])) or vector(0)",
-          "legendFormat": "Vector errors",
-          "queryType": "range",
-          "refId": "A",
-          "step": ""
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "${dashboardLokiDataSource}"
-          },
-          "editorMode": "code",
-          "expr": "sum(count_over_time({container_name=\"kafka\", pod_name=~`^$dashboardCluster\\-.*$`} |~ `SSL handshake failed` [$__interval])) or vector(0)",
+          "expr": "ClickHouse_NumberOfDatabases{cluster=\"$dashboardCluster\"}",
+          "fullMetaSearch": false,
           "hide": false,
-          "legendFormat": "Kafka errors",
-          "queryType": "range",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "${dashboardLokiDataSource}"
-          },
-          "editorMode": "code",
-          "expr": "sum(count_over_time({container_name=\"snowplow-enricher\", pod_name=~`^$dashboardCluster\\-.*$`} |~ `SSL handshake failed` [$__interval])) or vector(0)",
-          "hide": false,
-          "legendFormat": "Snowplow Enricher Errors",
-          "queryType": "range",
-          "refId": "C"
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "{{hostname}}",
+          "range": true,
+          "refId": "B",
+          "useBackend": false
         }
       ],
-      "title": "SSL errors",
+      "title": "ClickHouse Database Count",
       "type": "timeseries"
     },
     {
@@ -1142,129 +1099,6 @@
         }
       ],
       "title": "ClickHouse Row Inserts",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "${dashboardLokiDataSource}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [
-
-          ],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "prod-1-vector-1"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 40
-      },
-      "id": 1,
-      "options": {
-        "legend": {
-          "calcs": [
-
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "${dashboardLokiDataSource}"
-          },
-          "editorMode": "code",
-          "expr": "sum(count_over_time({container_name=\"vector\",severity=\"ERROR\",pod_name=~`^$dashboardCluster\\-.*$`} |~ \"WARN\"[$__interval])) by (pod_name)",
-          "legendFormat": "{{pod_name}}",
-          "queryType": "range",
-          "refId": "A"
-        }
-      ],
-      "title": "Vector Error Rate",
       "type": "timeseries"
     },
     {
@@ -1382,7 +1216,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 41
+        "y": 40
       },
       "id": 11,
       "options": {
@@ -1525,9 +1359,10 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
+        "type": "loki",
+        "uid": "${dashboardLokiDataSource}"
       },
+      "description": "SSL errors from Vector, Kafka, or the Snowplow Enricher",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1561,7 +1396,7 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "dashed"
             }
           },
           "mappings": [
@@ -1576,22 +1411,45 @@
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 1
               }
             ]
           }
         },
         "overrides": [
-
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "{}"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              }
+            ]
+          }
         ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 9,
         "w": 12,
         "x": 12,
-        "y": 48
+        "y": 40
       },
-      "id": 5,
+      "id": 10,
       "options": {
         "legend": {
           "calcs": [
@@ -1609,18 +1467,42 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
+            "type": "loki",
+            "uid": "${dashboardLokiDataSource}"
           },
           "editorMode": "code",
-          "expr": "rate(vector_component_sent_events_total{component_id=\"clickhouse_enriched_events\",host=~`^$dashboardCluster\\-.*$`}[$__interval])",
-          "instant": false,
-          "legendFormat": "{{host}}",
-          "range": true,
-          "refId": "A"
+          "expr": "sum(count_over_time({container_name=\"vector\", pod_name=~`^$dashboardCluster\\-.*$`} |~ `SSL handshake failed` [$__interval])) or vector(0)",
+          "legendFormat": "Vector errors",
+          "queryType": "range",
+          "refId": "A",
+          "step": ""
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${dashboardLokiDataSource}"
+          },
+          "editorMode": "code",
+          "expr": "sum(count_over_time({container_name=\"kafka\", pod_name=~`^$dashboardCluster\\-.*$`} |~ `SSL handshake failed` [$__interval])) or vector(0)",
+          "hide": false,
+          "legendFormat": "Kafka errors",
+          "queryType": "range",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${dashboardLokiDataSource}"
+          },
+          "editorMode": "code",
+          "expr": "sum(count_over_time({container_name=\"snowplow-enricher\", pod_name=~`^$dashboardCluster\\-.*$`} |~ `SSL handshake failed` [$__interval])) or vector(0)",
+          "hide": false,
+          "legendFormat": "Snowplow Enricher Errors",
+          "queryType": "range",
+          "refId": "C"
         }
       ],
-      "title": "Vector Enriched Events Sent",
+      "title": "SSL errors",
       "type": "timeseries"
     },
     {
@@ -1689,7 +1571,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 50
+        "y": 49
       },
       "id": 7,
       "options": {
@@ -1725,8 +1607,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
+        "type": "loki",
+        "uid": "${dashboardLokiDataSource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1767,6 +1649,7 @@
           "mappings": [
 
           ],
+          "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1782,16 +1665,39 @@
           }
         },
         "overrides": [
-
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "prod-1-vector-1"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
         ]
       },
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 56
+        "y": 49
       },
-      "id": 8,
+      "id": 1,
       "options": {
         "legend": {
           "calcs": [
@@ -1809,23 +1715,17 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
+            "type": "loki",
+            "uid": "${dashboardLokiDataSource}"
           },
-          "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "ClickHouse_NumberOfDatabases{cluster=\"$dashboardCluster\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "{{hostname}}",
-          "range": true,
-          "refId": "B",
-          "useBackend": false
+          "expr": "sum(count_over_time({container_name=\"vector\",severity=\"ERROR\",pod_name=~`^$dashboardCluster\\-.*$`} |~ \"WARN\"[$__interval])) by (pod_name)",
+          "legendFormat": "{{pod_name}}",
+          "queryType": "range",
+          "refId": "A"
         }
       ],
-      "title": "ClickHouse Database Count",
+      "title": "Vector Error Rate",
       "type": "timeseries"
     },
     {
@@ -1893,8 +1793,8 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 12,
-        "y": 64
+        "x": 0,
+        "y": 57
       },
       "id": 12,
       "options": {
@@ -1930,6 +1830,106 @@
     },
     {
       "datasource": {
+        "type": "prometheus",
+        "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 57
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "afc602e5-4a21-40e9-a7ed-b31a3dec1cc3"
+          },
+          "editorMode": "code",
+          "expr": "rate(vector_component_sent_events_total{component_id=\"clickhouse_enriched_events\",host=~`^$dashboardCluster\\-.*$`}[$__interval])",
+          "instant": false,
+          "legendFormat": "{{host}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Vector Enriched Events Sent",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
         "type": "loki",
         "uid": "${dashboardLokiDataSource}"
       },
@@ -1937,7 +1937,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 72
+        "y": 65
       },
       "id": 2,
       "options": {
@@ -2033,7 +2033,7 @@
         "h": 11,
         "w": 12,
         "x": 0,
-        "y": 82
+        "y": 75
       },
       "id": 3,
       "options": {
@@ -2075,7 +2075,7 @@
         "h": 11,
         "w": 12,
         "x": 12,
-        "y": 82
+        "y": 75
       },
       "id": 4,
       "options": {
@@ -2171,7 +2171,7 @@
         "h": 11,
         "w": 12,
         "x": 0,
-        "y": 93
+        "y": 86
       },
       "id": 23,
       "options": {
@@ -2213,7 +2213,7 @@
         "h": 11,
         "w": 12,
         "x": 12,
-        "y": 93
+        "y": 86
       },
       "id": 24,
       "options": {
@@ -2251,7 +2251,7 @@
         "h": 11,
         "w": 12,
         "x": 0,
-        "y": 104
+        "y": 97
       },
       "id": 6,
       "options": {
@@ -2352,6 +2352,6 @@
   "timezone": "",
   "title": "Product Analytics Service Health",
   "uid": "da6cf9ea-d593-41ed-91c5-8536fd15c2fa",
-  "version": 32,
+  "version": 33,
   "weekStart": ""
 }
