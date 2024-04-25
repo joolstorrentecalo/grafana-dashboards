@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6708484303 at Wed Apr 24 16:55:29 UTC 2024",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6711350767 at Thu Apr 25 01:41:00 UTC 2024",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -2983,6 +2983,234 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
+          "description": "Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 40
+          },
+          "id": 38,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": [
+              {
+                "targetBlank": true,
+                "title": "runway_lb SLI Error-Rate SLO Analysis",
+                "url": "/d/alerts-service_component_stage_groups_slo_error?${__url_time_range}&${__all_variables}&var-component=runway_lb&var-stage=$stage"
+              }
+            ]
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/6h Degradation SLO \\(5% of monthly error budget\\).*/",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/1h Outage SLO \\(2% of monthly error budget\\).*/",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            },
+            {
+              "alias": "/.*shard (apdex|error ratio|RPS)$/",
+              "color": "#E7D551"
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "sli-runway_lb-error-rate",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_max(\n  max_over_time(gitlab:component:stage_group:execution:error:ratio_5m{component=\"runway_lb\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"code_creation\"}[$__interval])\n,\n  1\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{ type }} error ratio",
+              "refId": "A"
+            },
+            {
+              "expr": "(6 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"runway_lb\",monitor=\"global\"})\n)\n",
+              "format": "time_series",
+              "interval": "5m",
+              "intervalFactor": 1,
+              "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+              "refId": "B"
+            },
+            {
+              "expr": "(14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"runway_lb\",monitor=\"global\"})\n)\n",
+              "format": "time_series",
+              "interval": "5m",
+              "intervalFactor": 1,
+              "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+              "refId": "C"
+            }
+          ],
+          "title": "runway_lb SLI Error Ratio",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Error %",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 8,
+            "y": 40
+          },
+          "id": 39,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*shard (apdex|error ratio|RPS)$/",
+              "color": "#E7D551"
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "sli-runway_lb-ops-rate",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "avg_over_time(gitlab:component:stage_group:execution:ops:rate_5m{component=\"runway_lb\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"code_creation\"}[$__interval])\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{ type }} RPS",
+              "refId": "A"
+            }
+          ],
+          "title": "runway_lb SLI RPS - Requests per Second",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Operations per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "content": "### Description\n\nExternal load balancer serving global HTTP requests for the Runway service.\n\n\n\n### Observability Tools\n\n* [Google Load Balancer](https://console.cloud.google.com/net-services/loadbalancing/details/http/ai-gateway-url-map?project=gitlab-runway-production)\n* [Stackdriver Logs: Loadbalancer Access Logs](https://console.cloud.google.com/logs/query;query=resource%2Elabels%2Eurl%5Fmap%5Fname%3D%22ai%2Dgateway%2Durl%2Dmap%22%0Aresource%2Etype%3D%22http%5Fload%5Fbalancer%22;timeRange=PT30M?project=gitlab-runway-production)\n* [Stackdriver Logs: Loadbalancer Access 5xx Logs](https://console.cloud.google.com/logs/query;query=httpRequest%2Estatus%3E%3D500%0Aresource%2Elabels%2Eurl%5Fmap%5Fname%3D%22ai%2Dgateway%2Durl%2Dmap%22%0Aresource%2Etype%3D%22http%5Fload%5Fbalancer%22;timeRange=PT30M?project=gitlab-runway-production)\n\n",
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 16,
+            "y": 40
+          },
+          "id": 40,
+          "mode": "markdown",
+          "title": "Details",
+          "type": "text"
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
           "description": "Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
           "fill": 0,
           "fillGradient": 0,
@@ -2990,9 +3218,9 @@
             "h": 10,
             "w": 6,
             "x": 0,
-            "y": 40
+            "y": 50
           },
-          "id": 38,
+          "id": 41,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3122,9 +3350,9 @@
             "h": 10,
             "w": 6,
             "x": 6,
-            "y": 40
+            "y": 50
           },
-          "id": 39,
+          "id": 42,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3254,9 +3482,9 @@
             "h": 10,
             "w": 6,
             "x": 12,
-            "y": 40
+            "y": 50
           },
-          "id": 40,
+          "id": 43,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3330,9 +3558,9 @@
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 40
+            "y": 50
           },
-          "id": 41,
+          "id": 44,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -3350,9 +3578,9 @@
             "h": 10,
             "w": 6,
             "x": 0,
-            "y": 50
+            "y": 60
           },
-          "id": 42,
+          "id": 45,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3482,9 +3710,9 @@
             "h": 10,
             "w": 6,
             "x": 6,
-            "y": 50
+            "y": 60
           },
-          "id": 43,
+          "id": 46,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3614,9 +3842,9 @@
             "h": 10,
             "w": 6,
             "x": 12,
-            "y": 50
+            "y": 60
           },
-          "id": 44,
+          "id": 47,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3690,9 +3918,9 @@
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 50
+            "y": 60
           },
-          "id": 45,
+          "id": 48,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -3710,9 +3938,9 @@
             "h": 10,
             "w": 6,
             "x": 0,
-            "y": 60
+            "y": 70
           },
-          "id": 46,
+          "id": 49,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3842,9 +4070,9 @@
             "h": 10,
             "w": 6,
             "x": 6,
-            "y": 60
+            "y": 70
           },
-          "id": 47,
+          "id": 50,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3974,9 +4202,9 @@
             "h": 10,
             "w": 6,
             "x": 12,
-            "y": 60
+            "y": 70
           },
-          "id": 48,
+          "id": 51,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4050,9 +4278,9 @@
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 60
+            "y": 70
           },
-          "id": 49,
+          "id": 52,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -4070,9 +4298,9 @@
             "h": 10,
             "w": 6,
             "x": 0,
-            "y": 70
+            "y": 80
           },
-          "id": 50,
+          "id": 53,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4202,9 +4430,9 @@
             "h": 10,
             "w": 6,
             "x": 6,
-            "y": 70
+            "y": 80
           },
-          "id": 51,
+          "id": 54,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4334,9 +4562,9 @@
             "h": 10,
             "w": 6,
             "x": 12,
-            "y": 70
+            "y": 80
           },
-          "id": 52,
+          "id": 55,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4410,9 +4638,9 @@
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 70
+            "y": 80
           },
-          "id": 53,
+          "id": 56,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -4430,9 +4658,9 @@
             "h": 10,
             "w": 6,
             "x": 0,
-            "y": 80
+            "y": 90
           },
-          "id": 54,
+          "id": 57,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4562,9 +4790,9 @@
             "h": 10,
             "w": 6,
             "x": 6,
-            "y": 80
+            "y": 90
           },
-          "id": 55,
+          "id": 58,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4694,9 +4922,9 @@
             "h": 10,
             "w": 6,
             "x": 12,
-            "y": 80
+            "y": 90
           },
-          "id": 56,
+          "id": 59,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4770,9 +4998,9 @@
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 80
+            "y": 90
           },
-          "id": 57,
+          "id": 60,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -4790,9 +5018,9 @@
             "h": 10,
             "w": 8,
             "x": 0,
-            "y": 90
+            "y": 100
           },
-          "id": 58,
+          "id": 61,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4922,9 +5150,9 @@
             "h": 10,
             "w": 8,
             "x": 8,
-            "y": 90
+            "y": 100
           },
-          "id": 59,
+          "id": 62,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -4998,9 +5226,9 @@
             "h": 10,
             "w": 8,
             "x": 16,
-            "y": 90
+            "y": 100
           },
-          "id": 60,
+          "id": 63,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -5130,5 +5358,5 @@
   "timezone": "utc",
   "title": "stage-groups: Code Creation: group error budget detail",
   "uid": "stage-groups-detail-code_creation",
-  "version": 914
+  "version": 915
 }

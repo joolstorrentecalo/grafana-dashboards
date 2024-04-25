@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6708484303 at Wed Apr 24 16:55:51 UTC 2024",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6711350767 at Thu Apr 25 01:43:24 UTC 2024",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -1023,6 +1023,234 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
+      "description": "Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 1021
+      },
+      "id": 812057818,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": [
+          {
+            "targetBlank": true,
+            "title": "runway_lb SLI Error-Rate SLO Analysis",
+            "url": "/d/alerts-regional_component_slo_error?${__url_time_range}&${__all_variables}&var-component=runway_lb&var-type=ai-gateway&var-stage=$stage"
+          }
+        ]
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/6h Degradation SLO \\(5% of monthly error budget\\).*/",
+          "color": "#FF4500",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "connected",
+          "spaceLength": 10,
+          "zindex": -2
+        },
+        {
+          "alias": "/1h Outage SLO \\(2% of monthly error budget\\).*/",
+          "color": "#F2495C",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 4,
+          "nullPointMode": "connected",
+          "spaceLength": 4,
+          "zindex": -2
+        },
+        {
+          "alias": "/.*shard (apdex|error ratio|RPS)$/",
+          "color": "#E7D551"
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "sli-runway_lb-error-rate",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "clamp_max(\n  max_over_time(gitlab_regional_sli_errors:ratio_5m{component=\"runway_lb\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"ai-gateway\"}[$__interval])\n,\n  1\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{ region }} {{ location }} error ratio",
+          "refId": "A"
+        },
+        {
+          "expr": "(6 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"runway_lb\",monitor=\"global\",type=\"ai-gateway\"})\n)\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 1,
+          "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+          "refId": "B"
+        },
+        {
+          "expr": "(14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"runway_lb\",monitor=\"global\",type=\"ai-gateway\"})\n)\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 1,
+          "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+          "refId": "C"
+        }
+      ],
+      "title": "runway_lb SLI Error Ratio",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "Error %",
+          "logBase": 1,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
+      "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 1021
+      },
+      "id": 1782139780,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/.*shard (apdex|error ratio|RPS)$/",
+          "color": "#E7D551"
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "sli-runway_lb-ops-rate",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "avg_over_time(gitlab_regional_sli_ops:rate_5m{component=\"runway_lb\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",type=\"ai-gateway\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{ region }} {{ location }} RPS",
+          "refId": "A"
+        }
+      ],
+      "title": "runway_lb SLI RPS - Requests per Second",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Operations per Second",
+          "logBase": 1,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "content": "### Description\n\nExternal load balancer serving global HTTP requests for the Runway service.\n\n\n\n### Observability Tools\n\n* [Google Load Balancer](https://console.cloud.google.com/net-services/loadbalancing/details/http/ai-gateway-url-map?project=gitlab-runway-production)\n* [Stackdriver Logs: Loadbalancer Access Logs](https://console.cloud.google.com/logs/query;query=resource%2Elabels%2Eurl%5Fmap%5Fname%3D%22ai%2Dgateway%2Durl%2Dmap%22%0Aresource%2Etype%3D%22http%5Fload%5Fbalancer%22;timeRange=PT30M?project=gitlab-runway-production)\n* [Stackdriver Logs: Loadbalancer Access 5xx Logs](https://console.cloud.google.com/logs/query;query=httpRequest%2Estatus%3E%3D500%0Aresource%2Elabels%2Eurl%5Fmap%5Fname%3D%22ai%2Dgateway%2Durl%2Dmap%22%0Aresource%2Etype%3D%22http%5Fload%5Fbalancer%22;timeRange=PT30M?project=gitlab-runway-production)\n\n",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 1021
+      },
+      "id": 15,
+      "mode": "markdown",
+      "title": "Details",
+      "type": "text"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
       "description": "Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
       "fill": 0,
       "fillGradient": 0,
@@ -1030,7 +1258,7 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 1021
+        "y": 1031
       },
       "id": 2863319079,
       "legend": {
@@ -1162,7 +1390,7 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 1021
+        "y": 1031
       },
       "id": 1631973137,
       "legend": {
@@ -1294,7 +1522,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 1021
+        "y": 1031
       },
       "id": 2414183688,
       "legend": {
@@ -1370,9 +1598,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 1021
+        "y": 1031
       },
-      "id": 16,
+      "id": 19,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -1390,7 +1618,7 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 1031
+        "y": 1041
       },
       "id": 3566889786,
       "legend": {
@@ -1522,7 +1750,7 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 1031
+        "y": 1041
       },
       "id": 1462095494,
       "legend": {
@@ -1654,7 +1882,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 1031
+        "y": 1041
       },
       "id": 520527452,
       "legend": {
@@ -1730,9 +1958,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 1031
+        "y": 1041
       },
-      "id": 20,
+      "id": 23,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -1750,7 +1978,7 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 1041
+        "y": 1051
       },
       "id": 792111394,
       "legend": {
@@ -1882,7 +2110,7 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 1041
+        "y": 1051
       },
       "id": 2484607007,
       "legend": {
@@ -2014,7 +2242,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 1041
+        "y": 1051
       },
       "id": 791409793,
       "legend": {
@@ -2090,9 +2318,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 1041
+        "y": 1051
       },
-      "id": 24,
+      "id": 27,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -2110,7 +2338,7 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 1051
+        "y": 1061
       },
       "id": 886296197,
       "legend": {
@@ -2242,7 +2470,7 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 1051
+        "y": 1061
       },
       "id": 2564361589,
       "legend": {
@@ -2374,7 +2602,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 1051
+        "y": 1061
       },
       "id": 3577613156,
       "legend": {
@@ -2450,9 +2678,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 1051
+        "y": 1061
       },
-      "id": 28,
+      "id": 31,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -2470,7 +2698,7 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 1061
+        "y": 1071
       },
       "id": 532989566,
       "legend": {
@@ -2602,7 +2830,7 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 1061
+        "y": 1071
       },
       "id": 2737483849,
       "legend": {
@@ -2734,7 +2962,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 1061
+        "y": 1071
       },
       "id": 2077541328,
       "legend": {
@@ -2810,9 +3038,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 1061
+        "y": 1071
       },
-      "id": 32,
+      "id": 35,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -2830,7 +3058,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 1071
+        "y": 1081
       },
       "id": 1626131899,
       "legend": {
@@ -2962,7 +3190,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 1071
+        "y": 1081
       },
       "id": 225787872,
       "legend": {
@@ -3038,9 +3266,9 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 1071
+        "y": 1081
       },
-      "id": 35,
+      "id": 38,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -3054,7 +3282,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 36,
+      "id": 39,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -3175,5 +3403,5 @@
   "timezone": "utc",
   "title": "ai-gateway: Regional Detail",
   "uid": "ai-gateway-regional",
-  "version": 196
+  "version": 197
 }

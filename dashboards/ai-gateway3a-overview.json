@@ -66,7 +66,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6708484303 at Wed Apr 24 16:55:51 UTC 2024",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6711350767 at Thu Apr 25 01:43:31 UTC 2024",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -2587,6 +2587,505 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
+      "description": "Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 41
+      },
+      "id": 812057818,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": [
+          {
+            "targetBlank": true,
+            "title": "runway_lb SLI Error-Rate SLO Analysis",
+            "url": "/d/alerts-component_slo_error?${__url_time_range}&${__all_variables}&var-component=runway_lb&var-type=ai-gateway"
+          }
+        ]
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/6h Degradation SLO \\(5% of monthly error budget\\).*/",
+          "color": "#FF4500",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "connected",
+          "spaceLength": 10,
+          "zindex": -2
+        },
+        {
+          "alias": "/1h Outage SLO \\(2% of monthly error budget\\).*/",
+          "color": "#F2495C",
+          "dashLength": 4,
+          "dashes": true,
+          "legend": true,
+          "lines": true,
+          "linewidth": 4,
+          "nullPointMode": "connected",
+          "spaceLength": 4,
+          "zindex": -2
+        },
+        {
+          "alias": "/.*shard (apdex|error ratio|RPS)$/",
+          "color": "#E7D551"
+        },
+        {
+          "alias": "runway_lb error ratio",
+          "color": "#E7D551",
+          "fillBelowTo": "runway_lb error ratio avg",
+          "zindex": 3
+        },
+        {
+          "alias": "runway_lb error ratio avg",
+          "color": "#5794F2",
+          "dashLength": 1,
+          "fillGradient": 10,
+          "linewidth": 1,
+          "spaceLength": 1,
+          "zindex": -3
+        },
+        {
+          "alias": "last week",
+          "color": "#dddddd80",
+          "dashLength": 4,
+          "dashes": true,
+          "fill": 0,
+          "legend": true,
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "spaceLength": 2,
+          "zindex": -3
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "sli-runway_lb-error-rate",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "clamp_max(\n  max_over_time(gitlab_component_errors:ratio_5m{component=\"runway_lb\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"ai-gateway\"}[$__interval])\n,\n  1\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "runway_lb error ratio",
+          "refId": "A"
+        },
+        {
+          "expr": "(6 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"runway_lb\",monitor=\"global\",type=\"ai-gateway\"})\n)\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 1,
+          "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+          "refId": "B"
+        },
+        {
+          "expr": "(14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"runway_lb\",monitor=\"global\",type=\"ai-gateway\"})\n)\n",
+          "format": "time_series",
+          "interval": "5m",
+          "intervalFactor": 1,
+          "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+          "refId": "C"
+        },
+        {
+          "expr": "clamp_max(\n  avg_over_time(gitlab_component_errors:ratio_5m{component=\"runway_lb\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"ai-gateway\"}[$__interval])\n,\n  1\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "runway_lb error ratio avg",
+          "refId": "D"
+        },
+        {
+          "expr": "clamp_max(\n  gitlab_component_errors:ratio_5m{component=\"runway_lb\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"ai-gateway\"} offset 1w\n,\n  scalar(max((14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"runway_lb\",monitor=\"global\",type=\"ai-gateway\"})\n)\n))\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "last week",
+          "refId": "E"
+        }
+      ],
+      "title": "runway_lb SLI Error Ratio",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "Error %",
+          "logBase": 1,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "displayName": "Status",
+          "mappings": [
+            {
+              "id": 0,
+              "options": {
+                "0": {
+                  "color": "black",
+                  "index": 0,
+                  "text": "Healthy"
+                },
+                "1": {
+                  "color": "orange",
+                  "index": 1,
+                  "text": "Warning 🔥"
+                },
+                "10": {
+                  "color": "orange",
+                  "index": 10,
+                  "text": "Warning 🔥🥵"
+                },
+                "11": {
+                  "color": "red",
+                  "index": 11,
+                  "text": "Degraded 🔥🥵"
+                },
+                "12": {
+                  "color": "red",
+                  "index": 12,
+                  "text": "Degraded 🥵"
+                },
+                "13": {
+                  "color": "red",
+                  "index": 13,
+                  "text": "Degraded 🔥🥵"
+                },
+                "14": {
+                  "color": "red",
+                  "index": 14,
+                  "text": "Degraded 🔥🥵"
+                },
+                "15": {
+                  "color": "red",
+                  "index": 15,
+                  "text": "Degraded 🔥🥵"
+                },
+                "2": {
+                  "color": "orange",
+                  "index": 2,
+                  "text": "Warning 🔥"
+                },
+                "3": {
+                  "color": "red",
+                  "index": 3,
+                  "text": "Degraded 🔥"
+                },
+                "4": {
+                  "color": "orange",
+                  "index": 4,
+                  "text": "Warning 🥵"
+                },
+                "5": {
+                  "color": "orange",
+                  "index": 5,
+                  "text": "Warning 🔥🥵"
+                },
+                "6": {
+                  "color": "orange",
+                  "index": 6,
+                  "text": "Warning 🔥🥵"
+                },
+                "7": {
+                  "color": "red",
+                  "index": 7,
+                  "text": "Degraded 🔥🥵"
+                },
+                "8": {
+                  "color": "orange",
+                  "index": 8,
+                  "text": "Warning 🥵"
+                },
+                "9": {
+                  "color": "orange",
+                  "index": 9,
+                  "text": "Warning 🔥🥵"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "black",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "orange",
+                "value": 2
+              },
+              {
+                "color": "red",
+                "value": 3
+              },
+              {
+                "color": "orange",
+                "value": 4
+              },
+              {
+                "color": "orange",
+                "value": 5
+              },
+              {
+                "color": "orange",
+                "value": 6
+              },
+              {
+                "color": "red",
+                "value": 7
+              },
+              {
+                "color": "orange",
+                "value": 8
+              },
+              {
+                "color": "orange",
+                "value": 9
+              },
+              {
+                "color": "orange",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 11
+              },
+              {
+                "color": "red",
+                "value": 12
+              },
+              {
+                "color": "red",
+                "value": 13
+              },
+              {
+                "color": "red",
+                "value": 14
+              },
+              {
+                "color": "red",
+                "value": 15
+              }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 8,
+        "x": 0,
+        "y": 48
+      },
+      "id": 21,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7",
+      "targets": [
+        {
+          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"runway_lb\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"ai-gateway\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_component_errors:ratio_5m{component=\"runway_lb\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"ai-gateway\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"runway_lb\",monitor=\"global\",type=\"ai-gateway\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_component_errors:ratio_1h{component=\"runway_lb\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"ai-gateway\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"runway_lb\",monitor=\"global\",type=\"ai-gateway\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_component_errors:ratio_30m{component=\"runway_lb\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"ai-gateway\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"runway_lb\",monitor=\"global\",type=\"ai-gateway\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_component_errors:ratio_6h{component=\"runway_lb\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"ai-gateway\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"runway_lb\",monitor=\"global\",type=\"ai-gateway\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "format": "time_series",
+          "instant": true,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "runway_lb SLI | Errors",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "transparent": false,
+      "type": "stat"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
+      "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 41
+      },
+      "id": 1782139780,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/.*shard (apdex|error ratio|RPS)$/",
+          "color": "#E7D551"
+        },
+        {
+          "alias": "runway_lb RPS",
+          "color": "#E7D551",
+          "zindex": 3
+        },
+        {
+          "alias": "last week",
+          "color": "#dddddd80",
+          "dashLength": 4,
+          "dashes": true,
+          "fill": 0,
+          "legend": true,
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "spaceLength": 2,
+          "zindex": -3
+        }
+      ],
+      "spaceLength": 10,
+      "stableId": "sli-runway_lb-ops-rate",
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "avg_over_time(gitlab_component_ops:rate_5m{component=\"runway_lb\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"ai-gateway\"}[$__interval])\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "runway_lb RPS",
+          "refId": "A"
+        },
+        {
+          "expr": "gitlab_component_ops:rate_5m{component=\"runway_lb\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"ai-gateway\"} offset 1w\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "last week",
+          "refId": "B"
+        }
+      ],
+      "title": "runway_lb SLI RPS - Requests per Second",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Operations per Second",
+          "logBase": 1,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "content": "### Description\n\nExternal load balancer serving global HTTP requests for the Runway service.\n\n\n\n### Observability Tools\n\n* [Google Load Balancer](https://console.cloud.google.com/net-services/loadbalancing/details/http/ai-gateway-url-map?project=gitlab-runway-production)\n* [Stackdriver Logs: Loadbalancer Access Logs](https://console.cloud.google.com/logs/query;query=resource%2Elabels%2Eurl%5Fmap%5Fname%3D%22ai%2Dgateway%2Durl%2Dmap%22%0Aresource%2Etype%3D%22http%5Fload%5Fbalancer%22;timeRange=PT30M?project=gitlab-runway-production)\n* [Stackdriver Logs: Loadbalancer Access 5xx Logs](https://console.cloud.google.com/logs/query;query=httpRequest%2Estatus%3E%3D500%0Aresource%2Elabels%2Eurl%5Fmap%5Fname%3D%22ai%2Dgateway%2Durl%2Dmap%22%0Aresource%2Etype%3D%22http%5Fload%5Fbalancer%22;timeRange=PT30M?project=gitlab-runway-production)\n\n",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 41
+      },
+      "id": 23,
+      "mode": "markdown",
+      "title": "Details",
+      "type": "text"
+    },
+    {
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
       "description": "Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
       "fill": 0,
       "fillGradient": 0,
@@ -2594,7 +3093,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 41
+        "y": 51
       },
       "id": 2863319079,
       "legend": {
@@ -2924,9 +3423,9 @@
         "h": 1,
         "w": 6,
         "x": 0,
-        "y": 48
+        "y": 58
       },
-      "id": 21,
+      "id": 25,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -2970,7 +3469,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 41
+        "y": 51
       },
       "id": 1631973137,
       "legend": {
@@ -3301,9 +3800,9 @@
         "h": 1,
         "w": 6,
         "x": 6,
-        "y": 48
+        "y": 58
       },
-      "id": 23,
+      "id": 27,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -3347,7 +3846,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 41
+        "y": 51
       },
       "id": 2414183688,
       "legend": {
@@ -3449,9 +3948,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 41
+        "y": 51
       },
-      "id": 25,
+      "id": 29,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -3469,7 +3968,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 51
+        "y": 61
       },
       "id": 3566889786,
       "legend": {
@@ -3799,9 +4298,9 @@
         "h": 1,
         "w": 6,
         "x": 0,
-        "y": 58
+        "y": 68
       },
-      "id": 27,
+      "id": 31,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -3845,7 +4344,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 51
+        "y": 61
       },
       "id": 1462095494,
       "legend": {
@@ -4176,9 +4675,9 @@
         "h": 1,
         "w": 6,
         "x": 6,
-        "y": 58
+        "y": 68
       },
-      "id": 29,
+      "id": 33,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -4222,7 +4721,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 51
+        "y": 61
       },
       "id": 520527452,
       "legend": {
@@ -4324,9 +4823,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 51
+        "y": 61
       },
-      "id": 31,
+      "id": 35,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -4344,7 +4843,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 61
+        "y": 71
       },
       "id": 792111394,
       "legend": {
@@ -4674,9 +5173,9 @@
         "h": 1,
         "w": 6,
         "x": 0,
-        "y": 68
+        "y": 78
       },
-      "id": 33,
+      "id": 37,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -4720,7 +5219,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 61
+        "y": 71
       },
       "id": 2484607007,
       "legend": {
@@ -5051,9 +5550,9 @@
         "h": 1,
         "w": 6,
         "x": 6,
-        "y": 68
+        "y": 78
       },
-      "id": 35,
+      "id": 39,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -5097,7 +5596,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 61
+        "y": 71
       },
       "id": 791409793,
       "legend": {
@@ -5199,9 +5698,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 61
+        "y": 71
       },
-      "id": 37,
+      "id": 41,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -5219,7 +5718,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 71
+        "y": 81
       },
       "id": 886296197,
       "legend": {
@@ -5549,9 +6048,9 @@
         "h": 1,
         "w": 6,
         "x": 0,
-        "y": 78
+        "y": 88
       },
-      "id": 39,
+      "id": 43,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -5595,7 +6094,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 71
+        "y": 81
       },
       "id": 2564361589,
       "legend": {
@@ -5926,9 +6425,9 @@
         "h": 1,
         "w": 6,
         "x": 6,
-        "y": 78
+        "y": 88
       },
-      "id": 41,
+      "id": 45,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -5972,7 +6471,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 71
+        "y": 81
       },
       "id": 3577613156,
       "legend": {
@@ -6074,9 +6573,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 71
+        "y": 81
       },
-      "id": 43,
+      "id": 47,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -6094,7 +6593,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 81
+        "y": 91
       },
       "id": 532989566,
       "legend": {
@@ -6424,9 +6923,9 @@
         "h": 1,
         "w": 6,
         "x": 0,
-        "y": 88
+        "y": 98
       },
-      "id": 45,
+      "id": 49,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -6470,7 +6969,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 81
+        "y": 91
       },
       "id": 2737483849,
       "legend": {
@@ -6801,9 +7300,9 @@
         "h": 1,
         "w": 6,
         "x": 6,
-        "y": 88
+        "y": 98
       },
-      "id": 47,
+      "id": 51,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -6847,7 +7346,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 81
+        "y": 91
       },
       "id": 2077541328,
       "legend": {
@@ -6949,9 +7448,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 81
+        "y": 91
       },
-      "id": 49,
+      "id": 53,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -6969,7 +7468,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 91
+        "y": 101
       },
       "id": 1626131899,
       "legend": {
@@ -7300,9 +7799,9 @@
         "h": 1,
         "w": 8,
         "x": 0,
-        "y": 98
+        "y": 108
       },
-      "id": 51,
+      "id": 55,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -7346,7 +7845,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 91
+        "y": 101
       },
       "id": 225787872,
       "legend": {
@@ -7448,9 +7947,9 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 91
+        "y": 101
       },
-      "id": 53,
+      "id": 57,
       "mode": "markdown",
       "title": "Details",
       "type": "text"
@@ -7464,7 +7963,7 @@
         "x": 0,
         "y": 200
       },
-      "id": 54,
+      "id": 58,
       "panels": [
         {
           "bars": false,
@@ -7481,7 +7980,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 55,
+          "id": 59,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7577,7 +8076,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 56,
+          "id": 60,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7653,7 +8152,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 57,
+          "id": 61,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7749,7 +8248,7 @@
             "x": 8,
             "y": 10
           },
-          "id": 58,
+          "id": 62,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7830,7 +8329,7 @@
             "x": 16,
             "y": 10
           },
-          "id": 59,
+          "id": 63,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -7906,7 +8405,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 60,
+          "id": 64,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8002,7 +8501,7 @@
             "x": 8,
             "y": 20
           },
-          "id": 61,
+          "id": 65,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8083,7 +8582,7 @@
             "x": 16,
             "y": 20
           },
-          "id": 62,
+          "id": 66,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8159,7 +8658,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 63,
+          "id": 67,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8255,7 +8754,7 @@
             "x": 8,
             "y": 30
           },
-          "id": 64,
+          "id": 68,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8336,7 +8835,7 @@
             "x": 16,
             "y": 30
           },
-          "id": 65,
+          "id": 69,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8415,7 +8914,7 @@
         "x": 0,
         "y": 210
       },
-      "id": 66,
+      "id": 70,
       "panels": [
         {
           "bars": false,
@@ -8432,7 +8931,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 67,
+          "id": 71,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8527,7 +9026,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 68,
+          "id": 72,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8603,7 +9102,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 69,
+          "id": 73,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8679,7 +9178,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 70,
+          "id": 74,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8774,7 +9273,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 71,
+          "id": 75,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8855,7 +9354,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 72,
+          "id": 76,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8931,7 +9430,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 73,
+          "id": 77,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9007,7 +9506,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 74,
+          "id": 78,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9102,7 +9601,7 @@
             "x": 6,
             "y": 20
           },
-          "id": 75,
+          "id": 79,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9183,7 +9682,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 76,
+          "id": 80,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9259,7 +9758,7 @@
             "x": 18,
             "y": 20
           },
-          "id": 77,
+          "id": 81,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9335,7 +9834,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 78,
+          "id": 82,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9430,7 +9929,7 @@
             "x": 6,
             "y": 30
           },
-          "id": 79,
+          "id": 83,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9511,7 +10010,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 80,
+          "id": 84,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9587,7 +10086,7 @@
             "x": 18,
             "y": 30
           },
-          "id": 81,
+          "id": 85,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9663,7 +10162,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 82,
+          "id": 86,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9758,7 +10257,7 @@
             "x": 6,
             "y": 40
           },
-          "id": 83,
+          "id": 87,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9839,7 +10338,7 @@
             "x": 12,
             "y": 40
           },
-          "id": 84,
+          "id": 88,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9915,7 +10414,7 @@
             "x": 18,
             "y": 40
           },
-          "id": 85,
+          "id": 89,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -9994,7 +10493,483 @@
         "x": 0,
         "y": 220
       },
-      "id": 86,
+      "id": 90,
+      "panels": [
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 0
+          },
+          "id": 91,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by () (\n  rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{env=\"$environment\",environment=\"$environment\",job=\"runway-exporter\",response_code_class=\"500\",url_map_name=\"ai-gateway-url-map\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "overall",
+              "refId": "A"
+            }
+          ],
+          "title": "runway_lb Errors - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 0
+          },
+          "id": 92,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by () (\n  rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{env=\"$environment\",environment=\"$environment\",job=\"runway-exporter\",url_map_name=\"ai-gateway-url-map\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "overall",
+              "refId": "A"
+            }
+          ],
+          "title": "runway_lb RPS - Overall",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 10
+          },
+          "id": 93,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (proxy_continent) (\n  rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{env=\"$environment\",environment=\"$environment\",job=\"runway-exporter\",proxy_continent!=\"\",response_code_class=\"500\",url_map_name=\"ai-gateway-url-map\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{proxy_continent}}",
+              "refId": "A"
+            }
+          ],
+          "title": "runway_lb Errors - per proxy_continent",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 10
+          },
+          "id": 94,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (proxy_continent) (\n  rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{env=\"$environment\",environment=\"$environment\",job=\"runway-exporter\",proxy_continent!=\"\",url_map_name=\"ai-gateway-url-map\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{proxy_continent}}",
+              "refId": "A"
+            }
+          ],
+          "title": "runway_lb RPS - per proxy_continent",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 20
+          },
+          "id": 95,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (response_code) (\n  rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{env=\"$environment\",environment=\"$environment\",job=\"runway-exporter\",response_code!=\"\",response_code_class=\"500\",url_map_name=\"ai-gateway-url-map\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{response_code}}",
+              "refId": "A"
+            }
+          ],
+          "title": "runway_lb Errors - per response_code",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Errors",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 0,
+          "description": "",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 20
+          },
+          "id": 96,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by (response_code) (\n  rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{env=\"$environment\",environment=\"$environment\",job=\"runway-exporter\",response_code!=\"\",url_map_name=\"ai-gateway-url-map\"}[$__interval])\n)\n > 0",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{response_code}}",
+              "refId": "A"
+            }
+          ],
+          "title": "runway_lb RPS - per response_code",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Requests per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "🔬 SLI Detail: runway_lb",
+      "titleSize": "h6",
+      "type": "row"
+    },
+    {
+      "collapse": true,
+      "collapsed": true,
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 230
+      },
+      "id": 97,
       "panels": [
         {
           "bars": false,
@@ -10011,7 +10986,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 87,
+          "id": 98,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10107,7 +11082,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 88,
+          "id": 99,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10183,7 +11158,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 89,
+          "id": 100,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10259,7 +11234,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 90,
+          "id": 101,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10355,7 +11330,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 91,
+          "id": 102,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10436,7 +11411,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 92,
+          "id": 103,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10512,7 +11487,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 93,
+          "id": 104,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10588,7 +11563,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 94,
+          "id": 105,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10684,7 +11659,7 @@
             "x": 6,
             "y": 20
           },
-          "id": 95,
+          "id": 106,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10765,7 +11740,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 96,
+          "id": 107,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10841,7 +11816,7 @@
             "x": 18,
             "y": 20
           },
-          "id": 97,
+          "id": 108,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -10917,7 +11892,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 98,
+          "id": 109,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11013,7 +11988,7 @@
             "x": 6,
             "y": 30
           },
-          "id": 99,
+          "id": 110,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11094,7 +12069,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 100,
+          "id": 111,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11170,7 +12145,7 @@
             "x": 18,
             "y": 30
           },
-          "id": 101,
+          "id": 112,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11246,7 +12221,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 102,
+          "id": 113,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11342,7 +12317,7 @@
             "x": 6,
             "y": 40
           },
-          "id": 103,
+          "id": 114,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11423,7 +12398,7 @@
             "x": 12,
             "y": 40
           },
-          "id": 104,
+          "id": 115,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11499,7 +12474,7 @@
             "x": 18,
             "y": 40
           },
-          "id": 105,
+          "id": 116,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11576,9 +12551,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 230
+        "y": 240
       },
-      "id": 106,
+      "id": 117,
       "panels": [
         {
           "bars": false,
@@ -11595,7 +12570,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 107,
+          "id": 118,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11691,7 +12666,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 108,
+          "id": 119,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11767,7 +12742,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 109,
+          "id": 120,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11843,7 +12818,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 110,
+          "id": 121,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -11939,7 +12914,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 111,
+          "id": 122,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12020,7 +12995,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 112,
+          "id": 123,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12096,7 +13071,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 113,
+          "id": 124,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12172,7 +13147,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 114,
+          "id": 125,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12268,7 +13243,7 @@
             "x": 6,
             "y": 20
           },
-          "id": 115,
+          "id": 126,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12349,7 +13324,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 116,
+          "id": 127,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12425,7 +13400,7 @@
             "x": 18,
             "y": 20
           },
-          "id": 117,
+          "id": 128,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12501,7 +13476,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 118,
+          "id": 129,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12597,7 +13572,7 @@
             "x": 6,
             "y": 30
           },
-          "id": 119,
+          "id": 130,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12678,7 +13653,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 120,
+          "id": 131,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12754,7 +13729,7 @@
             "x": 18,
             "y": 30
           },
-          "id": 121,
+          "id": 132,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12830,7 +13805,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 122,
+          "id": 133,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -12926,7 +13901,7 @@
             "x": 6,
             "y": 40
           },
-          "id": 123,
+          "id": 134,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13007,7 +13982,7 @@
             "x": 12,
             "y": 40
           },
-          "id": 124,
+          "id": 135,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13083,7 +14058,7 @@
             "x": 18,
             "y": 40
           },
-          "id": 125,
+          "id": 136,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13160,9 +14135,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 240
+        "y": 250
       },
-      "id": 126,
+      "id": 137,
       "panels": [
         {
           "bars": false,
@@ -13179,7 +14154,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 127,
+          "id": 138,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13275,7 +14250,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 128,
+          "id": 139,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13351,7 +14326,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 129,
+          "id": 140,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13427,7 +14402,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 130,
+          "id": 141,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13523,7 +14498,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 131,
+          "id": 142,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13604,7 +14579,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 132,
+          "id": 143,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13680,7 +14655,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 133,
+          "id": 144,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13756,7 +14731,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 134,
+          "id": 145,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13852,7 +14827,7 @@
             "x": 6,
             "y": 20
           },
-          "id": 135,
+          "id": 146,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -13933,7 +14908,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 136,
+          "id": 147,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14009,7 +14984,7 @@
             "x": 18,
             "y": 20
           },
-          "id": 137,
+          "id": 148,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14085,7 +15060,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 138,
+          "id": 149,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14181,7 +15156,7 @@
             "x": 6,
             "y": 30
           },
-          "id": 139,
+          "id": 150,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14262,7 +15237,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 140,
+          "id": 151,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14338,7 +15313,7 @@
             "x": 18,
             "y": 30
           },
-          "id": 141,
+          "id": 152,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14414,7 +15389,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 142,
+          "id": 153,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14510,7 +15485,7 @@
             "x": 6,
             "y": 40
           },
-          "id": 143,
+          "id": 154,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14591,7 +15566,7 @@
             "x": 12,
             "y": 40
           },
-          "id": 144,
+          "id": 155,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14667,7 +15642,7 @@
             "x": 18,
             "y": 40
           },
-          "id": 145,
+          "id": 156,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14744,9 +15719,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 250
+        "y": 260
       },
-      "id": 146,
+      "id": 157,
       "panels": [
         {
           "bars": false,
@@ -14763,7 +15738,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 147,
+          "id": 158,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14858,7 +15833,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 148,
+          "id": 159,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -14934,7 +15909,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 149,
+          "id": 160,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15010,7 +15985,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 150,
+          "id": 161,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15105,7 +16080,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 151,
+          "id": 162,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15186,7 +16161,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 152,
+          "id": 163,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15262,7 +16237,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 153,
+          "id": 164,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15338,7 +16313,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 154,
+          "id": 165,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15433,7 +16408,7 @@
             "x": 6,
             "y": 20
           },
-          "id": 155,
+          "id": 166,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15514,7 +16489,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 156,
+          "id": 167,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15590,7 +16565,7 @@
             "x": 18,
             "y": 20
           },
-          "id": 157,
+          "id": 168,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15666,7 +16641,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 158,
+          "id": 169,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15761,7 +16736,7 @@
             "x": 6,
             "y": 30
           },
-          "id": 159,
+          "id": 170,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15842,7 +16817,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 160,
+          "id": 171,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15918,7 +16893,7 @@
             "x": 18,
             "y": 30
           },
-          "id": 161,
+          "id": 172,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -15994,7 +16969,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 162,
+          "id": 173,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16089,7 +17064,7 @@
             "x": 6,
             "y": 40
           },
-          "id": 163,
+          "id": 174,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16170,7 +17145,7 @@
             "x": 12,
             "y": 40
           },
-          "id": 164,
+          "id": 175,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16246,7 +17221,7 @@
             "x": 18,
             "y": 40
           },
-          "id": 165,
+          "id": 176,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16323,9 +17298,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 260
+        "y": 270
       },
-      "id": 166,
+      "id": 177,
       "panels": [
         {
           "bars": false,
@@ -16342,7 +17317,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 167,
+          "id": 178,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16438,7 +17413,7 @@
             "x": 8,
             "y": 0
           },
-          "id": 168,
+          "id": 179,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16514,7 +17489,7 @@
             "x": 16,
             "y": 0
           },
-          "id": 169,
+          "id": 180,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16590,7 +17565,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 170,
+          "id": 181,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16686,7 +17661,7 @@
             "x": 6,
             "y": 10
           },
-          "id": 171,
+          "id": 182,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16767,7 +17742,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 172,
+          "id": 183,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16843,7 +17818,7 @@
             "x": 18,
             "y": 10
           },
-          "id": 173,
+          "id": 184,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -16919,7 +17894,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 174,
+          "id": 185,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17015,7 +17990,7 @@
             "x": 6,
             "y": 20
           },
-          "id": 175,
+          "id": 186,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17096,7 +18071,7 @@
             "x": 12,
             "y": 20
           },
-          "id": 176,
+          "id": 187,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17172,7 +18147,7 @@
             "x": 18,
             "y": 20
           },
-          "id": 177,
+          "id": 188,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17248,7 +18223,7 @@
             "x": 0,
             "y": 30
           },
-          "id": 178,
+          "id": 189,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17344,7 +18319,7 @@
             "x": 6,
             "y": 30
           },
-          "id": 179,
+          "id": 190,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17425,7 +18400,7 @@
             "x": 12,
             "y": 30
           },
-          "id": 180,
+          "id": 191,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17501,7 +18476,7 @@
             "x": 18,
             "y": 30
           },
-          "id": 181,
+          "id": 192,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17577,7 +18552,7 @@
             "x": 0,
             "y": 40
           },
-          "id": 182,
+          "id": 193,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17673,7 +18648,7 @@
             "x": 6,
             "y": 40
           },
-          "id": 183,
+          "id": 194,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17754,7 +18729,7 @@
             "x": 12,
             "y": 40
           },
-          "id": 184,
+          "id": 195,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17830,7 +18805,7 @@
             "x": 18,
             "y": 40
           },
-          "id": 185,
+          "id": 196,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -17907,9 +18882,9 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 270
+        "y": 280
       },
-      "id": 186,
+      "id": 197,
       "panels": [
         {
           "bars": false,
@@ -17926,7 +18901,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 187,
+          "id": 198,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -18002,7 +18977,7 @@
             "x": 12,
             "y": 0
           },
-          "id": 188,
+          "id": 199,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -18078,7 +19053,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 189,
+          "id": 200,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -18154,7 +19129,7 @@
             "x": 12,
             "y": 10
           },
-          "id": 190,
+          "id": 201,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -18233,7 +19208,7 @@
         "x": 0,
         "y": 500
       },
-      "id": 191,
+      "id": 202,
       "panels": [
         {
           "aliasColors": {
@@ -19997,7 +20972,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 201,
+      "id": 212,
       "panels": [
         {
           "colors": [
@@ -20018,7 +20993,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 202,
+          "id": 213,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -20131,7 +21106,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 203,
+          "id": 214,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -20242,7 +21217,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 204,
+          "id": 215,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -20347,7 +21322,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 205,
+      "id": 216,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -20441,5 +21416,5 @@
   "timezone": "utc",
   "title": "ai-gateway: Overview",
   "uid": "ai-gateway-main",
-  "version": 888
+  "version": 889
 }
