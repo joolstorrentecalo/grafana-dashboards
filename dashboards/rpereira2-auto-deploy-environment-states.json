@@ -51,12 +51,399 @@
       "type": "text"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 23,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "- locked_deployment - There is an ongoing deployment to the environment.\n- locked_deployment_failed - The last deployment to the environment failed.\n- locked_qa - A QA pipeline is running against this environment.\n- locked_qa_failed - The last QA pipeline on the environment failed.\n- locked_post_deploy_migration - Post deploy migrations are being executed on this environment.\n- locked_post_deploy_migration_failed - Post deploy migrations on the environment has failed.\n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "10.4.2",
+      "title": "Lock state legend",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "description": "Displays the last 10 auto deploy packages and their statuses",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "inspect": false
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pkg_state (lastNotNull)"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 185
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "version"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 432
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "project_path (allValues)"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 762
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Package state (lastNotNull)"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 339
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 15,
+        "x": 0,
+        "y": 8
+      },
+      "id": 24,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "frameIndex": 0,
+        "showHeader": true,
+        "sortBy": [
+
+        ]
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "last_over_time(delivery_auto_deploy_package_state[$__range]) >= 1",
+          "format": "table",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "last_over_time(delivery_deployment_completed[$__range])",
+          "format": "table",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "last_over_time(delivery_auto_deploy_package_state[$__range]) >= 1 and on (version) last_over_time(delivery_deployment_completed[$__range])",
+          "format": "table",
+          "hide": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "title": "Auto deploy packages",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "pkg_state",
+                "version",
+                "target_env"
+              ]
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {
+          }
+        },
+        {
+          "disabled": true,
+          "id": "concatenate",
+          "options": {
+            "frameNameLabel": "frame",
+            "frameNameMode": "label"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true,
+              "Value #A": true,
+              "Value #B": true,
+              "__name__": true,
+              "__name__ 1": true,
+              "__name__ 2": true,
+              "cluster": true,
+              "cluster 1": true,
+              "cluster 2": true,
+              "container": true,
+              "container 1": true,
+              "container 2": true,
+              "endpoint": true,
+              "endpoint 1": true,
+              "endpoint 2": true,
+              "env": true,
+              "env 1": true,
+              "env 2": true,
+              "environment": true,
+              "environment 1": true,
+              "environment 2": true,
+              "instance": true,
+              "instance 1": true,
+              "instance 2": true,
+              "job": true,
+              "job 1": true,
+              "job 2": true,
+              "monitor": true,
+              "monitor 1": true,
+              "monitor 2": true,
+              "namespace": true,
+              "namespace 1": true,
+              "namespace 2": true,
+              "pod": true,
+              "pod 1": true,
+              "pod 2": true,
+              "prometheus": true,
+              "prometheus 1": true,
+              "prometheus 2": true,
+              "provider": true,
+              "provider 1": true,
+              "provider 2": true,
+              "region": true,
+              "region 1": true,
+              "region 2": true,
+              "service": true,
+              "service 1": true,
+              "service 2": true,
+              "shard": true,
+              "shard 1": true,
+              "shard 2": true,
+              "stage": true,
+              "stage 1": true,
+              "stage 2": true,
+              "target_env": false,
+              "tier": true,
+              "tier 1": true,
+              "tier 2": true,
+              "type": true,
+              "type 1": true,
+              "type 2": true,
+              "version 2": false
+            },
+            "includeByName": {
+            },
+            "indexByName": {
+              "Time": 1,
+              "Value": 23,
+              "__name__": 2,
+              "cluster": 3,
+              "container": 4,
+              "endpoint": 5,
+              "env": 6,
+              "environment": 7,
+              "instance": 8,
+              "job": 9,
+              "monitor": 10,
+              "namespace": 11,
+              "pkg_state": 12,
+              "pod": 13,
+              "project_path": 14,
+              "prometheus": 15,
+              "provider": 16,
+              "region": 17,
+              "service": 18,
+              "shard": 19,
+              "stage": 20,
+              "tier": 21,
+              "type": 22,
+              "version": 0
+            },
+            "renameByName": {
+              "pkg_state": "Package state",
+              "target_env": "Deployed environments",
+              "version 1": "version",
+              "version 2": "version"
+            }
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Deployed environments": {
+                "aggregations": [
+                  "allValues"
+                ],
+                "operation": "aggregate"
+              },
+              "Package state": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "pkg_state": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "project_path": {
+                "aggregations": [
+                  "uniqueValues"
+                ],
+                "operation": "aggregate"
+              },
+              "target_env": {
+                "aggregations": [
+                  "allValues"
+                ],
+                "operation": "aggregate"
+              },
+              "version": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {
+            },
+            "sort": [
+              {
+                "desc": true,
+                "field": "version"
+              }
+            ]
+          }
+        },
+        {
+          "disabled": true,
+          "id": "groupingToMatrix",
+          "options": {
+            "columnField": "project_path",
+            "emptyValue": "empty",
+            "rowField": "version",
+            "valueField": "Package state"
+          }
+        },
+        {
+          "id": "limit",
+          "options": {
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 8
+        "y": 20
       },
       "id": 9,
       "panels": [
@@ -99,9 +486,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 6,
         "x": 0,
-        "y": 9
+        "y": 21
       },
       "id": 10,
       "options": {
@@ -154,6 +541,7 @@
           "mappings": [
 
           ],
+          "noValue": "-",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -175,9 +563,85 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 6,
+        "x": 6,
+        "y": 21
+      },
+      "id": 19,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^lock_reason$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "delivery_auto_deploy_lock_state{target_env=\"gstg\", target_stage=\"cny\"} >= 1",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "gstg-cny lock reason",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "string"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
         "x": 12,
-        "y": 9
+        "y": 21
       },
       "id": 11,
       "options": {
@@ -230,6 +694,7 @@
           "mappings": [
 
           ],
+          "noValue": "-",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -251,9 +716,85 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 6,
+        "x": 18,
+        "y": 21
+      },
+      "id": 21,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^lock_reason$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "delivery_auto_deploy_lock_state{target_env=\"gprd\", target_stage=\"cny\"} >= 1",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "gprd-cny lock reason",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "string"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
         "x": 0,
-        "y": 17
+        "y": 29
       },
       "id": 12,
       "options": {
@@ -306,6 +847,7 @@
           "mappings": [
 
           ],
+          "noValue": "-",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -327,9 +869,85 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 6,
+        "x": 6,
+        "y": 29
+      },
+      "id": 20,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^lock_reason$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "delivery_auto_deploy_lock_state{target_env=\"gstg\", target_stage=\"main\"} >= 1",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "gstg lock reason",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "string"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
         "x": 12,
-        "y": 17
+        "y": 29
       },
       "id": 13,
       "options": {
@@ -366,7 +984,84 @@
           "refId": "A"
         }
       ],
-      "title": "gstg environment state",
+      "title": "gprd environment state",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+
+          ],
+          "noValue": "-",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "string"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 29
+      },
+      "id": 22,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^lock_reason$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "delivery_auto_deploy_lock_state{target_env=\"gprd\", target_stage=\"main\"} >= 1",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "gprd lock reason",
       "type": "stat"
     },
     {
@@ -375,7 +1070,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 37
       },
       "id": 5,
       "panels": [
@@ -421,7 +1116,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 26
+        "y": 38
       },
       "id": 1,
       "options": {
@@ -463,7 +1158,7 @@
         "type": "prometheus",
         "uid": "PA258B30F88C30650"
       },
-      "description": "Percentage of time of the selected time range that production is ready to accept a new deployment, and there is a package available for promotion.",
+      "description": "Percentage of time of the selected time range that staging is ready to accept a new deployment, and there is a package available for promotion.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -495,9 +1190,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 26
+        "y": 38
       },
-      "id": 17,
+      "id": 2,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -522,14 +1217,14 @@
             "uid": "PA258B30F88C30650"
           },
           "editorMode": "code",
-          "expr": "sum without (pod,instance) (delivery_auto_deploy_environment_state{target_env=\"gprd\", target_stage=\"main\",env_state=\"awaiting_promotion\"})",
+          "expr": "sum without (pod,instance) (delivery_auto_deploy_environment_state{target_env=\"gstg\", target_stage=\"main\",env_state=\"awaiting_promotion\"})",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Production awaiting promotion alerternate",
+      "title": "Staging awaiting promotion",
       "type": "stat"
     },
     {
@@ -601,7 +1296,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 34
+        "y": 46
       },
       "id": 16,
       "options": {
@@ -640,154 +1335,6 @@
         "type": "prometheus",
         "uid": "PA258B30F88C30650"
       },
-      "description": "Percentage of time of the selected time range that staging is ready to accept a new deployment, and there is a package available for promotion.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 34
-      },
-      "id": 2,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "10.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PA258B30F88C30650"
-          },
-          "editorMode": "code",
-          "expr": "sum without (pod,instance) (delivery_auto_deploy_environment_state{target_env=\"gstg\", target_stage=\"main\",env_state=\"awaiting_promotion\"})",
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Staging awaiting promotion",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PA258B30F88C30650"
-      },
-      "description": "Percentage of time of the selected time range where staging-canary was idle and ready to accept a new deployment.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 42
-      },
-      "id": 3,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "10.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PA258B30F88C30650"
-          },
-          "editorMode": "code",
-          "expr": "sum without (pod,instance) (delivery_auto_deploy_environment_state{target_env=\"gstg\", target_stage=\"cny\",env_state=\"ready\"})",
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Staging canary ready to accept new packages",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PA258B30F88C30650"
-      },
       "description": "Percentage of time in the selected time range that production canary is baking a package.",
       "fieldConfig": {
         "defaults": {
@@ -820,7 +1367,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 42
+        "y": 46
       },
       "id": 4,
       "options": {
@@ -862,6 +1409,80 @@
         "type": "prometheus",
         "uid": "PA258B30F88C30650"
       },
+      "description": "Percentage of time of the selected time range where staging-canary was idle and ready to accept a new deployment.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 54
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PA258B30F88C30650"
+          },
+          "editorMode": "code",
+          "expr": "sum without (pod,instance) (delivery_auto_deploy_environment_state{target_env=\"gstg\", target_stage=\"cny\",env_state=\"ready\"})",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Staging canary ready to accept new packages",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PA258B30F88C30650"
+      },
       "description": "Percentage of time of the selected time range where production-canary was idle and ready to accept a new deployment.",
       "fieldConfig": {
         "defaults": {
@@ -894,7 +1515,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 50
+        "y": 62
       },
       "id": 14,
       "options": {
@@ -951,6 +1572,6 @@
   "timezone": "browser",
   "title": "rpereira2 - Auto deploy environment states",
   "uid": "adkafblr7g4xsa",
-  "version": 17,
+  "version": 23,
   "weekStart": ""
 }
