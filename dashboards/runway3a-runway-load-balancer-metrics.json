@@ -10,7 +10,7 @@
 
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6821069374 at Fri May 10 04:20:46 UTC 2024",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6823407245 at Fri May 10 11:12:44 UTC 2024",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -27,8 +27,8 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
-      "decimals": 0,
-      "description": "Rate of requests served by backends of external HTTP(S) load balancer.",
+      "decimals": 2,
+      "description": "Rate of requests served by the external HTTP(S) load balancer, grouped by HTTP status code.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -70,11 +70,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (response_code_class, backend_scope) (\n  rate(\n    stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_backend_request_count{env=\"$environment\",job=\"runway-exporter\",region=~\"$region\",url_map_name=\"$loadbalancer\"}[$__rate_interval]\n  )\n)\n",
+          "expr": "sum by(response_code_class) (\n  rate(\n    stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{backend_scope=~\"$region\",env=\"$environment\",job=\"runway-exporter\",url_map_name=\"$loadbalancer\"}[$__rate_interval]\n  )\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
-          "legendFormat": "{{response_code_class}} {{backend_scope}}",
+          "legendFormat": "HTTP status {{response_code_class}}",
           "refId": "A"
         }
       ],
@@ -83,7 +83,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Request rate",
+      "title": "Request rate by status",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -126,7 +126,7 @@
       "dashes": false,
       "datasource": "$PROMETHEUS_DS",
       "decimals": 2,
-      "description": "Distribution of the latency calculated from when the request was sent by the proxy to the backend, in milliseconds.",
+      "description": "Rate of requests served by the external HTTP(S) load balancer, grouped by the region of the backend handling the request.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -168,11 +168,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(\n  0.99,\n  sum by (revision_name, le, backend_scope) (\n    rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_backend_latencies_bucket{env=\"$environment\",job=\"runway-exporter\",region=~\"$region\",url_map_name=\"$loadbalancer\"}[$__rate_interval])\n  )\n)\n",
+          "expr": "sum by(backend_scope) (\n  rate(\n    stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{backend_scope=~\"$region\",env=\"$environment\",job=\"runway-exporter\",url_map_name=\"$loadbalancer\"}[$__rate_interval]\n  )\n)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
-          "legendFormat": "p99 {{revision_name}} {{backend_scope}}",
+          "legendFormat": "Region {{backend_scope}}",
           "refId": "A"
         }
       ],
@@ -181,7 +181,397 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Request latency",
+      "title": "Request rate by region",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Requests per Second",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
+      "description": "Ratio of HTTP 5xx status codes to total number of requests.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 10
+      },
+      "id": 4,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "clamp_min(clamp_max(rate(\n  stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{response_code_class=\"500\",backend_scope=~\"$region\",env=\"$environment\",job=\"runway-exporter\",url_map_name=\"$loadbalancer\"}[$__rate_interval]\n)\n/\nrate(\n  stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{backend_scope=~\"$region\",env=\"$environment\",job=\"runway-exporter\",url_map_name=\"$loadbalancer\"}[$__rate_interval]\n)\nOR on()\nvector(0)\n,1),0)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 2,
+          "legendFormat": "Total error ratio",
+          "refId": "A"
+        }
+      ],
+      "thresholds": null,
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Error ratio",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": "Error ratio",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
+      "description": "Rate of requests with status code 500 served by the external HTTP(S) load balancer, grouped by the region of the backend handling the request.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 10
+      },
+      "id": 5,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by(backend_scope) (\n  rate(\n    stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{response_code_class=\"500\",backend_scope=~\"$region\",env=\"$environment\",job=\"runway-exporter\",url_map_name=\"$loadbalancer\"}[$__rate_interval]\n  )\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 2,
+          "legendFormat": "Region {{backend_scope}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Error rate by region",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Requests per Second",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
+      "description": "The latency calculated from when the request was received by the external HTTP(S) load balancer proxy until the proxy got ACK from client on last response byte.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 20
+      },
+      "id": 6,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(\n  0.99,\n  sum by(le, backend_scope) (\n    rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_total_latencies_bucket{backend_scope=~\"$region\",env=\"$environment\",job=\"runway-exporter\",url_map_name=\"$loadbalancer\"}[$__rate_interval])\n  )\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 2,
+          "legendFormat": "Region {{backend_scope}} p99",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Total latency by region",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "format": "ms",
+          "label": "Duration",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": 1,
+          "min": 0,
+          "show": false
+        }
+      ]
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 2,
+      "description": "Distribution of the latency calculated from when the request was sent by the proxy to the backend, in milliseconds.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 20
+      },
+      "id": 7,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(\n  0.99,\n  sum by(le, backend_scope) (\n    rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_backend_latencies_bucket{backend_scope=~\"$region\",env=\"$environment\",job=\"runway-exporter\",url_map_name=\"$loadbalancer\"}[$__rate_interval])\n  )\n)\n",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 2,
+          "legendFormat": "Region {{backend_scope}} p99",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Backend latency by region",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -353,5 +743,5 @@
   "timezone": "utc",
   "title": "runway: Runway Load Balancer Metrics",
   "uid": "runway-loadbalancer",
-  "version": 692
+  "version": 693
 }
