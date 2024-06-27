@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6839288453 at Mon May 13 15:50:22 UTC 2024",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/7198318089 at Thu Jun 27 03:35:16 UTC 2024",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -206,11 +206,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "thanos apdex",
-          "color": "#E7D551",
-          "zindex": 3
-        },
-        {
           "alias": "thanos apdex avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -231,6 +226,11 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "thanos apdex",
+          "color": "#E7D551",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -308,8 +308,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -323,77 +326,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -495,7 +498,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_service_apdex:ratio_1h{monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_service_apdex:ratio_5m{monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_service_apdex:ratio_1h{monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_service_apdex:ratio_30m{monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_service_apdex:ratio_6h{monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_service_apdex:ratio_1h{monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_service_apdex:ratio_5m{monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_service_apdex:ratio_1h{monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_service_apdex:ratio_30m{monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_service_apdex:ratio_6h{monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -582,12 +585,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "thanos error ratio",
-          "color": "#E7D551",
-          "fillBelowTo": "thanos error ratio avg",
-          "zindex": 3
-        },
-        {
           "alias": "thanos error ratio avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -608,6 +605,12 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "thanos error ratio",
+          "color": "#E7D551",
+          "fillBelowTo": "thanos error ratio avg",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -685,8 +688,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -700,77 +706,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -872,7 +878,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_service_errors:ratio_1h{monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_service_errors:ratio_5m{monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_service_errors:ratio_1h{monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_service_errors:ratio_30m{monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_service_errors:ratio_6h{monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_service_errors:ratio_1h{monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_service_errors:ratio_5m{monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_service_errors:ratio_1h{monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_service_errors:ratio_30m{monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_service_errors:ratio_6h{monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -1277,11 +1283,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "rule_evaluation apdex",
-          "color": "#E7D551",
-          "zindex": 3
-        },
-        {
           "alias": "rule_evaluation apdex avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -1302,6 +1303,11 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "rule_evaluation apdex",
+          "color": "#E7D551",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -1379,8 +1385,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -1394,77 +1403,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -1566,7 +1575,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -1653,12 +1662,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "rule_evaluation error ratio",
-          "color": "#E7D551",
-          "fillBelowTo": "rule_evaluation error ratio avg",
-          "zindex": 3
-        },
-        {
           "alias": "rule_evaluation error ratio avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -1679,6 +1682,12 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "rule_evaluation error ratio",
+          "color": "#E7D551",
+          "fillBelowTo": "rule_evaluation error ratio avg",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -1756,8 +1765,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -1771,77 +1783,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -1943,7 +1955,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_component_errors:ratio_5m{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_component_errors:ratio_1h{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_component_errors:ratio_30m{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_component_errors:ratio_6h{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_errors:ratio_5m{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_errors:ratio_1h{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_errors:ratio_30m{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_errors:ratio_6h{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"rule_evaluation\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -2152,12 +2164,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "thanos_compactor error ratio",
-          "color": "#E7D551",
-          "fillBelowTo": "thanos_compactor error ratio avg",
-          "zindex": 3
-        },
-        {
           "alias": "thanos_compactor error ratio avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -2178,6 +2184,12 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "thanos_compactor error ratio",
+          "color": "#E7D551",
+          "fillBelowTo": "thanos_compactor error ratio avg",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -2255,8 +2267,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -2270,77 +2285,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -2442,7 +2457,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"thanos_compactor\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_component_errors:ratio_5m{component=\"thanos_compactor\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_compactor\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_component_errors:ratio_1h{component=\"thanos_compactor\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_compactor\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_component_errors:ratio_30m{component=\"thanos_compactor\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_compactor\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_component_errors:ratio_6h{component=\"thanos_compactor\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_compactor\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"thanos_compactor\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_errors:ratio_5m{component=\"thanos_compactor\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_compactor\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_errors:ratio_1h{component=\"thanos_compactor\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_compactor\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_errors:ratio_30m{component=\"thanos_compactor\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_compactor\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_errors:ratio_6h{component=\"thanos_compactor\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_compactor\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -2651,11 +2666,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "thanos_memcached apdex",
-          "color": "#E7D551",
-          "zindex": 3
-        },
-        {
           "alias": "thanos_memcached apdex avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -2676,6 +2686,11 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "thanos_memcached apdex",
+          "color": "#E7D551",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -2753,8 +2768,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -2768,77 +2786,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -2940,7 +2958,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -3027,12 +3045,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "thanos_memcached error ratio",
-          "color": "#E7D551",
-          "fillBelowTo": "thanos_memcached error ratio avg",
-          "zindex": 3
-        },
-        {
           "alias": "thanos_memcached error ratio avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -3053,6 +3065,12 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "thanos_memcached error ratio",
+          "color": "#E7D551",
+          "fillBelowTo": "thanos_memcached error ratio avg",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -3130,8 +3148,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -3145,77 +3166,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -3317,7 +3338,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_component_errors:ratio_5m{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_component_errors:ratio_1h{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_component_errors:ratio_30m{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_component_errors:ratio_6h{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_errors:ratio_5m{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_errors:ratio_1h{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_errors:ratio_30m{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_errors:ratio_6h{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_memcached\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -3526,11 +3547,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "thanos_query apdex",
-          "color": "#E7D551",
-          "zindex": 3
-        },
-        {
           "alias": "thanos_query apdex avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -3551,6 +3567,11 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "thanos_query apdex",
+          "color": "#E7D551",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -3628,8 +3649,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -3643,77 +3667,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -3815,7 +3839,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -3902,12 +3926,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "thanos_query error ratio",
-          "color": "#E7D551",
-          "fillBelowTo": "thanos_query error ratio avg",
-          "zindex": 3
-        },
-        {
           "alias": "thanos_query error ratio avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -3928,6 +3946,12 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "thanos_query error ratio",
+          "color": "#E7D551",
+          "fillBelowTo": "thanos_query error ratio avg",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -4005,8 +4029,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -4020,77 +4047,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -4192,7 +4219,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_component_errors:ratio_5m{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_component_errors:ratio_1h{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_component_errors:ratio_30m{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_component_errors:ratio_6h{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_errors:ratio_5m{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_errors:ratio_1h{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_errors:ratio_30m{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_errors:ratio_6h{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_query\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -4401,11 +4428,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "thanos_query_frontend apdex",
-          "color": "#E7D551",
-          "zindex": 3
-        },
-        {
           "alias": "thanos_query_frontend apdex avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -4426,6 +4448,11 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "thanos_query_frontend apdex",
+          "color": "#E7D551",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -4503,8 +4530,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -4518,77 +4548,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -4690,7 +4720,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -4777,12 +4807,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "thanos_query_frontend error ratio",
-          "color": "#E7D551",
-          "fillBelowTo": "thanos_query_frontend error ratio avg",
-          "zindex": 3
-        },
-        {
           "alias": "thanos_query_frontend error ratio avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -4803,6 +4827,12 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "thanos_query_frontend error ratio",
+          "color": "#E7D551",
+          "fillBelowTo": "thanos_query_frontend error ratio avg",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -4880,8 +4910,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -4895,77 +4928,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -5067,7 +5100,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_component_errors:ratio_5m{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_component_errors:ratio_1h{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_component_errors:ratio_30m{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_component_errors:ratio_6h{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_errors:ratio_5m{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_errors:ratio_1h{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_errors:ratio_30m{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_errors:ratio_6h{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_query_frontend\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -5276,12 +5309,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "thanos_rule_alert_sender error ratio",
-          "color": "#E7D551",
-          "fillBelowTo": "thanos_rule_alert_sender error ratio avg",
-          "zindex": 3
-        },
-        {
           "alias": "thanos_rule_alert_sender error ratio avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -5302,6 +5329,12 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "thanos_rule_alert_sender error ratio",
+          "color": "#E7D551",
+          "fillBelowTo": "thanos_rule_alert_sender error ratio avg",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -5379,8 +5412,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -5394,77 +5430,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -5566,7 +5602,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"thanos_rule_alert_sender\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_component_errors:ratio_5m{component=\"thanos_rule_alert_sender\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_rule_alert_sender\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_component_errors:ratio_1h{component=\"thanos_rule_alert_sender\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_rule_alert_sender\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_component_errors:ratio_30m{component=\"thanos_rule_alert_sender\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_rule_alert_sender\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_component_errors:ratio_6h{component=\"thanos_rule_alert_sender\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_rule_alert_sender\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"thanos_rule_alert_sender\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_errors:ratio_5m{component=\"thanos_rule_alert_sender\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_rule_alert_sender\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_errors:ratio_1h{component=\"thanos_rule_alert_sender\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_rule_alert_sender\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_errors:ratio_30m{component=\"thanos_rule_alert_sender\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_rule_alert_sender\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_errors:ratio_6h{component=\"thanos_rule_alert_sender\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_rule_alert_sender\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -5775,11 +5811,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "thanos_store apdex",
-          "color": "#E7D551",
-          "zindex": 3
-        },
-        {
           "alias": "thanos_store apdex avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -5800,6 +5831,11 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "thanos_store apdex",
+          "color": "#E7D551",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -5877,8 +5913,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -5892,77 +5931,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -6064,7 +6103,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -6151,12 +6190,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "thanos_store error ratio",
-          "color": "#E7D551",
-          "fillBelowTo": "thanos_store error ratio avg",
-          "zindex": 3
-        },
-        {
           "alias": "thanos_store error ratio avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -6177,6 +6210,12 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "thanos_store error ratio",
+          "color": "#E7D551",
+          "fillBelowTo": "thanos_store error ratio avg",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -6254,8 +6293,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -6269,77 +6311,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -6441,7 +6483,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_component_errors:ratio_5m{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_component_errors:ratio_1h{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_component_errors:ratio_30m{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_component_errors:ratio_6h{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_errors:ratio_5m{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_errors:ratio_1h{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_errors:ratio_30m{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_errors:ratio_6h{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"thanos_store\",monitor=\"global\",type=\"thanos\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -6703,7 +6745,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(prometheus_rule_evaluations_total{job=\"thanos-ruler\",namespace=\"thanos\",type=\"thanos\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:prometheus_rule_evaluations_total:rate_5m{job=\"thanos-ruler\",namespace=\"thanos\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -6785,7 +6827,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(clamp_max((\n  (\n    sum by (pod) (\n      rate(prometheus_rule_group_iterations_total{job=\"thanos-ruler\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n    )\n    -\n    sum by (pod) (\n      rate(prometheus_rule_group_iterations_total{job=\"thanos-ruler\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n    ) - (\n      sum by (pod) (\n        rate(prometheus_rule_group_iterations_missed_total{job=\"thanos-ruler\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n      ) or\n      0 * sum by (pod) (\n        rate(prometheus_rule_group_iterations_total{job=\"thanos-ruler\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n      )\n    )\n  )\n  / ignoring (pod) group_left()\n  (\n    sum by () (\n      rate(prometheus_rule_group_iterations_total{job=\"thanos-ruler\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n    )\n  )\n) > 0\n,1),0)\n",
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (pod) (\n      sli_aggregations:prometheus_rule_group_iterations_total:rate_5m{job=\"thanos-ruler\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n    )\n    -\n    sum by (pod) (\n      sli_aggregations:prometheus_rule_group_iterations_total:rate_5m{job=\"thanos-ruler\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n    ) - (\n      sum by (pod) (\n        sli_aggregations:prometheus_rule_group_iterations_missed_total:rate_5m{job=\"thanos-ruler\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n      ) or\n      0 * sum by (pod) (\n        sli_aggregations:prometheus_rule_group_iterations_total:rate_5m{job=\"thanos-ruler\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n      )\n    )\n  )\n  / ignoring (pod) group_left()\n  (\n    sum by () (\n      sli_aggregations:prometheus_rule_group_iterations_total:rate_5m{job=\"thanos-ruler\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n    )\n  )\n) > 0\n,1),0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -6936,7 +6978,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (pod) (\n  rate(prometheus_rule_evaluations_total{job=\"thanos-ruler\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n)\n > 0",
+              "expr": "sum by (pod) (\n  sli_aggregations:prometheus_rule_evaluations_total:rate_5m{job=\"thanos-ruler\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -7018,7 +7060,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(clamp_max((\n  (\n    sum by (rule_group) (\n      rate(prometheus_rule_group_iterations_total{job=\"thanos-ruler\",namespace=\"thanos\",rule_group!=\"\",type=\"thanos\"}[$__interval])\n    )\n    -\n    sum by (rule_group) (\n      rate(prometheus_rule_group_iterations_total{job=\"thanos-ruler\",namespace=\"thanos\",rule_group!=\"\",type=\"thanos\"}[$__interval])\n    ) - (\n      sum by (rule_group) (\n        rate(prometheus_rule_group_iterations_missed_total{job=\"thanos-ruler\",namespace=\"thanos\",rule_group!=\"\",type=\"thanos\"}[$__interval])\n      ) or\n      0 * sum by (rule_group) (\n        rate(prometheus_rule_group_iterations_total{job=\"thanos-ruler\",namespace=\"thanos\",rule_group!=\"\",type=\"thanos\"}[$__interval])\n      )\n    )\n  )\n  / ignoring (rule_group) group_left()\n  (\n    sum by () (\n      rate(prometheus_rule_group_iterations_total{job=\"thanos-ruler\",namespace=\"thanos\",rule_group!=\"\",type=\"thanos\"}[$__interval])\n    )\n  )\n) > 0\n,1),0)\n",
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (rule_group) (\n      sli_aggregations:prometheus_rule_group_iterations_total:rate_5m{job=\"thanos-ruler\",namespace=\"thanos\",rule_group!=\"\",type=\"thanos\"}\n    )\n    -\n    sum by (rule_group) (\n      sli_aggregations:prometheus_rule_group_iterations_total:rate_5m{job=\"thanos-ruler\",namespace=\"thanos\",rule_group!=\"\",type=\"thanos\"}\n    ) - (\n      sum by (rule_group) (\n        sli_aggregations:prometheus_rule_group_iterations_missed_total:rate_5m{job=\"thanos-ruler\",namespace=\"thanos\",rule_group!=\"\",type=\"thanos\"}\n      ) or\n      0 * sum by (rule_group) (\n        sli_aggregations:prometheus_rule_group_iterations_total:rate_5m{job=\"thanos-ruler\",namespace=\"thanos\",rule_group!=\"\",type=\"thanos\"}\n      )\n    )\n  )\n  / ignoring (rule_group) group_left()\n  (\n    sum by () (\n      sli_aggregations:prometheus_rule_group_iterations_total:rate_5m{job=\"thanos-ruler\",namespace=\"thanos\",rule_group!=\"\",type=\"thanos\"}\n    )\n  )\n) > 0\n,1),0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -7169,7 +7211,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (rule_group) (\n  rate(prometheus_rule_evaluations_total{job=\"thanos-ruler\",namespace=\"thanos\",rule_group!=\"\",type=\"thanos\"}[$__interval])\n)\n > 0",
+              "expr": "sum by (rule_group) (\n  sli_aggregations:prometheus_rule_evaluations_total:rate_5m{job=\"thanos-ruler\",namespace=\"thanos\",rule_group!=\"\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -7265,7 +7307,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(thanos_compact_group_compactions_failures_total{job=~\"thanos-(.+)-compactor\",namespace=\"thanos\",type=\"thanos\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:thanos_compact_group_compactions_failures_total:rate_5m{job=~\"thanos-(.+)-compactor\",namespace=\"thanos\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -7341,7 +7383,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(thanos_compact_group_compactions_total{job=~\"thanos-(.+)-compactor\",namespace=\"thanos\",type=\"thanos\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:thanos_compact_group_compactions_total:rate_5m{job=~\"thanos-(.+)-compactor\",namespace=\"thanos\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -7417,7 +7459,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (pod) (\n  rate(thanos_compact_group_compactions_failures_total{job=~\"thanos-(.+)-compactor\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n)\n > 0",
+              "expr": "sum by (pod) (\n  sli_aggregations:thanos_compact_group_compactions_failures_total:rate_5m{job=~\"thanos-(.+)-compactor\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -7493,7 +7535,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (pod) (\n  rate(thanos_compact_group_compactions_total{job=~\"thanos-(.+)-compactor\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n)\n > 0",
+              "expr": "sum by (pod) (\n  sli_aggregations:thanos_compact_group_compactions_total:rate_5m{job=~\"thanos-(.+)-compactor\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -7589,7 +7631,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    rate(thanos_memcached_operation_duration_seconds_bucket{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",namespace=\"thanos\",type=\"thanos\"}[$__interval])\n  )\n)\n > 0",
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    sli_aggregations:thanos_memcached_operation_duration_seconds_bucket:rate_5m{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",namespace=\"thanos\",type=\"thanos\"}\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -7684,7 +7726,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(thanos_memcached_operation_failures_total{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",namespace=\"thanos\",type=\"thanos\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:thanos_memcached_operation_failures_total:rate_5m{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",namespace=\"thanos\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -7760,7 +7802,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(thanos_memcached_operations_total{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",namespace=\"thanos\",type=\"thanos\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:thanos_memcached_operations_total:rate_5m{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",namespace=\"thanos\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -7836,7 +7878,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,operation) (\n    rate(thanos_memcached_operation_duration_seconds_bucket{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",namespace=\"thanos\",operation!=\"\",type=\"thanos\"}[$__interval])\n  )\n)\n > 0",
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,operation) (\n    sli_aggregations:thanos_memcached_operation_duration_seconds_bucket:rate_5m{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",namespace=\"thanos\",operation!=\"\",type=\"thanos\"}\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -7937,7 +7979,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(clamp_max((\n  (\n    sum by (operation) (\n  rate(thanos_memcached_operation_duration_seconds_bucket{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",le=\"+Inf\",namespace=\"thanos\",operation!=\"\",type=\"thanos\"}[$__interval])\n)\n\n    -\n    (\n      sum by (operation) (\n  rate(thanos_memcached_operation_duration_seconds_bucket{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",le=\"0.1\",namespace=\"thanos\",operation!=\"\",type=\"thanos\"}[$__interval])\n)\n\n    )\n  )\n  / ignoring(operation) group_left()\n  (\n    sum by () (\n  rate(thanos_memcached_operation_duration_seconds_bucket{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",le=\"+Inf\",namespace=\"thanos\",operation!=\"\",type=\"thanos\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (operation) (\n  sli_aggregations:thanos_memcached_operation_duration_seconds_bucket:rate_5m{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",le=\"+Inf\",namespace=\"thanos\",operation!=\"\",type=\"thanos\"}\n)\n\n    -\n    (\n      sum by (operation) (\n  sli_aggregations:thanos_memcached_operation_duration_seconds_bucket:rate_5m{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",le=\"0.1\",namespace=\"thanos\",operation!=\"\",type=\"thanos\"}\n)\n\n    )\n  )\n  / ignoring(operation) group_left()\n  (\n    sum by () (\n  sli_aggregations:thanos_memcached_operation_duration_seconds_bucket:rate_5m{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",le=\"+Inf\",namespace=\"thanos\",operation!=\"\",type=\"thanos\"}\n)\n\n  )\n) > 0\n,1),0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8012,7 +8054,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (operation) (\n  rate(thanos_memcached_operation_failures_total{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",namespace=\"thanos\",operation!=\"\",type=\"thanos\"}[$__interval])\n)\n > 0",
+              "expr": "sum by (operation) (\n  sli_aggregations:thanos_memcached_operation_failures_total:rate_5m{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",namespace=\"thanos\",operation!=\"\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8088,7 +8130,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (operation) (\n  rate(thanos_memcached_operations_total{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",namespace=\"thanos\",operation!=\"\",type=\"thanos\"}[$__interval])\n)\n > 0",
+              "expr": "sum by (operation) (\n  sli_aggregations:thanos_memcached_operations_total:rate_5m{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",namespace=\"thanos\",operation!=\"\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8164,7 +8206,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,reason) (\n    rate(thanos_memcached_operation_duration_seconds_bucket{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",namespace=\"thanos\",reason!=\"\",type=\"thanos\"}[$__interval])\n  )\n)\n > 0",
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,reason) (\n    sli_aggregations:thanos_memcached_operation_duration_seconds_bucket:rate_5m{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",namespace=\"thanos\",reason!=\"\",type=\"thanos\"}\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8265,7 +8307,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(clamp_max((\n  (\n    sum by (reason) (\n  rate(thanos_memcached_operation_duration_seconds_bucket{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",le=\"+Inf\",namespace=\"thanos\",reason!=\"\",type=\"thanos\"}[$__interval])\n)\n\n    -\n    (\n      sum by (reason) (\n  rate(thanos_memcached_operation_duration_seconds_bucket{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",le=\"0.1\",namespace=\"thanos\",reason!=\"\",type=\"thanos\"}[$__interval])\n)\n\n    )\n  )\n  / ignoring(reason) group_left()\n  (\n    sum by () (\n  rate(thanos_memcached_operation_duration_seconds_bucket{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",le=\"+Inf\",namespace=\"thanos\",reason!=\"\",type=\"thanos\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (reason) (\n  sli_aggregations:thanos_memcached_operation_duration_seconds_bucket:rate_5m{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",le=\"+Inf\",namespace=\"thanos\",reason!=\"\",type=\"thanos\"}\n)\n\n    -\n    (\n      sum by (reason) (\n  sli_aggregations:thanos_memcached_operation_duration_seconds_bucket:rate_5m{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",le=\"0.1\",namespace=\"thanos\",reason!=\"\",type=\"thanos\"}\n)\n\n    )\n  )\n  / ignoring(reason) group_left()\n  (\n    sum by () (\n  sli_aggregations:thanos_memcached_operation_duration_seconds_bucket:rate_5m{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",le=\"+Inf\",namespace=\"thanos\",reason!=\"\",type=\"thanos\"}\n)\n\n  )\n) > 0\n,1),0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8340,7 +8382,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (reason) (\n  rate(thanos_memcached_operation_failures_total{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",namespace=\"thanos\",reason!=\"\",type=\"thanos\"}[$__interval])\n)\n > 0",
+              "expr": "sum by (reason) (\n  sli_aggregations:thanos_memcached_operation_failures_total:rate_5m{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",namespace=\"thanos\",reason!=\"\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8416,7 +8458,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (reason) (\n  rate(thanos_memcached_operations_total{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",namespace=\"thanos\",reason!=\"\",type=\"thanos\"}[$__interval])\n)\n > 0",
+              "expr": "sum by (reason) (\n  sli_aggregations:thanos_memcached_operations_total:rate_5m{grpc_type=\"unary\",job=~\"thanos-(labels|querier)-metrics|thanos-(.+)-(bucket|index)-metrics\",namespace=\"thanos\",reason!=\"\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8512,7 +8554,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    rate(http_request_duration_seconds_bucket{job=\"thanos-query\",namespace=\"thanos\",type=\"thanos\"}[$__interval])\n  )\n)\n > 0",
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    sli_aggregations:http_request_duration_seconds_bucket:rate_5m{job=\"thanos-query\",namespace=\"thanos\",type=\"thanos\"}\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8607,7 +8649,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  sli_aggregations:http_requests_total_rate5m{code=~\"^5.*\",job=\"thanos-query\",namespace=\"thanos\",type=\"thanos\"}\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:http_requests_total:rate_5m{code=~\"^5.*\",job=\"thanos-query\",namespace=\"thanos\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8683,7 +8725,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  sli_aggregations:http_requests_total_rate5m{job=\"thanos-query\",namespace=\"thanos\",type=\"thanos\"}\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:http_requests_total:rate_5m{job=\"thanos-query\",namespace=\"thanos\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8759,7 +8801,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,pod) (\n    rate(http_request_duration_seconds_bucket{job=\"thanos-query\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n  )\n)\n > 0",
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,pod) (\n    sli_aggregations:http_request_duration_seconds_bucket:rate_5m{job=\"thanos-query\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8860,7 +8902,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(clamp_max((\n  (\n    sum by (pod) (\n  rate(http_request_duration_seconds_bucket{job=\"thanos-query\",le=\"+Inf\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n)\n\n    -\n    (\n      sum by (pod) (\n  rate(http_request_duration_seconds_bucket{job=\"thanos-query\",le=\"30.0\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n)\n\n    )\n  )\n  / ignoring(pod) group_left()\n  (\n    sum by () (\n  rate(http_request_duration_seconds_bucket{job=\"thanos-query\",le=\"+Inf\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (pod) (\n  sli_aggregations:http_request_duration_seconds_bucket:rate_5m{job=\"thanos-query\",le=\"+Inf\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n\n    -\n    (\n      sum by (pod) (\n  sli_aggregations:http_request_duration_seconds_bucket:rate_5m{job=\"thanos-query\",le=\"30.0\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n\n    )\n  )\n  / ignoring(pod) group_left()\n  (\n    sum by () (\n  sli_aggregations:http_request_duration_seconds_bucket:rate_5m{job=\"thanos-query\",le=\"+Inf\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n\n  )\n) > 0\n,1),0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8935,7 +8977,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (pod) (\n  sli_aggregations:http_requests_total_rate5m{code=~\"^5.*\",job=\"thanos-query\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n > 0",
+              "expr": "sum by (pod) (\n  sli_aggregations:http_requests_total:rate_5m{code=~\"^5.*\",job=\"thanos-query\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -9011,7 +9053,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (pod) (\n  sli_aggregations:http_requests_total_rate5m{job=\"thanos-query\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n > 0",
+              "expr": "sum by (pod) (\n  sli_aggregations:http_requests_total:rate_5m{job=\"thanos-query\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -9107,7 +9149,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    rate(http_request_duration_seconds_bucket{job=\"thanos-query-frontend\",namespace=\"thanos\",type=\"thanos\"}[$__interval])\n  )\n)\n > 0",
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    sli_aggregations:http_request_duration_seconds_bucket:rate_5m{job=\"thanos-query-frontend\",namespace=\"thanos\",type=\"thanos\"}\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -9202,7 +9244,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  sli_aggregations:http_requests_total_rate5m{code=~\"^5.*\",job=\"thanos-query-frontend\",namespace=\"thanos\",type=\"thanos\"}\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:http_requests_total:rate_5m{code=~\"^5.*\",job=\"thanos-query-frontend\",namespace=\"thanos\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -9278,7 +9320,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  sli_aggregations:http_requests_total_rate5m{job=\"thanos-query-frontend\",namespace=\"thanos\",type=\"thanos\"}\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:http_requests_total:rate_5m{job=\"thanos-query-frontend\",namespace=\"thanos\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -9354,7 +9396,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,pod) (\n    rate(http_request_duration_seconds_bucket{job=\"thanos-query-frontend\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n  )\n)\n > 0",
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,pod) (\n    sli_aggregations:http_request_duration_seconds_bucket:rate_5m{job=\"thanos-query-frontend\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -9455,7 +9497,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(clamp_max((\n  (\n    sum by (pod) (\n  rate(http_request_duration_seconds_bucket{job=\"thanos-query-frontend\",le=\"+Inf\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n)\n\n    -\n    (\n      sum by (pod) (\n  rate(http_request_duration_seconds_bucket{job=\"thanos-query-frontend\",le=\"30.0\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n)\n\n    )\n  )\n  / ignoring(pod) group_left()\n  (\n    sum by () (\n  rate(http_request_duration_seconds_bucket{job=\"thanos-query-frontend\",le=\"+Inf\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (pod) (\n  sli_aggregations:http_request_duration_seconds_bucket:rate_5m{job=\"thanos-query-frontend\",le=\"+Inf\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n\n    -\n    (\n      sum by (pod) (\n  sli_aggregations:http_request_duration_seconds_bucket:rate_5m{job=\"thanos-query-frontend\",le=\"30.0\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n\n    )\n  )\n  / ignoring(pod) group_left()\n  (\n    sum by () (\n  sli_aggregations:http_request_duration_seconds_bucket:rate_5m{job=\"thanos-query-frontend\",le=\"+Inf\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n\n  )\n) > 0\n,1),0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -9530,7 +9572,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (pod) (\n  sli_aggregations:http_requests_total_rate5m{code=~\"^5.*\",job=\"thanos-query-frontend\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n > 0",
+              "expr": "sum by (pod) (\n  sli_aggregations:http_requests_total:rate_5m{code=~\"^5.*\",job=\"thanos-query-frontend\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -9606,7 +9648,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (pod) (\n  sli_aggregations:http_requests_total_rate5m{job=\"thanos-query-frontend\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n > 0",
+              "expr": "sum by (pod) (\n  sli_aggregations:http_requests_total:rate_5m{job=\"thanos-query-frontend\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -9702,7 +9744,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(thanos_alert_sender_alerts_dropped_total{job=\"thanos-ruler\",namespace=\"thanos\",type=\"thanos\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:thanos_alert_sender_alerts_dropped_total:rate_5m{job=\"thanos-ruler\",namespace=\"thanos\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -9778,7 +9820,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(thanos_alert_sender_alerts_sent_total{job=\"thanos-ruler\",namespace=\"thanos\",type=\"thanos\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:thanos_alert_sender_alerts_sent_total:rate_5m{job=\"thanos-ruler\",namespace=\"thanos\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -9854,7 +9896,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (pod) (\n  rate(thanos_alert_sender_alerts_dropped_total{job=\"thanos-ruler\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n)\n > 0",
+              "expr": "sum by (pod) (\n  sli_aggregations:thanos_alert_sender_alerts_dropped_total:rate_5m{job=\"thanos-ruler\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -9930,7 +9972,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (pod) (\n  rate(thanos_alert_sender_alerts_sent_total{job=\"thanos-ruler\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n)\n > 0",
+              "expr": "sum by (pod) (\n  sli_aggregations:thanos_alert_sender_alerts_sent_total:rate_5m{job=\"thanos-ruler\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -10026,7 +10068,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    rate(grpc_server_handling_seconds_bucket{grpc_type=\"unary\",job=~\"thanos-(.+)-storegateway-(.+)\",namespace=\"thanos\",type=\"thanos\"}[$__interval])\n  )\n)\n > 0",
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    sli_aggregations:grpc_server_handling_seconds_bucket:rate_5m{grpc_type=\"unary\",job=~\"thanos-(.+)-storegateway-(.+)\",namespace=\"thanos\",type=\"thanos\"}\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -10122,7 +10164,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(grpc_server_handled_total{grpc_code!=\"OK\",grpc_type=\"unary\",job=~\"thanos-(.+)-storegateway-(.+)\",namespace=\"thanos\",type=\"thanos\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:grpc_server_handled_total:rate_5m{grpc_code!=\"OK\",grpc_type=\"unary\",job=~\"thanos-(.+)-storegateway-(.+)\",namespace=\"thanos\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -10198,7 +10240,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(grpc_server_handled_total{grpc_type=\"unary\",job=~\"thanos-(.+)-storegateway-(.+)\",namespace=\"thanos\",type=\"thanos\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:grpc_server_handled_total:rate_5m{grpc_type=\"unary\",job=~\"thanos-(.+)-storegateway-(.+)\",namespace=\"thanos\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -10274,7 +10316,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,pod) (\n    rate(grpc_server_handling_seconds_bucket{grpc_type=\"unary\",job=~\"thanos-(.+)-storegateway-(.+)\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n  )\n)\n > 0",
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le,pod) (\n    sli_aggregations:grpc_server_handling_seconds_bucket:rate_5m{grpc_type=\"unary\",job=~\"thanos-(.+)-storegateway-(.+)\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -10376,7 +10418,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(clamp_max((\n  (\n    sum by (pod) (\n  rate(grpc_server_handling_seconds_bucket{grpc_type=\"unary\",job=~\"thanos-(.+)-storegateway-(.+)\",le=\"+Inf\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n)\n\n    -\n    (\n      (\n  sum by (pod) (\n    rate(grpc_server_handling_seconds_bucket{grpc_type=\"unary\",job=~\"thanos-(.+)-storegateway-(.+)\",le=\"1.0\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n  )\n  +\n  sum by (pod) (\n    rate(grpc_server_handling_seconds_bucket{grpc_type=\"unary\",job=~\"thanos-(.+)-storegateway-(.+)\",le=\"3.0\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(pod) group_left()\n  (\n    sum by () (\n  rate(grpc_server_handling_seconds_bucket{grpc_type=\"unary\",job=~\"thanos-(.+)-storegateway-(.+)\",le=\"+Inf\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n)\n\n  )\n) > 0\n,1),0)\n",
+              "expr": "clamp_min(clamp_max((\n  (\n    sum by (pod) (\n  sli_aggregations:grpc_server_handling_seconds_bucket:rate_5m{grpc_type=\"unary\",job=~\"thanos-(.+)-storegateway-(.+)\",le=\"+Inf\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n\n    -\n    (\n      (\n  sum by (pod) (\n    sli_aggregations:grpc_server_handling_seconds_bucket:rate_5m{grpc_type=\"unary\",job=~\"thanos-(.+)-storegateway-(.+)\",le=\"1.0\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n  )\n  +\n  sum by (pod) (\n    sli_aggregations:grpc_server_handling_seconds_bucket:rate_5m{grpc_type=\"unary\",job=~\"thanos-(.+)-storegateway-(.+)\",le=\"3.0\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n  )\n)\n/\n2\n\n    )\n  )\n  / ignoring(pod) group_left()\n  (\n    sum by () (\n  sli_aggregations:grpc_server_handling_seconds_bucket:rate_5m{grpc_type=\"unary\",job=~\"thanos-(.+)-storegateway-(.+)\",le=\"+Inf\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n\n  )\n) > 0\n,1),0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -10451,7 +10493,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (pod) (\n  rate(grpc_server_handled_total{grpc_code!=\"OK\",grpc_type=\"unary\",job=~\"thanos-(.+)-storegateway-(.+)\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n)\n > 0",
+              "expr": "sum by (pod) (\n  sli_aggregations:grpc_server_handled_total:rate_5m{grpc_code!=\"OK\",grpc_type=\"unary\",job=~\"thanos-(.+)-storegateway-(.+)\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -10527,7 +10569,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (pod) (\n  rate(grpc_server_handled_total{grpc_type=\"unary\",job=~\"thanos-(.+)-storegateway-(.+)\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}[$__interval])\n)\n > 0",
+              "expr": "sum by (pod) (\n  sli_aggregations:grpc_server_handled_total:rate_5m{grpc_type=\"unary\",job=~\"thanos-(.+)-storegateway-(.+)\",namespace=\"thanos\",pod!=\"\",type=\"thanos\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -16398,7 +16440,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, horizontalpodautoscaler, shard) (\n  clamp_min(\n    clamp_max(\n      kube_horizontalpodautoscaler_status_desired_replicas:labeled{type=\"thanos\", shard!~\"database-throttled|elasticsearch|gitaly-throttled|urgent-authorized-projects|urgent-other\", namespace!~\"pubsubbeat\"}\n      /\n      kube_horizontalpodautoscaler_spec_max_replicas:labeled{type=\"thanos\", shard!~\"database-throttled|elasticsearch|gitaly-throttled|urgent-authorized-projects|urgent-other\", namespace!~\"pubsubbeat\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, horizontalpodautoscaler, shard) (\n  clamp_min(\n    clamp_max(\n      kube_horizontalpodautoscaler_status_desired_replicas:labeled{type=\"thanos\", shard!~\"database-throttled|elasticsearch|gitaly-throttled|urgent-authorized-projects\", namespace!~\"pubsubbeat\"}\n      /\n      kube_horizontalpodautoscaler_spec_max_replicas:labeled{type=\"thanos\", shard!~\"database-throttled|elasticsearch|gitaly-throttled|urgent-authorized-projects\", namespace!~\"pubsubbeat\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -18040,8 +18082,8 @@
     "list": [
       {
         "current": {
-          "text": "Global",
-          "value": "Global"
+          "text": "Mimir - Gitlab Ops",
+          "value": "Mimir - Gitlab Ops"
         },
         "hide": 0,
         "label": null,
@@ -18083,5 +18125,5 @@
   "timezone": "utc",
   "title": "thanos: Overview",
   "uid": "thanos-main",
-  "version": 1712
+  "version": 1882
 }

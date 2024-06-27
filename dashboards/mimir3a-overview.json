@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/6839288453 at Mon May 13 15:50:20 UTC 2024",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/7198318089 at Thu Jun 27 03:35:14 UTC 2024",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -206,11 +206,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "mimir apdex",
-          "color": "#E7D551",
-          "zindex": 3
-        },
-        {
           "alias": "mimir apdex avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -231,6 +226,11 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "mimir apdex",
+          "color": "#E7D551",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -308,8 +308,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -323,77 +326,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -495,7 +498,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_service_apdex:ratio_1h{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_service_apdex:ratio_5m{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_service_apdex:ratio_1h{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_service_apdex:ratio_30m{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_service_apdex:ratio_6h{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_service_apdex:ratio_1h{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_service_apdex:ratio_5m{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_service_apdex:ratio_1h{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_service_apdex:ratio_30m{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_service_apdex:ratio_6h{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -582,12 +585,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "mimir error ratio",
-          "color": "#E7D551",
-          "fillBelowTo": "mimir error ratio avg",
-          "zindex": 3
-        },
-        {
           "alias": "mimir error ratio avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -608,6 +605,12 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "mimir error ratio",
+          "color": "#E7D551",
+          "fillBelowTo": "mimir error ratio avg",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -685,8 +688,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -700,77 +706,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -872,7 +878,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_service_errors:ratio_1h{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_service_errors:ratio_5m{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_service_errors:ratio_1h{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_service_errors:ratio_30m{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_service_errors:ratio_6h{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_service_errors:ratio_1h{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_service_errors:ratio_5m{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_service_errors:ratio_1h{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_service_errors:ratio_30m{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_service_errors:ratio_6h{env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -1233,12 +1239,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "mimir_compactor error ratio",
-          "color": "#E7D551",
-          "fillBelowTo": "mimir_compactor error ratio avg",
-          "zindex": 3
-        },
-        {
           "alias": "mimir_compactor error ratio avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -1259,6 +1259,12 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "mimir_compactor error ratio",
+          "color": "#E7D551",
+          "fillBelowTo": "mimir_compactor error ratio avg",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -1336,8 +1342,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -1351,77 +1360,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -1523,7 +1532,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_compactor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_component_errors:ratio_5m{component=\"mimir_compactor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_compactor\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_compactor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_compactor\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_component_errors:ratio_30m{component=\"mimir_compactor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_compactor\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_component_errors:ratio_6h{component=\"mimir_compactor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_compactor\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_compactor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_errors:ratio_5m{component=\"mimir_compactor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_compactor\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_errors:ratio_1h{component=\"mimir_compactor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_compactor\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_errors:ratio_30m{component=\"mimir_compactor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_compactor\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_errors:ratio_6h{component=\"mimir_compactor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_compactor\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -1732,11 +1741,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "mimir_distributor apdex",
-          "color": "#E7D551",
-          "zindex": 3
-        },
-        {
           "alias": "mimir_distributor apdex avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -1757,6 +1761,11 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "mimir_distributor apdex",
+          "color": "#E7D551",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -1834,8 +1843,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -1849,77 +1861,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -2021,7 +2033,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"mimir_distributor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"mimir_distributor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_distributor\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"mimir_distributor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_distributor\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"mimir_distributor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_distributor\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"mimir_distributor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_distributor\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"mimir_distributor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"mimir_distributor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_distributor\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"mimir_distributor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_distributor\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"mimir_distributor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_distributor\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"mimir_distributor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_distributor\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -2108,12 +2120,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "mimir_distributor error ratio",
-          "color": "#E7D551",
-          "fillBelowTo": "mimir_distributor error ratio avg",
-          "zindex": 3
-        },
-        {
           "alias": "mimir_distributor error ratio avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -2134,6 +2140,12 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "mimir_distributor error ratio",
+          "color": "#E7D551",
+          "fillBelowTo": "mimir_distributor error ratio avg",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -2211,8 +2223,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -2226,77 +2241,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -2398,7 +2413,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_distributor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_component_errors:ratio_5m{component=\"mimir_distributor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_distributor\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_distributor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_distributor\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_component_errors:ratio_30m{component=\"mimir_distributor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_distributor\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_component_errors:ratio_6h{component=\"mimir_distributor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_distributor\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_distributor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_errors:ratio_5m{component=\"mimir_distributor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_distributor\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_errors:ratio_1h{component=\"mimir_distributor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_distributor\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_errors:ratio_30m{component=\"mimir_distributor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_distributor\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_errors:ratio_6h{component=\"mimir_distributor\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_distributor\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -2607,11 +2622,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "mimir_ingester apdex",
-          "color": "#E7D551",
-          "zindex": 3
-        },
-        {
           "alias": "mimir_ingester apdex avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -2632,6 +2642,11 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "mimir_ingester apdex",
+          "color": "#E7D551",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -2709,8 +2724,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -2724,77 +2742,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -2896,7 +2914,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"mimir_ingester\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"mimir_ingester\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_ingester\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"mimir_ingester\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_ingester\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"mimir_ingester\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_ingester\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"mimir_ingester\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_ingester\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"mimir_ingester\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"mimir_ingester\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_ingester\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"mimir_ingester\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_ingester\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"mimir_ingester\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_ingester\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"mimir_ingester\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_ingester\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -2983,12 +3001,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "mimir_ingester error ratio",
-          "color": "#E7D551",
-          "fillBelowTo": "mimir_ingester error ratio avg",
-          "zindex": 3
-        },
-        {
           "alias": "mimir_ingester error ratio avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -3009,6 +3021,12 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "mimir_ingester error ratio",
+          "color": "#E7D551",
+          "fillBelowTo": "mimir_ingester error ratio avg",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -3086,8 +3104,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -3101,77 +3122,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -3273,7 +3294,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_ingester\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_component_errors:ratio_5m{component=\"mimir_ingester\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_ingester\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_ingester\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_ingester\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_component_errors:ratio_30m{component=\"mimir_ingester\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_ingester\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_component_errors:ratio_6h{component=\"mimir_ingester\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_ingester\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_ingester\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_errors:ratio_5m{component=\"mimir_ingester\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_ingester\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_errors:ratio_1h{component=\"mimir_ingester\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_ingester\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_errors:ratio_30m{component=\"mimir_ingester\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_ingester\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_errors:ratio_6h{component=\"mimir_ingester\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_ingester\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -3482,11 +3503,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "mimir_querier apdex",
-          "color": "#E7D551",
-          "zindex": 3
-        },
-        {
           "alias": "mimir_querier apdex avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -3507,6 +3523,11 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "mimir_querier apdex",
+          "color": "#E7D551",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -3584,8 +3605,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -3599,77 +3623,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -3771,7 +3795,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"mimir_querier\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"mimir_querier\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_querier\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"mimir_querier\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_querier\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"mimir_querier\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_querier\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"mimir_querier\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_querier\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"mimir_querier\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"mimir_querier\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_querier\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"mimir_querier\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_querier\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"mimir_querier\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_querier\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"mimir_querier\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_querier\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -3858,12 +3882,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "mimir_querier error ratio",
-          "color": "#E7D551",
-          "fillBelowTo": "mimir_querier error ratio avg",
-          "zindex": 3
-        },
-        {
           "alias": "mimir_querier error ratio avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -3884,6 +3902,12 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "mimir_querier error ratio",
+          "color": "#E7D551",
+          "fillBelowTo": "mimir_querier error ratio avg",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -3961,8 +3985,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -3976,77 +4003,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -4148,7 +4175,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_querier\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_component_errors:ratio_5m{component=\"mimir_querier\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_querier\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_querier\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_querier\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_component_errors:ratio_30m{component=\"mimir_querier\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_querier\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_component_errors:ratio_6h{component=\"mimir_querier\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_querier\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_querier\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_errors:ratio_5m{component=\"mimir_querier\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_querier\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_errors:ratio_1h{component=\"mimir_querier\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_querier\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_errors:ratio_30m{component=\"mimir_querier\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_querier\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_errors:ratio_6h{component=\"mimir_querier\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_querier\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -4357,11 +4384,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "mimir_query_frontend apdex",
-          "color": "#E7D551",
-          "zindex": 3
-        },
-        {
           "alias": "mimir_query_frontend apdex avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -4382,6 +4404,11 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "mimir_query_frontend apdex",
+          "color": "#E7D551",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -4459,8 +4486,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -4474,77 +4504,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -4646,7 +4676,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"mimir_query_frontend\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"mimir_query_frontend\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_query_frontend\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"mimir_query_frontend\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_query_frontend\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"mimir_query_frontend\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_query_frontend\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"mimir_query_frontend\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_query_frontend\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"mimir_query_frontend\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"mimir_query_frontend\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_query_frontend\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"mimir_query_frontend\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_query_frontend\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"mimir_query_frontend\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_query_frontend\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"mimir_query_frontend\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_query_frontend\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -4733,12 +4763,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "mimir_query_frontend error ratio",
-          "color": "#E7D551",
-          "fillBelowTo": "mimir_query_frontend error ratio avg",
-          "zindex": 3
-        },
-        {
           "alias": "mimir_query_frontend error ratio avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -4759,6 +4783,12 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "mimir_query_frontend error ratio",
+          "color": "#E7D551",
+          "fillBelowTo": "mimir_query_frontend error ratio avg",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -4836,8 +4866,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -4851,77 +4884,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -5023,7 +5056,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_query_frontend\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_component_errors:ratio_5m{component=\"mimir_query_frontend\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_query_frontend\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_query_frontend\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_query_frontend\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_component_errors:ratio_30m{component=\"mimir_query_frontend\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_query_frontend\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_component_errors:ratio_6h{component=\"mimir_query_frontend\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_query_frontend\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_query_frontend\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_errors:ratio_5m{component=\"mimir_query_frontend\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_query_frontend\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_errors:ratio_1h{component=\"mimir_query_frontend\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_query_frontend\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_errors:ratio_30m{component=\"mimir_query_frontend\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_query_frontend\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_errors:ratio_6h{component=\"mimir_query_frontend\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_query_frontend\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -5232,11 +5265,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "mimir_query_scheduler apdex",
-          "color": "#E7D551",
-          "zindex": 3
-        },
-        {
           "alias": "mimir_query_scheduler apdex avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -5257,6 +5285,11 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "mimir_query_scheduler apdex",
+          "color": "#E7D551",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -5334,8 +5367,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -5349,77 +5385,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -5521,7 +5557,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"mimir_query_scheduler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"mimir_query_scheduler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_query_scheduler\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"mimir_query_scheduler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_query_scheduler\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"mimir_query_scheduler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_query_scheduler\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"mimir_query_scheduler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_query_scheduler\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"mimir_query_scheduler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"mimir_query_scheduler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_query_scheduler\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"mimir_query_scheduler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_query_scheduler\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"mimir_query_scheduler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_query_scheduler\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"mimir_query_scheduler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_query_scheduler\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -5608,12 +5644,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "mimir_query_scheduler error ratio",
-          "color": "#E7D551",
-          "fillBelowTo": "mimir_query_scheduler error ratio avg",
-          "zindex": 3
-        },
-        {
           "alias": "mimir_query_scheduler error ratio avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -5634,6 +5664,12 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "mimir_query_scheduler error ratio",
+          "color": "#E7D551",
+          "fillBelowTo": "mimir_query_scheduler error ratio avg",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -5711,8 +5747,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -5726,77 +5765,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -5898,7 +5937,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_query_scheduler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_component_errors:ratio_5m{component=\"mimir_query_scheduler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_query_scheduler\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_query_scheduler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_query_scheduler\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_component_errors:ratio_30m{component=\"mimir_query_scheduler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_query_scheduler\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_component_errors:ratio_6h{component=\"mimir_query_scheduler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_query_scheduler\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_query_scheduler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_errors:ratio_5m{component=\"mimir_query_scheduler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_query_scheduler\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_errors:ratio_1h{component=\"mimir_query_scheduler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_query_scheduler\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_errors:ratio_30m{component=\"mimir_query_scheduler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_query_scheduler\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_errors:ratio_6h{component=\"mimir_query_scheduler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_query_scheduler\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -6107,12 +6146,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "mimir_ruler error ratio",
-          "color": "#E7D551",
-          "fillBelowTo": "mimir_ruler error ratio avg",
-          "zindex": 3
-        },
-        {
           "alias": "mimir_ruler error ratio avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -6133,6 +6166,12 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "mimir_ruler error ratio",
+          "color": "#E7D551",
+          "fillBelowTo": "mimir_ruler error ratio avg",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -6210,8 +6249,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -6225,77 +6267,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -6397,7 +6439,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_ruler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_component_errors:ratio_5m{component=\"mimir_ruler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_ruler\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_ruler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_ruler\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_component_errors:ratio_30m{component=\"mimir_ruler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_ruler\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_component_errors:ratio_6h{component=\"mimir_ruler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_ruler\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_ruler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_errors:ratio_5m{component=\"mimir_ruler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_ruler\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_errors:ratio_1h{component=\"mimir_ruler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_ruler\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_errors:ratio_30m{component=\"mimir_ruler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_ruler\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_errors:ratio_6h{component=\"mimir_ruler\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_ruler\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -6606,11 +6648,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "mimir_store_gateway apdex",
-          "color": "#E7D551",
-          "zindex": 3
-        },
-        {
           "alias": "mimir_store_gateway apdex avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -6631,6 +6668,11 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "mimir_store_gateway apdex",
+          "color": "#E7D551",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -6708,8 +6750,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -6723,77 +6768,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -6895,7 +6940,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"mimir_store_gateway\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"mimir_store_gateway\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_store_gateway\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"mimir_store_gateway\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_store_gateway\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"mimir_store_gateway\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_store_gateway\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"mimir_store_gateway\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_store_gateway\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_apdex:ratio_1h{component=\"mimir_store_gateway\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_apdex:ratio_5m{component=\"mimir_store_gateway\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_store_gateway\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_apdex:ratio_1h{component=\"mimir_store_gateway\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_store_gateway\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_apdex:ratio_30m{component=\"mimir_store_gateway\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_store_gateway\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_apdex:ratio_6h{component=\"mimir_store_gateway\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} < on(tier, type, __tenant_id__) group_left() (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{component=\"mimir_store_gateway\",monitor=\"global\",type=\"mimir\"})))),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -6982,12 +7027,6 @@
           "color": "#E7D551"
         },
         {
-          "alias": "mimir_store_gateway error ratio",
-          "color": "#E7D551",
-          "fillBelowTo": "mimir_store_gateway error ratio avg",
-          "zindex": 3
-        },
-        {
           "alias": "mimir_store_gateway error ratio avg",
           "color": "#5794F2",
           "dashLength": 1,
@@ -7008,6 +7047,12 @@
           "nullPointMode": "connected",
           "spaceLength": 2,
           "zindex": -3
+        },
+        {
+          "alias": "mimir_store_gateway error ratio",
+          "color": "#E7D551",
+          "fillBelowTo": "mimir_store_gateway error ratio avg",
+          "zindex": 3
         }
       ],
       "spaceLength": 10,
@@ -7085,8 +7130,11 @@
       ]
     },
     {
+      "datasource": "$PROMETHEUS_DS",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "displayName": "Status",
           "mappings": [
             {
@@ -7100,77 +7148,77 @@
                 "1": {
                   "color": "orange",
                   "index": 1,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h deteriorating"
                 },
                 "10": {
                   "color": "orange",
                   "index": 10,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h recovering"
                 },
                 "11": {
                   "color": "red",
                   "index": 11,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h recovering, 1h degraded"
                 },
                 "12": {
                   "color": "red",
                   "index": 12,
-                  "text": "Degraded 🥵"
+                  "text": "Degraded: 6h degraded"
                 },
                 "13": {
                   "color": "red",
                   "index": 13,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h deteriorating"
                 },
                 "14": {
                   "color": "red",
                   "index": 14,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h recovering"
                 },
                 "15": {
                   "color": "red",
                   "index": 15,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h degraded, 1h degraded"
                 },
                 "2": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Warning 🔥"
+                  "text": "Warning: 1h recovering"
                 },
                 "3": {
                   "color": "red",
                   "index": 3,
-                  "text": "Degraded 🔥"
+                  "text": "Degraded: 1h degraded"
                 },
                 "4": {
                   "color": "orange",
                   "index": 4,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h deteriorating"
                 },
                 "5": {
                   "color": "orange",
                   "index": 5,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h deteriorating"
                 },
                 "6": {
                   "color": "orange",
                   "index": 6,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h deteriorating, 1h recovering"
                 },
                 "7": {
                   "color": "red",
                   "index": 7,
-                  "text": "Degraded 🔥🥵"
+                  "text": "Degraded: 6h deteriorating, 1h degraded"
                 },
                 "8": {
                   "color": "orange",
                   "index": 8,
-                  "text": "Warning 🥵"
+                  "text": "Warning: 6h recovering"
                 },
                 "9": {
                   "color": "orange",
                   "index": 9,
-                  "text": "Warning 🔥🥵"
+                  "text": "Warning: 6h recovering, 1h deteriorating"
                 }
               },
               "type": "value"
@@ -7272,7 +7320,7 @@
       "pluginVersion": "7",
       "targets": [
         {
-          "expr": "sum (\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_store_gateway\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on() (gitlab_component_errors:ratio_5m{component=\"mimir_store_gateway\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_store_gateway\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_store_gateway\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_store_gateway\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on() (gitlab_component_errors:ratio_30m{component=\"mimir_store_gateway\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_store_gateway\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on() (gitlab_component_errors:ratio_6h{component=\"mimir_store_gateway\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_store_gateway\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
+          "expr": "sum(\n  label_replace(\n    vector(0) and on() (gitlab_component_errors:ratio_1h{component=\"mimir_store_gateway\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"}),\n    \"period\", \"na\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(1) and on () (gitlab_component_errors:ratio_5m{component=\"mimir_store_gateway\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_store_gateway\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"5m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(2) and on () (gitlab_component_errors:ratio_1h{component=\"mimir_store_gateway\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (14.4 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_store_gateway\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"1h\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(4) and on () (gitlab_component_errors:ratio_30m{component=\"mimir_store_gateway\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_store_gateway\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"30m\", \"\", \"\"\n  )\n  or\n  label_replace(\n    vector(8) and on () (gitlab_component_errors:ratio_6h{component=\"mimir_store_gateway\",env=\"$environment\",environment=\"$environment\",monitor=\"global\",type=\"mimir\"} > on(tier, type, __tenant_id__) group_left() (6 * slo:max:events:gitlab_service_errors:ratio{component=\"mimir_store_gateway\",monitor=\"global\",type=\"mimir\"})),\n    \"period\", \"6h\", \"\", \"\"\n  )\n)\n",
           "format": "time_series",
           "instant": true,
           "interval": "1m",
@@ -7458,7 +7506,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(cortex_compactor_group_compactions_failures_total{code=~\"^5.*\",job=\"mimir/compactor\",namespace=\"mimir\",type=\"mimir\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:cortex_compactor_group_compactions_failures_total:rate_5m{job=\"mimir/compactor\",namespace=\"mimir\",type=\"mimir\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -7534,7 +7582,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(cortex_compactor_group_compaction_runs_started_total{job=\"mimir/compactor\",namespace=\"mimir\",type=\"mimir\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:cortex_compactor_group_compaction_runs_started_total:rate_5m{job=\"mimir/compactor\",namespace=\"mimir\",type=\"mimir\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -7630,7 +7678,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    rate(cortex_request_duration_seconds_bucket{job=\"mimir/distributor\",namespace=\"mimir\",type=\"mimir\"}[$__interval])\n  )\n)\n > 0",
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    sli_aggregations:cortex_request_duration_seconds_bucket:rate_5m{job=\"mimir/distributor\",namespace=\"mimir\",route=~\"/distributor\\\\.Distributor/Push|/httpgrpc.*|(api_(v1|prom)_push)|otlp_v1_metrics\",type=\"mimir\"}\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -7645,6 +7693,7 @@
               "fillColor": "rgba(242, 73, 92, 0.5)",
               "line": false,
               "op": "gt",
+              "value": 1,
               "yaxis": "left"
             },
             {
@@ -7653,7 +7702,7 @@
               "fillColor": "rgba(242, 73, 92, 0.25)",
               "line": false,
               "op": "gt",
-              "value": 30,
+              "value": 0.5,
               "yaxis": "left"
             }
           ],
@@ -7725,7 +7774,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(cortex_request_duration_seconds_count{code=~\"^5.*\",job=\"mimir/distributor\",namespace=\"mimir\",type=\"mimir\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:cortex_request_duration_seconds_count:rate_5m{job=\"mimir/distributor\",namespace=\"mimir\",route=~\"/distributor\\\\.Distributor/Push|/httpgrpc.*|(api_(v1|prom)_push)|otlp_v1_metrics\",status_code=~\"^5.*\",type=\"mimir\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -7801,7 +7850,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(cortex_request_duration_seconds_count{job=\"mimir/distributor\",namespace=\"mimir\",type=\"mimir\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:cortex_request_duration_seconds_count:rate_5m{job=\"mimir/distributor\",namespace=\"mimir\",route=~\"/distributor\\\\.Distributor/Push|/httpgrpc.*|(api_(v1|prom)_push)|otlp_v1_metrics\",type=\"mimir\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -7897,7 +7946,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    rate(cortex_request_duration_seconds_bucket{job=\"mimir/ingester\",namespace=\"mimir\",type=\"mimir\"}[$__interval])\n  )\n)\n > 0",
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    sli_aggregations:cortex_request_duration_seconds_bucket:rate_5m{job=\"mimir/ingester\",namespace=\"mimir\",route=\"/cortex.Ingester/Push\",type=\"mimir\"}\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -7912,6 +7961,7 @@
               "fillColor": "rgba(242, 73, 92, 0.5)",
               "line": false,
               "op": "gt",
+              "value": 1,
               "yaxis": "left"
             },
             {
@@ -7920,7 +7970,7 @@
               "fillColor": "rgba(242, 73, 92, 0.25)",
               "line": false,
               "op": "gt",
-              "value": 30,
+              "value": 0.1,
               "yaxis": "left"
             }
           ],
@@ -7992,7 +8042,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(cortex_request_duration_seconds_count{code=~\"^5.*\",job=\"mimir/ingester\",namespace=\"mimir\",type=\"mimir\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:cortex_request_duration_seconds_count:rate_5m{job=\"mimir/ingester\",namespace=\"mimir\",route=\"/cortex.Ingester/Push\",status_code=~\"^5.*\",type=\"mimir\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8068,7 +8118,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(cortex_request_duration_seconds_count{job=\"mimir/ingester\",namespace=\"mimir\",type=\"mimir\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:cortex_request_duration_seconds_count:rate_5m{job=\"mimir/ingester\",namespace=\"mimir\",route=\"/cortex.Ingester/Push\",type=\"mimir\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8164,7 +8214,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    rate(cortex_querier_request_duration_seconds_count{job=\"mimir/querier\",namespace=\"mimir\",type=\"mimir\"}[$__interval])\n  )\n)\n > 0",
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    sli_aggregations:cortex_querier_request_duration_seconds_bucket:rate_5m{job=\"mimir/querier\",namespace=\"mimir\",route=~\"prometheus_(api|prom)_v1_.+\",type=\"mimir\"}\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8187,7 +8237,7 @@
               "fillColor": "rgba(242, 73, 92, 0.25)",
               "line": false,
               "op": "gt",
-              "value": 30,
+              "value": 25,
               "yaxis": "left"
             }
           ],
@@ -8259,7 +8309,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(cortex_request_duration_seconds_count{code=~\"^5.*\",job=\"mimir/querier\",namespace=\"mimir\",type=\"mimir\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:cortex_querier_request_duration_seconds_count:rate_5m{job=\"mimir/querier\",namespace=\"mimir\",route=~\"prometheus_(api|prom)_v1_.+\",status_code=~\"^5.*\",type=\"mimir\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8335,7 +8385,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(cortex_request_duration_seconds_count{job=\"mimir/querier\",namespace=\"mimir\",type=\"mimir\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:cortex_querier_request_duration_seconds_count:rate_5m{job=\"mimir/querier\",namespace=\"mimir\",route=~\"prometheus_(api|prom)_v1_.+\",type=\"mimir\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8431,7 +8481,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    rate(cortex_querier_query_frontend_request_duration_seconds_bucket{job=\"mimir/query-frontend\",namespace=\"mimir\",type=\"mimir\"}[$__interval])\n  )\n)\n > 0",
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    sli_aggregations:cortex_request_duration_seconds_bucket:rate_5m{job=\"mimir/query-frontend\",namespace=\"mimir\",route=~\"prometheus_(api|prom)_v1_.+\",type=\"mimir\"}\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8454,7 +8504,7 @@
               "fillColor": "rgba(242, 73, 92, 0.25)",
               "line": false,
               "op": "gt",
-              "value": 30,
+              "value": 25,
               "yaxis": "left"
             }
           ],
@@ -8526,7 +8576,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(cortex_request_duration_seconds_count{code=~\"^5.*\",job=\"mimir/query-frontend\",namespace=\"mimir\",type=\"mimir\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:cortex_request_duration_seconds_count:rate_5m{job=\"mimir/query-frontend\",namespace=\"mimir\",route=~\"prometheus_(api|prom)_v1_.+\",status_code=~\"^5.*\",type=\"mimir\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8602,7 +8652,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(cortex_request_duration_seconds_count{job=\"mimir/query-frontend\",namespace=\"mimir\",type=\"mimir\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:cortex_request_duration_seconds_count:rate_5m{job=\"mimir/query-frontend\",namespace=\"mimir\",route=~\"prometheus_(api|prom)_v1_.+\",type=\"mimir\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8698,7 +8748,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    rate(cortex_query_scheduler_queue_duration_seconds_bucket{job=\"mimir/query-scheduler\",namespace=\"mimir\",type=\"mimir\"}[$__interval])\n  )\n)\n > 0",
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    sli_aggregations:cortex_query_scheduler_queue_duration_seconds_bucket:rate_5m{job=\"mimir/query-scheduler\",namespace=\"mimir\",type=\"mimir\"}\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8721,7 +8771,7 @@
               "fillColor": "rgba(242, 73, 92, 0.25)",
               "line": false,
               "op": "gt",
-              "value": 30,
+              "value": 5,
               "yaxis": "left"
             }
           ],
@@ -8793,7 +8843,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(cortex_query_scheduler_queue_duration_seconds_count{code=~\"^5.*\",job=\"mimir/query-scheduler\",namespace=\"mimir\",type=\"mimir\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:cortex_query_scheduler_queue_duration_seconds_count:rate_5m{job=\"mimir/query-scheduler\",namespace=\"mimir\",status_code=~\"^5.*\",type=\"mimir\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8869,7 +8919,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(cortex_query_scheduler_queue_duration_seconds_count{job=\"mimir/query-scheduler\",namespace=\"mimir\",type=\"mimir\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:cortex_query_scheduler_queue_duration_seconds_count:rate_5m{job=\"mimir/query-scheduler\",namespace=\"mimir\",type=\"mimir\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -8965,7 +9015,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(cortex_prometheus_rule_evaluation_failures_total{job=\"mimir/ruler\",namespace=\"mimir\",type=\"mimir\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:cortex_prometheus_rule_evaluation_failures_total:rate_5m{job=\"mimir/ruler\",namespace=\"mimir\",type=\"mimir\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -9041,7 +9091,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(cortex_prometheus_rule_evaluations_total{job=\"mimir/ruler\",namespace=\"mimir\",type=\"mimir\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:cortex_prometheus_rule_evaluations_total:rate_5m{job=\"mimir/ruler\",namespace=\"mimir\",type=\"mimir\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -9137,7 +9187,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    rate(cortex_kv_request_duration_seconds_bucket{job=\"mimir/store-gateway\",namespace=\"mimir\",type=\"mimir\"}[$__interval])\n  )\n)\n > 0",
+              "expr": "histogram_quantile(\n  0.950000,\n  sum by (le) (\n    sli_aggregations:cortex_request_duration_seconds_bucket:rate_5m{job=\"mimir/store-gateway\",namespace=\"mimir\",route=~\"/gatewaypb\\\\.StoreGateway/.*\",type=\"mimir\"}\n  )\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -9160,7 +9210,7 @@
               "fillColor": "rgba(242, 73, 92, 0.25)",
               "line": false,
               "op": "gt",
-              "value": 30,
+              "value": 25,
               "yaxis": "left"
             }
           ],
@@ -9232,7 +9282,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(cortex_kv_request_duration_seconds_count{code=~\"^5.*\",job=\"mimir/store-gateway\",namespace=\"mimir\",type=\"mimir\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:cortex_request_duration_seconds_count:rate_5m{job=\"mimir/store-gateway\",namespace=\"mimir\",route=~\"/gatewaypb\\\\.StoreGateway/.*\",status_code=~\"^5.*\",type=\"mimir\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -9308,7 +9358,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by () (\n  rate(cortex_kv_request_duration_seconds_count{job=\"mimir/store-gateway\",namespace=\"mimir\",type=\"mimir\"}[$__interval])\n)\n > 0",
+              "expr": "sum by () (\n  sli_aggregations:cortex_request_duration_seconds_count:rate_5m{job=\"mimir/store-gateway\",namespace=\"mimir\",route=~\"/gatewaypb\\\\.StoreGateway/.*\",type=\"mimir\"}\n)\n > 0",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -15156,7 +15206,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, horizontalpodautoscaler, shard) (\n  clamp_min(\n    clamp_max(\n      kube_horizontalpodautoscaler_status_desired_replicas:labeled{env=\"$environment\",environment=\"$environment\",type=\"mimir\", shard!~\"database-throttled|elasticsearch|gitaly-throttled|urgent-authorized-projects|urgent-other\", namespace!~\"pubsubbeat\"}\n      /\n      kube_horizontalpodautoscaler_spec_max_replicas:labeled{env=\"$environment\",environment=\"$environment\",type=\"mimir\", shard!~\"database-throttled|elasticsearch|gitaly-throttled|urgent-authorized-projects|urgent-other\", namespace!~\"pubsubbeat\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, horizontalpodautoscaler, shard) (\n  clamp_min(\n    clamp_max(\n      kube_horizontalpodautoscaler_status_desired_replicas:labeled{env=\"$environment\",environment=\"$environment\",type=\"mimir\", shard!~\"database-throttled|elasticsearch|gitaly-throttled|urgent-authorized-projects\", namespace!~\"pubsubbeat\"}\n      /\n      kube_horizontalpodautoscaler_spec_max_replicas:labeled{env=\"$environment\",environment=\"$environment\",type=\"mimir\", shard!~\"database-throttled|elasticsearch|gitaly-throttled|urgent-authorized-projects\", namespace!~\"pubsubbeat\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -15828,8 +15878,8 @@
     "list": [
       {
         "current": {
-          "text": "Global",
-          "value": "Global"
+          "text": "Mimir - Metamonitoring",
+          "value": "Mimir - Metamonitoring"
         },
         "hide": 0,
         "label": null,
@@ -15898,5 +15948,5 @@
   "timezone": "utc",
   "title": "mimir: Overview",
   "uid": "mimir-main",
-  "version": 363
+  "version": 533
 }
