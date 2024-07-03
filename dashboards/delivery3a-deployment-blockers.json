@@ -10,7 +10,7 @@
 
     ]
   },
-  "description": "Uploaded by mawreendelacruz at Mon Jul  1 04:13:21 UTC 2024",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/7253336796 at Wed Jul  3 08:57:04 UTC 2024",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
@@ -33,7 +33,7 @@
       },
       "id": 2,
       "options": {
-        "content": "# Deployment Blockers\n\nDeployment failures are currently automatically captured under [release/tasks issues](https://gitlab.com/gitlab-org/release/tasks/-/issues).\nRelease managers are responsible for labeling these failures with appropriate `RootCause::*` labels. By the start of the following week (Monday), the `deployments:blockers_report` scheduled pipeline in the [release/tools](https://ops.gitlab.net/gitlab-org/release/tools/-/pipeline_schedules) repo reviews the labeled issues and generates a weekly deployment blockers issue, like this [one](https://gitlab.com/gitlab-org/release/tasks/-/issues/11125).\n\nThis dashboard tracks the trend of recurring root causes for deployment blockers. Each root cause is displayed in separate rows with three panels: one for the count of blockers, one for `gprd` hours blocked, and one for `gstg` hours blocked. At the top, there is an overview of the failure types, including the total calculations for the entire specified time window.\n\nLinks:\n- [List of root causes](https://gitlab.com/gitlab-org/release/tasks/-/labels?subscribed=&sort=relevance&search=RootCause)\n- [Deployments metrics review](https://gitlab.com/groups/gitlab-com/gl-infra/-/epics/1192)\n",
+        "content": "# Deployment Blockers\n\nDeployment failures are currently automatically captured under [release/tasks issues](https://gitlab.com/gitlab-org/release/tasks/-/issues).\nEach week a report is generated to keep track of the deployment blockers of the GitLab.com environments, release managers are responsible for labeling these failures with appropriate `RootCause::*` labels\n\nThis dashboard tracks the trend of recurring root causes for deployment blockers. Each root cause is displayed in separate rows with three panels: one for the count of blockers, one for `gprd` hours blocked, and one for `gstg` hours blocked. At the top, there is an overview of the failure types, including the total calculations for the entire specified time window.\n\nLinks:\n- [List of root causes](https://gitlab.com/gitlab-org/release/tasks/-/labels?subscribed=&sort=relevance&search=RootCause)\n- [Deployments metrics review](https://gitlab.com/groups/gitlab-com/gl-infra/-/epics/1192)\n",
         "mode": "markdown"
       },
       "pluginVersion": "v10.4.0",
@@ -71,7 +71,16 @@
           "color": {
             "mode": "thresholds"
           },
-          "displayName": "blockers_count"
+          "displayName": "blockers_count",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
         }
       },
       "gridPos": {
@@ -163,7 +172,16 @@
           "color": {
             "mode": "thresholds"
           },
-          "displayName": "gprd_hours_blocked"
+          "displayName": "gprd_hours_blocked",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
         }
       },
       "gridPos": {
@@ -255,7 +273,16 @@
           "color": {
             "mode": "thresholds"
           },
-          "displayName": "gstg_hours_blocked"
+          "displayName": "gstg_hours_blocked",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
         }
       },
       "gridPos": {
@@ -380,6 +407,15 @@
           "decimals": 0,
           "displayName": "blockers_count",
           "min": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
           "unit": "short"
         },
         "overrides": [
@@ -520,6 +556,15 @@
           "decimals": 0,
           "displayName": "gprd_hours_blocked",
           "min": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
           "unit": "short"
         },
         "overrides": [
@@ -660,6 +705,15 @@
           "decimals": 0,
           "displayName": "gstg_hours_blocked",
           "min": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
           "unit": "short"
         },
         "overrides": [
@@ -811,8 +865,7 @@
             "uid": "$PROMETHEUS_DS"
           },
           "expr": "max by (week, root_cause) (last_over_time(delivery_deployment_blocker_count{root_cause=\"$root_cause\"}[1d]))",
-          "format": "time_series",
-          "refId": "blockers_count"
+          "format": "table"
         },
         {
           "datasource": {
@@ -820,8 +873,7 @@
             "uid": "$PROMETHEUS_DS"
           },
           "expr": "max by (week, root_cause) (last_over_time(delivery_deployment_hours_blocked{root_cause=\"$root_cause\", target_env=\"gprd\"}[1d]))",
-          "format": "time_series",
-          "refId": "gprd_hours_blocked"
+          "format": "table"
         },
         {
           "datasource": {
@@ -829,14 +881,18 @@
             "uid": "$PROMETHEUS_DS"
           },
           "expr": "max by (week, root_cause) (last_over_time(delivery_deployment_hours_blocked{root_cause=\"$root_cause\", target_env=\"gstg\"}[1d]))",
-          "format": "time_series",
-          "refId": "gstg_hours_blocked"
+          "format": "table"
         }
       ],
       "title": "",
       "transformations": [
         {
           "id": "merge",
+          "options": {
+          }
+        },
+        {
+          "id": "sortBy",
           "options": {
             "fields": {
             },
@@ -972,17 +1028,19 @@
           "id": "organize",
           "options": {
             "excludeByName": {
-              "count": true,
-              "root_cause": true
+              "count": true
             },
             "includeByName": {
             },
             "indexByName": {
             },
             "renameByName": {
-              "Trend #blockers_count": "blockers_count",
-              "Trend #gprd_hours_blocked": "gprd_hours_blocked",
-              "Trend #gstg_hours_blocked": "gstg_hours_blocked"
+              "Value #A (lastNotNull) (sum)": "blockers_count",
+              "Value #A (sum)": "blockers_count",
+              "Value #B (lastNotNull) (sum)": "gprd_hours_blocked",
+              "Value #B (sum)": "gprd_hours_blocked",
+              "Value #C (lastNotNull) (sum)": "gstg_hours_blocked",
+              "Value #C (sum)": "gstg_hours_blocked"
             }
           }
         }
@@ -1108,5 +1166,5 @@
   "timezone": "utc",
   "title": "delivery: Deployment Blockers",
   "uid": "delivery-deployment_blockers",
-  "version": 1
+  "version": 2
 }
