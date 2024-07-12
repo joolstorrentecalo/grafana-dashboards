@@ -7,51 +7,10 @@
   ],
   "annotations": {
     "list": [
-      {
-        "builtIn": 1,
-        "datasource": "-- Grafana --",
-        "enable": true,
-        "hide": false,
-        "iconColor": "#96D98D",
-        "name": "deploy",
-        "showIn": 0,
-        "tags": [
-          "deploy",
-          "$environment"
-        ],
-        "type": "tags"
-      },
-      {
-        "builtIn": 1,
-        "datasource": "-- Grafana --",
-        "enable": false,
-        "hide": false,
-        "iconColor": "#FFEE52",
-        "name": "canary-deploy",
-        "showIn": 0,
-        "tags": [
-          "deploy",
-          "${environment}-cny"
-        ],
-        "type": "tags"
-      },
-      {
-        "builtIn": 1,
-        "datasource": "-- Grafana --",
-        "enable": false,
-        "hide": false,
-        "iconColor": "#CA95E5",
-        "name": "feature-flags",
-        "showIn": 0,
-        "tags": [
-          "feature-flag",
-          "${environment}"
-        ],
-        "type": "tags"
-      }
+
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/7320416348 at Thu Jul 11 15:47:09 UTC 2024",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/7321803589 at Thu Jul 11 18:52:37 UTC 2024",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
@@ -62,10 +21,10 @@
   ],
   "panels": [
     {
-      "content": "- Production awaiting promotion - Percentage of time over the selected window where production was idle and waiting for a package to be promoted. This only counts the time where there was a package available for promotion.\n- Staging awaiting promotion - Percentage of time over the selected window where staging was idle and waiting for a package to be promoted. This only counts the time where there was a package available for promotion.\n- Production canary ready to accept new packages - Percentage of time that gprd-cny was idle.\n- Staging canary ready to accept new packages - Percentage of time that gstg-cny was idle.\n- Production canary baking time - Percentage of time where there was a package baking on gprd-cny.\n",
+      "content": "- Awaiting promotion - State where production or staging was idle and waiting for a package to be promoted. This only counts the time where there was a package available for promotion.\n- Ready - State where the environment was idle.\n- Baking time - State where there was a package baking on gprd-cny.\n- Locked - State where there was a deployment ongoing on the environment, or QA, or post-deploy migrations being executed.\n",
       "datasource": null,
       "gridPos": {
-        "h": 10,
+        "h": 4,
         "w": 24,
         "x": 0,
         "y": 0
@@ -76,35 +35,13 @@
       "type": "text"
     },
     {
-      "datasource": "$PROMETHEUS_DS",
-      "description": "Percentage of time of the selected time range that production is ready to accept a new deployment, and there is a package available for promotion.",
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Mixed --"
+      },
+      "description": "Pie chart representation of the percentage of time gprd-main spent in different states",
       "fieldConfig": {
         "defaults": {
-          "decimals": 1,
-          "displayName": "Production awaiting promotion",
-          "links": [
-
-          ],
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          },
           "unit": "percentunit"
         }
       },
@@ -115,75 +52,49 @@
         "y": 100
       },
       "id": 3,
-      "links": [
-
-      ],
       "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "vertical",
+        "displayLabels": [
+          "value"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
         "reduceOptions": {
           "calcs": [
             "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
+          ]
+        }
       },
-      "pluginVersion": "7",
+      "pluginVersion": "v10.4.0",
       "targets": [
         {
-          "expr": "sum without (pod,instance) (delivery_auto_deploy_environment_state{target_env=\"gprd\", target_stage=\"main\",env_state=\"awaiting_promotion\"})",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "$PROMETHEUS_DS"
+          },
+          "expr": "sum without (pod,instance) (delivery_auto_deploy_environment_state{target_env=\"gprd\", target_stage=\"main\"})",
           "format": "time_series",
-          "instant": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
+          "legendFormat": "{{env_state}}"
         }
       ],
-      "title": "",
-      "transformations": [
-
-      ],
-      "transparent": false,
-      "type": "stat"
+      "title": "gprd-main environment states",
+      "type": "piechart"
     },
     {
-      "datasource": "$PROMETHEUS_DS",
-      "description": "Percentage of time of the selected time range that staging is ready to accept a new deployment, and there is a package available for promotion.",
-      "fieldConfig": {
-        "defaults": {
-          "decimals": 0,
-          "displayName": "Staging awaiting promotion",
-          "links": [
-
-          ],
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          },
-          "unit": "percentunit"
-        }
+      "aliasColors": {
       },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "Time series representation of the percentage of time gprd-main spent in different states",
+      "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
         "h": 10,
         "w": 12,
@@ -191,72 +102,96 @@
         "y": 100
       },
       "id": 4,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "hideEmpty": true,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
       "links": [
 
       ],
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "7",
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
       "targets": [
         {
-          "expr": "sum without (pod,instance) (delivery_auto_deploy_environment_state{target_env=\"gstg\", target_stage=\"main\",env_state=\"awaiting_promotion\"})",
+          "expr": "sum without (pod,instance) (delivery_auto_deploy_environment_state{target_env=\"gprd\", target_stage=\"main\"})",
           "format": "time_series",
-          "instant": false,
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "",
+          "legendFormat": "{{env_state}}",
           "refId": "A"
         }
       ],
-      "title": "",
-      "transformations": [
+      "thresholds": [
 
       ],
-      "transparent": false,
-      "type": "stat"
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "gprd-main environment states",
+      "tooltip": {
+        "shared": true,
+        "sort": "desc",
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ]
     },
     {
-      "datasource": "$PROMETHEUS_DS",
-      "description": "Percentage of time of the selected time range where production-canary was idle and ready to accept a new deployment.",
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Mixed --"
+      },
+      "description": "Pie chart representation of the percentage of time gprd-cny spent in different states",
       "fieldConfig": {
         "defaults": {
-          "decimals": 0,
-          "displayName": "Production canary ready to accept new packages",
-          "links": [
-
-          ],
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          },
           "unit": "percentunit"
         }
       },
@@ -267,75 +202,49 @@
         "y": 110
       },
       "id": 5,
-      "links": [
-
-      ],
       "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "vertical",
+        "displayLabels": [
+          "value"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
         "reduceOptions": {
           "calcs": [
             "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
+          ]
+        }
       },
-      "pluginVersion": "7",
+      "pluginVersion": "v10.4.0",
       "targets": [
         {
-          "expr": "sum without (pod,instance) (delivery_auto_deploy_environment_state{target_env=\"gprd\", target_stage=\"cny\",env_state=\"ready\"})",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "$PROMETHEUS_DS"
+          },
+          "expr": "sum without (pod,instance) (delivery_auto_deploy_environment_state{target_env=\"gprd\", target_stage=\"cny\"})",
           "format": "time_series",
-          "instant": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
+          "legendFormat": "{{env_state}}"
         }
       ],
-      "title": "",
-      "transformations": [
-
-      ],
-      "transparent": false,
-      "type": "stat"
+      "title": "gprd-cny environment states",
+      "type": "piechart"
     },
     {
-      "datasource": "$PROMETHEUS_DS",
-      "description": "Percentage of time of the selected time range where staging-canary was idle and ready to accept a new deployment.",
-      "fieldConfig": {
-        "defaults": {
-          "decimals": 0,
-          "displayName": "Staging canary ready to accept new packages",
-          "links": [
-
-          ],
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          },
-          "unit": "percentunit"
-        }
+      "aliasColors": {
       },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "Time series representation of the percentage of time gprd-cny spent in different states",
+      "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
         "h": 10,
         "w": 12,
@@ -343,72 +252,96 @@
         "y": 110
       },
       "id": 6,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "hideEmpty": true,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
       "links": [
 
       ],
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "7",
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
       "targets": [
         {
-          "expr": "sum without (pod,instance) (delivery_auto_deploy_environment_state{target_env=\"gstg\", target_stage=\"cny\",env_state=\"ready\"})",
+          "expr": "sum without (pod,instance) (delivery_auto_deploy_environment_state{target_env=\"gprd\", target_stage=\"cny\"})",
           "format": "time_series",
-          "instant": false,
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "",
+          "legendFormat": "{{env_state}}",
           "refId": "A"
         }
       ],
-      "title": "",
-      "transformations": [
+      "thresholds": [
 
       ],
-      "transparent": false,
-      "type": "stat"
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "gprd-cny environment states",
+      "tooltip": {
+        "shared": true,
+        "sort": "desc",
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ]
     },
     {
-      "datasource": "$PROMETHEUS_DS",
-      "description": "Percentage of time in the selected time range that production canary is baking a package.",
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Mixed --"
+      },
+      "description": "Pie chart representation of the percentage of time gstg-main spent in different states",
       "fieldConfig": {
         "defaults": {
-          "decimals": 0,
-          "displayName": "Production canary baking time",
-          "links": [
-
-          ],
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          },
           "unit": "percentunit"
         }
       },
@@ -419,41 +352,287 @@
         "y": 120
       },
       "id": 7,
-      "links": [
-
-      ],
       "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "vertical",
+        "displayLabels": [
+          "value"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
         "reduceOptions": {
           "calcs": [
             "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
+          ]
+        }
       },
-      "pluginVersion": "7",
+      "pluginVersion": "v10.4.0",
       "targets": [
         {
-          "expr": "sum without (pod,instance) (delivery_auto_deploy_environment_state{target_env=\"gprd\", target_stage=\"cny\",env_state=\"baking_time\"})",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "$PROMETHEUS_DS"
+          },
+          "expr": "sum without (pod,instance) (delivery_auto_deploy_environment_state{target_env=\"gstg\", target_stage=\"main\"})",
           "format": "time_series",
-          "instant": false,
+          "legendFormat": "{{env_state}}"
+        }
+      ],
+      "title": "gstg-main environment states",
+      "type": "piechart"
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "Time series representation of the percentage of time gstg-main spent in different states",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 120
+      },
+      "id": 8,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "hideEmpty": true,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum without (pod,instance) (delivery_auto_deploy_environment_state{target_env=\"gstg\", target_stage=\"main\"})",
+          "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "",
+          "legendFormat": "{{env_state}}",
           "refId": "A"
         }
       ],
-      "title": "",
-      "transformations": [
+      "thresholds": [
 
       ],
-      "transparent": false,
-      "type": "stat"
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "gstg-main environment states",
+      "tooltip": {
+        "shared": true,
+        "sort": "desc",
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Mixed --"
+      },
+      "description": "Pie chart representation of the percentage of time gstg-cny spent in different states",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit"
+        }
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 130
+      },
+      "id": 9,
+      "options": {
+        "displayLabels": [
+          "value"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ]
+        }
+      },
+      "pluginVersion": "v10.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "$PROMETHEUS_DS"
+          },
+          "expr": "sum without (pod,instance) (delivery_auto_deploy_environment_state{target_env=\"gstg\", target_stage=\"cny\"})",
+          "format": "time_series",
+          "legendFormat": "{{env_state}}"
+        }
+      ],
+      "title": "gstg-cny environment states",
+      "type": "piechart"
+    },
+    {
+      "aliasColors": {
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PROMETHEUS_DS",
+      "decimals": 0,
+      "description": "Time series representation of the percentage of time gstg-cny spent in different states",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 130
+      },
+      "id": 10,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "hideEmpty": true,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [
+
+      ],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [
+
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum without (pod,instance) (delivery_auto_deploy_environment_state{target_env=\"gstg\", target_stage=\"cny\"})",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{env_state}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "gstg-cny environment states",
+      "tooltip": {
+        "shared": true,
+        "sort": "desc",
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": [
+
+        ]
+      },
+      "yaxes": [
+        {
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ]
     },
     {
       "content": "Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards)\n",
@@ -464,7 +643,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 8,
+      "id": 11,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -498,33 +677,6 @@
         "refresh": 1,
         "regex": "",
         "type": "datasource"
-      },
-      {
-        "allValue": null,
-        "current": {
-          "text": "gprd",
-          "value": "gprd"
-        },
-        "datasource": "$PROMETHEUS_DS",
-        "hide": 0,
-        "includeAll": false,
-        "label": null,
-        "multi": false,
-        "name": "environment",
-        "options": [
-
-        ],
-        "query": "label_values(gitlab_service_ops:rate_1h, environment)",
-        "refresh": 1,
-        "regex": "",
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tags": [
-
-        ],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
       }
     ]
   },
@@ -555,5 +707,5 @@
   "timezone": "utc",
   "title": "delivery: Percentage of Auto deploy environment states",
   "uid": "delivery-auto_deploy_environment_state",
-  "version": 39
+  "version": 41
 }
