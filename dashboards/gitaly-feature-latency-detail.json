@@ -167,7 +167,7 @@
       "dashes": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+        "uid": "${PROMETHEUS_DS}"
       },
       "fill": 1,
       "fillGradient": 0,
@@ -210,7 +210,8 @@
       "targets": [
         {
           "datasource": {
-            "uid": "prometheus-01-inf-gprd"
+            "type": "prometheus",
+            "uid": "${PROMETHEUS_DS}"
           },
           "dsType": "influxdb",
           "editorMode": "code",
@@ -578,39 +579,14 @@
     "list": [
       {
         "current": {
-          "text": "gitaly",
-          "value": "gitaly"
-        },
-        "datasource": {
-          "uid": "prometheus-01-inf-gprd"
-        },
-        "definition": "",
-        "hide": 0,
-        "includeAll": false,
-        "multi": false,
-        "name": "job",
-        "options": [
-
-        ],
-        "query": "label_values(up{job=~\"^gitaly.*\"}, job)",
-        "refresh": 2,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "current": {
           "text": "AddNamespace",
           "value": "AddNamespace"
         },
         "datasource": {
-          "uid": "prometheus-01-inf-gprd"
+          "type": "prometheus",
+          "uid": "${PROMETHEUS_DS}"
         },
-        "definition": "",
+        "definition": "label_values(gitaly:grpc_server_handled_total:rate1m,grpc_method)",
         "hide": 0,
         "includeAll": false,
         "label": "method",
@@ -619,15 +595,36 @@
         "options": [
 
         ],
-        "query": "label_values(grpc_server_handled_total{grpc_code=\"OK\"}, grpc_method)",
-        "refresh": 2,
+        "query": {
+          "qryType": 1,
+          "query": "label_values(gitaly:grpc_server_handled_total:rate1m,grpc_method)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "Mimir - Gitlab Gstg",
+          "value": "mimir-gitlab-gstg"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "PROMETHEUS_DS",
+        "options": [
+
+        ],
+        "query": "prometheus",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
       }
     ]
   },
@@ -663,6 +660,6 @@
   "timezone": "utc",
   "title": "Gitaly Feature Latency Detail",
   "uid": "PqeIQ9Iik",
-  "version": 10,
+  "version": 12,
   "weekStart": ""
 }
