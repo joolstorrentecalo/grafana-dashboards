@@ -1,10 +1,4 @@
 {
-  "__inputs": [
-
-  ],
-  "__requires": [
-
-  ],
   "annotations": {
     "list": [
       {
@@ -51,7 +45,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/7402123751 at Tue Jul 23 01:54:33 UTC 2024",
+  "description": "Uploaded by davidleach at Tue 23 Jul 2024 03:51:11 UTC",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -62,7 +56,7 @@
   ],
   "panels": [
     {
-      "content": "# **$environment** **$cluster**",
+      "content": "# **$environment** **$cluster** **source_version**",
       "datasource": "$PROMETHEUS_DS",
       "gridPos": {
         "h": 7,
@@ -77,7 +71,7 @@
       "type": "text"
     },
     {
-      "content": "🏹 Source cluster: PG12, Ubuntu 20.04 (prefixes contain hard-coded `v12` and/or `2004`)",
+      "content": "🏹 Source cluster: PG${source_version}, Ubuntu 20.04",
       "datasource": "$PROMETHEUS_DS",
       "gridPos": {
         "h": 3,
@@ -204,7 +198,7 @@
       "type": "text"
     },
     {
-      "content": "🎯 Target cluster: PG14 (prefixes contain hard-coded `v14`)",
+      "content": "🎯 Target cluster: PG${destination_version} ",
       "datasource": "$PROMETHEUS_DS",
       "gridPos": {
         "h": 3,
@@ -278,7 +272,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(pg_replication_lag{env=\"$environment\", fqdn=~\"(patroni-${cluster}-2004|patroni-v12-${cluster})-.*\"}) by (fqdn)\n",
+              "expr": "sum(pg_replication_lag{env=\"$environment\", fqdn=~\"patroni-${cluster}-v${source_version}.*\"}) by (fqdn)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -375,7 +369,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(pg_replication_lag{env=\"$environment\", fqdn=~\"patroni-${cluster}-v14-.*\"}) by (fqdn)\n",
+              "expr": "sum(pg_replication_lag{env=\"$environment\", fqdn=~\"patroni-${cluster}-v${destination_version}-.*\"}) by (fqdn)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -472,7 +466,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(postgres:pg_replication_lag_bytes{env=\"$environment\", fqdn=~\"(patroni-${cluster}-2004|patroni-v12-${cluster})-.*\"}) by (fqdn)\n",
+              "expr": "sum(postgres:pg_replication_lag_bytes{env=\"$environment\", fqdn=~\"patroni-${cluster}-v${source_version}.*\"}) by (fqdn)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -569,7 +563,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(postgres:pg_replication_lag_bytes{env=\"$environment\", fqdn=~\"patroni-${cluster}-v14-.*\"}) by (fqdn)\n",
+              "expr": "sum(postgres:pg_replication_lag_bytes{env=\"$environment\", fqdn=~\"patroni-${cluster}-v${destination_version}-.*\"}) by (fqdn)\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -686,7 +680,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "(sum(irate(pg_stat_database_xact_commit{env=\"$environment\", fqdn=~\"(patroni-${cluster}-2004|patroni-v12-${cluster})-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==0\n",
+              "expr": "(sum(irate(pg_stat_database_xact_commit{env=\"$environment\", fqdn=~\"patroni-${cluster}-v${source_version}.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==0\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -783,7 +777,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "(sum(irate(pg_stat_database_xact_commit{env=\"$environment\", fqdn=~\"patroni-${cluster}-v14-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==0\n",
+              "expr": "(sum(irate(pg_stat_database_xact_commit{env=\"$environment\", fqdn=~\"patroni-${cluster}-v${destination_version}-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==0\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -880,7 +874,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "(sum(irate(pg_stat_database_xact_commit{env=\"$environment\", fqdn=~\"(patroni-${cluster}-2004|patroni-v12-${cluster})-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1\n",
+              "expr": "(sum(irate(pg_stat_database_xact_commit{env=\"$environment\", fqdn=~\"patroni-${cluster}-v${source_version}.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -977,7 +971,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "(sum(irate(pg_stat_database_xact_commit{env=\"$environment\", fqdn=~\"patroni-${cluster}-v14-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1\n",
+              "expr": "(sum(irate(pg_stat_database_xact_commit{env=\"$environment\", fqdn=~\"patroni-${cluster}-v${destination_version}-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -1094,7 +1088,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "(sum(irate(pg_stat_database_xact_rollback{env=\"$environment\", fqdn=~\"(patroni-${cluster}-2004|patroni-v12-${cluster})-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==0\n",
+              "expr": "(sum(irate(pg_stat_database_xact_rollback{env=\"$environment\", fqdn=~\"patroni-${cluster}-v${source_version}.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==0\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -1191,7 +1185,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "(sum(irate(pg_stat_database_xact_rollback{env=\"$environment\", fqdn=~\"patroni-${cluster}-v14-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==0\n",
+              "expr": "(sum(irate(pg_stat_database_xact_rollback{env=\"$environment\", fqdn=~\"patroni-${cluster}-v${destination_version}-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==0\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -1288,7 +1282,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "(sum(irate(pg_stat_database_xact_rollback{env=\"$environment\", fqdn=~\"(patroni-${cluster}-2004|patroni-v12-${cluster})-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1\n",
+              "expr": "(sum(irate(pg_stat_database_xact_rollback{env=\"$environment\", fqdn=~\"patroni-${cluster}-v${source_version}.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -1385,7 +1379,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "(sum(irate(pg_stat_database_xact_rollback{env=\"$environment\", fqdn=~\"patroni-${cluster}-v14-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1\n",
+              "expr": "(sum(irate(pg_stat_database_xact_rollback{env=\"$environment\", fqdn=~\"patroni-${cluster}-v${destination_version}-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -1502,7 +1496,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(irate(pg_stat_user_tables_n_tup_ins{env=\"$environment\", fqdn=~\"(patroni-${cluster}-2004|patroni-v12-${cluster})-.*\"}[1m])\n+\nirate(pg_stat_user_tables_n_tup_del{env=\"$environment\", fqdn=~\"(patroni-${cluster}-2004|patroni-v12-${cluster})-.*\"}[1m])\n+\nirate(pg_stat_user_tables_n_tup_upd{env=\"$environment\", fqdn=~\"(patroni-${cluster}-2004|patroni-v12-${cluster})-.*\"}[1m])) by (instance)\nand on(instance) pg_replication_is_replica==0\n",
+              "expr": "sum(irate(pg_stat_user_tables_n_tup_ins{env=\"$environment\", fqdn=~\"patroni-${cluster}-v${source_version}.*\"}[1m])\n+\nirate(pg_stat_user_tables_n_tup_del{env=\"$environment\", fqdn=~\"patroni-${cluster}-v${source_version}.*\"}[1m])\n+\nirate(pg_stat_user_tables_n_tup_upd{env=\"$environment\", fqdn=~\"patroni-${cluster}-v${source_version}.*\"}[1m])) by (instance)\nand on(instance) pg_replication_is_replica==0\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -1599,7 +1593,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(irate(pg_stat_user_tables_n_tup_ins{env=\"$environment\", fqdn=~\"patroni-${cluster}-v14-.*\"}[1m])\n+\nirate(pg_stat_user_tables_n_tup_del{env=\"$environment\", fqdn=~\"patroni-${cluster}-v14-.*\"}[1m])\n+\nirate(pg_stat_user_tables_n_tup_upd{env=\"$environment\", fqdn=~\"patroni-${cluster}-v14-.*\"}[1m])) by (instance)\nand on(instance) pg_replication_is_replica==0\n",
+              "expr": "sum(irate(pg_stat_user_tables_n_tup_ins{env=\"$environment\", fqdn=~\"patroni-${cluster}-v${destination_version}-.*\"}[1m])\n+\nirate(pg_stat_user_tables_n_tup_del{env=\"$environment\", fqdn=~\"patroni-${cluster}-v${destination_version}-.*\"}[1m])\n+\nirate(pg_stat_user_tables_n_tup_upd{env=\"$environment\", fqdn=~\"patroni-${cluster}-v${destination_version}-.*\"}[1m])) by (instance)\nand on(instance) pg_replication_is_replica==0\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -1696,7 +1690,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "(sum(rate(pg_stat_user_tables_idx_tup_fetch{env=\"$environment\", fqdn=~\"(patroni-${cluster}-2004|patroni-v12-${cluster})-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1\n",
+              "expr": "(sum(rate(pg_stat_user_tables_idx_tup_fetch{env=\"$environment\", fqdn=~\"patroni-${cluster}-v${source_version}.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -1793,7 +1787,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "(sum(rate(pg_stat_user_tables_idx_tup_fetch{env=\"$environment\", fqdn=~\"patroni-${cluster}-v14-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1\n",
+              "expr": "(sum(rate(pg_stat_user_tables_idx_tup_fetch{env=\"$environment\", fqdn=~\"patroni-${cluster}-v${destination_version}-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -1890,7 +1884,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "(sum(rate(pg_stat_user_tables_seq_tup_read{env=\"$environment\", fqdn=~\"(patroni-${cluster}-2004|patroni-v12-${cluster})-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1\n",
+              "expr": "(sum(rate(pg_stat_user_tables_seq_tup_read{env=\"$environment\", fqdn=~\"patroni-${cluster}-v${source_version}.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -1987,7 +1981,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "(sum(rate(pg_stat_user_tables_seq_tup_read{env=\"$environment\", fqdn=~\"patroni-${cluster}-v14-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1\n",
+              "expr": "(sum(rate(pg_stat_user_tables_seq_tup_read{env=\"$environment\", fqdn=~\"patroni-${cluster}-v${destination_version}-.*\"}[1m])) by (instance)) and on(instance) pg_replication_is_replica==1\n",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -2053,7 +2047,7 @@
   "style": "light",
   "tags": [
     "managed",
-    "pg14-upgrade",
+    "pg-upgrade",
     "postgresql"
   ],
   "templating": {
@@ -2129,6 +2123,56 @@
         "query": "main,ci,registry",
         "refresh": 0,
         "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+        },
+        "datasource": "$PROMETHEUS_DS",
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "source_version",
+        "options": [
+
+        ],
+        "query": "label_values(pg_settings_server_version_num{fqdn=~\"patroni-${cluster}.*\"}, fqdn)",
+        "refresh": 1,
+        "regex": "/.*v(\\d{2})/",
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [
+
+        ],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+        },
+        "datasource": "$PROMETHEUS_DS",
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "destination_version",
+        "options": [
+
+        ],
+        "query": "label_values(pg_settings_server_version_num{fqdn=~\"patroni-${cluster}.*\"}, fqdn)",
+        "refresh": 1,
+        "regex": "/.*v(\\d{2})/",
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [
+
+        ],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       }
     ]
   },
@@ -2157,7 +2201,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "pg14-upgrade: Postgres upgrade using logical",
-  "uid": "pg14-upgrade-main-pg14-upgrade",
-  "version": 1517
+  "title": "pg-upgrade: Postgres upgrade using logical",
+  "uid": "pg-upgrade-test",
+  "version": 1
 }
