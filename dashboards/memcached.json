@@ -3,7 +3,10 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -14,18 +17,16 @@
   },
   "description": "Prometheus dashboard for memcached servers",
   "editable": true,
+  "fiscalYearStartMonth": 0,
   "gnetId": 37,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1607708767602,
   "links": [
 
   ],
   "panels": [
     {
       "cards": {
-        "cardPadding": null,
-        "cardRound": null
       },
       "color": {
         "cardColor": "#b4ff00",
@@ -35,10 +36,21 @@
         "mode": "opacity"
       },
       "dataFormat": "tsbuckets",
-      "datasource": "Global",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-gitlab-ops"
+      },
       "fieldConfig": {
         "defaults": {
           "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "scaleDistribution": {
+              "type": "linear"
+            }
           }
         },
         "overrides": [
@@ -59,19 +71,64 @@
       "legend": {
         "show": false
       },
+      "options": {
+        "calculate": false,
+        "calculation": {
+        },
+        "cellGap": 2,
+        "cellValues": {
+        },
+        "color": {
+          "exponent": 0.5,
+          "fill": "#b4ff00",
+          "mode": "opacity",
+          "reverse": false,
+          "scale": "exponential",
+          "scheme": "Oranges",
+          "steps": 128
+        },
+        "exemplars": {
+          "color": "rgba(255,0,255,0.7)"
+        },
+        "filterValues": {
+          "le": 1.0e-09
+        },
+        "legend": {
+          "show": false
+        },
+        "rowsFrame": {
+          "layout": "auto"
+        },
+        "showValue": "never",
+        "tooltip": {
+          "mode": "single",
+          "showColorScale": false,
+          "yHistogram": false
+        },
+        "yAxis": {
+          "axisPlacement": "left",
+          "reverse": false,
+          "unit": "short"
+        }
+      },
+      "pluginVersion": "11.1.0",
       "reverseYBuckets": false,
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-gitlab-ops"
+          },
+          "editorMode": "code",
           "expr": "sum by (slab) (\n  avg_over_time(memcached_slab_current_items{env=\"$env\",job=\"$job\",instance=~\"$instance\"}[$__interval])\n)",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "{{slab}}",
+          "range": true,
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Slab Items",
       "tooltip": {
         "show": true,
@@ -81,20 +138,12 @@
       "xAxis": {
         "show": true
       },
-      "xBucketNumber": null,
-      "xBucketSize": null,
       "yAxis": {
-        "decimals": null,
         "format": "short",
         "logBase": 1,
-        "max": null,
-        "min": null,
-        "show": true,
-        "splitFactor": null
+        "show": true
       },
-      "yBucketBound": "auto",
-      "yBucketNumber": null,
-      "yBucketSize": null
+      "yBucketBound": "auto"
     },
     {
       "aliasColors": {
@@ -102,13 +151,13 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Global",
+      "datasource": {
+        "uid": "Global"
+      },
       "editable": true,
       "error": false,
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -129,7 +178,6 @@
       },
       "hiddenSeries": false,
       "id": 1,
-      "isNew": true,
       "legend": {
         "avg": false,
         "current": false,
@@ -141,15 +189,12 @@
       },
       "lines": true,
       "linewidth": 2,
-      "links": [
-
-      ],
       "nullPointMode": "connected",
       "options": {
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "11.1.0",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -161,6 +206,9 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "uid": "Global"
+          },
           "expr": "(\n  sum(rate(memcached_commands_total{env=\"$env\",job=\"$job\",instance=~\"$instance\",status=\"miss\"}[$__interval]))\n  /\n  sum(rate(memcached_commands_total{env=\"$env\",job=\"$job\",instance=~\"$instance\"}[$__interval])) > 0\n) or vector(0)",
           "hide": false,
           "interval": "1m",
@@ -174,11 +222,9 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
-      "timeShift": null,
       "title": "% Hit ratio",
       "tooltip": {
         "msResolution": false,
@@ -188,9 +234,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -200,7 +244,6 @@
         {
           "$$hashKey": "object:120",
           "format": "percentunit",
-          "label": null,
           "logBase": 1,
           "max": 1,
           "min": 0,
@@ -209,16 +252,12 @@
         {
           "$$hashKey": "object:121",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -228,13 +267,13 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Global",
+      "datasource": {
+        "uid": "Global"
+      },
       "editable": true,
       "error": false,
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -255,7 +294,6 @@
       },
       "hiddenSeries": false,
       "id": 4,
-      "isNew": true,
       "legend": {
         "avg": false,
         "current": false,
@@ -267,15 +305,12 @@
       },
       "lines": true,
       "linewidth": 2,
-      "links": [
-
-      ],
       "nullPointMode": "connected",
       "options": {
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "11.1.0",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -287,6 +322,9 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "uid": "Global"
+          },
           "expr": "sum (memcached_current_connections{env=\"$env\",job=\"$job\",instance=~\"$instance\"}) by (instance)",
           "interval": "",
           "intervalFactor": 2,
@@ -299,11 +337,9 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
-      "timeShift": null,
       "title": "Connections",
       "tooltip": {
         "msResolution": false,
@@ -313,9 +349,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -325,25 +359,18 @@
         {
           "$$hashKey": "object:347",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:348",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -353,13 +380,13 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Global",
+      "datasource": {
+        "uid": "Global"
+      },
       "editable": true,
       "error": false,
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -380,7 +407,6 @@
       },
       "hiddenSeries": false,
       "id": 3,
-      "isNew": true,
       "legend": {
         "avg": false,
         "current": false,
@@ -392,15 +418,12 @@
       },
       "lines": true,
       "linewidth": 2,
-      "links": [
-
-      ],
       "nullPointMode": "connected",
       "options": {
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "11.1.0",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -412,6 +435,9 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "uid": "Global"
+          },
           "expr": "(\n  sum (rate(memcached_commands_total{env=\"$env\",job=\"$job\",instance=~\"$instance\", command=\"set\"}[$__interval]))\n  /\n  sum (rate(memcached_commands_total{env=\"$env\",job=\"$job\",instance=~\"$instance\", command=\"get\"}[$__interval])) > 0\n) or vector(0)",
           "interval": "1m",
           "intervalFactor": 2,
@@ -424,11 +450,9 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
-      "timeShift": null,
       "title": "Get / Set ratio",
       "tooltip": {
         "msResolution": false,
@@ -438,9 +462,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -450,7 +472,6 @@
         {
           "$$hashKey": "object:396",
           "format": "percentunit",
-          "label": null,
           "logBase": 1,
           "max": 1,
           "min": 0,
@@ -459,16 +480,12 @@
         {
           "$$hashKey": "object:397",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -477,13 +494,13 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Global",
+      "datasource": {
+        "uid": "Global"
+      },
       "editable": true,
       "error": false,
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -504,7 +521,6 @@
       },
       "hiddenSeries": false,
       "id": 2,
-      "isNew": true,
       "legend": {
         "avg": false,
         "current": false,
@@ -516,15 +532,12 @@
       },
       "lines": true,
       "linewidth": 2,
-      "links": [
-
-      ],
       "nullPointMode": "connected",
       "options": {
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "11.1.0",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -536,6 +549,9 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "uid": "Global"
+          },
           "expr": "sum (rate(memcached_commands_total{env=\"$env\",job=\"$job\",instance=~\"$instance\"}[$__interval])) by (command)",
           "interval": "60s",
           "intervalFactor": 2,
@@ -548,11 +564,9 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
-      "timeShift": null,
       "title": "Commands",
       "tooltip": {
         "msResolution": false,
@@ -562,9 +576,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -574,25 +586,19 @@
         {
           "$$hashKey": "object:445",
           "format": "ops",
-          "label": null,
           "logBase": 1,
-          "max": null,
           "min": "0",
           "show": true
         },
         {
           "$$hashKey": "object:446",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -604,13 +610,13 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Global",
+      "datasource": {
+        "uid": "Global"
+      },
       "editable": true,
       "error": false,
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -631,7 +637,6 @@
       },
       "hiddenSeries": false,
       "id": 8,
-      "isNew": true,
       "legend": {
         "avg": false,
         "current": false,
@@ -643,15 +648,12 @@
       },
       "lines": true,
       "linewidth": 2,
-      "links": [
-
-      ],
       "nullPointMode": "null",
       "options": {
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "11.1.0",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -663,6 +665,9 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "uid": "Global"
+          },
           "expr": "sum(rate(memcached_items_evicted_total{env=\"$env\",job=\"$job\",instance=~\"$instance\"}[$__interval]))",
           "interval": "1m",
           "intervalFactor": 3,
@@ -672,6 +677,9 @@
           "target": ""
         },
         {
+          "datasource": {
+            "uid": "Global"
+          },
           "expr": "sum(rate(memcached_items_reclaimed_total{env=\"$env\",instance=~\"$instance\"}[$__interval]))",
           "interval": "1m",
           "intervalFactor": 1,
@@ -683,11 +691,9 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
-      "timeShift": null,
       "title": "evicts / reclaims",
       "tooltip": {
         "msResolution": false,
@@ -697,9 +703,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -709,25 +713,20 @@
         {
           "$$hashKey": "object:494",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
           "min": "0",
           "show": true
         },
         {
           "$$hashKey": "object:495",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
           "min": "0",
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -736,13 +735,13 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Global",
+      "datasource": {
+        "uid": "Global"
+      },
       "editable": true,
       "error": false,
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -763,7 +762,6 @@
       },
       "hiddenSeries": false,
       "id": 6,
-      "isNew": true,
       "legend": {
         "avg": false,
         "current": false,
@@ -775,15 +773,12 @@
       },
       "lines": true,
       "linewidth": 2,
-      "links": [
-
-      ],
       "nullPointMode": "connected",
       "options": {
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "11.1.0",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -799,6 +794,9 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "uid": "Global"
+          },
           "expr": "sum(rate(memcached_read_bytes_total{env=\"$env\",job=\"$job\",instance=~\"$instance\"}[$__interval]))",
           "interval": "1m",
           "intervalFactor": 2,
@@ -808,6 +806,9 @@
           "target": ""
         },
         {
+          "datasource": {
+            "uid": "Global"
+          },
           "expr": "sum(rate(memcached_written_bytes_total{env=\"$env\",instance=~\"$instance\"}[$__interval]))",
           "interval": "1m",
           "intervalFactor": 1,
@@ -820,11 +821,9 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
-      "timeShift": null,
       "title": "Read / written bytes",
       "tooltip": {
         "msResolution": false,
@@ -834,9 +833,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -846,25 +843,18 @@
         {
           "$$hashKey": "object:655",
           "format": "bytes",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:656",
           "format": "bytes",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -873,13 +863,13 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Global",
+      "datasource": {
+        "uid": "Global"
+      },
       "editable": true,
       "error": false,
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -900,7 +890,6 @@
       },
       "hiddenSeries": false,
       "id": 7,
-      "isNew": true,
       "legend": {
         "avg": false,
         "current": false,
@@ -912,15 +901,12 @@
       },
       "lines": true,
       "linewidth": 2,
-      "links": [
-
-      ],
       "nullPointMode": "connected",
       "options": {
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "11.1.0",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -932,6 +918,9 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "uid": "Global"
+          },
           "expr": "sum(memcached_current_bytes{env=\"$env\",job=\"$job\",instance=~\"$instance\"})\n/\nsum(memcached_limit_bytes{env=\"$env\",job=\"$job\",instance=~\"$instance\"})",
           "interval": "",
           "intervalFactor": 2,
@@ -944,11 +933,9 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
-      "timeShift": null,
       "title": "Total memory usage",
       "tooltip": {
         "msResolution": false,
@@ -958,9 +945,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -970,7 +955,6 @@
         {
           "$$hashKey": "object:706",
           "format": "percentunit",
-          "label": null,
           "logBase": 1,
           "max": 1,
           "min": 0,
@@ -979,16 +963,12 @@
         {
           "$$hashKey": "object:707",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -997,13 +977,13 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Global",
+      "datasource": {
+        "uid": "Global"
+      },
       "editable": true,
       "error": false,
       "fieldConfig": {
         "defaults": {
-          "custom": {
-          },
           "links": [
 
           ]
@@ -1024,7 +1004,6 @@
       },
       "hiddenSeries": false,
       "id": 5,
-      "isNew": true,
       "legend": {
         "avg": false,
         "current": false,
@@ -1036,15 +1015,12 @@
       },
       "lines": true,
       "linewidth": 2,
-      "links": [
-
-      ],
       "nullPointMode": "connected",
       "options": {
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.0",
+      "pluginVersion": "11.1.0",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1056,6 +1032,9 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "uid": "Global"
+          },
           "expr": "sum (memcached_current_items{env=\"$env\",job=\"$job\",instance=~\"$instance\"})",
           "interval": "",
           "intervalFactor": 2,
@@ -1068,11 +1047,9 @@
       "thresholds": [
 
       ],
-      "timeFrom": null,
       "timeRegions": [
 
       ],
-      "timeShift": null,
       "title": "Items in cache",
       "tooltip": {
         "msResolution": false,
@@ -1082,9 +1059,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": [
 
@@ -1094,31 +1069,24 @@
         {
           "$$hashKey": "object:757",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
           "min": "0",
           "show": true
         },
         {
           "$$hashKey": "object:758",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     }
   ],
-  "refresh": "1m",
-  "schemaVersion": 27,
-  "style": "dark",
+  "refresh": "5m",
+  "schemaVersion": 39,
   "tags": [
     "prometheus",
     "memcached",
@@ -1127,98 +1095,112 @@
   "templating": {
     "list": [
       {
-        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "Mimir - Gitlab Ops",
+          "value": "mimir-gitlab-ops"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Datasource",
+        "multi": false,
+        "name": "datasource",
+        "options": [
+
+        ],
+        "query": "prometheus",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
         "current": {
           "selected": false,
           "text": "ops",
           "value": "ops"
         },
-        "datasource": "Global",
-        "definition": "label_values(memcached_up, env)",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "definition": "label_values(memcached_version,env)",
         "hide": 0,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "env",
         "options": [
 
         ],
-        "query": "label_values(memcached_up, env)",
+        "query": {
+          "qryType": 1,
+          "query": "label_values(memcached_version,env)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
-        "tagValuesQuery": "",
-        "tags": [
-
-        ],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
-        "allValue": null,
         "current": {
-          "selected": false,
-          "text": "memcached-thanos-qfe-query-range-metrics",
-          "value": "memcached-thanos-qfe-query-range-metrics"
+          "selected": true,
+          "text": "memcached-bucket-metrics",
+          "value": "memcached-bucket-metrics"
         },
-        "datasource": "Global",
-        "definition": "label_values(memcached_up{env=\"$env\"}, job)",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "definition": "label_values(memcached_version,job)",
         "hide": 0,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "job",
         "options": [
 
         ],
-        "query": "label_values(memcached_up{env=\"$env\"}, job)",
+        "query": {
+          "qryType": 1,
+          "query": "label_values(memcached_version,job)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
-        "tagValuesQuery": "",
-        "tags": [
-
-        ],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
+          "text": "10.252.12.16:9150",
+          "value": "10.252.12.16:9150"
         },
-        "datasource": "Global",
-        "definition": "label_values(memcached_up{env=\"$env\",job=\"$job\"}, instance)",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "definition": "label_values(memcached_version,instance)",
         "hide": 0,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
+        "includeAll": false,
+        "multi": false,
         "name": "instance",
         "options": [
 
         ],
-        "query": "label_values(memcached_up{env=\"$env\",job=\"$job\"}, instance)",
-        "refresh": 2,
+        "query": {
+          "qryType": 1,
+          "query": "label_values(memcached_version,instance)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
-        "tagValuesQuery": "",
-        "tags": [
-
-        ],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       }
     ]
   },
@@ -1253,5 +1235,6 @@
   "timezone": "browser",
   "title": "memcached",
   "uid": "memcached",
-  "version": 2
+  "version": 4,
+  "weekStart": ""
 }
