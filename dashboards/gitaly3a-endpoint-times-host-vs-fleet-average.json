@@ -17,12 +17,49 @@
   },
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "graphTooltip": 0,
+  "graphTooltip": 1,
   "id": null,
   "links": [
-
+    {
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "GitalyMain"
+      ],
+      "type": "dashboards"
+    }
   ],
   "panels": [
+    {
+      "collapsed": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "panels": [
+
+      ],
+      "repeat": "grpc_method",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "refId": "A"
+        }
+      ],
+      "title": "Compare",
+      "type": "row"
+    },
     {
       "datasource": {
         "type": "prometheus",
@@ -53,7 +90,8 @@
             "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
-              "type": "linear"
+              "log": 10,
+              "type": "log"
             },
             "showPoints": "never",
             "spanNulls": false,
@@ -81,45 +119,53 @@
               }
             ]
           },
-          "unit": "reqps"
+          "unit": "ms"
         },
         "overrides": [
           {
             "matcher": {
-              "id": "byValue",
-              "options": {
-                "op": "gte",
-                "reducer": "allIsZero",
-                "value": 0
-              }
+              "id": "byName",
+              "options": "Cluster Average"
             },
             "properties": [
               {
-                "id": "custom.hideFrom",
+                "id": "color",
                 "value": {
-                  "legend": true,
-                  "tooltip": true,
-                  "viz": false
+                  "fixedColor": "#584477",
+                  "mode": "fixed"
                 }
               }
             ]
           },
           {
             "matcher": {
-              "id": "byValue",
-              "options": {
-                "op": "gte",
-                "reducer": "allIsNull",
-                "value": 0
-              }
+              "id": "byName",
+              "options": "nfs-file-08.stor.gitlab.com"
             },
             "properties": [
               {
-                "id": "custom.hideFrom",
+                "id": "color",
                 "value": {
-                  "legend": true,
-                  "tooltip": true,
-                  "viz": false
+                  "fixedColor": "#7EB26D",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cluster Average"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    10,
+                    10
+                  ],
+                  "fill": "dash"
                 }
               }
             ]
@@ -130,23 +176,21 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 1
       },
-      "id": 2,
+      "id": 1,
       "options": {
         "legend": {
           "calcs": [
-            "lastNotNull",
-            "max",
-            "min"
+
           ],
-          "displayMode": "table",
-          "placement": "right",
+          "displayMode": "list",
+          "placement": "bottom",
           "showLegend": true
         },
         "tooltip": {
           "mode": "multi",
-          "sort": "desc"
+          "sort": "none"
         }
       },
       "pluginVersion": "11.1.0",
@@ -157,7 +201,7 @@
           },
           "dsType": "influxdb",
           "editorMode": "code",
-          "expr": "sum(rate(gitaly_service_client_requests_total{type=\"gitaly\"}[5m])) by (client_name)\n",
+          "expr": "histogram_quantile(0.50, avg(rate(grpc_server_handling_seconds_bucket{environment=\"gprd\",grpc_method=\"$grpc_method\", fqdn=\"$fqdn\"}[$__interval])) by (le)) * 1000",
           "format": "time_series",
           "groupBy": [
             {
@@ -173,8 +217,9 @@
               "type": "fill"
             }
           ],
-          "intervalFactor": 2,
-          "legendFormat": "{{ client_name }}",
+          "hide": false,
+          "intervalFactor": 5,
+          "legendFormat": "$fqdn",
           "orderByTime": "ASC",
           "policy": "default",
           "range": true,
@@ -196,22 +241,89 @@
               }
             ]
           ],
+          "step": 25,
           "tags": [
 
           ]
+        },
+        {
+          "datasource": {
+            "uid": "prometheus-01-inf-gprd"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.50, avg(rate(grpc_server_handling_seconds_bucket{environment=\"gprd\", grpc_method=\"$grpc_method\"}[$__interval])) by (le)) * 1000  ",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 5,
+          "legendFormat": "Cluster Average",
+          "range": true,
+          "refId": "B",
+          "step": 25
         }
       ],
-      "title": "Request rate by Client",
+      "title": "$grpc_method (log 10)",
       "type": "timeseries"
     }
   ],
   "schemaVersion": 39,
   "tags": [
+    "Gitaly",
     "unmanaged"
   ],
   "templating": {
     "list": [
+      {
+        "current": {
+          "text": "FetchRemote",
+          "value": "FetchRemote"
+        },
+        "datasource": {
+          "uid": "prometheus-01-inf-gprd"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": true,
+        "multi": false,
+        "name": "grpc_method",
+        "options": [
 
+        ],
+        "query": "label_values(grpc_server_handling_seconds_bucket{environment=\"gprd\",job=\"gitaly\"}, grpc_method)",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "text": "file-04-stor-gprd.c.gitlab-production.internal",
+          "value": "file-04-stor-gprd.c.gitlab-production.internal"
+        },
+        "datasource": {
+          "uid": "prometheus-01-inf-gprd"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "fqdn",
+        "options": [
+
+        ],
+        "query": "label_values(grpc_server_handling_seconds_bucket{environment=\"gprd\",job=\"gitaly\"}, fqdn)",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
     ]
   },
   "time": {
@@ -243,9 +355,9 @@
       "30d"
     ]
   },
-  "timezone": "",
-  "title": "Gitaly Service Clients Metrics",
-  "uid": "-k-_Q9Smk",
-  "version": 14,
+  "timezone": "utc",
+  "title": "Gitaly: Endpoint Times - Host vs Fleet Average",
+  "uid": "U50nQ9Smk",
+  "version": 8,
   "weekStart": ""
 }
