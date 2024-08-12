@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/7558995994 at Mon Aug 12 06:51:20 UTC 2024",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/7564012541 at Mon Aug 12 15:23:35 UTC 2024",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -224,7 +224,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "clamp_min(\n  clamp_max(\n    quantile by(environment, tier, type, stage, shard, pod, container) (\n  0.99,\n  clamp_min(\n    clamp_max(\n      (\n        sum by (environment, tier, type, stage, shard, pod, container) (\n          rate(container_cpu_usage_seconds_total:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}[1h])\n        )\n        unless on(environment, tier, type, stage, shard, pod, container) (\n          container_spec_cpu_quota:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n        )\n      )\n      /\n      sum by(environment, tier, type, stage, shard, pod, container) (\n        kube_pod_container_resource_requests:labeled{container!=\"\", container!=\"POD\", resource=\"cpu\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+          "expr": "clamp_min(\n  clamp_max(\n    quantile by(environment, tier, type, stage, shard, pod, container) (\n  0.99,\n  clamp_min(\n    clamp_max(\n      (\n        sum by (environment, tier, type, stage, shard, pod, container) (\n          rate(container_cpu_usage_seconds_total:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}[1h])\n        )\n        unless on(environment, tier, type, stage, shard, pod, container) (\n          last_over_time(container_spec_cpu_quota:labeled{container!=\"\", container!=\"POD\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}[1h])\n        )\n      )\n      /\n      sum by(environment, tier, type, stage, shard, pod, container) (\n        kube_pod_container_resource_requests:labeled{container!=\"\", container!=\"POD\", resource=\"cpu\", env=\"$environment\",stage=\"$stage\",type=\"$type\"}\n      )\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -550,5 +550,5 @@
   "timezone": "utc",
   "title": "alerts: kube container cpu: Saturation Detail",
   "uid": "alerts-sat_kube_container_cpu",
-  "version": 4295
+  "version": 4299
 }
