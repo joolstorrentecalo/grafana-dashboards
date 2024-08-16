@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/7595618280 at Thu Aug 15 22:02:28 UTC 2024",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/7601656099 at Fri Aug 16 15:43:01 UTC 2024",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -1143,6 +1143,10 @@
         {
           "title": "redis Service | redis_secondary_cpu resource Dashboard",
           "url": "https://dashboards.gitlab.net/d/alerts-sat_redis_secondary_cpu/?var-environment=gprd&var-type=redis&var-stage=main&var-component=redis_secondary_cpu"
+        },
+        {
+          "title": "redis Service | redis_sentinel_clients resource Dashboard",
+          "url": "https://dashboards.gitlab.net/d/alerts-sat_redis_sentinel_clients/?var-environment=gprd&var-type=redis&var-stage=main&var-component=redis_sentinel_clients"
         },
         {
           "title": "redis Service | shard_cpu resource Dashboard",
@@ -8807,13 +8811,207 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
-          "description": "This resource measures average CPU utilization across an all cores in a shard of a\nservice fleet. If it is becoming saturated, it may indicate that the\nshard needs horizontal or vertical scaling.\n Lower is better.",
+          "description": "Redis sentinel client utilization per node.\n\nA redis sentinel has a maximum number of clients that can connect. When this resource is saturated,\nnew clients may fail to connect redis server because \"Sentinel is both responsible for reconfiguring\ninstances during failovers, and providing configurations to clients connecting to Redis masters or replicas\" per docs.\n\nMore details at https://redis.io/docs/latest/develop/reference/sentinel-clients/\n Lower is better.",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
             "h": 10,
             "w": 12,
             "x": 0,
+            "y": 90
+          },
+          "id": 387778341,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "sideWidth": null,
+            "sort": "max",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+
+          ],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [
+            {
+              "alias": "/^Soft SLO/",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^Hard SLO/",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            },
+            {
+              "alias": "/aggregated /",
+              "color": "#E7D551",
+              "linewidth": 2,
+              "zindex": 3
+            },
+            {
+              "alias": "/^95th quantile for week/",
+              "color": "#37872D",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 1,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/^99th quantile for week/",
+              "color": "#56A64B",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "saturation-redis_sentinel_clients",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max by(environment, tier, type, stage, shard, fqdn, instance, shard) (\n  clamp_min(\n    clamp_max(\n      max_over_time(gitlab_redis_sentinel_connected_clients{env=\"$environment\",environment=\"$environment\",type=\"redis\"}[1m])\n      /\n      gitlab_redis_sentinel_maxclients{env=\"$environment\",environment=\"$environment\",type=\"redis\"}\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{ fqdn }} {{ instance }} {{ shard }}",
+              "refId": "A"
+            },
+            {
+              "expr": "clamp_min(\n  clamp_max(\n    max(\n      max_over_time(gitlab_component_saturation:ratio{env=\"$environment\",environment=\"$environment\",type=\"redis\", component=\"redis_sentinel_clients\"}[$__interval])\n    ) by (component)\n  ,1)\n,0)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "aggregated {{ component }}",
+              "refId": "B"
+            },
+            {
+              "expr": "max(\n  gitlab_component_saturation:ratio_quantile95_1w{env=\"$environment\",environment=\"$environment\",type=\"redis\", component=\"redis_sentinel_clients\"}\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "95th quantile for week {{ component }}",
+              "refId": "C"
+            },
+            {
+              "expr": "max(\n  gitlab_component_saturation:ratio_quantile99_1w{env=\"$environment\",environment=\"$environment\",type=\"redis\", component=\"redis_sentinel_clients\"}\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "99th quantile for week {{ component }}",
+              "refId": "D"
+            },
+            {
+              "expr": "avg(slo:max:soft:gitlab_component_saturation:ratio{component=\"redis_sentinel_clients\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "Soft SLO: {{ component }}",
+              "refId": "E"
+            },
+            {
+              "expr": "avg(slo:max:hard:gitlab_component_saturation:ratio{component=\"redis_sentinel_clients\"}) by (component)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "Hard SLO: {{ component }}",
+              "refId": "F"
+            }
+          ],
+          "thresholds": [
+
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "redis_sentinel_clients component saturation: Redis Sentinel Client Utilization per Node",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Saturation %",
+              "logBase": 1,
+              "max": 1,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+          },
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "This resource measures average CPU utilization across an all cores in a shard of a\nservice fleet. If it is becoming saturated, it may indicate that the\nshard needs horizontal or vertical scaling.\n Lower is better.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
             "y": 90
           },
           "id": 1472933476,
@@ -9007,8 +9205,8 @@
           "gridPos": {
             "h": 10,
             "w": 12,
-            "x": 12,
-            "y": 90
+            "x": 0,
+            "y": 100
           },
           "id": 3372411356,
           "legend": {
@@ -9205,7 +9403,7 @@
         "x": 0,
         "y": 1000
       },
-      "id": 76,
+      "id": 77,
       "panels": [
 
       ],
@@ -9234,7 +9432,7 @@
         "x": 0,
         "y": 1001
       },
-      "id": 77,
+      "id": 78,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9332,7 +9530,7 @@
         "x": 12,
         "y": 1001
       },
-      "id": 78,
+      "id": 79,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9430,7 +9628,7 @@
         "x": 0,
         "y": 1011
       },
-      "id": 79,
+      "id": 80,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9520,7 +9718,7 @@
         "x": 0,
         "y": 2000
       },
-      "id": 80,
+      "id": 81,
       "panels": [
 
       ],
@@ -9549,7 +9747,7 @@
         "x": 0,
         "y": 2001
       },
-      "id": 81,
+      "id": 82,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9647,7 +9845,7 @@
         "x": 12,
         "y": 2001
       },
-      "id": 82,
+      "id": 83,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9745,7 +9943,7 @@
         "x": 0,
         "y": 2011
       },
-      "id": 83,
+      "id": 84,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9841,7 +10039,7 @@
         "x": 12,
         "y": 2011
       },
-      "id": 84,
+      "id": 85,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -9937,7 +10135,7 @@
         "x": 0,
         "y": 2021
       },
-      "id": 85,
+      "id": 86,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10035,7 +10233,7 @@
         "x": 12,
         "y": 2021
       },
-      "id": 86,
+      "id": 87,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10133,7 +10331,7 @@
         "x": 0,
         "y": 2031
       },
-      "id": 87,
+      "id": 88,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10231,7 +10429,7 @@
         "x": 12,
         "y": 2031
       },
-      "id": 88,
+      "id": 89,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10329,7 +10527,7 @@
         "x": 0,
         "y": 2041
       },
-      "id": 89,
+      "id": 90,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10427,7 +10625,7 @@
         "x": 12,
         "y": 2041
       },
-      "id": 90,
+      "id": 91,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10525,7 +10723,7 @@
         "x": 0,
         "y": 2051
       },
-      "id": 91,
+      "id": 92,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10623,7 +10821,7 @@
         "x": 12,
         "y": 2051
       },
-      "id": 92,
+      "id": 93,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10721,7 +10919,7 @@
         "x": 0,
         "y": 2061
       },
-      "id": 93,
+      "id": 94,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10819,7 +11017,7 @@
         "x": 12,
         "y": 2061
       },
-      "id": 94,
+      "id": 95,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -10917,7 +11115,7 @@
         "x": 0,
         "y": 2071
       },
-      "id": 95,
+      "id": 96,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11015,7 +11213,7 @@
         "x": 12,
         "y": 2071
       },
-      "id": 96,
+      "id": 97,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11105,7 +11303,7 @@
         "x": 0,
         "y": 3000
       },
-      "id": 97,
+      "id": 98,
       "panels": [
 
       ],
@@ -11134,7 +11332,7 @@
         "x": 0,
         "y": 3001
       },
-      "id": 98,
+      "id": 99,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11269,7 +11467,7 @@
         "x": 12,
         "y": 3001
       },
-      "id": 99,
+      "id": 100,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11367,7 +11565,7 @@
         "x": 0,
         "y": 3011
       },
-      "id": 100,
+      "id": 101,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11465,7 +11663,7 @@
         "x": 12,
         "y": 3011
       },
-      "id": 101,
+      "id": 102,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11563,7 +11761,7 @@
         "x": 0,
         "y": 3021
       },
-      "id": 102,
+      "id": 103,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11661,7 +11859,7 @@
         "x": 12,
         "y": 3021
       },
-      "id": 103,
+      "id": 104,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11759,7 +11957,7 @@
         "x": 0,
         "y": 3031
       },
-      "id": 104,
+      "id": 105,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11849,7 +12047,7 @@
         "x": 0,
         "y": 4000
       },
-      "id": 105,
+      "id": 106,
       "panels": [
 
       ],
@@ -11878,7 +12076,7 @@
         "x": 0,
         "y": 4001
       },
-      "id": 106,
+      "id": 107,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -11976,7 +12174,7 @@
         "x": 12,
         "y": 4001
       },
-      "id": 107,
+      "id": 108,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12074,7 +12272,7 @@
         "x": 0,
         "y": 4011
       },
-      "id": 108,
+      "id": 109,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12164,7 +12362,7 @@
         "x": 0,
         "y": 5000
       },
-      "id": 109,
+      "id": 110,
       "panels": [
 
       ],
@@ -12193,7 +12391,7 @@
         "x": 0,
         "y": 5000
       },
-      "id": 110,
+      "id": 111,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12291,7 +12489,7 @@
         "x": 12,
         "y": 5000
       },
-      "id": 111,
+      "id": 112,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12389,7 +12587,7 @@
         "x": 0,
         "y": 5010
       },
-      "id": 112,
+      "id": 113,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12487,7 +12685,7 @@
         "x": 12,
         "y": 5010
       },
-      "id": 113,
+      "id": 114,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12585,7 +12783,7 @@
         "x": 0,
         "y": 5020
       },
-      "id": 114,
+      "id": 115,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -12673,7 +12871,7 @@
         "x": 0,
         "y": 100010
       },
-      "id": 115,
+      "id": 116,
       "panels": [
         {
           "colors": [
@@ -12694,7 +12892,7 @@
             "x": 0,
             "y": 0
           },
-          "id": 116,
+          "id": 117,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -12807,7 +13005,7 @@
             "x": 0,
             "y": 10
           },
-          "id": 117,
+          "id": 118,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -12918,7 +13116,7 @@
             "x": 0,
             "y": 20
           },
-          "id": 118,
+          "id": 119,
           "init": {
             "arrowMarkerAbsolute": true,
             "cloneCssStyles": true,
@@ -13023,7 +13221,7 @@
         "x": 0,
         "y": 110000
       },
-      "id": 119,
+      "id": 120,
       "mode": "markdown",
       "title": "Source",
       "type": "text"
@@ -13117,5 +13315,5 @@
   "timezone": "utc",
   "title": "redis: Overview",
   "uid": "redis-main",
-  "version": 5838
+  "version": 5839
 }
