@@ -1,20 +1,24 @@
 {
-  "__inputs": [
-
-  ],
-  "__requires": [
-
-  ],
   "annotations": {
     "list": [
-
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/7653744065 at Fri Aug 23 15:42:39 UTC 2024",
+  "description": "TEST Deployment Blockers Dashboard",
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "hideControls": false,
   "id": null,
   "links": [
 
@@ -33,16 +37,33 @@
       },
       "id": 2,
       "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
         "content": "# Deployment Blockers\n\nDeployment failures are currently automatically captured under [release/tasks issues](https://gitlab.com/gitlab-org/release/tasks/-/issues).\nEach week a report is generated to keep track of the deployment blockers of the GitLab.com environments, release managers are responsible for labeling these failures with appropriate `RootCause::*` labels\n\nThis dashboard tracks the trend of recurring root causes for deployment blockers. Each root cause is displayed in separate rows with three panels: one for the count of blockers, one for `gprd` hours blocked, and one for `gstg` hours blocked. At the top, there is an overview of the failure types, including the total calculations for the entire specified time window.\n\nLinks:\n- [List of root causes](https://gitlab.com/gitlab-org/release/tasks/-/labels?subscribed=&sort=relevance&search=RootCause)\n- [Deployments metrics review](https://gitlab.com/groups/gitlab-com/gl-infra/-/epics/1192)\n",
         "mode": "markdown"
       },
-      "pluginVersion": "v10.4.0",
-      "title": "",
+      "pluginVersion": "11.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "refId": "A"
+        }
+      ],
       "type": "text"
     },
     {
       "collapse": false,
       "collapsed": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -53,10 +74,16 @@
       "panels": [
 
       ],
-      "repeat": null,
-      "repeatIteration": null,
-      "repeatRowId": null,
       "showTitle": true,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "Overview",
       "titleSize": "h6",
       "type": "row"
@@ -69,9 +96,467 @@
       "fieldConfig": {
         "defaults": {
           "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": true,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "displayName": "blockers_count",
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "week_index"
+            },
+            "properties": [
+              {
+                "id": "custom.axisLabel",
+                "value": "week_index"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "hidden"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 13,
+        "x": 0,
+        "y": 8
+      },
+      "id": 49,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xField": "week_index"
+      },
+      "pluginVersion": "v10.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "$PROMETHEUS_DS"
+          },
+          "editorMode": "code",
+          "expr": "max by (week, root_cause) (last_over_time(delivery_deployment_hours_blocked{root_cause=\"$root_cause\", target_env=\"gprd\"}[1d]))",
+          "format": "table",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Blockers Count for $root_cause",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "last"
+                ],
+                "operation": "aggregate"
+              },
+              "root_cause": {
+                "aggregations": [
+
+                ]
+              },
+              "week": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "count",
+            "binary": {
+              "left": "week"
+            },
+            "mode": "index",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "week_index",
+            "binary": {
+              "left": "count",
+              "right": "1"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": false,
+              "count": true
+            },
+            "includeByName": {
+            },
+            "indexByName": {
+            },
+            "renameByName": {
+            }
+          }
+        }
+      ],
+      "type": "trend"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Mixed --"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
             "mode": "thresholds"
           },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 11,
+        "x": 13,
+        "y": 8
+      },
+      "id": 50,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "11.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "$PROMETHEUS_DS"
+          },
+          "expr": "max by (week, root_cause) (last_over_time(delivery_deployment_blocker_count{root_cause=\"$root_cause\"}[1d]))",
+          "format": "table",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "$PROMETHEUS_DS"
+          },
+          "expr": "max by (week, root_cause) (last_over_time(delivery_deployment_hours_blocked{root_cause=\"$root_cause\", target_env=\"gprd\"}[1d]))",
+          "format": "table",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "$PROMETHEUS_DS"
+          },
+          "expr": "max by (week, root_cause) (last_over_time(delivery_deployment_hours_blocked{root_cause=\"$root_cause\", target_env=\"gstg\"}[1d]))",
+          "format": "table",
+          "refId": "C"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {
+            },
+            "sort": [
+              {
+                "field": "week"
+              }
+            ]
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value #A": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "Value #B": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "Value #C": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "root_cause": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "week": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value #A": {
+                "aggregations": [
+                  "sum"
+                ],
+                "operation": "aggregate"
+              },
+              "Value #A (lastNotNull)": {
+                "aggregations": [
+                  "sum"
+                ],
+                "operation": "aggregate"
+              },
+              "Value #B": {
+                "aggregations": [
+                  "sum"
+                ],
+                "operation": "aggregate"
+              },
+              "Value #B (lastNotNull)": {
+                "aggregations": [
+                  "sum"
+                ],
+                "operation": "aggregate"
+              },
+              "Value #C": {
+                "aggregations": [
+                  "sum"
+                ],
+                "operation": "aggregate"
+              },
+              "Value #C (lastNotNull)": {
+                "aggregations": [
+                  "sum"
+                ],
+                "operation": "aggregate"
+              },
+              "root_cause": {
+                "aggregations": [
+
+                ],
+                "operation": "aggregate"
+              },
+              "week": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "week_index": {
+                "aggregations": [
+
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "count",
+            "mode": "index",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "week_index",
+            "binary": {
+              "left": "count",
+              "right": "1"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "count": true
+            },
+            "includeByName": {
+            },
+            "indexByName": {
+            },
+            "renameByName": {
+              "Value #A (lastNotNull) (sum)": "blockers_count",
+              "Value #A (sum)": "blockers_count",
+              "Value #B (lastNotNull) (sum)": "gprd_hours_blocked",
+              "Value #B (sum)": "gprd_hours_blocked",
+              "Value #C (lastNotNull) (sum)": "gstg_hours_blocked",
+              "Value #C (sum)": "gstg_hours_blocked"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Mixed --"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
           "displayName": "blockers_count",
+          "mappings": [
+
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -81,16 +566,23 @@
               }
             ]
           }
-        }
+        },
+        "overrides": [
+
+        ]
       },
       "gridPos": {
         "h": 10,
         "w": 8,
         "x": 0,
-        "y": 8
+        "y": 19
       },
       "id": 4,
       "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
         "legend": {
           "calcs": [
             "sum"
@@ -99,7 +591,15 @@
           "placement": "bottom",
           "showLegend": true
         },
-        "orientation": "horizontal"
+        "orientation": "horizontal",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
       },
       "pluginVersion": "v10.4.0",
       "targets": [
@@ -110,7 +610,8 @@
           },
           "expr": "max by (week, root_cause) (last_over_time(delivery_deployment_blocker_count{root_cause=~\".+\", root_cause!=\"RootCause::FlakyTest\"}[1d])) != 0",
           "format": "table",
-          "legendFormat": "{{root_cause}}"
+          "legendFormat": "{{root_cause}}",
+          "refId": "A"
         }
       ],
       "title": "Total Blockers Count per Root Cause",
@@ -172,7 +673,31 @@
           "color": {
             "mode": "thresholds"
           },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
           "displayName": "gprd_hours_blocked",
+          "mappings": [
+
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -182,16 +707,23 @@
               }
             ]
           }
-        }
+        },
+        "overrides": [
+
+        ]
       },
       "gridPos": {
         "h": 10,
         "w": 8,
         "x": 8,
-        "y": 8
+        "y": 19
       },
       "id": 5,
       "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
         "legend": {
           "calcs": [
             "sum"
@@ -200,7 +732,15 @@
           "placement": "bottom",
           "showLegend": true
         },
-        "orientation": "horizontal"
+        "orientation": "horizontal",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
       },
       "pluginVersion": "v10.4.0",
       "targets": [
@@ -211,7 +751,8 @@
           },
           "expr": "max by (week, root_cause) (last_over_time(delivery_deployment_hours_blocked{root_cause=~\".+\", root_cause!=\"RootCause::FlakyTest\", target_env=\"gprd\"}[1d])) != 0",
           "format": "table",
-          "legendFormat": "{{root_cause}}"
+          "legendFormat": "{{root_cause}}",
+          "refId": "A"
         }
       ],
       "title": "Total gprd Hours Blocked per Root Cause",
@@ -273,7 +814,31 @@
           "color": {
             "mode": "thresholds"
           },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
           "displayName": "gstg_hours_blocked",
+          "mappings": [
+
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -283,16 +848,23 @@
               }
             ]
           }
-        }
+        },
+        "overrides": [
+
+        ]
       },
       "gridPos": {
         "h": 10,
         "w": 8,
         "x": 16,
-        "y": 8
+        "y": 19
       },
       "id": 6,
       "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
         "legend": {
           "calcs": [
             "sum"
@@ -301,7 +873,15 @@
           "placement": "bottom",
           "showLegend": true
         },
-        "orientation": "horizontal"
+        "orientation": "horizontal",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
       },
       "pluginVersion": "v10.4.0",
       "targets": [
@@ -312,7 +892,8 @@
           },
           "expr": "max by (week, root_cause) (last_over_time(delivery_deployment_hours_blocked{root_cause=~\".+\", root_cause!=\"RootCause::FlakyTest\", target_env=\"gstg\"}[1d])) != 0",
           "format": "table",
-          "legendFormat": "{{root_cause}}"
+          "legendFormat": "{{root_cause}}",
+          "refId": "A"
         }
       ],
       "title": "Total gstg Hours Blocked per Root Cause",
@@ -367,20 +948,31 @@
     {
       "collapse": false,
       "collapsed": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 29
       },
       "id": 7,
       "panels": [
 
       ],
       "repeat": "root_cause",
-      "repeatIteration": null,
-      "repeatRowId": null,
       "showTitle": true,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "$root_cause",
       "titleSize": "h6",
       "type": "row"
@@ -397,14 +989,41 @@
           },
           "custom": {
             "axisBorderShow": true,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
             "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
             "showPoints": "always",
-            "spanNulls": true
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "decimals": 0,
           "displayName": "blockers_count",
+          "mappings": [
+
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -439,13 +1058,21 @@
         "h": 9,
         "w": 8,
         "x": 0,
-        "y": 19
+        "y": 30
       },
       "id": 8,
       "options": {
         "legend": {
+          "calcs": [
+
+          ],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
         },
         "xField": "week_index"
       },
@@ -457,7 +1084,8 @@
             "uid": "$PROMETHEUS_DS"
           },
           "expr": "max by (week, root_cause) (last_over_time(delivery_deployment_blocker_count{root_cause=\"$root_cause\"}[1d]))",
-          "format": "table"
+          "format": "table",
+          "refId": "A"
         }
       ],
       "title": "Blockers Count for $root_cause",
@@ -475,8 +1103,7 @@
               "root_cause": {
                 "aggregations": [
 
-                ],
-                "operation": null
+                ]
               },
               "week": {
                 "aggregations": [
@@ -544,14 +1171,41 @@
           },
           "custom": {
             "axisBorderShow": true,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
             "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
             "showPoints": "always",
-            "spanNulls": true
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "decimals": 0,
           "displayName": "gprd_hours_blocked",
+          "mappings": [
+
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -586,13 +1240,21 @@
         "h": 9,
         "w": 8,
         "x": 8,
-        "y": 19
+        "y": 30
       },
       "id": 9,
       "options": {
         "legend": {
+          "calcs": [
+
+          ],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
         },
         "xField": "week_index"
       },
@@ -604,7 +1266,8 @@
             "uid": "$PROMETHEUS_DS"
           },
           "expr": "max by (week, root_cause) (last_over_time(delivery_deployment_hours_blocked{root_cause=\"$root_cause\", target_env=\"gprd\"}[1d]))",
-          "format": "table"
+          "format": "table",
+          "refId": "A"
         }
       ],
       "title": "gprd Hours Blocked for $root_cause",
@@ -622,8 +1285,7 @@
               "root_cause": {
                 "aggregations": [
 
-                ],
-                "operation": null
+                ]
               },
               "week": {
                 "aggregations": [
@@ -691,14 +1353,41 @@
           },
           "custom": {
             "axisBorderShow": true,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
             "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
             "showPoints": "always",
-            "spanNulls": true
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "decimals": 0,
           "displayName": "gstg_hours_blocked",
+          "mappings": [
+
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -733,13 +1422,21 @@
         "h": 9,
         "w": 8,
         "x": 16,
-        "y": 19
+        "y": 30
       },
       "id": 10,
       "options": {
         "legend": {
+          "calcs": [
+
+          ],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
         },
         "xField": "week_index"
       },
@@ -751,7 +1448,8 @@
             "uid": "$PROMETHEUS_DS"
           },
           "expr": "max by (week, root_cause) (last_over_time(delivery_deployment_hours_blocked{root_cause=\"$root_cause\", target_env=\"gstg\"}[1d]))",
-          "format": "table"
+          "format": "table",
+          "refId": "A"
         }
       ],
       "title": "gstg Hours Blocked for $root_cause",
@@ -769,8 +1467,7 @@
               "root_cause": {
                 "aggregations": [
 
-                ],
-                "operation": null
+                ]
               },
               "week": {
                 "aggregations": [
@@ -837,21 +1534,54 @@
             "mode": "thresholds"
           },
           "custom": {
-            "filterable": true
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
           }
-        }
+        },
+        "overrides": [
+
+        ]
       },
       "gridPos": {
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 39
       },
       "id": 11,
       "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
         "showHeader": true
       },
-      "pluginVersion": "v10.4.0",
+      "pluginVersion": "11.1.0",
       "targets": [
         {
           "datasource": {
@@ -859,7 +1589,8 @@
             "uid": "$PROMETHEUS_DS"
           },
           "expr": "max by (week, root_cause) (last_over_time(delivery_deployment_blocker_count{root_cause=\"$root_cause\"}[1d]))",
-          "format": "table"
+          "format": "table",
+          "refId": "A"
         },
         {
           "datasource": {
@@ -867,7 +1598,8 @@
             "uid": "$PROMETHEUS_DS"
           },
           "expr": "max by (week, root_cause) (last_over_time(delivery_deployment_hours_blocked{root_cause=\"$root_cause\", target_env=\"gprd\"}[1d]))",
-          "format": "table"
+          "format": "table",
+          "refId": "B"
         },
         {
           "datasource": {
@@ -875,10 +1607,10 @@
             "uid": "$PROMETHEUS_DS"
           },
           "expr": "max by (week, root_cause) (last_over_time(delivery_deployment_hours_blocked{root_cause=\"$root_cause\", target_env=\"gstg\"}[1d]))",
-          "format": "table"
+          "format": "table",
+          "refId": "C"
         }
       ],
-      "title": "",
       "transformations": [
         {
           "id": "merge",
@@ -1044,59 +1776,84 @@
     {
       "collapse": false,
       "collapsed": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 100000
+        "y": 46
       },
       "id": 12,
       "panels": [
 
       ],
-      "repeat": null,
-      "repeatIteration": null,
-      "repeatRowId": null,
       "showTitle": true,
-      "title": "",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "refId": "A"
+        }
+      ],
       "titleSize": "h6",
       "type": "row"
     },
     {
-      "content": "Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards)\n",
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+      },
       "gridPos": {
         "h": 2,
         "w": 24,
         "x": 0,
-        "y": 110000
+        "y": 47
       },
       "id": 13,
-      "mode": "markdown",
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards)\n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "11.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "Source",
       "type": "text"
     }
   ],
   "refresh": "",
-  "rows": [
-
-  ],
-  "schemaVersion": 16,
-  "style": "light",
+  "schemaVersion": 40,
   "tags": [
-    "managed",
-    "delivery",
-    "release"
+    "unmanaged"
   ],
   "templating": {
     "list": [
       {
         "current": {
+          "selected": false,
           "text": "Mimir - Gitlab Ops",
-          "value": "Mimir - Gitlab Ops"
+          "value": "mimir-gitlab-ops"
         },
         "hide": 0,
-        "label": null,
+        "includeAll": false,
+        "multi": false,
         "name": "PROMETHEUS_DS",
         "options": [
 
@@ -1104,29 +1861,33 @@
         "query": "prometheus",
         "refresh": 1,
         "regex": "",
+        "skipUrlSync": false,
         "type": "datasource"
       },
       {
-        "allValue": null,
         "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
         },
-        "datasource": "$PROMETHEUS_DS",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "$PROMETHEUS_DS"
+        },
+        "definition": "",
         "hide": 0,
         "includeAll": true,
-        "label": null,
         "multi": true,
         "name": "root_cause",
         "options": [
 
         ],
         "query": "query_result(max by (root_cause) (last_over_time(delivery_deployment_blocker_count{root_cause!=\"RootCause::FlakyTest\"}[$__range]) > 0))",
-        "refresh": 0,
+        "refresh": 1,
         "regex": "/root_cause=\"(?<text>[^\"]+)/g",
+        "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
-        "tags": [
-
-        ],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -1158,7 +1919,8 @@
     ]
   },
   "timezone": "utc",
-  "title": "delivery: Deployment Blockers",
-  "uid": "delivery-deployment_blockers",
-  "version": 181
+  "title": "delivery: Deployment Blockers-TEST",
+  "uid": "cdvoooi2i8dfkb",
+  "version": 4,
+  "weekStart": ""
 }
