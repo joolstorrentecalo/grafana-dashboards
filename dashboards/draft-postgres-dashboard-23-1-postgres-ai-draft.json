@@ -84,12 +84,39 @@
           }
         },
         "overrides": [
-
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "IO",
+                  "IPC",
+                  "LWLock",
+                  "Lock",
+                  "Timeout"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
         ]
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 24,
         "x": 0,
         "y": 0
       },
@@ -115,7 +142,7 @@
             "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
           },
           "editorMode": "code",
-          "expr": "pg_wait_sampling_count{fqdn=\"patroni-ci-v14-03-db-gprd.c.gitlab-production.internal\"}",
+          "expr": "sum by (wait_type) (pg_wait_sampling_count{fqdn=\"$fqdn\", wait_type!~\"Activity\"})/1500",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -126,13 +153,121 @@
       "type": "timeseries"
     }
   ],
-  "schemaVersion": 40,
+  "refresh": "",
+  "schemaVersion": 39,
   "tags": [
-    "unmanaged"
+
   ],
   "templating": {
     "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "dev.gitlab.org",
+          "value": "P5E350EAF3A71C11E"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Datasource",
+        "multi": false,
+        "name": "prometheus",
+        "options": [
 
+        ],
+        "query": "prometheus",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "isNone": true,
+          "selected": false,
+          "text": "None",
+          "value": ""
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${prometheus}"
+        },
+        "definition": "label_values(node_exporter_build_info,env)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Environment",
+        "multi": false,
+        "name": "environment",
+        "options": [
+
+        ],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(node_exporter_build_info,env)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "bastion",
+          "value": "bastion"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${prometheus}"
+        },
+        "definition": "label_values(node_exporter_build_info,type)",
+        "description": "\tlabel_values(up{environment=\"$environment\",tier=\"db\",type!=\"redis\"},type)",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "type",
+        "options": [
+
+        ],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(node_exporter_build_info,type)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "patroni-main-v14-01-db-gprd.c.gitlab-production.internal",
+          "value": "patroni-main-v14-01-db-gprd.c.gitlab-production.internal"
+        },
+        "definition": "label_values(node_exporter_build_info{tier=\"db\", type=\"$type\", environment=\"$environment\"},fqdn)",
+        "description": "\tlabel_values(up{environment=\"$environment\",tier=\"db\",type=\"$type\"},fqdn)",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "fqdn",
+        "options": [
+
+        ],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(node_exporter_build_info{tier=\"db\", type=\"$type\", environment=\"$environment\"},fqdn)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
     ]
   },
   "time": {
@@ -144,6 +279,6 @@
   "timezone": "browser",
   "title": "[Draft] Postgres Dashboard #1 (Postgres.ai draft)",
   "uid": "bdvmbqlu8thxce",
-  "version": 2,
+  "version": 8,
   "weekStart": ""
 }
