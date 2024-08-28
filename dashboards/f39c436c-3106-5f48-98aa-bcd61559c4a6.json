@@ -154,6 +154,132 @@
         "type": "prometheus",
         "uid": "mimir-gitlab-gprd"
       },
+      "description": "We will be reading from this table in place of the *_pipelines table, so should see an increase",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-gitlab-gprd"
+          },
+          "editorMode": "code",
+          "expr": "sum by (type) (pg_stat_user_tables_n_live_tup{relname=\"vulnerability_occurrences\", env=\"gprd\"})",
+          "instant": true,
+          "legendFormat": "Live Rows - {{type}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-gitlab-gprd"
+          },
+          "editorMode": "code",
+          "expr": "sum by (type) (pg_stat_user_tables_n_dead_tup{relname=\"vulnerability_occurrences\", env=\"gprd\"})\n",
+          "instant": true,
+          "legendFormat": "Dead Rows - {{type}}",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-gitlab-gprd"
+          },
+          "editorMode": "code",
+          "expr": "sum by (instance) (pg_total_relation_size{relname=\"vulnerability_occurrences\", env=\"gprd\"})\n",
+          "instant": true,
+          "legendFormat": "Total Size - ",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "title": "Table Statistics (Findings)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-gitlab-gprd"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -286,6 +412,138 @@
         "type": "prometheus",
         "uid": "mimir-gitlab-gprd"
       },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-RdYlGr",
+            "seriesBy": "max"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 23,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-gitlab-gprd"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "sum by(type) (rate(pg_stat_user_tables_n_tup_ins{relname=\"vulnerability_occurrences\", env=\"gprd\"}[1h]))",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": true,
+          "legendFormat": "Inserts - ({{type}})",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-gitlab-gprd"
+          },
+          "editorMode": "code",
+          "expr": "sum by (type) (rate(pg_stat_user_tables_n_tup_upd{relname=\"vulnerability_occurrences\", env=\"gprd\"}[1h]))",
+          "instant": true,
+          "legendFormat": "Updates - {{type}}",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-gitlab-gprd"
+          },
+          "editorMode": "builder",
+          "expr": "sum by (type) (rate(pg_stat_user_tables_n_tup_del{relname=\"vulnerability_occurrence_pipelines\", env=\"gprd\"}[1h]))\n",
+          "instant": true,
+          "legendFormat": "Deletes - {{type}}",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "title": "Write Oprations (Findings)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-gitlab-gprd"
+      },
       "description": "Index scans and sequential table scans of the vulnerability_occurrence_pipelines table",
       "fieldConfig": {
         "defaults": {
@@ -399,6 +657,125 @@
       ],
       "title": "Read Operations",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-gitlab-gprd"
+      },
+      "description": "Index scans and sequential table scans of the vulnerability_occurrences table",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-RdYlGr",
+            "seriesBy": "max"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 19,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-gitlab-gprd"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "sum by (indexrelname, env) (rate(pg_stat_user_indexes_idx_scan{relname=\"vulnerability_occurrences\", env=\"gprd\"}[1h]))",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": true,
+          "legendFormat": "Index Scans - {{indexrelname}}",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-gitlab-gprd"
+          },
+          "editorMode": "code",
+          "expr": "sum by (instance) (rate(pg_stat_user_tables_seq_scan{relname=\"vulnerability_occurrences\", env=\"gprd\"}[1h]))",
+          "instant": true,
+          "legendFormat": "Sequential Scans ({{instance}})",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Read Operations (findings)",
+      "type": "timeseries"
     }
   ],
   "schemaVersion": 39,
@@ -419,6 +796,6 @@
   "timezone": "browser",
   "title": "[draft] vulnerability_occurrence_pipelines deprecation",
   "uid": "cdw3ci512nbi8c",
-  "version": 3,
+  "version": 4,
   "weekStart": ""
 }
