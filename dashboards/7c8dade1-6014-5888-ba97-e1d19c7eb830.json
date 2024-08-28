@@ -51,7 +51,7 @@
       }
     ]
   },
-  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/7676583995 at Tue Aug 27 12:35:55 UTC 2024",
+  "description": "Uploaded by https://gitlab.com/gitlab-com/runbooks/-/jobs/7684012629 at Wed Aug 28 07:57:21 UTC 2024",
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
@@ -1822,6 +1822,240 @@
           "dashes": false,
           "datasource": "$PROMETHEUS_DS",
           "decimals": 2,
+          "description": "Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 0
+          },
+          "id": 24,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": [
+              {
+                "targetBlank": true,
+                "title": "cloud_gitlab_zone SLI Error-Rate SLO Analysis",
+                "url": "/d/alerts-service_component_stage_groups_slo_error?${__url_time_range}&${__all_variables}&var-component=cloud_gitlab_zone&var-stage=$stage"
+              }
+            ]
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/6h Degradation SLO \\(5% of monthly error budget\\).*/",
+              "color": "#FF4500",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "connected",
+              "spaceLength": 10,
+              "zindex": -2
+            },
+            {
+              "alias": "/1h Outage SLO \\(2% of monthly error budget\\).*/",
+              "color": "#F2495C",
+              "dashLength": 4,
+              "dashes": true,
+              "legend": true,
+              "lines": true,
+              "linewidth": 4,
+              "nullPointMode": "connected",
+              "spaceLength": 4,
+              "zindex": -2
+            },
+            {
+              "alias": "/.*shard (apdex|error ratio|RPS)$/",
+              "color": "#E7D551"
+            },
+            {
+              "alias": "{{ type }} error ratio",
+              "color": "#E7D551",
+              "fillBelowTo": "{{ type }} error ratio avg",
+              "zindex": 3
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "sli-cloud_gitlab_zone-error-rate",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "clamp_max(\n  max_over_time(gitlab:component:stage_group:execution:error:ratio_5m{component=\"cloud_gitlab_zone\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"cloud_connector\"}[$__interval])\n,\n  1\n)\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{ type }} error ratio",
+              "refId": "A"
+            },
+            {
+              "expr": "(6 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"cloud_gitlab_zone\",monitor=\"global\"})\n)\n",
+              "format": "time_series",
+              "interval": "5m",
+              "intervalFactor": 1,
+              "legendFormat": "6h Degradation SLO (5% of monthly error budget)",
+              "refId": "B"
+            },
+            {
+              "expr": "(14.4 * avg(slo:max:events:gitlab_service_errors:ratio{component=\"cloud_gitlab_zone\",monitor=\"global\"})\n)\n",
+              "format": "time_series",
+              "interval": "5m",
+              "intervalFactor": 1,
+              "legendFormat": "1h Outage SLO (2% of monthly error budget)",
+              "refId": "C"
+            }
+          ],
+          "title": "cloud_gitlab_zone SLI Error Ratio",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "Error %",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
+          "description": "The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 8,
+            "y": 0
+          },
+          "id": 25,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*shard (apdex|error ratio|RPS)$/",
+              "color": "#E7D551"
+            }
+          ],
+          "spaceLength": 10,
+          "stableId": "sli-cloud_gitlab_zone-ops-rate",
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "avg_over_time(gitlab:component:stage_group:execution:ops:rate_5m{component=\"cloud_gitlab_zone\",environment=\"$environment\",monitor=\"global\",stage=\"$stage\",stage_group=\"cloud_connector\"}[$__interval])\n",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "{{ type }} RPS",
+              "refId": "A"
+            }
+          ],
+          "title": "cloud_gitlab_zone SLI RPS - Requests per Second",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Operations per Second",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 1,
+              "min": 0,
+              "show": false
+            }
+          ]
+        },
+        {
+          "content": "### Description\n\nAggregation of all public traffic for cloud.gitlab.com passing through Cloudflare.\n\nErrors on this SLI may indicate that the WAF has detected\nmalicious traffic and is blocking it. It may also indicate\nserious upstream failures in GitLab-operated backends.\n\n",
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 16,
+            "y": 0
+          },
+          "id": 26,
+          "mode": "markdown",
+          "title": "Details",
+          "type": "text"
+        },
+        {
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PROMETHEUS_DS",
+          "decimals": 2,
           "description": "Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
           "fill": 0,
           "fillGradient": 0,
@@ -1829,9 +2063,9 @@
             "h": 10,
             "w": 6,
             "x": 0,
-            "y": 0
+            "y": 10
           },
-          "id": 24,
+          "id": 27,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -1966,9 +2200,9 @@
             "h": 10,
             "w": 6,
             "x": 6,
-            "y": 0
+            "y": 10
           },
-          "id": 25,
+          "id": 28,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2104,9 +2338,9 @@
             "h": 10,
             "w": 6,
             "x": 12,
-            "y": 0
+            "y": 10
           },
-          "id": 26,
+          "id": 29,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2180,9 +2414,9 @@
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 0
+            "y": 10
           },
-          "id": 27,
+          "id": 30,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -2200,9 +2434,9 @@
             "h": 10,
             "w": 6,
             "x": 0,
-            "y": 10
+            "y": 20
           },
-          "id": 28,
+          "id": 31,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2337,9 +2571,9 @@
             "h": 10,
             "w": 6,
             "x": 6,
-            "y": 10
+            "y": 20
           },
-          "id": 29,
+          "id": 32,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2475,9 +2709,9 @@
             "h": 10,
             "w": 6,
             "x": 12,
-            "y": 10
+            "y": 20
           },
-          "id": 30,
+          "id": 33,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2551,9 +2785,9 @@
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 10
+            "y": 20
           },
-          "id": 31,
+          "id": 34,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -2571,9 +2805,9 @@
             "h": 10,
             "w": 6,
             "x": 0,
-            "y": 20
+            "y": 30
           },
-          "id": 32,
+          "id": 35,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2708,9 +2942,9 @@
             "h": 10,
             "w": 6,
             "x": 6,
-            "y": 20
+            "y": 30
           },
-          "id": 33,
+          "id": 36,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2846,9 +3080,9 @@
             "h": 10,
             "w": 6,
             "x": 12,
-            "y": 20
+            "y": 30
           },
-          "id": 34,
+          "id": 37,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -2922,9 +3156,9 @@
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 20
+            "y": 30
           },
-          "id": 35,
+          "id": 38,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -2942,9 +3176,9 @@
             "h": 10,
             "w": 6,
             "x": 0,
-            "y": 30
+            "y": 40
           },
-          "id": 36,
+          "id": 39,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3079,9 +3313,9 @@
             "h": 10,
             "w": 6,
             "x": 6,
-            "y": 30
+            "y": 40
           },
-          "id": 37,
+          "id": 40,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3217,9 +3451,9 @@
             "h": 10,
             "w": 6,
             "x": 12,
-            "y": 30
+            "y": 40
           },
-          "id": 38,
+          "id": 41,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -3293,9 +3527,9 @@
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 30
+            "y": 40
           },
-          "id": 39,
+          "id": 42,
           "mode": "markdown",
           "title": "Details",
           "type": "text"
@@ -3425,5 +3659,5 @@
   "timezone": "utc",
   "title": "stage-groups: Cloud Connector: group error budget detail",
   "uid": "stage-groups-detail-cloud_connector",
-  "version": 1104
+  "version": 1110
 }
