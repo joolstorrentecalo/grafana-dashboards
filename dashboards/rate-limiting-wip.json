@@ -68,11 +68,36 @@
         "type": "prometheus",
         "uid": "mimir-gitlab-ops"
       },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "id": 8,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "# Cloudflare\n\nThe edge of our network - applies IP based rate limits and other high level blocks.\n\n## Links\n\n- [Cloudflare Dashboard: Rate Limit configuration](https://dash.cloudflare.com/852e9d53d0f8adbd9205389356f2303d/gitlab.com/security/waf/rate-limiting-rules)\n  - Managed in [config-mgmt](https://ops.gitlab.net/gitlab-com/gl-infra/config-mgmt/-/blob/main/environments/gprd/cloudflare-rate-limits-waf-and-rules.tf)\n- [Cloudflare Dashboard: Firewall Events](https://dash.cloudflare.com/852e9d53d0f8adbd9205389356f2303d/gitlab.com/security/events)\n\n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "11.1.0",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-gitlab-ops"
+      },
       "description": "(request rate/60s)",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "fixedColor": "red",
+            "mode": "fixed"
           },
           "custom": {
             "axisBorderShow": false,
@@ -128,10 +153,10 @@
         ]
       },
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 8,
         "x": 0,
-        "y": 6
+        "y": 12
       },
       "id": 2,
       "interval": "60s",
@@ -163,7 +188,7 @@
           "refId": "A"
         }
       ],
-      "title": "Cloudflare rate limited responses",
+      "title": "Cloudflare rate limited response rate",
       "type": "timeseries"
     },
     {
@@ -175,7 +200,8 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "fixedColor": "red",
+            "mode": "fixed"
           },
           "custom": {
             "axisBorderShow": false,
@@ -231,10 +257,10 @@
         ]
       },
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 8,
         "x": 8,
-        "y": 6
+        "y": 12
       },
       "id": 1,
       "interval": "60s",
@@ -274,35 +300,12 @@
         "type": "prometheus",
         "uid": "mimir-gitlab-ops"
       },
-      "gridPos": {
-        "h": 14,
-        "w": 8,
-        "x": 16,
-        "y": 6
-      },
-      "id": 8,
-      "options": {
-        "code": {
-          "language": "plaintext",
-          "showLineNumbers": false,
-          "showMiniMap": false
-        },
-        "content": "# Cloudflare\n\nThe edge of our network - applies IP based rate limits and other high level blocks.\n\nTODO: \n\n- Are there other interesting rate limiting related metrics we could surface here?\n- What links would be useful?\n\n## Links\n\n- Cloudflare Dashboard\n\n",
-        "mode": "markdown"
-      },
-      "pluginVersion": "11.1.0",
-      "type": "text"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "mimir-gitlab-ops"
-      },
-      "description": "What percentage of requests are being rate limited? This currently does not work as expected. :(",
+      "description": "What percentage of requests were rate limited in this period of time?",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "fixedColor": "red",
+            "mode": "fixed"
           },
           "custom": {
             "axisBorderShow": false,
@@ -333,11 +336,19 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "dashed"
             }
           },
           "mappings": [
-
+            {
+              "options": {
+                "40": {
+                  "index": 0,
+                  "text": "WARN 40%"
+                }
+              },
+              "type": "value"
+            }
           ],
           "thresholds": {
             "mode": "absolute",
@@ -348,20 +359,21 @@
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 40
               }
             ]
-          }
+          },
+          "unit": "percent"
         },
         "overrides": [
 
         ]
       },
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 8,
-        "x": 0,
-        "y": 13
+        "x": 16,
+        "y": 12
       },
       "id": 4,
       "interval": "60s",
@@ -379,6 +391,7 @@
           "sort": "none"
         }
       },
+      "pluginVersion": "11.1.0",
       "targets": [
         {
           "datasource": {
@@ -386,7 +399,7 @@
             "uid": "mimir-gitlab-ops"
           },
           "editorMode": "code",
-          "expr": "rate(cloudflare_zone_requests_status{zone=\"gitlab.com\", status=\"429\"}[$__rate_interval])",
+          "expr": "sum (rate(cloudflare_zone_requests_status{zone=\"gitlab.com\", status!=\"\"}[$__rate_interval]))",
           "hide": true,
           "instant": false,
           "legendFormat": "__auto",
@@ -399,12 +412,12 @@
             "uid": "mimir-gitlab-ops"
           },
           "editorMode": "code",
-          "expr": "rate(cloudflare_zone_requests_status{zone=\"gitlab.com\", status!=\"\"}[$__rate_interval])",
+          "expr": "sum (rate(cloudflare_zone_requests_status{zone=\"gitlab.com\", status=\"429\"}[$__rate_interval]))",
           "hide": true,
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
-          "refId": "C"
+          "refId": "B"
         },
         {
           "datasource": {
@@ -412,10 +425,9 @@
             "type": "__expr__",
             "uid": "__expr__"
           },
-          "expression": "($A / $C) * 100",
+          "expression": "($B / $A) * 100",
           "hide": false,
-          "reducer": "count",
-          "refId": "B",
+          "refId": "Percentage of rate limited requests",
           "type": "math"
         }
       ],
@@ -428,7 +440,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 20
+        "y": 18
       },
       "id": 5,
       "panels": [
@@ -466,7 +478,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 19
       },
       "id": 6,
       "panels": [
@@ -484,7 +496,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 20
       },
       "id": 10,
       "options": {
@@ -493,7 +505,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "# Application::RackAttack\n\n\n\nTODO:\n\n- Generate metrics! We currently only have logs :(\n- Add links to logs\n\n## Links\n\n- [RackAttack Kibana logs](https://log.gprd.gitlab.net/app/discover#/view/0026cc97-6b9a-445a-a364-7197e04053a2?_g=())",
+        "content": "# Application::RackAttack\n\n\n\nTODO:\n\n- Generate metrics! We currently only have logs :(\n  - Related [issue](https://gitlab.com/gitlab-com/gl-infra/production-engineering/-/work_items/25767)\n\n## Links\n\n- [RackAttack Kibana logs](https://log.gprd.gitlab.net/app/discover#/view/0026cc97-6b9a-445a-a364-7197e04053a2?_g=())",
         "mode": "markdown"
       },
       "pluginVersion": "11.1.0",
@@ -505,7 +517,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 27
       },
       "id": 7,
       "panels": [
@@ -523,7 +535,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 28
       },
       "id": 11,
       "options": {
@@ -532,7 +544,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "# Application::ApplicationRateLimiter\n\nIntelligent application rate limits\n\nTODO:\n\n- Generate metrics! We currently only have logs :(\n- Add links to logs\n\n## Links\n\n- [ApplicationRateLimiter Kibana Logs](https://log.gprd.gitlab.net/app/discover#/view/2d2cf10e-b22a-4c07-bbda-45bb665c31ee?_g=()) ",
+        "content": "# Application::ApplicationRateLimiter\n\nIntelligent application rate limits\n\nTODO:\n\n- Generate metrics! We currently only have logs :(\n  - Related [issue](https://gitlab.com/gitlab-com/gl-infra/production-engineering/-/work_items/25767)\n\n## Links\n\n- [ApplicationRateLimiter Kibana Logs](https://log.gprd.gitlab.net/app/discover#/view/2d2cf10e-b22a-4c07-bbda-45bb665c31ee?_g=()) ",
         "mode": "markdown"
       },
       "pluginVersion": "11.1.0",
@@ -558,6 +570,6 @@
   "timezone": "browser",
   "title": "Rate Limiting (WIP)",
   "uid": "bdw6yx0ukk7pce",
-  "version": 9,
+  "version": 14,
   "weekStart": ""
 }
