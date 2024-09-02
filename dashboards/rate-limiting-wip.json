@@ -69,8 +69,8 @@
         "uid": "mimir-gitlab-ops"
       },
       "gridPos": {
-        "h": 6,
-        "w": 24,
+        "h": 12,
+        "w": 8,
         "x": 0,
         "y": 6
       },
@@ -155,8 +155,8 @@
       "gridPos": {
         "h": 6,
         "w": 8,
-        "x": 0,
-        "y": 12
+        "x": 8,
+        "y": 6
       },
       "id": 2,
       "interval": "60s",
@@ -189,6 +189,145 @@
         }
       ],
       "title": "Cloudflare rate limited response rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir-gitlab-ops"
+      },
+      "description": "What percentage of requests were rate limited in this period of time?",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "fixed"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "dashed"
+            }
+          },
+          "mappings": [
+            {
+              "options": {
+                "40": {
+                  "index": 0,
+                  "text": "WARN 40%"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 40
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 16,
+        "y": 6
+      },
+      "id": 4,
+      "interval": "60s",
+      "options": {
+        "legend": {
+          "calcs": [
+
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-gitlab-ops"
+          },
+          "editorMode": "code",
+          "expr": "sum (rate(cloudflare_zone_requests_status{zone=\"gitlab.com\", status!=\"\"}[$__rate_interval]))",
+          "hide": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir-gitlab-ops"
+          },
+          "editorMode": "code",
+          "expr": "sum (rate(cloudflare_zone_requests_status{zone=\"gitlab.com\", status=\"429\"}[$__rate_interval]))",
+          "hide": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "name": "Expression",
+            "type": "__expr__",
+            "uid": "__expr__"
+          },
+          "expression": "($B / $A) * 100",
+          "hide": false,
+          "refId": "Percentage of rate limited requests",
+          "type": "math"
+        }
+      ],
+      "title": "Cloudflare percentage of rate limited requests",
       "type": "timeseries"
     },
     {
@@ -300,12 +439,12 @@
         "type": "prometheus",
         "uid": "mimir-gitlab-ops"
       },
-      "description": "What percentage of requests were rate limited in this period of time?",
+      "description": "request rate/60s - indicates what protection is blocking requests.",
       "fieldConfig": {
         "defaults": {
           "color": {
             "fixedColor": "red",
-            "mode": "fixed"
+            "mode": "palette-classic"
           },
           "custom": {
             "axisBorderShow": false,
@@ -336,19 +475,11 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "dashed"
+              "mode": "off"
             }
           },
           "mappings": [
-            {
-              "options": {
-                "40": {
-                  "index": 0,
-                  "text": "WARN 40%"
-                }
-              },
-              "type": "value"
-            }
+
           ],
           "thresholds": {
             "mode": "absolute",
@@ -359,11 +490,10 @@
               },
               {
                 "color": "red",
-                "value": 40
+                "value": 80
               }
             ]
-          },
-          "unit": "percent"
+          }
         },
         "overrides": [
 
@@ -375,7 +505,7 @@
         "x": 16,
         "y": 12
       },
-      "id": 4,
+      "id": 15,
       "interval": "60s",
       "options": {
         "legend": {
@@ -391,7 +521,6 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.1.0",
       "targets": [
         {
           "datasource": {
@@ -399,39 +528,14 @@
             "uid": "mimir-gitlab-ops"
           },
           "editorMode": "code",
-          "expr": "sum (rate(cloudflare_zone_requests_status{zone=\"gitlab.com\", status!=\"\"}[$__rate_interval]))",
-          "hide": true,
+          "expr": "sum by (source) (rate(cloudflare_zone_firewall_events_count{zone=\"gitlab.com\", action=\"block\"}[$__rate_interval]))",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mimir-gitlab-ops"
-          },
-          "editorMode": "code",
-          "expr": "sum (rate(cloudflare_zone_requests_status{zone=\"gitlab.com\", status=\"429\"}[$__rate_interval]))",
-          "hide": true,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "name": "Expression",
-            "type": "__expr__",
-            "uid": "__expr__"
-          },
-          "expression": "($B / $A) * 100",
-          "hide": false,
-          "refId": "Percentage of rate limited requests",
-          "type": "math"
         }
       ],
-      "title": "Cloudflare percentage of rate limited requests",
+      "title": "Cloudflare block events by source",
       "type": "timeseries"
     },
     {
@@ -734,7 +838,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "# Application::RackAttack\n\n\n\nTODO:\n\n- Generate metrics! We currently only have logs :(\n  - Related [issue](https://gitlab.com/gitlab-com/gl-infra/production-engineering/-/work_items/25767)\n\n## Links\n\n- [RackAttack Kibana logs](https://log.gprd.gitlab.net/app/discover#/view/0026cc97-6b9a-445a-a364-7197e04053a2?_g=())",
+        "content": "# Application::RackAttack\n\n\n\nTODO:\n\n- Generate metrics! We currently only have logs :(\n  - Related [issue](https://gitlab.com/gitlab-com/gl-infra/production-engineering/-/work_items/25767)\n\n## Links\n\n- [RackAttack Kibana logs](https://log.gprd.gitlab.net/app/discover#/view/0026cc97-6b9a-445a-a364-7197e04053a2?_g=())\n- [Support Rate Limit Kibana dashboard](https://log.gprd.gitlab.net/app/r/s/AJDZC)",
         "mode": "markdown"
       },
       "pluginVersion": "11.1.0",
@@ -799,6 +903,6 @@
   "timezone": "browser",
   "title": "Rate Limiting (WIP)",
   "uid": "bdw6yx0ukk7pce",
-  "version": 16,
+  "version": 18,
   "weekStart": ""
 }
