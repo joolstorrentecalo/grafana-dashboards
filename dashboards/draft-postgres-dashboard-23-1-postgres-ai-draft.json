@@ -28,7 +28,7 @@
         "type": "prometheus",
         "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
       },
-      "description": "ASH (a.k.a. Performance Insights or Wait Event Analysis) -- DRAFT",
+      "description": "ASH (a.k.a. Performance Insights or Wait Event Analysis) -- DRAFT\n\n\nTODO add link to detailed wait events dashboard",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -84,7 +84,109 @@
           }
         },
         "overrides": [
-
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "IO"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "LWLock"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "IPC"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Client"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Lock"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "BufferPin",
+                  "IO",
+                  "IPC",
+                  "LWLock",
+                  "Lock",
+                  "Timeout"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
         ]
       },
       "gridPos": {
@@ -97,11 +199,15 @@
       "options": {
         "legend": {
           "calcs": [
-
+            "max",
+            "min",
+            "mean"
           ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Mean",
+          "sortDesc": true
         },
         "tooltip": {
           "mode": "single",
@@ -583,7 +689,30 @@
           "unit": "Bps"
         },
         "overrides": [
-
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "sdb read rate"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
         ]
       },
       "gridPos": {
@@ -737,7 +866,30 @@
           "unit": "Bps"
         },
         "overrides": [
-
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "sdb read rate"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
         ]
       },
       "gridPos": {
@@ -791,7 +943,7 @@
           "hide": false,
           "interval": "15s",
           "intervalFactor": 1,
-          "legendFormat": "{{device}} read rate",
+          "legendFormat": "{{device}} write rate",
           "metric": "",
           "policy": "default",
           "range": true,
@@ -819,12 +971,27 @@
           ]
         }
       ],
-      "title": "Disk Read Throughput (bytes/sec)",
+      "title": "Disk Write Throughput (bytes/sec)",
       "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 27
+      },
+      "id": 8,
+      "panels": [
+
+      ],
+      "title": "Postgres metrics",
+      "type": "row"
     }
   ],
-  "refresh": "auto",
-  "schemaVersion": 40,
+  "refresh": "5m",
+  "schemaVersion": 39,
   "tags": [
     "unmanaged"
   ],
@@ -918,6 +1085,10 @@
           "text": "patroni-main-v14-01-db-gprd.c.gitlab-production.internal",
           "value": "patroni-main-v14-01-db-gprd.c.gitlab-production.internal"
         },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+        },
         "definition": "label_values(node_exporter_build_info{tier=\"db\", type=\"$type\", environment=\"$environment\"},fqdn)",
         "description": "\tlabel_values(up{environment=\"$environment\",tier=\"db\",type=\"$type\"},fqdn)",
         "hide": 0,
@@ -949,6 +1120,6 @@
   "timezone": "browser",
   "title": "[Draft] Postgres Dashboard #1 (Postgres.ai draft)",
   "uid": "bdvmbqlu8thxce",
-  "version": 18,
+  "version": 23,
   "weekStart": ""
 }
