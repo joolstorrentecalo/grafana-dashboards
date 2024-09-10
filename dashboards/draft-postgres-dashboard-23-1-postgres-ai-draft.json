@@ -159,18 +159,46 @@
             ]
           },
           {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU count"
+            },
+            "properties": [
+              {
+                "id": "custom.drawStyle",
+                "value": "line"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    10,
+                    10
+                  ],
+                  "fill": "dash"
+                }
+              }
+            ]
+          },
+          {
             "__systemRef": "hideSeriesFrom",
             "matcher": {
               "id": "byNames",
               "options": {
                 "mode": "exclude",
                 "names": [
-                  "BufferPin",
                   "IO",
                   "IPC",
                   "LWLock",
                   "Lock",
-                  "Timeout"
+                  "Timeout",
+                  "CPU count"
                 ],
                 "prefix": "All except:",
                 "readOnly": true
@@ -226,6 +254,19 @@
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "editorMode": "code",
+          "expr": "128",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "CPU count",
+          "range": true,
+          "refId": "B"
         }
       ],
       "title": "Active Session History",
@@ -430,7 +471,31 @@
           "unit": "short"
         },
         "overrides": [
-
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU count"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "text",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    0,
+                    10
+                  ],
+                  "fill": "dot"
+                }
+              }
+            ]
+          }
         ]
       },
       "gridPos": {
@@ -594,6 +659,59 @@
           "policy": "default",
           "range": true,
           "refId": "C",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "step": 15,
+          "tags": [
+
+          ]
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${prometheus}"
+          },
+          "dsType": "influxdb",
+          "editorMode": "code",
+          "expr": "count without(cpu, mode) (node_cpu_seconds_total{mode=\"idle\",fqdn=\"$fqdn\"})",
+          "format": "time_series",
+          "groupBy": [
+            {
+              "params": [
+                "$interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "CPU count",
+          "metric": "node_load1",
+          "policy": "default",
+          "range": true,
+          "refId": "D",
           "resultFormat": "time_series",
           "select": [
             [
@@ -1208,15 +1326,17 @@
       "options": {
         "legend": {
           "calcs": [
-
+            "max",
+            "min",
+            "mean"
           ],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "bottom",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi",
-          "sort": "none"
+          "sort": "desc"
         }
       },
       "targets": [
@@ -1226,9 +1346,9 @@
             "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
           },
           "editorMode": "code",
-          "expr": "sum (irate(pg_stat_statements_calls{fqdn=\"$fqdn\"}[1m]))",
+          "expr": "sum by (queryid) (irate(pg_stat_statements_calls{fqdn=\"$fqdn\"}[1m]))",
           "instant": false,
-          "legendFormat": "calls ",
+          "legendFormat": "{{queryid}} ",
           "range": true,
           "refId": "A"
         }
@@ -1305,7 +1425,7 @@
         "x": 0,
         "y": 36
       },
-      "id": 10,
+      "id": 12,
       "options": {
         "legend": {
           "calcs": [
@@ -1329,27 +1449,119 @@
             "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
           },
           "editorMode": "code",
-          "expr": "sum (irate(pg_stat_database_xact_commit{fqdn=\"$fqdn\"}[1m]))",
+          "expr": "sum by (type) (irate(postgresql_errors_total{fqdn=\"$fqdn\"}[1m]))",
           "instant": false,
-          "legendFormat": "commits",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A"
+        }
+      ],
+      "title": "Errors per second",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "seconds",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 36,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
         },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 36
+      },
+      "id": 13,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "min",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "sortBy": "Max",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
           },
           "editorMode": "code",
-          "expr": "sum (irate(pg_stat_database_xact_rollback{fqdn=\"$fqdn\"}[1m]))",
-          "hide": false,
+          "expr": "sum by (queryid) (irate(pg_stat_statements_seconds_total{fqdn=\"$fqdn\"}[1m]))",
           "instant": false,
-          "legendFormat": "rollbacks",
+          "legendFormat": "{{queryid}} ",
           "range": true,
-          "refId": "B"
+          "refId": "A"
         }
       ],
-      "title": "TPS( commits vs rollbacks)",
+      "title": "AVG Query total (execution + planning) time",
       "type": "timeseries"
     },
     {
@@ -1412,39 +1624,16 @@
           }
         },
         "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "patroni"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
+
         ]
       },
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 12,
-        "y": 36
+        "x": 0,
+        "y": 44
       },
-      "id": 12,
+      "id": 10,
       "options": {
         "legend": {
           "calcs": [
@@ -1468,14 +1657,27 @@
             "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
           },
           "editorMode": "code",
-          "expr": "sum by (type) (irate(postgresql_errors_total{fqdn=\"$fqdn\"}[1m]))",
+          "expr": "sum (irate(pg_stat_database_xact_commit{fqdn=\"$fqdn\"}[1m]))",
           "instant": false,
-          "legendFormat": "__auto",
+          "legendFormat": "commits",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "editorMode": "code",
+          "expr": "sum (irate(pg_stat_database_xact_rollback{fqdn=\"$fqdn\"}[1m]))",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "rollbacks",
+          "range": true,
+          "refId": "B"
         }
       ],
-      "title": "Errors per second",
+      "title": "TPS( commits vs rollbacks)",
       "type": "timeseries"
     }
   ],
@@ -1609,6 +1811,6 @@
   "timezone": "browser",
   "title": "[Draft] Postgres Dashboard #1 (Postgres.ai draft)",
   "uid": "bdvmbqlu8thxce",
-  "version": 32,
+  "version": 39,
   "weekStart": ""
 }
