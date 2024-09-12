@@ -28,7 +28,6 @@
         "type": "prometheus",
         "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
       },
-      "description": "show pg_stat_statements with sorting by columns option",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -63,12 +62,12 @@
         ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 7,
         "w": 24,
         "x": 0,
         "y": 0
       },
-      "id": 11,
+      "id": 21,
       "options": {
         "cellHeight": "sm",
         "footer": {
@@ -79,7 +78,14 @@
           ],
           "show": false
         },
-        "showHeader": true
+        "frameIndex": 1,
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Calls"
+          }
+        ]
       },
       "pluginVersion": "11.1.0",
       "targets": [
@@ -89,15 +95,185 @@
             "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
           },
           "editorMode": "code",
-          "expr": "irate(pg_stat_statements_calls{fqdn=\"$fqdn\"}[1m])",
+          "exemplar": false,
+          "expr": "pg_stat_statements_calls{fqdn=\"$fqdn\"}",
           "format": "table",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
-          "refId": "A"
+          "refId": "calls"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "pg_stat_statements_seconds_total{fqdn=\"$fqdn\"}",
+          "format": "table",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "execution_time"
         }
       ],
-      "title": "pg_stat_statements table representation ",
+      "title": "pg_stat_statements",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value #A": {
+                "aggregations": [
+                  "diff"
+                ],
+                "operation": "aggregate"
+              },
+              "Value #B": {
+                "aggregations": [
+                  "diff"
+                ],
+                "operation": "aggregate"
+              },
+              "Value #calls": {
+                "aggregations": [
+                  "diff"
+                ],
+                "operation": "aggregate"
+              },
+              "Value #execution_time": {
+                "aggregations": [
+                  "diff"
+                ],
+                "operation": "aggregate"
+              },
+              "datname": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "queryid": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "queryid",
+            "mode": "inner"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "datname 2": true
+            },
+            "includeByName": {
+            },
+            "indexByName": {
+            },
+            "renameByName": {
+              "Value #calls (diff)": "Calls",
+              "Value #execution_time (diff)": "Total execution time(s)",
+              "datname 1": "Database ",
+              "queryid": "QueryID"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 7
+      },
+      "id": 22,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "frameIndex": 0,
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Value #calls (diff)"
+          }
+        ]
+      },
+      "pluginVersion": "11.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "pg_stat_statements_calls{fqdn=\"$fqdn\"}",
+          "format": "table",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "calls"
+        }
+      ],
+      "title": "pg_stat_statements",
       "type": "table"
     },
     {
@@ -143,9 +319,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 8
+        "y": 14
       },
-      "id": 13,
+      "id": 18,
       "options": {
         "cellHeight": "sm",
         "footer": {
@@ -174,7 +350,7 @@
           "refId": "A"
         }
       ],
-      "title": "Top N by total time",
+      "title": "Top N by blocks write",
       "type": "table"
     },
     {
@@ -220,7 +396,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 8
+        "y": 14
       },
       "id": 12,
       "options": {
@@ -297,9 +473,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 16
+        "y": 22
       },
-      "id": 17,
+      "id": 13,
       "options": {
         "cellHeight": "sm",
         "footer": {
@@ -328,7 +504,7 @@
           "refId": "A"
         }
       ],
-      "title": "Top N by blocks read",
+      "title": "Top N by total time",
       "type": "table"
     },
     {
@@ -374,161 +550,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 16
-      },
-      "id": 18,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true
-      },
-      "pluginVersion": "11.1.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
-          },
-          "editorMode": "code",
-          "expr": "irate(pg_stat_statements_calls{fqdn=\"$fqdn\"}[1m])",
-          "format": "table",
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Top N by blocks write",
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
-      },
-      "description": "show pg_stat_statements with sorting by columns option",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 24
-      },
-      "id": 15,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true
-      },
-      "pluginVersion": "11.1.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
-          },
-          "editorMode": "code",
-          "expr": "irate(pg_stat_statements_calls{fqdn=\"$fqdn\"}[1m])",
-          "format": "table",
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Top N by WAL generated ",
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
-      },
-      "description": "show pg_stat_statements with sorting by columns option",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 24
+        "y": 22
       },
       "id": 16,
       "options": {
@@ -587,8 +609,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -605,9 +626,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 32
+        "y": 30
       },
-      "id": 19,
+      "id": 17,
       "options": {
         "cellHeight": "sm",
         "footer": {
@@ -636,7 +657,7 @@
           "refId": "A"
         }
       ],
-      "title": "Top N by CPU time",
+      "title": "Top N by blocks read",
       "type": "table"
     },
     {
@@ -664,8 +685,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -682,7 +702,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 32
+        "y": 30
       },
       "id": 20,
       "options": {
@@ -741,8 +761,83 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 38
+      },
+      "id": 15,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "11.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "editorMode": "code",
+          "expr": "irate(pg_stat_statements_calls{fqdn=\"$fqdn\"}[1m])",
+          "format": "table",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Top N by WAL generated ",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+      },
+      "description": "show pg_stat_statements with sorting by columns option",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
               },
               {
                 "color": "red",
@@ -759,7 +854,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 40
+        "y": 38
       },
       "id": 14,
       "options": {
@@ -791,6 +886,82 @@
         }
       ],
       "title": "Top N by temp files ",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+      },
+      "description": "show pg_stat_statements with sorting by columns option",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 46
+      },
+      "id": 19,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "11.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "editorMode": "code",
+          "expr": "irate(pg_stat_statements_calls{fqdn=\"$fqdn\"}[1m])",
+          "format": "table",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Top N by CPU time",
       "type": "table"
     }
   ],
@@ -911,11 +1082,24 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+        },
+        "filters": [
+
+        ],
+        "hide": 0,
+        "name": "Filters",
+        "skipUrlSync": false,
+        "type": "adhoc"
       }
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {
@@ -923,6 +1107,6 @@
   "timezone": "browser",
   "title": "[Draft] Postgres aggregated query performance analysis",
   "uid": "edxi03vbar9q8a",
-  "version": 5,
+  "version": 18,
   "weekStart": ""
 }
