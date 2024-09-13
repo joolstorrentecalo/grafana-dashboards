@@ -82,7 +82,7 @@
         "showHeader": true,
         "sortBy": [
           {
-            "desc": false,
+            "desc": true,
             "displayName": "Calls"
           }
         ]
@@ -125,6 +125,12 @@
           "id": "groupBy",
           "options": {
             "fields": {
+              "Time": {
+                "aggregations": [
+                  "diff"
+                ],
+                "operation": "aggregate"
+              },
               "Value #A": {
                 "aggregations": [
                   "diff"
@@ -175,6 +181,7 @@
           "id": "organize",
           "options": {
             "excludeByName": {
+              "Time (diff) 2": true,
               "datname 2": true
             },
             "includeByName": {
@@ -182,6 +189,7 @@
             "indexByName": {
             },
             "renameByName": {
+              "Time (diff) 1": "time(s)",
               "Value #calls (diff)": "Calls",
               "Value #execution_time (diff)": "Total execution time(s)",
               "datname 1": "Database ",
@@ -247,12 +255,12 @@
           ],
           "show": false
         },
-        "frameIndex": 0,
+        "frameIndex": 1,
         "showHeader": true,
         "sortBy": [
           {
-            "desc": false,
-            "displayName": "Value #calls (diff)"
+            "desc": true,
+            "displayName": "Calls"
           }
         ]
       },
@@ -271,9 +279,129 @@
           "legendFormat": "__auto",
           "range": true,
           "refId": "calls"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "pg_stat_statements_seconds_total{fqdn=\"$fqdn\"}",
+          "format": "table",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "execution_time"
         }
       ],
       "title": "pg_stat_statements",
+      "transformations": [
+        {
+          "filter": {
+            "id": "byRefId",
+            "options": "calls"
+          },
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Time": {
+                "aggregations": [
+                  "diff"
+                ],
+                "operation": "aggregate"
+              },
+              "Value #A": {
+                "aggregations": [
+                  "diff"
+                ],
+                "operation": "aggregate"
+              },
+              "Value #B": {
+                "aggregations": [
+                  "diff"
+                ],
+                "operation": "aggregate"
+              },
+              "Value #calls": {
+                "aggregations": [
+                  "diff"
+                ],
+                "operation": "aggregate"
+              },
+              "Value #execution_time": {
+                "aggregations": [
+                  "diff"
+                ],
+                "operation": "aggregate"
+              },
+              "datname": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              },
+              "queryid": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "filter": {
+            "id": "byRefId",
+            "options": "execution_time"
+          },
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value #execution_time": {
+                "aggregations": [
+                  "diff"
+                ],
+                "operation": "aggregate"
+              },
+              "queryid": {
+                "aggregations": [
+
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "queryid",
+            "mode": "inner"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time (diff) 2": true,
+              "datname 2": true
+            },
+            "includeByName": {
+            },
+            "indexByName": {
+            },
+            "renameByName": {
+              "Time (diff) 1": "time(s)",
+              "Value #calls (diff)": "Calls",
+              "Value #execution_time (diff)": "Total execution time(s)",
+              "datname 1": "Database ",
+              "queryid": "QueryID"
+            }
+          }
+        }
+      ],
       "type": "table"
     },
     {
@@ -1055,7 +1183,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "patroni-main-v14-03-db-gprd.c.gitlab-production.internal",
           "value": "patroni-main-v14-03-db-gprd.c.gitlab-production.internal"
         },
@@ -1099,7 +1227,7 @@
     ]
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {
@@ -1107,6 +1235,6 @@
   "timezone": "browser",
   "title": "[Draft] Postgres aggregated query performance analysis",
   "uid": "edxi03vbar9q8a",
-  "version": 18,
+  "version": 24,
   "weekStart": ""
 }
