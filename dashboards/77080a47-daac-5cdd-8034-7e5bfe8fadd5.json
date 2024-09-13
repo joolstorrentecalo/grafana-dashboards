@@ -205,6 +205,7 @@
         "type": "prometheus",
         "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
       },
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -244,6 +245,195 @@
         "x": 0,
         "y": 7
       },
+      "id": 23,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "frameIndex": 7,
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Value #wal_records %"
+          }
+        ]
+      },
+      "pluginVersion": "11.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by (datname, queryid) (delta(pg_stat_statements_calls{fqdn=\"$fqdn\"}[$__range]))",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "calls"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "(sum(\n  delta(pg_stat_statements_calls{fqdn=\"$fqdn\"}[$__range])\n) by (datname,queryid))  / $__range_s",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "avg calls/s"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by (datname, queryid) (delta(pg_stat_statements_seconds_total{fqdn=\"$fqdn\"}[$__range]))",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "total_time(s)"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "(sum by (datname, queryid) (delta(pg_stat_statements_seconds_total{fqdn=\"$fqdn\"}[$__range]))) / $__range_s",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "total_time(s)/s"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by (datname, queryid) (delta(pg_stat_statements_rows{fqdn=\"$fqdn\"}[$__range]))",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "rows"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by (datname, queryid) (delta(pg_stat_statements_wal_records{fqdn=\"$fqdn\"}[$__range]))",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "wal_records"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "(sum by (datname, queryid) (delta(pg_stat_statements_wal_records{fqdn=\"$fqdn\"}[$__range]))) / $__range_s",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "wal_records/s"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(\n  increase(pg_stat_statements_wal_records{fqdn=\"$fqdn\"}[$__range])\n) by (queryid,datname)\n/ ignoring(queryid,datname) group_left\nsum(\n  increase(pg_stat_statements_wal_records{fqdn=\"$fqdn\"}[$__range])\n) by ()",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "wal_records %"
+        }
+      ],
+      "title": "Query Statistics (pg_stat_statements)  from ${__from:date:YYYY-MM-DD HH:mm:ss}   to ${__to:date:YYYY-MM-DD HH:mm:ss}",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [
+
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
       "id": 22,
       "options": {
         "cellHeight": "sm",
@@ -279,6 +469,21 @@
           "legendFormat": "__auto",
           "range": true,
           "refId": "calls"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by () (pg_stat_statements_calls{fqdn=\"$fqdn\"})",
+          "format": "table",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "call_total"
         },
         {
           "datasource": {
@@ -400,6 +605,23 @@
               "queryid": "QueryID"
             }
           }
+        },
+        {
+          "filter": {
+            "id": "byRefId",
+            "options": "call_total"
+          },
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value #call_total": {
+                "aggregations": [
+                  "diff"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
         }
       ],
       "type": "table"
@@ -447,7 +669,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 14
+        "y": 21
       },
       "id": 18,
       "options": {
@@ -524,7 +746,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 14
+        "y": 21
       },
       "id": 12,
       "options": {
@@ -583,8 +805,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -601,7 +822,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 22
+        "y": 29
       },
       "id": 13,
       "options": {
@@ -660,8 +881,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -678,7 +898,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 22
+        "y": 29
       },
       "id": 16,
       "options": {
@@ -754,7 +974,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 30
+        "y": 37
       },
       "id": 17,
       "options": {
@@ -830,7 +1050,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 30
+        "y": 37
       },
       "id": 20,
       "options": {
@@ -906,7 +1126,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 38
+        "y": 45
       },
       "id": 15,
       "options": {
@@ -982,7 +1202,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 38
+        "y": 45
       },
       "id": 14,
       "options": {
@@ -1058,7 +1278,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 46
+        "y": 53
       },
       "id": 19,
       "options": {
@@ -1183,7 +1403,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "patroni-main-v14-03-db-gprd.c.gitlab-production.internal",
           "value": "patroni-main-v14-03-db-gprd.c.gitlab-production.internal"
         },
@@ -1235,6 +1455,6 @@
   "timezone": "browser",
   "title": "[Draft] Postgres aggregated query performance analysis",
   "uid": "edxi03vbar9q8a",
-  "version": 24,
+  "version": 34,
   "weekStart": ""
 }
