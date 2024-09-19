@@ -88,7 +88,7 @@
       },
       "gridPos": {
         "h": 15,
-        "w": 14,
+        "w": 24,
         "x": 0,
         "y": 0
       },
@@ -116,12 +116,12 @@
           "editorMode": "code",
           "expr": "last_over_time(gitlab_deployment_health:service{env=\"gprd\"}[5m])",
           "instant": false,
-          "legendFormat": "__auto",
+          "legendFormat": "{{type}}-{{env}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Panel Title",
+      "title": "Existing deployment health metrics",
       "type": "timeseries"
     },
     {
@@ -191,8 +191,8 @@
               "options": {
                 "mode": "exclude",
                 "names": [
-                  "apdex",
-                  "{__tenant_id__=\"gitlab-gprd\", env=\"gprd\", environment=\"gprd\", monitor=\"global\", stage=\"main\", tier=\"sv\", type=\"web\"}"
+                  "errors orig",
+                  "3"
                 ],
                 "prefix": "All except:",
                 "readOnly": true
@@ -213,7 +213,7 @@
       },
       "gridPos": {
         "h": 15,
-        "w": 14,
+        "w": 24,
         "x": 0,
         "y": 15
       },
@@ -239,7 +239,8 @@
             "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
           },
           "editorMode": "code",
-          "expr": "abs(\n  avg_over_time(gitlab_service_apdex:success:rate_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}[10m])\n  - \n  avg_over_time(gitlab_service_apdex:success:rate_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}[48h])\n)\n/ stddev_over_time(gitlab_service_apdex:success:rate_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}[48h])\n",
+          "expr": "abs(\n  avg_over_time(gitlab_service_apdex:ratio_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}[10m])\n  - \n  avg_over_time(gitlab_service_apdex:ratio_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}[48h])\n)\n/ stddev_over_time(gitlab_service_apdex:ratio_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}[48h])\n",
+          "hide": false,
           "instant": false,
           "legendFormat": "apdex",
           "range": true,
@@ -251,7 +252,7 @@
             "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
           },
           "editorMode": "code",
-          "expr": "abs(\n  avg_over_time(gitlab_service_errors:rate_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}[10m])\n  - \n  avg_over_time(gitlab_service_errors:rate_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}[48h])\n)\n/ stddev_over_time(gitlab_service_errors:rate_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}[48h])\n",
+          "expr": "abs(\n  gitlab_service_errors:rate_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}\n  - \n  gitlab_service_errors:rate_3d{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}\n)\n/ stddev_over_time(gitlab_service_errors:rate_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}[1w])",
           "hide": false,
           "instant": false,
           "legendFormat": "errors",
@@ -293,7 +294,7 @@
           "expr": "abs(\n  gitlab_service_apdex:success:rate_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}\n  - \n  gitlab_service_apdex:success:rate_3d{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}\n)\n/ gitlab_service_apdex:success:rate:stddev_over_time_1w{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}",
           "hide": false,
           "instant": false,
-          "legendFormat": "__auto",
+          "legendFormat": "apdex:success",
           "range": true,
           "refId": "E"
         },
@@ -303,19 +304,32 @@
             "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
           },
           "editorMode": "code",
-          "expr": "gitlab_service_apdex:success:rate_3d",
+          "expr": "gitlab_service_apdex:ratio_5m",
           "hide": true,
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
           "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "editorMode": "code",
+          "expr": "abs(\n  avg_over_time(gitlab_service_errors:rate_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}[10m])\n  - \n  avg_over_time(gitlab_service_errors:rate_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}[48h])\n)\n/ stddev_over_time(gitlab_service_errors:rate_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}[48h])\n",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "errors orig",
+          "range": true,
+          "refId": "G"
         }
       ],
-      "title": "Panel Title",
+      "title": "Z-score metrics of apdex and errors",
       "type": "timeseries"
     }
   ],
-  "schemaVersion": 40,
+  "schemaVersion": 39,
   "tags": [
     "unmanaged"
   ],
@@ -326,6 +340,10 @@
           "selected": false,
           "text": "ai-assisted",
           "value": "ai-assisted"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
         },
         "definition": "label_values(gitlab_service_apdex:ratio_5m,type)",
         "hide": 0,
@@ -358,6 +376,6 @@
   "timezone": "",
   "title": "rpereira2 - Z-score metric playground",
   "uid": "bdyaj2df37gu8e",
-  "version": 6,
+  "version": 11,
   "weekStart": ""
 }
