@@ -17,7 +17,7 @@
   },
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "graphTooltip": 1,
+  "graphTooltip": 0,
   "id": null,
   "links": [
 
@@ -87,8 +87,8 @@
         ]
       },
       "gridPos": {
-        "h": 8,
-        "w": 12,
+        "h": 15,
+        "w": 14,
         "x": 0,
         "y": 0
       },
@@ -114,115 +114,14 @@
             "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
           },
           "editorMode": "code",
-          "expr": "quantile by (shard, type, env) (0.95, (sum by (pod, pid, env, shard, type) (avg_over_time(sidekiq_running_jobs{env=\"gprd\", shard=\"catchall\", type=\"sidekiq\"}[1m])) / avg by (pod, pid, env, shard, type) (sidekiq_concurrency{env=\"gprd\", shard=\"catchall\", type=\"sidekiq\"}))) ",
+          "expr": "last_over_time(gitlab_deployment_health:service{env=\"gprd\"}[5m])",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Catchall running jobs concurrency",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [
-
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 0
-      },
-      "id": 3,
-      "options": {
-        "legend": {
-          "calcs": [
-
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
-          },
-          "editorMode": "code",
-          "expr": "quantile by(env, namespace, container, cluster) (\n            0.95,\n            sum by (env, namespace, pod, container, cluster) (\n              rate(container_cpu_usage_seconds_total{env=\"gprd\", container!=\"\", container!=\"POD\", namespace='gitlab', pod=~'gitlab-sidekiq-catchall-.+'}[1m])\n            )\n            /\n            sum by(env, namespace, pod, container, cluster) (\n              kube_pod_container_resource_requests{env=\"gprd\", resource=\"cpu\", namespace='gitlab', pod=~'gitlab-sidekiq-catchall-.+'}\n            )\n      )",
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "CPU utilisation",
+      "title": "Panel Title",
       "type": "timeseries"
     },
     {
@@ -286,24 +185,37 @@
         },
         "overrides": [
           {
+            "__systemRef": "hideSeriesFrom",
             "matcher": {
-              "id": "byName",
-              "options": "{environment=\"gprd\", shard=\"catchall\", stage=\"main\", tier=\"sv\", type=\"sidekiq\"}"
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "apdex",
+                  "{__tenant_id__=\"gitlab-gprd\", env=\"gprd\", environment=\"gprd\", monitor=\"global\", stage=\"main\", tier=\"sv\", type=\"web\"}"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
             },
             "properties": [
               {
-                "id": "custom.axisPlacement",
-                "value": "right"
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
               }
             ]
           }
         ]
       },
       "gridPos": {
-        "h": 18,
-        "w": 24,
+        "h": 15,
+        "w": 14,
         "x": 0,
-        "y": 8
+        "y": 15
       },
       "id": 1,
       "options": {
@@ -327,9 +239,9 @@
             "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
           },
           "editorMode": "code",
-          "expr": "clamp_min(\n  clamp_max(\n    quantile by(environment, tier, type, stage, shard) (\n  0.99,\n  clamp_min(\n    clamp_max(\n      rate(ruby_process_cpu_seconds_total{env=\"gprd\",stage=\"main\",type=\"sidekiq\", shard=\"catchall\"}[1h])\n      ,\n      1)\n  ,\n  0)\n)\n\n  ,1)\n,0)\n",
+          "expr": "abs(\n  avg_over_time(gitlab_service_apdex:success:rate_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}[10m])\n  - \n  avg_over_time(gitlab_service_apdex:success:rate_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}[48h])\n)\n/ stddev_over_time(gitlab_service_apdex:success:rate_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}[48h])\n",
           "instant": false,
-          "legendFormat": "__auto",
+          "legendFormat": "apdex",
           "range": true,
           "refId": "A"
         },
@@ -339,36 +251,113 @@
             "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
           },
           "editorMode": "code",
-          "expr": "kube_horizontalpodautoscaler_status_current_replicas{horizontalpodautoscaler=\"keda-hpa-gitlab-sidekiq-catchall-v2\"}",
+          "expr": "abs(\n  avg_over_time(gitlab_service_errors:rate_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}[10m])\n  - \n  avg_over_time(gitlab_service_errors:rate_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}[48h])\n)\n/ stddev_over_time(gitlab_service_errors:rate_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}[48h])\n",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "errors",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "editorMode": "code",
+          "expr": "abs(\n  avg_over_time(gitlab_service_ops:rate_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}[10m])\n  - \n  avg_over_time(gitlab_service_ops:rate_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}[48h])\n)\n/ stddev_over_time(gitlab_service_ops:rate_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}[48h])\n",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "ops",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "editorMode": "code",
+          "expr": "3",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
-          "refId": "B"
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "editorMode": "code",
+          "expr": "abs(\n  gitlab_service_apdex:success:rate_5m{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}\n  - \n  gitlab_service_apdex:success:rate_3d{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}\n)\n/ gitlab_service_apdex:success:rate:stddev_over_time_1w{env=\"gprd\",environment=\"gprd\",monitor=\"global\",stage=\"main\",type=~\"$type\"}",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "E"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "e58c2f51-20f8-4f4b-ad48-2968782ca7d6"
+          },
+          "editorMode": "code",
+          "expr": "gitlab_service_apdex:success:rate_3d",
+          "hide": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "F"
         }
       ],
-      "title": "catchall CPU vs num pods",
+      "title": "Panel Title",
       "type": "timeseries"
     }
   ],
-  "schemaVersion": 39,
+  "schemaVersion": 40,
   "tags": [
     "unmanaged"
   ],
   "templating": {
     "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "ai-assisted",
+          "value": "ai-assisted"
+        },
+        "definition": "label_values(gitlab_service_apdex:ratio_5m,type)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "type",
+        "multi": true,
+        "name": "type",
+        "options": [
 
+        ],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(gitlab_service_apdex:ratio_5m,type)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
     ]
   },
   "time": {
-    "from": "now-6h",
-    "to": "now"
+    "from": "2024-08-22T16:30:00.000Z",
+    "to": "2024-08-23T05:29:59.000Z"
   },
   "timepicker": {
   },
   "timezone": "",
-  "title": "addie test",
-  "uid": "cdxbwomc4pfr4b",
-  "version": 7,
+  "title": "rpereira2 - Z-score metric playground",
+  "uid": "bdyaj2df37gu8e",
+  "version": 6,
   "weekStart": ""
 }
